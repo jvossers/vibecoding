@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>CPU & RAM Interactive Simulator (Mobile)</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f5f5f5;
+            min-height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+        }
+        .sim-description {
+            width: 100vw;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 1.05em;
+            color: #333;
+            margin: 0;
+            padding: 16px 8px 8px 8px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100vw;
+            max-width: 100vw;
+            margin: 0;
+            padding: 0 0 16px 0;
+            align-items: stretch;
+        }
+        .ram, .cpu, .control-panel, .explanation-panel {
+            border: 1px solid #ccc;
+            padding: 12px 8px;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            margin: 0 8px 8px 8px;
+        }
+        .ram-cells {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(10, min-content);
+            grid-auto-flow: column;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .controls-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .cell {
+            width: 100%;
+            min-width: 0;
+            height: 28px;
+            border: 1px solid #888;
+            display: flex;
+            align-items: center;
+            background: #f9f9f9;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+        .cell.active {
+            background: #ffe082;
+            border-color: #ffa000;
+        }
+        .cell.referenced {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+        .cell-address {
+            width: 38px;
+            text-align: right;
+            color: #888;
+            font-size: 0.95em;
+            padding-right: 6px;
+            font-weight: normal;
+        }
+        .cell-content {
+            flex: 1;
+            text-align: left;
+            padding-left: 6px;
+        }
+        .registers { margin-top: 6px; }
+        .register {
+            margin-bottom: 6px;
+            padding: 6px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .controls button {
+            width: 100%;
+            background: linear-gradient(90deg, #1976d2 60%, #43a047 100%);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 0;
+            font-size: 1.05em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+            transition: background 0.2s, transform 0.2s;
+            margin: 4px 0;
+        }
+        .controls button:hover {
+            background: linear-gradient(90deg, #1565c0 60%, #388e3c 100%);
+            transform: translateY(-1px);
+        }
+        .instruction { font-family: monospace; }
+        .explanation-panel {
+            min-height: 120px;
+        }
+        .explanation-content {
+            color: #1976d2;
+            font-size: 1em;
+            line-height: 1.4;
+        }
+        h1 {
+            font-size: 1.3em;
+            margin: 0 0 8px 0;
+        }
+        h2 {
+            margin: 0 0 10px 0;
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 4px;
+            font-size: 1.1em;
+        }
+        @media (max-width: 400px) {
+            .cell-address { width: 30px; font-size: 0.9em; }
+            .cell-content { font-size: 0.9em; }
+            .register { font-size: 0.95em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sim-description">
+        <h1>CPU & RAM Interactive Simulator</h1>
+        <p>
+            This interactive simulation demonstrates how a simple CPU interacts with RAM to execute instructions. Step through the fetch-decode-execute cycle and observe how the CPU reads instructions from memory, processes data, and updates both its registers and RAM.
+        </p>
+    </div>
+    <div class="container">
+        <div class="controls-column">
+            <div class="cpu">
+                <h2>CPU</h2>
+                <div class="registers">
+                    <div class="register">Accumulator (ACC): <span id="acc">0</span></div>
+                    <div class="register">Program Counter (PC): <span id="pc">0</span></div>
+                </div>
+                <div>Current Instruction: <span id="currentInstruction" class="instruction"></span></div>
+            </div>
+            <div class="control-panel">
+                <h2>Controls</h2>
+                <div class="controls">
+                    <button onclick="window.step()">Execute</button>
+                    <button onclick="window.resetSim()">Reset</button>
+                </div>
+            </div>
+            <div class="explanation-panel">
+                <h2>Explanation</h2>
+                <div id="instructionExplanation" class="explanation-content"></div>
+            </div>
+        </div>
+        <div class="ram">
+            <h2>RAM</h2>
+            <div id="ramCells" class="ram-cells"></div>
+        </div>
+    </div>
+
+    <script>
+    // ...existing code from cpu.html script block...
+    (function() {
+        window.ram = [
+            'LOAD 0x10',
+            'ADD 0x11',
+            'STORE 0x14',
+            'MUL 0x11',
+            'STORE 0x15',
+            'DIV 0x13',
+            'STORE 0x16',
+            'SUB 0x11',
+            'STORE 0x17',
+            'LOAD 0x14',
+            'MUL 0x11',
+            'STORE 0x18',
+            'JUMP 0x00',
+            'HLT',
+            'HLT',
+            0, 0, 0, 0, 0, 0,
+            5,
+            3,
+            10,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0
+        ];
+        window.pc = 0;
+        window.acc = 0;
+        window.halted = false;
+        window.instructionExplanations = {
+            'LOAD': (arg) => `LOAD ${arg}: Load the value from RAM address ${arg} into the accumulator (ACC). This copies the value, leaving the original in RAM.`,
+            'ADD': (arg) => `ADD ${arg}: Add the value from RAM address ${arg} to the accumulator (ACC). This performs ACC = ACC + RAM[${arg}]`,
+            'SUB': (arg) => `SUB ${arg}: Subtract the value from RAM address ${arg} from the accumulator (ACC). This performs ACC = ACC - RAM[${arg}]`,
+            'MUL': (arg) => `MUL ${arg}: Multiply the accumulator (ACC) by the value in RAM address ${arg}. This performs ACC = ACC * RAM[${arg}]`,
+            'DIV': (arg) => `DIV ${arg}: Divide the accumulator (ACC) by the value in RAM address ${arg}. This performs ACC = ACC / RAM[${arg}]`,
+            'STORE': (arg) => `STORE ${arg}: Store the value from the accumulator (ACC) into RAM address ${arg}. This writes ACC into RAM[${arg}]`,
+            'JUMP': (arg) => `JUMP ${arg}: Jump to the instruction at RAM address ${arg}. This sets the Program Counter (PC) to point to the new address.`,
+            'HLT': () => 'HLT: Halt the CPU. The program has finished executing all instructions.'
+        };
+        window.showExplanation = function(text) {
+            const expl = document.getElementById('instructionExplanation');
+            if (expl) {
+                expl.innerText = text;
+            }
+        };
+        window.render = function() {
+            const container = document.getElementById('ramCells');
+            container.innerHTML = '';
+            let referencedAddr = null;
+            if (window.pc !== null) {
+                const instruction = window.ram[window.pc];
+                if (typeof instruction === 'string') {
+                    const [op, arg] = instruction.split(' ');
+                    if (arg) {
+                        referencedAddr = parseInt(arg, 16);
+                    }
+                }
+            }
+            for (let i = 0; i < window.ram.length; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                if (i === window.pc) {
+                    cell.classList.add('active');
+                }
+                if (i === referencedAddr) {
+                    cell.classList.add('referenced');
+                }
+                const addr = document.createElement('div');
+                addr.classList.add('cell-address');
+                addr.innerText = '0x' + i.toString(16).toUpperCase();
+                const content = document.createElement('div');
+                content.classList.add('cell-content');
+                content.innerText = window.ram[i];
+                cell.appendChild(addr);
+                cell.appendChild(content);
+                container.appendChild(cell);
+                cell.addEventListener('click', () => {
+                    window.currentInstruction = i;
+                    render();
+                });
+            }
+            document.getElementById('acc').innerText = window.acc;
+            document.getElementById('pc').innerText = '0x' + window.pc.toString(16).toUpperCase();
+            document.getElementById('currentInstruction').innerText = window.ram[window.pc];
+            if (typeof window.ram[window.pc] === 'string') {
+                const [op, arg] = window.ram[window.pc].split(' ');
+                if (window.instructionExplanations[op]) {
+                    window.showExplanation(window.instructionExplanations[op](arg));
+                }
+            }
+        };
+        window.step = function() {
+            if (window.halted) return;
+            const instr = window.ram[window.pc];
+            if (typeof instr === 'string') {
+                const [op, arg] = instr.split(' ');
+                switch (op) {
+                    case 'LOAD':
+                        window.acc = window.ram[parseInt(arg, 16)];
+                        window.pc++;
+                        break;
+                    case 'ADD':
+                        window.acc += window.ram[parseInt(arg, 16)];
+                        window.pc++;
+                        break;
+                    case 'SUB':
+                        window.acc -= window.ram[parseInt(arg, 16)];
+                        window.pc++;
+                        break;
+                    case 'MUL':
+                        window.acc *= window.ram[parseInt(arg, 16)];
+                        window.pc++;
+                        break;
+                    case 'DIV':
+                        window.acc /= window.ram[parseInt(arg, 16)];
+                        window.pc++;
+                        break;
+                    case 'STORE':
+                        window.ram[parseInt(arg, 16)] = window.acc;
+                        window.pc++;
+                        break;
+                    case 'JUMP':
+                        window.pc = parseInt(arg, 16);
+                        break;
+                    case 'HLT':
+                        window.halted = true;
+                        window.pc++;
+                        break;
+                }
+            }
+            window.render();
+        };
+        window.resetSim = function() {
+            window.ram[0x10] = 5;
+            window.ram[0x11] = 3;
+            window.ram[0x12] = 10;
+            window.ram[0x13] = 4;
+            window.ram[0x14] = 0;
+            window.ram[0x15] = 0;
+            window.ram[0x16] = 0;
+            window.pc = 0;
+            window.acc = 0;
+            window.halted = false;
+            window.showExplanation('Program reset. Ready to start!');
+            window.render();
+        };
+        document.addEventListener('DOMContentLoaded', function() {
+            window.resetSim();
+        });
+    })();
+    </script>
+</body>
+</html>
