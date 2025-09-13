@@ -51,7 +51,8 @@
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(10, min-content);
             grid-auto-flow: column;
-            gap: 3px;
+            column-gap: 8px;
+            row-gap: 3px;
             margin-top: 2px;
         }
         .controls-column {
@@ -95,41 +96,76 @@
             font-size: 0.78em;
         }
         .registers { margin-top: 6px; }
+        .registers {
+            margin-top: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
         .register {
-            margin-bottom: 2px;
-            padding: 2px 4px;
-            background: #f5f5f5;
-            border-radius: 3px;
-            font-size: 0.9em;
+            background: #f0f4f8;
+            border-radius: 6px;
+            font-size: 1em;
+            padding: 7px 10px 7px 10px;
+            margin: 0;
+            font-weight: 500;
+            color: #222;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            border: 1px solid #e0e0e0;
+            letter-spacing: 0.01em;
+        }
+        .current-instruction-label {
+            font-size: 1em;
+            margin-top: 8px;
+            background: #f8fafc;
+            border-radius: 6px;
+            padding: 7px 10px;
+            color: #333;
+            font-weight: 500;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
         }
         .control-panel {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
-        .controls {
+        .controls-tray {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 54px;
+            background: #fff;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
             display: flex;
-            flex-direction: row;
-            gap: 6px;
-            margin: 6px 0 2px 0;
+            z-index: 100;
         }
-        .controls button {
+        .controls-tray button {
             flex: 1 1 0;
-            background: linear-gradient(90deg, #1976d2 60%, #43a047 100%);
-            color: #fff;
+            height: 100%;
             border: none;
-            border-radius: 5px;
-            padding: 7px 0;
-            font-size: 0.95em;
+            border-radius: 0;
+            font-size: 1.05em;
             font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
-            transition: background 0.2s, transform 0.2s;
+            color: #fff;
+            background: #1976d2;
+            box-shadow: none;
             margin: 0;
+            cursor: pointer;
+            transition: background 0.2s, filter 0.2s;
         }
-        .controls button:hover {
-            background: linear-gradient(90deg, #1565c0 60%, #388e3c 100%);
-            transform: translateY(-1px);
+        .controls-tray button:last-child {
+            background: #d32f2f;
+        }
+        .controls-tray button:active {
+            filter: brightness(0.95);
+        }
+        .controls {
+            display: none;
+        }
+        body {
+            padding-bottom: 54px;
         }
         .instruction { font-family: monospace; }
         .explanation-panel {
@@ -137,7 +173,7 @@
             margin: 2px 8px 0 8px;
         }
         .explanation-content {
-            color: #1976d2;
+            color: #444;
             font-size: 0.9em;
             line-height: 1.2;
         }
@@ -158,16 +194,15 @@
     <!-- Top explanation removed for condensed view -->
     <div class="container">
         <div class="cpu">
+            <div style="font-size:1em;font-weight:bold;margin-bottom:2px;">CPU</div>
             <div class="registers">
-                <div class="register">ACC: <span id="acc">0</span></div>
-                <div class="register">PC: <span id="pc">0</span></div>
+                <div class="register">Accumulator (ACC): <span id="acc">0</span></div>
+                <div class="register">Program Counter (PC): <span id="pc">0</span></div>
             </div>
-            <div style="font-size:0.95em;">Instr: <span id="currentInstruction" class="instruction"></span></div>
+            <div class="current-instruction-label">Current Instruction: <span id="currentInstruction" class="instruction"></span></div>
+        <!-- Remove any CSS text that was accidentally placed here -->
         </div>
-        <div class="controls">
-            <button onclick="window.step()">Execute</button>
-            <button onclick="window.resetSim()">Reset</button>
-        </div>
+        <!-- Controls moved to tray at bottom -->
         <div class="ram">
             <div style="font-size:1em;font-weight:bold;margin-bottom:2px;">RAM</div>
             <div id="ramCells" class="ram-cells"></div>
@@ -333,4 +368,19 @@
     })();
     </script>
 </body>
+</body>
+<div class="controls-tray">
+    <button onclick="window.step()">
+        <span style="display:inline-flex;align-items:center;gap:6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Execute
+        </span>
+    </button>
+    <button onclick="window.resetSim()">
+        <span style="display:inline-flex;align-items:center;gap:6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            Reset
+        </span>
+    </button>
+</div>
 </html>
