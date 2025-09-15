@@ -15,10 +15,17 @@
             font-family: Arial, sans-serif;
             margin: 0;
             background: #f5f5f5;
-            min-height: 100vh;
             width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .page-content {
+            flex: 1;
+            overflow-y: auto;
             overflow-x: hidden;
-            padding-bottom: 54px;
+            padding-bottom: 54px; /* Height of the controls tray */
         }
         .sim-description {
             width: 100vw;
@@ -33,10 +40,9 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            width: 100vw;
-            max-width: 100vw;
+            width: 100%;
             margin: 0;
-            padding: 0 0 16px 0;
+            padding: 0;
             align-items: stretch;
         }
         .ram, .cpu, .control-panel, .explanation-panel {
@@ -168,12 +174,42 @@
         .instruction { font-family: monospace; }
         .explanation-panel {
             min-height: 40px;
-            margin: 2px 8px 0 8px;
+            margin: 2px 8px 8px 8px;
+            display: flex;
+            flex-direction: column-reverse; /* Stack items bottom-up */
         }
         .explanation-content {
             color: #444;
             font-size: 0.9em;
             line-height: 1.2;
+            display: flex;
+            flex-direction: column-reverse; /* Stack items bottom-up */
+            gap: 8px;
+        }
+        .explanation-item {
+            padding: 8px 12px;
+            background: #fff;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            opacity: 0;
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            transition: color 0.3s ease-out;
+            color: #888; /* Historical entries have lighter text */
+        }
+        .explanation-item:last-child {
+            color: #444; /* Latest entry has darker text */
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                opacity: 1;
+            }
         }
         h1, h2 {
             display: none;
@@ -186,9 +222,10 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="cpu">
-            <div style="font-size:1em;font-weight:bold;margin-bottom:2px;">CPU</div>
+    <div class="page-content">
+        <div class="container">
+            <div class="cpu">
+                <div style="font-size:1em;font-weight:bold;margin-bottom:2px;">CPU</div>
             <div class="registers">
                 <div class="register">Memory Address Register (MAR): <span id="mar">0x0</span></div>
                 <div class="register">Memory Data Register (MDR): <span id="mdr">0</span></div>
@@ -202,6 +239,7 @@
         </div>
         <div class="explanation-panel">
             <div id="instructionExplanation" class="explanation-content"></div>
+            </div>
         </div>
     </div>
 
@@ -317,7 +355,17 @@
         window.showExplanation = function(text) {
             const expl = document.getElementById('instructionExplanation');
             if (expl) {
-                expl.innerText = text;
+                const item = document.createElement('div');
+                item.classList.add('explanation-item');
+                item.innerText = text;
+                
+                // Add to the end for correct chronological order (newest at the end)
+                expl.appendChild(item);
+
+                // Keep only the last 10 explanations to prevent excessive memory use
+                while (expl.children.length > 10) {
+                    expl.removeChild(expl.firstChild);
+                }
             }
         };
 
@@ -409,11 +457,11 @@
                 }
             }
 
-            // Update explanation
-            if (window.halted) {
-                window.showExplanation('Program halted.');
-            } else {
-                window.showExplanation(getPhaseExplanation());
+            // Update explanation (only if phase changed)
+            if (window.lastPhase !== window.currentPhase || window.halted) {
+                const text = window.halted ? 'Program halted.' : getPhaseExplanation();
+                window.showExplanation(text);
+                window.lastPhase = window.currentPhase;
             }
 
             // Update UI for halted state
@@ -527,6 +575,7 @@
             window.mdr = 0;
             window.halted = false;
             window.currentPhase = 'FETCH';
+            window.lastPhase = '';  // Initialize lastPhase
             window.currentInstruction = '';
             window.currentArg = '';
 
@@ -536,8 +585,12 @@
             window.accLast = '0';
             window.pcLast = '0x0';
 
-            // Update UI
-            window.showExplanation('Program reset. Ready to start!');
+            // Clear and reset UI
+            const expl = document.getElementById('instructionExplanation');
+            if (expl) {
+                expl.innerHTML = ''; // Clear all explanations
+                window.showExplanation('Program reset. Ready to start!');
+            }
             const cycleButton = document.getElementById('cycleButton');
             if (cycleButton) {
                 cycleButton.disabled = false;
