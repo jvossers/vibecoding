@@ -107,17 +107,28 @@
             background: #f0f4f8;
             border-radius: 6px;
             font-size: 1em;
-            padding: 7px 10px 7px 10px;
+            padding: 7px 12px;
             margin: 0;
             font-weight: 500;
             color: #222;
             box-shadow: 0 1px 2px rgba(0,0,0,0.03);
             border: 1px solid #e0e0e0;
             letter-spacing: 0.01em;
+            display: grid;
+            grid-template-columns: minmax(auto, 1fr) minmax(120px, auto);
+            align-items: center;
+            gap: 8px;
         }
-        .register span {
+        .register .label {
+            color: #555;
+        }
+        .register .value {
             position: relative;
-            display: inline-block;
+            text-align: right;
+            font-family: 'Consolas', monospace;
+            font-weight: 600;
+            padding: 2px 4px;
+            border-radius: 3px;
         }
         @keyframes valueChange {
             0% {
@@ -196,9 +207,27 @@
             animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
             transition: color 0.3s ease-out;
             color: #888; /* Historical entries have lighter text */
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
         }
         .explanation-item:last-child {
             color: #444; /* Latest entry has darker text */
+        }
+        .phase-icon {
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+        }
+        .phase-icon svg {
+            width: 16px;
+            height: 16px;
+            display: block;
+        }
+        .explanation-text {
+            flex: 1;
+            min-width: 0;
         }
         @keyframes fadeIn {
             0% {
@@ -227,10 +256,22 @@
             <div class="cpu">
                 <div style="font-size:1em;font-weight:bold;margin-bottom:2px;">CPU</div>
             <div class="registers">
-                <div class="register">Memory Address Register (MAR): <span id="mar">0x0</span></div>
-                <div class="register">Memory Data Register (MDR): <span id="mdr">0</span></div>
-                <div class="register">Accumulator (ACC): <span id="acc">0</span></div>
-                <div class="register">Program Counter (PC): <span id="pc">0</span></div>
+                <div class="register">
+                    <div class="label">Memory Address Register (MAR)</div>
+                    <div class="value" id="mar">0x0</div>
+                </div>
+                <div class="register">
+                    <div class="label">Memory Data Register (MDR)</div>
+                    <div class="value" id="mdr">0</div>
+                </div>
+                <div class="register">
+                    <div class="label">Accumulator (ACC)</div>
+                    <div class="value" id="acc">0</div>
+                </div>
+                <div class="register">
+                    <div class="label">Program Counter (PC)</div>
+                    <div class="value" id="pc">0</div>
+                </div>
             </div>
         </div>
         <div class="ram">
@@ -357,7 +398,35 @@
             if (expl) {
                 const item = document.createElement('div');
                 item.classList.add('explanation-item');
-                item.innerText = text;
+
+                // Create icon container
+                const iconContainer = document.createElement('div');
+                iconContainer.classList.add('phase-icon');
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', '16');
+                svg.setAttribute('height', '16');
+                svg.setAttribute('viewBox', '0 0 24 24');
+                svg.setAttribute('fill', 'none');
+                svg.setAttribute('stroke', 'currentColor');
+                svg.setAttribute('stroke-width', '2');
+                svg.setAttribute('stroke-linecap', 'round');
+                svg.setAttribute('stroke-linejoin', 'round');
+                
+                // Get current phase icon
+                const phase = phases[window.currentPhase];
+                if (phase) {
+                    svg.innerHTML = phase.icon;
+                }
+                iconContainer.appendChild(svg);
+
+                // Create text container
+                const textContainer = document.createElement('div');
+                textContainer.classList.add('explanation-text');
+                textContainer.innerText = text;
+
+                // Add icon and text to item
+                item.appendChild(iconContainer);
+                item.appendChild(textContainer);
                 
                 // Add to the end for correct chronological order (newest at the end)
                 expl.appendChild(item);
@@ -589,7 +658,35 @@
             const expl = document.getElementById('instructionExplanation');
             if (expl) {
                 expl.innerHTML = ''; // Clear all explanations
-                window.showExplanation('Program reset. Ready to start!');
+                
+                // Create a special explanation for reset with custom icon
+                const item = document.createElement('div');
+                item.classList.add('explanation-item');
+
+                const iconContainer = document.createElement('div');
+                iconContainer.classList.add('phase-icon');
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', '16');
+                svg.setAttribute('height', '16');
+                svg.setAttribute('viewBox', '0 0 24 24');
+                svg.setAttribute('fill', 'none');
+                svg.setAttribute('stroke', 'currentColor');
+                svg.setAttribute('stroke-width', '2');
+                svg.setAttribute('stroke-linecap', 'round');
+                svg.setAttribute('stroke-linejoin', 'round');
+                
+                // Same reset icon as the reset button
+                svg.innerHTML = '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>';
+                
+                iconContainer.appendChild(svg);
+
+                const textContainer = document.createElement('div');
+                textContainer.classList.add('explanation-text');
+                textContainer.innerText = 'Program reset. Ready to start!';
+
+                item.appendChild(iconContainer);
+                item.appendChild(textContainer);
+                expl.appendChild(item);
             }
             const cycleButton = document.getElementById('cycleButton');
             if (cycleButton) {
