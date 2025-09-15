@@ -25,7 +25,7 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding-bottom: 54px; /* Height of the controls tray */
+            padding: 8px 0 54px 0; /* Added top padding to match side padding */
         }
         .sim-description {
             width: 100vw;
@@ -47,11 +47,17 @@
         }
         .ram, .cpu, .control-panel, .explanation-panel {
             border: 1px solid #ccc;
-            padding: 12px 8px;
+            padding: 12px 10px;
             border-radius: 8px;
             background: #fff;
             box-shadow: 0 2px 4px rgba(0,0,0,0.08);
             margin: 0 8px 8px 8px;
+        }
+        
+        /* Specific adjustment for RAM section to ensure even cell spacing */
+        .ram {
+            padding-left: 10px;
+            padding-right: 10px;
         }
         .ram-cells {
             display: grid;
@@ -60,7 +66,10 @@
             grid-auto-flow: column;
             column-gap: 8px;
             row-gap: 3px;
-            margin-top: 2px;
+            margin-top: 6px;
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
         }
         .cell {
             width: 100%;
@@ -74,6 +83,8 @@
             font-weight: bold;
             font-size: 0.78em;
             padding: 0 2px;
+            box-sizing: border-box;
+            margin: 0;
         }
         .cell.active {
             background: #ffe082;
@@ -102,6 +113,7 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
+            padding: 0 1px; /* Match RAM cells padding */
         }
         .register {
             background: #f0f4f8;
@@ -138,22 +150,34 @@
         .section-header {
             font-size: 0.78em;
             font-weight: bold;
-            margin-bottom: 2px;
+            margin-bottom: 6px;
             color: #444;
         }
         @keyframes valueChange {
             0% {
                 background: rgba(33, 150, 243, 0);
             }
+            15% {
+                background: rgba(33, 150, 243, 0.15);
+            }
             30% {
-                background: rgba(33, 150, 243, 0.1);
+                background: rgba(33, 150, 243, 0);
+            }
+            45% {
+                background: rgba(33, 150, 243, 0.15);
+            }
+            60% {
+                background: rgba(33, 150, 243, 0);
+            }
+            75% {
+                background: rgba(33, 150, 243, 0.15);
             }
             100% {
                 background: rgba(33, 150, 243, 0);
             }
         }
         .value-changed {
-            animation: valueChange 0.8s ease-out;
+            animation: valueChange 1.5s ease-out;
             border-radius: 3px;
             /* Remove padding and margin adjustments that could cause alignment issues */
         }
@@ -213,18 +237,13 @@
             border-radius: 6px;
             border: 1px solid #e0e0e0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            opacity: 0;
-            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            transition: color 0.3s ease-out;
-            color: #888; /* Historical entries have lighter text */
+            color: #444; /* All items use same color */
             display: flex;
             align-items: center; /* Center align items vertically */
             gap: 8px;
             font-size: 0.78em;
         }
-        .explanation-item:last-child {
-            color: #444; /* Latest entry has darker text */
-        }
+        /* No special styling for last explanation item - all appear instantly */
         .phase-icon {
             flex-shrink: 0;
             width: 18px;
@@ -243,16 +262,16 @@
             min-width: 0;
             padding-top: 1px; /* Slight adjustment for text alignment */
         }
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-            }
-            50% {
-                opacity: 0.6;
-            }
-            100% {
-                opacity: 1;
-            }
+        /* Spinner animation for brief indication after button press */
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .spin {
+            animation: spinner 1.6s linear; /* Increased from 0.8s to 1.6s (2x) */
+            transform-origin: center;
+            stroke: #1976d2; /* Set the stroke color to match the blue button */
         }
         h1, h2 {
             display: none;
@@ -305,7 +324,7 @@
                 <span id="cycleText">Fetch</span>
             </span>
         </button>
-        <button onclick="window.resetSim()">
+        <button onclick="window.resetSim(false)">
             <span style="display:inline-flex;align-items:center;gap:6px;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
                 Reset
@@ -426,11 +445,18 @@
                 svg.setAttribute('stroke-linecap', 'round');
                 svg.setAttribute('stroke-linejoin', 'round');
                 
-                // Get current phase icon
-                const phase = phases[window.currentPhase];
-                if (phase) {
-                    svg.innerHTML = phase.icon;
+                // Add the appropriate phase icon immediately (no spinner)
+                if (text.includes('Program reset')) {
+                    // For reset, use the reset icon
+                    svg.innerHTML = '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>';
+                } else {
+                    // Use the current phase icon
+                    const phase = phases[window.currentPhase];
+                    if (phase) {
+                        svg.innerHTML = phase.icon;
+                    }
                 }
+                
                 iconContainer.appendChild(svg);
 
                 // Create text container
@@ -548,7 +574,10 @@
             // Update explanation (only if phase changed)
             if (window.lastPhase !== window.currentPhase || window.halted) {
                 const text = window.halted ? 'Program halted.' : getPhaseExplanation();
+                
+                // No delay - add explanation immediately
                 window.showExplanation(text);
+                
                 window.lastPhase = window.currentPhase;
             }
 
@@ -561,6 +590,30 @@
 
         window.cycleStep = function() {
             if (window.halted) return;
+            
+            // First, add spinner to the top explanation item when cycle button is pressed
+            const expl = document.getElementById('instructionExplanation');
+            if (expl && expl.children.length > 0) {
+                // Get the most recent explanation item (last child)
+                const latestItem = expl.lastChild;
+                
+                // Add a temporary spinning class to the icon in that item
+                const phaseIcon = latestItem.querySelector('.phase-icon svg');
+                if (phaseIcon) {
+                    // Store original icon content
+                    const originalIcon = phaseIcon.innerHTML;
+                    
+                    // Replace with spinner
+                    phaseIcon.innerHTML = '<circle cx="12" cy="12" r="10" stroke-width="2" stroke-dasharray="1.5 3" />';
+                    phaseIcon.classList.add('spin');
+                    
+                    // Restore after animation
+                    setTimeout(function() {
+                        phaseIcon.innerHTML = originalIcon;
+                        phaseIcon.classList.remove('spin');
+                    }, 600); // Increased from 300 to 600 (2x)
+                }
+            }
 
             switch(window.currentPhase) {
                 case 'FETCH':
@@ -644,7 +697,7 @@
             window.render();
         };
 
-        window.resetSim = function() {
+        window.resetSim = function(isInitialLoad) {
             // Reset RAM data values
             window.ram[0x10] = 5;   // Initial value
             window.ram[0x11] = 3;   // Second value
@@ -694,8 +747,20 @@
                 svg.setAttribute('stroke-linecap', 'round');
                 svg.setAttribute('stroke-linejoin', 'round');
                 
-                // Same reset icon as the reset button
-                svg.innerHTML = '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>';
+                if (isInitialLoad) {
+                    // On initial load, just show the reset icon without spinner
+                    svg.innerHTML = '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>';
+                } else {
+                    // Only show spinner if not initial load
+                    svg.innerHTML = '<circle cx="12" cy="12" r="10" stroke-width="2" stroke-dasharray="1.5 3" />';
+                    svg.classList.add('spin');
+                    
+                    // After brief moment, replace with reset icon
+                    setTimeout(function() {
+                        svg.innerHTML = '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>';
+                        svg.classList.remove('spin');
+                    }, 1600); // Increased from 800 to 1600 (2x)
+                }
                 
                 iconContainer.appendChild(svg);
 
@@ -716,7 +781,7 @@
 
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
-            window.resetSim();
+            window.resetSim(true); // Pass true to indicate initial page load
         });
     })();
     </script>
