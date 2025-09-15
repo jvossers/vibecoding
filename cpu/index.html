@@ -243,10 +243,18 @@
             gap: 8px;
             font-size: 0.78em;
         }
-        /* Modified style to ONLY target the latest explanation item's icon */
+        /* Modified style to make the entire latest explanation item clickable */
+        .explanation-item:last-child {
+            cursor: pointer; /* Add pointer cursor to indicate it's clickable */
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+        .explanation-item:last-child:hover {
+            background-color: #f5f9ff; /* Light blue hover effect */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        /* Keep the blue color for the icon in the latest item */
         .explanation-item:last-child .phase-icon svg {
             stroke: #1976d2; /* Match the blue button color */
-            cursor: pointer; /* Add pointer cursor to indicate it's clickable */
         }
         /* No special styling for last explanation item - all appear instantly */
         .phase-icon {
@@ -445,7 +453,7 @@
                 svg.setAttribute('height', '16');
                 svg.setAttribute('viewBox', '0 0 24 24');
                 svg.setAttribute('fill', 'none');
-                svg.setAttribute('stroke', 'currentColor'); // Use currentColor instead of hardcoded color
+                svg.setAttribute('stroke', 'currentColor');
                 svg.setAttribute('stroke-width', '2');
                 svg.setAttribute('stroke-linecap', 'round');
                 svg.setAttribute('stroke-linejoin', 'round');
@@ -454,7 +462,7 @@
                 if (text.includes('Program reset')) {
                     // For reset, use the reset icon
                     svg.innerHTML = '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>',
-                    svg.setAttribute('stroke', '#1976d2'); // Set stroke to match button color
+                    svg.setAttribute('stroke', '#1976d2');
                 } else {
                     // Use the current phase icon
                     const phase = phases[window.currentPhase];
@@ -477,15 +485,14 @@
                 // Add to the end for correct chronological order (newest at the end)
                 expl.appendChild(item);
                 
-                // Add click event to the latest icon (if it's the last item which gets the blue color)
+                // Add click event to the entire latest item (not just the icon)
                 // This needs to be after appending to expl so :last-child CSS applies
-                const latestSvg = expl.lastChild.querySelector('.phase-icon svg');
-                if (latestSvg) {
-                    latestSvg.addEventListener('click', function(e) {
+                const latestItem = expl.lastChild;
+                if (latestItem) {
+                    latestItem.addEventListener('click', function(e) {
                         if (!window.halted) {
                             window.cycleStep();
                         }
-                        e.stopPropagation(); // Prevent event bubbling
                     });
                 }
 
@@ -760,7 +767,7 @@
                 svg.setAttribute('height', '16');
                 svg.setAttribute('viewBox', '0 0 24 24');
                 svg.setAttribute('fill', 'none');
-                svg.setAttribute('stroke', 'currentColor'); // Use currentColor instead of hardcoded blue
+                svg.setAttribute('stroke', 'currentColor');
                 svg.setAttribute('stroke-width', '2');
                 svg.setAttribute('stroke-linecap', 'round');
                 svg.setAttribute('stroke-linejoin', 'round');
@@ -777,7 +784,7 @@
                     setTimeout(function() {
                         svg.innerHTML = '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>';
                         svg.classList.remove('spin');
-                    }, 1600); // Increased from 800 to 1600 (2x)
+                    }, 1600);
                 }
                 
                 iconContainer.appendChild(svg);
@@ -790,14 +797,13 @@
                 item.appendChild(textContainer);
                 expl.appendChild(item);
                 
-                // Add click event to the icon in the reset explanation
-                const resetSvg = expl.lastChild.querySelector('.phase-icon svg');
-                if (resetSvg) {
-                    resetSvg.addEventListener('click', function(e) {
+                // Add click event to the entire reset explanation (not just the icon)
+                const resetItem = expl.lastChild;
+                if (resetItem) {
+                    resetItem.addEventListener('click', function(e) {
                         if (!window.halted) {
                             window.cycleStep();
                         }
-                        e.stopPropagation(); // Prevent event bubbling
                     });
                 }
             }
