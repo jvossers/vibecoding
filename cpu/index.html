@@ -243,6 +243,11 @@
             gap: 8px;
             font-size: 0.78em;
         }
+        /* Modified style to ONLY target the latest explanation item's icon */
+        .explanation-item:last-child .phase-icon svg {
+            stroke: #1976d2; /* Match the blue button color */
+            cursor: pointer; /* Add pointer cursor to indicate it's clickable */
+        }
         /* No special styling for last explanation item - all appear instantly */
         .phase-icon {
             flex-shrink: 0;
@@ -440,7 +445,7 @@
                 svg.setAttribute('height', '16');
                 svg.setAttribute('viewBox', '0 0 24 24');
                 svg.setAttribute('fill', 'none');
-                svg.setAttribute('stroke', 'currentColor');
+                svg.setAttribute('stroke', 'currentColor'); // Use currentColor instead of hardcoded color
                 svg.setAttribute('stroke-width', '2');
                 svg.setAttribute('stroke-linecap', 'round');
                 svg.setAttribute('stroke-linejoin', 'round');
@@ -448,7 +453,8 @@
                 // Add the appropriate phase icon immediately (no spinner)
                 if (text.includes('Program reset')) {
                     // For reset, use the reset icon
-                    svg.innerHTML = '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>';
+                    svg.innerHTML = '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>',
+                    svg.setAttribute('stroke', '#1976d2'); // Set stroke to match button color
                 } else {
                     // Use the current phase icon
                     const phase = phases[window.currentPhase];
@@ -470,6 +476,18 @@
                 
                 // Add to the end for correct chronological order (newest at the end)
                 expl.appendChild(item);
+                
+                // Add click event to the latest icon (if it's the last item which gets the blue color)
+                // This needs to be after appending to expl so :last-child CSS applies
+                const latestSvg = expl.lastChild.querySelector('.phase-icon svg');
+                if (latestSvg) {
+                    latestSvg.addEventListener('click', function(e) {
+                        if (!window.halted) {
+                            window.cycleStep();
+                        }
+                        e.stopPropagation(); // Prevent event bubbling
+                    });
+                }
 
                 // Keep only the last 10 explanations to prevent excessive memory use
                 while (expl.children.length > 10) {
@@ -742,7 +760,7 @@
                 svg.setAttribute('height', '16');
                 svg.setAttribute('viewBox', '0 0 24 24');
                 svg.setAttribute('fill', 'none');
-                svg.setAttribute('stroke', 'currentColor');
+                svg.setAttribute('stroke', 'currentColor'); // Use currentColor instead of hardcoded blue
                 svg.setAttribute('stroke-width', '2');
                 svg.setAttribute('stroke-linecap', 'round');
                 svg.setAttribute('stroke-linejoin', 'round');
@@ -771,6 +789,17 @@
                 item.appendChild(iconContainer);
                 item.appendChild(textContainer);
                 expl.appendChild(item);
+                
+                // Add click event to the icon in the reset explanation
+                const resetSvg = expl.lastChild.querySelector('.phase-icon svg');
+                if (resetSvg) {
+                    resetSvg.addEventListener('click', function(e) {
+                        if (!window.halted) {
+                            window.cycleStep();
+                        }
+                        e.stopPropagation(); // Prevent event bubbling
+                    });
+                }
             }
             const cycleButton = document.getElementById('cycleButton');
             if (cycleButton) {
