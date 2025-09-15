@@ -295,7 +295,7 @@
                 </div>
                 <div class="register">
                     <div class="label">Memory Address Register (MAR)</div>
-                    <div class="value" id="mar">0x0</div>
+                    <div class="value" id="mar">0x00</div>
                 </div>
                 <div class="register">
                     <div class="label">Memory Data Register (MDR)</div>
@@ -396,7 +396,7 @@
             
             switch(window.currentPhase) {
                 case 'FETCH':
-                    return `FETCH: Set MAR = PC (${window.pc}), then copy instruction from RAM[${window.pc}] into MDR`;
+                    return `FETCH: Set MAR = PC (0x${window.pc.toString(16).padStart(2, '0').toUpperCase()}), then copy instruction from RAM[0x${window.pc.toString(16).padStart(2, '0').toUpperCase()}] into MDR`;
                 case 'DECODE':
                     return `DECODE: Parse instruction in MDR (${window.mdr}) to determine operation and address`;
                 case 'EXECUTE':
@@ -502,7 +502,7 @@
 
                 const addr = document.createElement('div');
                 addr.classList.add('cell-address');
-                addr.innerText = '0x' + i.toString(16).toUpperCase();
+                addr.innerText = '0x' + i.toString(16).padStart(2, '0').toUpperCase();
 
                 const content = document.createElement('div');
                 content.classList.add('cell-content');
@@ -517,7 +517,7 @@
             const registers = {
                 'mar': { 
                     elem: document.getElementById('mar'),
-                    value: '0x' + window.mar.toString(16).toUpperCase(),
+                    value: '0x' + window.mar.toString(16).padStart(2, '0').toUpperCase(),
                     lastValue: window.marLast
                 },
                 'mdr': { 
@@ -532,7 +532,7 @@
                 },
                 'pc': { 
                     elem: document.getElementById('pc'),
-                    value: '0x' + window.pc.toString(16).toUpperCase(),
+                    value: '0x' + window.pc.toString(16).padStart(2, '0').toUpperCase(),
                     lastValue: window.pcLast
                 }
             };
