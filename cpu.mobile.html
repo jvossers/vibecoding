@@ -18,6 +18,7 @@
             min-height: 100vh;
             width: 100vw;
             overflow-x: hidden;
+            padding-bottom: 54px;
         }
         .sim-description {
             width: 100vw;
@@ -55,11 +56,6 @@
             row-gap: 3px;
             margin-top: 2px;
         }
-        .controls-column {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
         .cell {
             width: 100%;
             min-width: 0;
@@ -95,7 +91,6 @@
             padding-left: 2px;
             font-size: 0.78em;
         }
-        .registers { margin-top: 6px; }
         .registers {
             margin-top: 6px;
             display: flex;
@@ -114,21 +109,26 @@
             border: 1px solid #e0e0e0;
             letter-spacing: 0.01em;
         }
-        .current-instruction-label {
-            font-size: 1em;
-            margin-top: 8px;
-            background: #f8fafc;
-            border-radius: 6px;
-            padding: 7px 10px;
-            color: #333;
-            font-weight: 500;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        .register span {
+            position: relative;
+            display: inline-block;
         }
-        .control-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        @keyframes valueChange {
+            0% {
+                background: rgba(33, 150, 243, 0);
+            }
+            30% {
+                background: rgba(33, 150, 243, 0.1);
+            }
+            100% {
+                background: rgba(33, 150, 243, 0);
+            }
+        }
+        .value-changed {
+            animation: valueChange 0.8s ease-out;
+            border-radius: 3px;
+            padding: 2px 4px;
+            margin: -2px -4px;
         }
         .controls-tray {
             position: fixed;
@@ -161,11 +161,9 @@
         .controls-tray button:active {
             filter: brightness(0.95);
         }
-        .controls {
-            display: none;
-        }
-        body {
-            padding-bottom: 54px;
+        .controls-tray button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
         .instruction { font-family: monospace; }
         .explanation-panel {
@@ -177,10 +175,7 @@
             font-size: 0.9em;
             line-height: 1.2;
         }
-        h1 {
-            display: none;
-        }
-        h2 {
+        h1, h2 {
             display: none;
         }
         @media (max-width: 400px) {
@@ -191,18 +186,16 @@
     </style>
 </head>
 <body>
-    <!-- Top explanation removed for condensed view -->
     <div class="container">
         <div class="cpu">
             <div style="font-size:1em;font-weight:bold;margin-bottom:2px;">CPU</div>
             <div class="registers">
+                <div class="register">Memory Address Register (MAR): <span id="mar">0x0</span></div>
+                <div class="register">Memory Data Register (MDR): <span id="mdr">0</span></div>
                 <div class="register">Accumulator (ACC): <span id="acc">0</span></div>
                 <div class="register">Program Counter (PC): <span id="pc">0</span></div>
             </div>
-            <div class="current-instruction-label">Current Instruction: <span id="currentInstruction" class="instruction"></span></div>
-        <!-- Remove any CSS text that was accidentally placed here -->
         </div>
-        <!-- Controls moved to tray at bottom -->
         <div class="ram">
             <div style="font-size:1em;font-weight:bold;margin-bottom:2px;">RAM</div>
             <div id="ramCells" class="ram-cells"></div>
@@ -212,175 +205,351 @@
         </div>
     </div>
 
+    <div class="controls-tray">
+        <button id="cycleButton" onclick="window.cycleStep()">
+            <span style="display:inline-flex;align-items:center;gap:6px;">
+                <svg id="cycleIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+                <span id="cycleText">Fetch</span>
+            </span>
+        </button>
+        <button onclick="window.resetSim()">
+            <span style="display:inline-flex;align-items:center;gap:6px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                Reset
+            </span>
+        </button>
+    </div>
+
     <script>
-    // ...existing code from cpu.html script block...
     (function() {
+        // Define phase metadata with icons and descriptions
+        const phases = {
+            'FETCH': {
+                icon: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+                description: 'Fetching instruction from memory at address in PC'
+            },
+            'DECODE': {
+                icon: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+                description: 'Decoding the instruction and preparing for execution'
+            },
+            'EXECUTE': {
+                icon: '<polygon points="5 3 19 12 5 21 5 3"/>',
+                description: 'Executing the decoded instruction'
+            }
+        };
+
+        // Initialize simulation state
+        window.mar = 0;  // Memory Address Register
+        window.mdr = 0;  // Memory Data Register
+        window.pc = 0;   // Program Counter
+        window.acc = 0;  // Accumulator
+        window.halted = false;
+        window.currentPhase = 'FETCH';
+        window.currentInstruction = '';
+        window.currentArg = '';
+
+        // Initial RAM setup
         window.ram = [
-            'LOAD 0x10',
-            'ADD 0x11',
-            'STORE 0x14',
-            'MUL 0x11',
-            'STORE 0x15',
-            'DIV 0x13',
-            'STORE 0x16',
-            'SUB 0x11',
-            'STORE 0x17',
-            'LOAD 0x14',
-            'MUL 0x11',
-            'STORE 0x18',
-            'JUMP 0x00',
-            'HLT',
+            'LOAD 0x10',  // Load initial value
+            'ADD 0x11',   // Add second value
+            'STORE 0x14', // Store sum
+            'MUL 0x11',   // Multiply by second value
+            'STORE 0x15', // Store product
+            'DIV 0x13',   // Divide by fourth value
+            'STORE 0x16', // Store quotient
+            'SUB 0x11',   // Subtract second value
+            'STORE 0x17', // Store difference
+            'LOAD 0x14',  // Load sum back
+            'MUL 0x11',   // Multiply by second value again
+            'STORE 0x18', // Store final result
+            'JUMP 0x00',  // Loop back to start
+            'HLT',        // Halt (not reached due to jump)
             'HLT',
             0, 0, 0, 0, 0, 0,
-            5,
-            3,
-            10,
-            4,
-            0,
-            0,
-            0,
-            0,
-            0
+            5,   // Initial value at 0x10
+            3,   // Second value at 0x11
+            10,  // Third value at 0x12
+            4,   // Fourth value at 0x13
+            0,   // Sum storage at 0x14
+            0,   // Product storage at 0x15
+            0,   // Quotient storage at 0x16
+            0,   // Difference storage at 0x17
+            0    // Final result storage at 0x18
         ];
-        window.pc = 0;
-        window.acc = 0;
-        window.halted = false;
-        window.instructionExplanations = {
-            'LOAD': (arg) => `LOAD ${arg}: Load the value from RAM address ${arg} into the accumulator (ACC). This copies the value, leaving the original in RAM.`,
-            'ADD': (arg) => `ADD ${arg}: Add the value from RAM address ${arg} to the accumulator (ACC). This performs ACC = ACC + RAM[${arg}]`,
-            'SUB': (arg) => `SUB ${arg}: Subtract the value from RAM address ${arg} from the accumulator (ACC). This performs ACC = ACC - RAM[${arg}]`,
-            'MUL': (arg) => `MUL ${arg}: Multiply the accumulator (ACC) by the value in RAM address ${arg}. This performs ACC = ACC * RAM[${arg}]`,
-            'DIV': (arg) => `DIV ${arg}: Divide the accumulator (ACC) by the value in RAM address ${arg}. This performs ACC = ACC / RAM[${arg}]`,
-            'STORE': (arg) => `STORE ${arg}: Store the value from the accumulator (ACC) into RAM address ${arg}. This writes ACC into RAM[${arg}]`,
-            'JUMP': (arg) => `JUMP ${arg}: Jump to the instruction at RAM address ${arg}. This sets the Program Counter (PC) to point to the new address.`,
-            'HLT': () => 'HLT: Halt the CPU. The program has finished executing all instructions.'
+
+        // Instruction explanations
+        const getPhaseExplanation = () => {
+            const currentOp = window.currentInstruction;
+            const currentArg = window.currentArg;
+            
+            switch(window.currentPhase) {
+                case 'FETCH':
+                    return `FETCH: Set MAR = PC (${window.pc}), then copy instruction from RAM[${window.pc}] into MDR`;
+                case 'DECODE':
+                    return `DECODE: Parse instruction in MDR (${window.mdr}) to determine operation and address`;
+                case 'EXECUTE':
+                    if (currentOp === 'LOAD') {
+                        return `EXECUTE LOAD: Set MAR = ${currentArg}, copy value from RAM to MDR, then copy MDR to ACC`;
+                    } else if (currentOp === 'ADD') {
+                        return `EXECUTE ADD: Set MAR = ${currentArg}, get value into MDR, then add MDR to ACC`;
+                    } else if (currentOp === 'SUB') {
+                        return `EXECUTE SUB: Set MAR = ${currentArg}, get value into MDR, then subtract MDR from ACC`;
+                    } else if (currentOp === 'MUL') {
+                        return `EXECUTE MUL: Set MAR = ${currentArg}, get value into MDR, then multiply ACC by MDR`;
+                    } else if (currentOp === 'DIV') {
+                        return `EXECUTE DIV: Set MAR = ${currentArg}, get value into MDR, then divide ACC by MDR`;
+                    } else if (currentOp === 'STORE') {
+                        return `EXECUTE STORE: Set MAR = ${currentArg}, copy ACC to MDR, then store MDR to RAM`;
+                    } else if (currentOp === 'JUMP') {
+                        return `EXECUTE JUMP: Set PC to ${currentArg}`;
+                    } else if (currentOp === 'HLT') {
+                        return `EXECUTE HALT: Stop CPU execution`;
+                    } else if (currentOp === 'DATA') {
+                        return `This is data, not an instruction`;
+                    }
+                    return 'Unknown instruction';
+                default:
+                    return 'Unknown phase';
+            }
         };
+
+        // UI update functions
         window.showExplanation = function(text) {
             const expl = document.getElementById('instructionExplanation');
             if (expl) {
                 expl.innerText = text;
             }
         };
+
         window.render = function() {
+            // Update RAM display
             const container = document.getElementById('ramCells');
             container.innerHTML = '';
             let referencedAddr = null;
-            if (window.pc !== null) {
-                const instruction = window.ram[window.pc];
-                if (typeof instruction === 'string') {
-                    const [op, arg] = instruction.split(' ');
-                    if (arg) {
-                        referencedAddr = parseInt(arg, 16);
-                    }
-                }
+
+            // Find referenced address from current instruction
+            if (window.pc !== null && window.currentArg) {
+                referencedAddr = parseInt(window.currentArg, 16);
             }
+
+            // Create RAM cell elements
             for (let i = 0; i < window.ram.length; i++) {
                 const cell = document.createElement('div');
                 cell.classList.add('cell');
                 if (i === window.pc) {
                     cell.classList.add('active');
                 }
-                if (i === referencedAddr) {
+                if (i === referencedAddr && window.currentPhase === 'EXECUTE') {
                     cell.classList.add('referenced');
                 }
+
                 const addr = document.createElement('div');
                 addr.classList.add('cell-address');
                 addr.innerText = '0x' + i.toString(16).toUpperCase();
+
                 const content = document.createElement('div');
                 content.classList.add('cell-content');
                 content.innerText = window.ram[i];
+
                 cell.appendChild(addr);
                 cell.appendChild(content);
                 container.appendChild(cell);
-                cell.addEventListener('click', () => {
-                    window.currentInstruction = i;
-                    render();
-                });
             }
-            document.getElementById('acc').innerText = window.acc;
-            document.getElementById('pc').innerText = '0x' + window.pc.toString(16).toUpperCase();
-            document.getElementById('currentInstruction').innerText = window.ram[window.pc];
-            if (typeof window.ram[window.pc] === 'string') {
-                const [op, arg] = window.ram[window.pc].split(' ');
-                if (window.instructionExplanations[op]) {
-                    window.showExplanation(window.instructionExplanations[op](arg));
+
+            // Track and update register displays with animation
+            const registers = {
+                'mar': { 
+                    elem: document.getElementById('mar'),
+                    value: '0x' + window.mar.toString(16).toUpperCase(),
+                    lastValue: window.marLast
+                },
+                'mdr': { 
+                    elem: document.getElementById('mdr'),
+                    value: window.mdr,
+                    lastValue: window.mdrLast
+                },
+                'acc': { 
+                    elem: document.getElementById('acc'),
+                    value: window.acc,
+                    lastValue: window.accLast
+                },
+                'pc': { 
+                    elem: document.getElementById('pc'),
+                    value: '0x' + window.pc.toString(16).toUpperCase(),
+                    lastValue: window.pcLast
+                }
+            };
+
+            // Update each register and animate if changed
+            Object.entries(registers).forEach(([key, reg]) => {
+                if (reg.elem) {
+                    reg.elem.innerText = reg.value;
+                    if (reg.value !== reg.lastValue) {
+                        reg.elem.classList.remove('value-changed');
+                        void reg.elem.offsetWidth; // Force reflow
+                        reg.elem.classList.add('value-changed');
+                    }
+                }
+            });
+
+            // Store current values for next comparison
+            window.marLast = registers.mar.value;
+            window.mdrLast = registers.mdr.value;
+            window.accLast = registers.acc.value;
+            window.pcLast = registers.pc.value;
+
+            // Update phase indicator
+            const phase = phases[window.currentPhase];
+            if (phase) {
+                const cycleIcon = document.getElementById('cycleIcon');
+                const cycleText = document.getElementById('cycleText');
+                if (cycleIcon && cycleText) {
+                    cycleIcon.innerHTML = phase.icon;
+                    cycleText.innerText = window.currentPhase.charAt(0) + window.currentPhase.slice(1).toLowerCase();
                 }
             }
+
+            // Update explanation
+            if (window.halted) {
+                window.showExplanation('Program halted.');
+            } else {
+                window.showExplanation(getPhaseExplanation());
+            }
+
+            // Update UI for halted state
+            const cycleButton = document.getElementById('cycleButton');
+            if (cycleButton) {
+                cycleButton.disabled = window.halted;
+            }
         };
-        window.step = function() {
+
+        window.cycleStep = function() {
             if (window.halted) return;
-            const instr = window.ram[window.pc];
-            if (typeof instr === 'string') {
-                const [op, arg] = instr.split(' ');
-                switch (op) {
-                    case 'LOAD':
-                        window.acc = window.ram[parseInt(arg, 16)];
-                        window.pc++;
-                        break;
-                    case 'ADD':
-                        window.acc += window.ram[parseInt(arg, 16)];
-                        window.pc++;
-                        break;
-                    case 'SUB':
-                        window.acc -= window.ram[parseInt(arg, 16)];
-                        window.pc++;
-                        break;
-                    case 'MUL':
-                        window.acc *= window.ram[parseInt(arg, 16)];
-                        window.pc++;
-                        break;
-                    case 'DIV':
-                        window.acc /= window.ram[parseInt(arg, 16)];
-                        window.pc++;
-                        break;
-                    case 'STORE':
-                        window.ram[parseInt(arg, 16)] = window.acc;
-                        window.pc++;
-                        break;
-                    case 'JUMP':
-                        window.pc = parseInt(arg, 16);
-                        break;
-                    case 'HLT':
+
+            switch(window.currentPhase) {
+                case 'FETCH':
+                    // Fetch phase: Load instruction from memory at PC into MDR
+                    window.mar = window.pc;
+                    window.mdr = window.ram[window.mar];
+                    window.currentPhase = 'DECODE';
+                    window.render();
+                    break;
+
+                case 'DECODE':
+                    // Decode phase: Parse the instruction in MDR
+                    if (typeof window.mdr === 'string') {
+                        [window.currentInstruction, window.currentArg] = window.mdr.split(' ');
+                    } else {
+                        window.currentInstruction = 'DATA';
+                        window.currentArg = window.mdr;
+                    }
+                    window.currentPhase = 'EXECUTE';
+                    window.render();
+                    break;
+
+                case 'EXECUTE':
+                    // Execute phase: Perform the instruction
+                    if (window.currentInstruction === 'HLT') {
                         window.halted = true;
                         window.pc++;
-                        break;
-                }
+                    } else if (window.currentInstruction === 'DATA') {
+                        window.pc++;
+                    } else {
+                        const op = window.currentInstruction;
+                        window.currentPhase = 'FETCH';  // Set next phase for next cycle
+                        const arg = window.currentArg;
+                        switch (op) {
+                            case 'LOAD':
+                                window.mar = parseInt(arg, 16);  // Set memory address
+                                window.mdr = window.ram[window.mar];  // Fetch from memory
+                                window.acc = window.mdr;  // Load to accumulator
+                                window.pc++;
+                                break;
+                            case 'ADD':
+                                window.mar = parseInt(arg, 16);  // Set memory address
+                                window.mdr = window.ram[window.mar];  // Fetch from memory
+                                window.acc += window.mdr;  // Add to accumulator
+                                window.pc++;
+                                break;
+                            case 'SUB':
+                                window.mar = parseInt(arg, 16);  // Set memory address
+                                window.mdr = window.ram[window.mar];  // Fetch from memory
+                                window.acc -= window.mdr;  // Subtract from accumulator
+                                window.pc++;
+                                break;
+                            case 'MUL':
+                                window.mar = parseInt(arg, 16);  // Set memory address
+                                window.mdr = window.ram[window.mar];  // Fetch from memory
+                                window.acc *= window.mdr;  // Multiply accumulator
+                                window.pc++;
+                                break;
+                            case 'DIV':
+                                window.mar = parseInt(arg, 16);  // Set memory address
+                                window.mdr = window.ram[window.mar];  // Fetch from memory
+                                if (window.mdr !== 0) {
+                                    window.acc = Math.floor(window.acc / window.mdr);  // Integer division
+                                }
+                                window.pc++;
+                                break;
+                            case 'STORE':
+                                window.mar = parseInt(arg, 16);  // Set memory address
+                                window.mdr = window.acc;  // Load ACC into MDR
+                                window.ram[window.mar] = window.mdr;  // Store to memory
+                                window.pc++;
+                                break;
+                            case 'JUMP':
+                                window.pc = parseInt(arg, 16);
+                                break;
+                        }
+                        window.currentPhase = 'FETCH';  // Reset cycle for next instruction
+                    }
+                    break;
             }
             window.render();
         };
+
         window.resetSim = function() {
-            window.ram[0x10] = 5;
-            window.ram[0x11] = 3;
-            window.ram[0x12] = 10;
-            window.ram[0x13] = 4;
-            window.ram[0x14] = 0;
-            window.ram[0x15] = 0;
-            window.ram[0x16] = 0;
+            // Reset RAM data values
+            window.ram[0x10] = 5;   // Initial value
+            window.ram[0x11] = 3;   // Second value
+            window.ram[0x12] = 10;  // Third value
+            window.ram[0x13] = 4;   // Fourth value
+            window.ram[0x14] = 0;   // Sum storage
+            window.ram[0x15] = 0;   // Product storage
+            window.ram[0x16] = 0;   // Quotient storage
+            window.ram[0x17] = 0;   // Difference storage
+            window.ram[0x18] = 0;   // Final result storage
+
+            // Reset CPU state
             window.pc = 0;
             window.acc = 0;
+            window.mar = 0;
+            window.mdr = 0;
             window.halted = false;
+            window.currentPhase = 'FETCH';
+            window.currentInstruction = '';
+            window.currentArg = '';
+
+            // Initialize last values for change detection
+            window.marLast = '0x0';
+            window.mdrLast = '0';
+            window.accLast = '0';
+            window.pcLast = '0x0';
+
+            // Update UI
             window.showExplanation('Program reset. Ready to start!');
+            const cycleButton = document.getElementById('cycleButton');
+            if (cycleButton) {
+                cycleButton.disabled = false;
+            }
             window.render();
         };
+
+        // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
             window.resetSim();
         });
     })();
     </script>
 </body>
-</body>
-<div class="controls-tray">
-    <button onclick="window.step()">
-        <span style="display:inline-flex;align-items:center;gap:6px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            Execute
-        </span>
-    </button>
-    <button onclick="window.resetSim()">
-        <span style="display:inline-flex;align-items:center;gap:6px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-            Reset
-        </span>
-    </button>
-</div>
 </html>
