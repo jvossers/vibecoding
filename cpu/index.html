@@ -389,7 +389,7 @@
             'STORE 0x18', // Store final result
             'JUMP 0x00',  // Loop back to start
             'HLT',        // Halt (not reached due to jump)
-            'HLT',
+            0,            // Was HLT, now 0
             0, 0, 0, 0, 0, 0,
             5,   // Initial value at 0x10
             3,   // Second value at 0x11
