@@ -106,7 +106,7 @@
         .register {
             background: #f0f4f8;
             border-radius: 6px;
-            font-size: 1em;
+            font-size: 0.78em;
             padding: 7px 12px;
             margin: 0;
             font-weight: 500;
@@ -129,6 +129,17 @@
             font-weight: 600;
             padding: 2px 4px;
             border-radius: 3px;
+            min-width: 50px; /* Increased min-width for better alignment */
+            width: 100%; /* Take full width of the grid cell */
+            display: block; /* Block display for consistent sizing */
+            box-sizing: border-box; /* Include padding in width calculation */
+        }
+        
+        .section-header {
+            font-size: 0.78em;
+            font-weight: bold;
+            margin-bottom: 2px;
+            color: #444;
         }
         @keyframes valueChange {
             0% {
@@ -144,8 +155,7 @@
         .value-changed {
             animation: valueChange 0.8s ease-out;
             border-radius: 3px;
-            padding: 2px 4px;
-            margin: -2px -4px;
+            /* Remove padding and margin adjustments that could cause alignment issues */
         }
         .controls-tray {
             position: fixed;
@@ -208,17 +218,20 @@
             transition: color 0.3s ease-out;
             color: #888; /* Historical entries have lighter text */
             display: flex;
-            align-items: flex-start;
+            align-items: center; /* Center align items vertically */
             gap: 8px;
+            font-size: 0.78em;
         }
         .explanation-item:last-child {
             color: #444; /* Latest entry has darker text */
         }
         .phase-icon {
             flex-shrink: 0;
-            width: 16px;
-            height: 16px;
-            margin-top: 2px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .phase-icon svg {
             width: 16px;
@@ -228,6 +241,7 @@
         .explanation-text {
             flex: 1;
             min-width: 0;
+            padding-top: 1px; /* Slight adjustment for text alignment */
         }
         @keyframes fadeIn {
             0% {
@@ -254,7 +268,7 @@
     <div class="page-content">
         <div class="container">
             <div class="cpu">
-                <div style="font-size:1em;font-weight:bold;margin-bottom:2px;">CPU</div>
+                <div class="section-header">CPU</div>
             <div class="registers">
                 <div class="register">
                     <div class="label">Memory Address Register (MAR)</div>
@@ -275,7 +289,7 @@
             </div>
         </div>
         <div class="ram">
-            <div style="font-size:1em;font-weight:bold;margin-bottom:2px;">RAM</div>
+            <div class="section-header">RAM</div>
             <div id="ramCells" class="ram-cells"></div>
         </div>
         <div class="explanation-panel">
@@ -500,10 +514,15 @@
             // Update each register and animate if changed
             Object.entries(registers).forEach(([key, reg]) => {
                 if (reg.elem) {
+                    // Always ensure text is right-aligned
                     reg.elem.innerText = reg.value;
+                    
+                    // Handle animation without affecting alignment
                     if (reg.value !== reg.lastValue) {
+                        // Remove animation class and force reflow
                         reg.elem.classList.remove('value-changed');
                         void reg.elem.offsetWidth; // Force reflow
+                        // Add animation class
                         reg.elem.classList.add('value-changed');
                     }
                 }
