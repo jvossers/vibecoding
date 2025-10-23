@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline Puzzle Game</title>
+    <style>
+        body { font-family: Arial,sans-serif; background: #f4f4f4; margin:0; padding:0; }
+        h1 { text-align:center; margin-top:24px; }
+        #timeline { display:flex; align-items:center; justify-content:center; margin:40px auto 20px auto; width:80vw; height:120px; background:#e0e0e0; border-radius:16px; position:relative; }
+        .timeline-slot { flex:1; height:100px; margin:0 8px; border:2px dashed #bbb; border-radius:8px; background:#fff; display:flex; align-items:center; justify-content:center; min-width:120px; position:relative; }
+        #event-cards { display:flex; justify-content:center; gap:16px; margin-bottom:32px; flex-wrap:wrap; }
+        .event-card { background:#fff; border:2px solid #2196f3; border-radius:8px; padding:16px 24px; cursor:grab; box-shadow:0 2px 8px rgba(0,0,0,0.08); font-size:1rem; user-select:none; margin-bottom:8px; }
+        .event-card.dragging { opacity:0.5; }
+        .timeline-slot.over { border-color:#2196f3; background:#e3f2fd; }
+        #submit-btn { display:block; margin:0 auto 24px auto; padding:12px 32px; font-size:1.1rem; background:#2196f3; color:#fff; border:none; border-radius:8px; cursor:pointer; }
+        #result { text-align:center; font-size:1.2rem; margin-bottom:24px; }
+    </style>
+</head>
+<body>
+    <h1>Timeline Puzzle Game</h1>
+    <div id="event-cards"></div>
+    <div id="timeline"></div>
+    <button id="submit-btn">Submit Order</button>
+    <div id="result"></div>
+    <script>
+        const _ev = [
+            { k: atob("V29ybGQgV2FyIElJ"), v: "x7p" },
+            { k: atob("U3RvbmUgQWdl"), v: "q2z" },
+            { k: atob("RGlnaXRhbCBBZ2U="), v: "m9a" },
+            { k: atob("SW5kdXN0cmlhbCBSZXZvbHV0aW9u"), v: "b4w" },
+            { k: atob("QW5jaWVudCBFbmd5cHQ="), v: "t8j" },
+            { k: atob("TWlkZGxlIEFnZXM="), v: "r1c" },
+            { k: atob("V29ybGQgV2FyIEk="), v: "u5d" },
+            { k: atob("UmVuYWlzc2FuY2U="), v: "k3s" },
+            { k: atob("Um9tYW4gRW1waXJl"), v: "v6n" },
+            { k: atob("Q2xhc3NpY2FsIEdyZWVjZQ=="), v: "f0e" }
+        ];
+        const _o = ["q2z","t8j","f0e","v6n","r1c","k3s","b4w","u5d","x7p","m9a"];
+        function _s(a) { for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
+        const _d = [..._ev]; _s(_d);
+        const _ec = document.getElementById('event-cards');
+        _d.forEach(e => { const c=document.createElement('div'); c.className='event-card'; c.draggable=true; c.textContent=e.k; c.dataset.v=e.v; _ec.appendChild(c); });
+        const _tl = document.getElementById('timeline');
+        for (let i=0;i<_ev.length;i++) { const s=document.createElement('div'); s.className='timeline-slot'; s.dataset.i=i; _tl.appendChild(s); }
+        let _dc=null;
+        document.querySelectorAll('.event-card').forEach(c=>{
+            c.addEventListener('dragstart',e=>{_dc=c;c.classList.add('dragging');});
+            c.addEventListener('dragend',e=>{_dc=null;c.classList.remove('dragging');});
+        });
+        document.querySelectorAll('.timeline-slot').forEach(s=>{
+            s.addEventListener('dragover',e=>{e.preventDefault();s.classList.add('over');});
+            s.addEventListener('dragleave',e=>{s.classList.remove('over');});
+            s.addEventListener('drop',e=>{
+                e.preventDefault();s.classList.remove('over');
+                if(_dc){
+                    if(_dc.parentElement===_ec){_ec.removeChild(_dc);}else if(_dc.parentElement.classList.contains('timeline-slot')){_dc.parentElement.removeChild(_dc);}
+                    if(s.firstChild){_ec.appendChild(s.firstChild);}
+                    s.appendChild(_dc);
+                }
+            });
+        });
+        document.getElementById('submit-btn').onclick=function(){
+            let ok=true;let arr=[];
+            document.querySelectorAll('.timeline-slot').forEach((s,i)=>{
+                if(s.firstChild){const v=s.firstChild.dataset.v;arr.push(v);if(v!==_o[i]){ok=false;}}else{ok=false;}
+            });
+            const resultDiv=document.getElementById('result');
+            if(ok){
+                resultDiv.textContent = decodeURIComponent(escape(atob("4pyTQ29ycmVjdCEgV2VsbCBkb25lLiBGaXJzdCBwZXJzb24gdG8gZW50ZXIgdGhlIHdvcmQgRlJJREFZIGluIHRoZSBjaGF0IHdpbnMu")));
+                resultDiv.style.color="green";showConfetti();
+            }
+            else{resultDiv.textContent="❌ Incorrect order. Try again.";resultDiv.style.color="red";}
+        };
+        function showConfetti(){
+            const confettiCanvas=document.createElement('canvas');
+            confettiCanvas.id='confetti-canvas';
+            confettiCanvas.style.position='fixed';
+            confettiCanvas.style.top='0';
+            confettiCanvas.style.left='0';
+            confettiCanvas.style.width='100vw';
+            confettiCanvas.style.height='100vh';
+            confettiCanvas.style.pointerEvents='none';
+            confettiCanvas.width=window.innerWidth;
+            confettiCanvas.height=window.innerHeight;
+            document.body.appendChild(confettiCanvas);
+            const ctx=confettiCanvas.getContext('2d');
+            const confettiCount=120;
+            const confetti=[];
+            for(let i=0;i<confettiCount;i++){
+                confetti.push({x:Math.random()*confettiCanvas.width,y:Math.random()*confettiCanvas.height-100,r:Math.random()*8+4,d:Math.random()*confettiCanvas.height,color:`hsl(${Math.random()*360},80%,60%)`,tilt:Math.random()*10-5,tiltAngle:Math.random()*Math.PI});
+            }
+            let frame=0;
+            function drawConfetti(){
+                ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+                confetti.forEach(c=>{ctx.beginPath();ctx.ellipse(c.x,c.y,c.r,c.r/2,c.tiltAngle,0,2*Math.PI);ctx.fillStyle=c.color;ctx.fill();});
+                updateConfetti();frame++;
+                if(frame<120){requestAnimationFrame(drawConfetti);}else{confettiCanvas.remove();}
+            }
+            function updateConfetti(){
+                confetti.forEach(c=>{c.y+=Math.cos(c.d)+2+c.r/2;c.x+=Math.sin(frame/10)*2;c.tiltAngle+=0.1;if(c.y>confettiCanvas.height){c.y=-10;c.x=Math.random()*confettiCanvas.width;}});
+            }
+            drawConfetti();
+        }
+    </script>
+</body>
+</html>
