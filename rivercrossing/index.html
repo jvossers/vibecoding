@@ -101,8 +101,40 @@
         button:disabled { background: #90a4ae; cursor: not-allowed; }
         .status { text-align: center; font-weight: bold; margin-top: 16px; }
     </style>
+    <style>
+        .winner-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .winner-message {
+            background: #fff;
+            color: #1976d2;
+            border-radius: 18px;
+            padding: 48px 36px;
+            font-size: 2.1em;
+            font-weight: bold;
+            box-shadow: 0 4px 32px #2228;
+            text-align: center;
+            max-width: 90vw;
+        }
+        .confetti {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1100;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+        }
+    </style>
 </head>
 <body>
+    <div class="winner-overlay" id="winner-overlay">
+        <div class="winner-message" id="winner-message"></div>
+        <canvas class="confetti" id="confetti-canvas"></canvas>
+    </div>
     <div class="container">
         <h1>River Crossing Puzzle</h1>
         <p>Help the farmer get himself, the fox, the goose, and the beans across the river. The boat can only carry the farmer and one item at a time. If left alone, the fox will eat the goose, and the goose will eat the beans!</p>
@@ -188,7 +220,7 @@
             if (['farmer', 'fox', 'goose', 'beans'].every(item => state[item] === 'right')) {
                 const base64msg = 'Rmlyc3QgcGxheWVyIHRvIGVudGVyIHRoZSB3b3JkIE5PVkVNQkVSIGluIHRoZSBjaGF0IHdpbnMu';
                 const decoded = atob(base64msg);
-                document.getElementById('status').textContent = 'Congratulations! You solved the puzzle! ' + decoded;
+                showWinnerOverlay('Congratulations! You solved the puzzle! ' + decoded);
                 document.getElementById('move-btn').disabled = true;
                 return;
             }
@@ -281,8 +313,64 @@
             checkStatus();
         }
 
-    document.getElementById('move-btn').onclick = move;
-    document.getElementById('reset-btn').onclick = reset;
+        document.getElementById('move-btn').onclick = move;
+        document.getElementById('reset-btn').onclick = reset;
+
+        // Winner overlay and confetti
+        function showWinnerOverlay(msg) {
+            const overlay = document.getElementById('winner-overlay');
+            const message = document.getElementById('winner-message');
+            message.textContent = msg;
+            overlay.style.display = 'flex';
+            launchConfetti();
+        }
+
+        // Simple confetti animation
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const colors = ['#f44336','#ffeb3b','#4caf50','#2196f3','#ff9800','#e91e63','#00bcd4','#8bc34a'];
+            const confetti = [];
+            for (let i = 0; i < 120; i++) {
+                confetti.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * -canvas.height,
+                    r: 6 + Math.random() * 8,
+                    d: 2 + Math.random() * 2,
+                    color: colors[Math.floor(Math.random()*colors.length)],
+                    tilt: Math.random() * 10 - 5,
+                    tiltAngle: 0,
+                    tiltAngleInc: (Math.random() * 0.07) + 0.03
+                });
+            }
+            let frame = 0;
+            function draw() {
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                for (let i = 0; i < confetti.length; i++) {
+                    let c = confetti[i];
+                    ctx.beginPath();
+                    ctx.ellipse(c.x, c.y, c.r, c.r/2, c.tilt, 0, 2*Math.PI);
+                    ctx.fillStyle = c.color;
+                    ctx.fill();
+                }
+                update();
+                if (frame++ < 180) requestAnimationFrame(draw);
+            }
+            function update() {
+                for (let i = 0; i < confetti.length; i++) {
+                    let c = confetti[i];
+                    c.y += c.d;
+                    c.tilt += c.tiltAngleInc;
+                    if (c.y > canvas.height + 20) {
+                        c.x = Math.random() * canvas.width;
+                        c.y = -10;
+                    }
+                }
+            }
+            draw();
+        }
 
         // Initial render
         reset();
