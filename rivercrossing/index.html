@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>River Crossing Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+    body { font-family: Arial, sans-serif; background: #e0f7fa; margin: 0; padding: 0; }
+    .container { max-width: 700px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #bbb; padding: 24px; }
+        h1 { text-align: center; }
+        .river-bg {
+            flex: 2 1 0;
+            min-width: 220px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background: #64b5f6;
+            border-radius: 12px;
+            height: 440px;
+            margin: 0 18px;
+            position: relative;
+        }
+        .river {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 16px;
+            margin: 32px 0;
+        }
+        .bank {
+            flex: 1 1 0;
+            min-width: 120px;
+            height: 440px;
+            background: #81c784;
+            border-radius: 8px;
+            padding: 12px;
+            box-sizing: border-box;
+        }
+        .bank > div {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .boat {
+            flex: 0 0 100px;
+            min-width: 80px;
+            min-height: 80px;
+            background: #8d5524;
+            border-radius: 12px 12px 30px 30px/12px 12px 40px 40px;
+            text-align: center;
+            padding: 8px;
+            margin-top: 40px;
+            transition: box-shadow 0.3s, margin-left 0.3s, margin-right 0.3s;
+            box-shadow: 0 2px 8px #bbb;
+            position: relative;
+            z-index: 2;
+        }
+        .item {
+            margin: 8px 0;
+            padding: 6px 12px;
+            background: #fff9c4;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            box-shadow: 0 1px 3px #e0e0e0;
+        }
+        .item-btn {
+            margin-left: 8px;
+            background: #f5f5f5;
+            color: #1976d2;
+            border: 1px solid #b0bec5;
+            border-radius: 4px;
+            width: 22px;
+            height: 22px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            vertical-align: middle;
+            transition: background 0.15s, border 0.15s, color 0.15s;
+            box-shadow: none;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .item-btn:hover:not(:disabled) {
+            background: #e3f2fd;
+            border-color: #1976d2;
+            color: #0d47a1;
+        }
+        .item-btn:disabled {
+            background: #f5f5f5;
+            color: #bdbdbd;
+            border: 1px solid #e0e0e0;
+            cursor: not-allowed;
+        }
+        .controls { text-align: center; margin-top: 24px; }
+        button { margin: 4px; padding: 8px 16px; font-size: 1em; border-radius: 4px; border: none; background: #1976d2; color: #fff; cursor: pointer; }
+        button:disabled { background: #90a4ae; cursor: not-allowed; }
+        .status { text-align: center; font-weight: bold; margin-top: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>River Crossing Puzzle</h1>
+        <p>Help the farmer get himself, the fox, the goose, and the beans across the river. The boat can only carry the farmer and one item at a time. If left alone, the fox will eat the goose, and the goose will eat the beans!</p>
+        <div class="river">
+            <div class="bank" id="left-bank">
+                <strong>Left Bank</strong>
+                <div id="left-items"></div>
+            </div>
+            <div class="river-bg">
+                <div class="boat" id="boat">
+                    <strong>Boat</strong>
+                    <div id="boat-items"></div>
+                </div>
+            </div>
+            <div class="bank" id="right-bank">
+                <strong>Right Bank</strong>
+                <div id="right-items"></div>
+            </div>
+        </div>
+        <div class="controls">
+            <button id="move-btn">Move Boat</button>
+            <button id="reset-btn">Reset</button>
+            <div style="margin-top:10px; color:#333; font-size:0.95em;">Click <b>+</b> to add an item to the boat. Only the farmer and one other item can be in the boat. Click the item in the boat to remove it.</div>
+        </div>
+        <div class="status" id="status"></div>
+    </div>
+    <script>
+        // State: which side is each item on? 'left', 'boat', or 'right'
+        const initialState = {
+            farmer: 'left',
+            fox: 'left',
+            goose: 'left',
+            beans: 'left',
+            boat: 'left',
+        };
+        let state = {};
+
+        function render() {
+            // Clear banks and boat
+            document.getElementById('left-items').innerHTML = '';
+            document.getElementById('right-items').innerHTML = '';
+            document.getElementById('boat-items').innerHTML = '';
+            // Place items with plus button if on bank, clickable if in boat
+            for (const item of ['farmer', 'fox', 'goose', 'beans']) {
+                let el = '';
+                if (state[item] === 'left' || state[item] === 'right') {
+                    // Show plus button if item is on same side as boat and boat has room
+                    const canAdd = state.boat === state[item] && canAddToBoat(item);
+                    el = `<span class=\"item\" id=\"item-${item}\">${item.charAt(0).toUpperCase() + item.slice(1)}<button class=\"item-btn\" data-item=\"${item}\" ${canAdd ? '' : 'disabled'}>+</button></span>`;
+                } else if (state[item] === 'boat') {
+                    // In boat: make clickable to remove
+                    el = `<span class=\"item\" id=\"item-${item}\" style=\"cursor:pointer;\">${item.charAt(0).toUpperCase() + item.slice(1)}</span>`;
+                }
+                if (state[item] === 'left') {
+                    document.getElementById('left-items').innerHTML += el;
+                } else if (state[item] === 'right') {
+                    document.getElementById('right-items').innerHTML += el;
+                } else if (state[item] === 'boat') {
+                    document.getElementById('boat-items').innerHTML += el;
+                }
+            }
+            // Visually move boat to left or right side of the river
+            const boat = document.getElementById('boat');
+            if (state.boat === 'left') {
+                boat.style.marginLeft = '0';
+                boat.style.marginRight = 'auto';
+            } else {
+                boat.style.marginLeft = 'auto';
+                boat.style.marginRight = '0';
+            }
+            // Setup plus button and remove-from-boat click handlers
+            setupItemButtons();
+        }
+
+        function getBankItems(bank) {
+            return Object.entries(state)
+                .filter(([k, v]) => ['farmer', 'fox', 'goose', 'beans'].includes(k) && v === bank)
+                .map(([k]) => k);
+        }
+
+        function checkStatus() {
+            // Check for win
+            if (['farmer', 'fox', 'goose', 'beans'].every(item => state[item] === 'right')) {
+                const base64msg = 'Rmlyc3QgcGxheWVyIHRvIGVudGVyIHRoZSB3b3JkIE5PVkVNQkVSIGluIHRoZSBjaGF0IHdpbnMu';
+                const decoded = atob(base64msg);
+                document.getElementById('status').textContent = 'Congratulations! You solved the puzzle! ' + decoded;
+                document.getElementById('move-btn').disabled = true;
+                return;
+            }
+            // Check for losing conditions
+            for (const bank of ['left', 'right']) {
+                const items = getBankItems(bank);
+                if (!items.includes('farmer')) {
+                    if (items.includes('fox') && items.includes('goose')) {
+                        document.getElementById('status').textContent = 'The fox ate the goose! Game over.';
+                        document.getElementById('move-btn').disabled = true;
+                        return;
+                    }
+                    if (items.includes('goose') && items.includes('beans')) {
+                        document.getElementById('status').textContent = 'The goose ate the beans! Game over.';
+                        document.getElementById('move-btn').disabled = true;
+                        return;
+                    }
+                }
+            }
+            document.getElementById('status').textContent = '';
+            document.getElementById('move-btn').disabled = false;
+        }
+
+        function move() {
+            // Only allow move if farmer is in the boat
+            if (state.farmer !== 'boat') return;
+            // Only one other item (besides farmer) can be in the boat
+            const boatItems = Object.entries(state).filter(([k, v]) => ['fox', 'goose', 'beans'].includes(k) && v === 'boat').map(([k]) => k);
+            if (boatItems.length > 1) return;
+            const boatSide = state.boat;
+            // Move boat to other side
+            const newSide = boatSide === 'left' ? 'right' : 'left';
+            state.boat = newSide;
+            state.farmer = newSide;
+            for (const item of boatItems) {
+                state[item] = newSide;
+            }
+            render();
+            checkStatus();
+        }
+        // Helper: can add item to boat
+        function canAddToBoat(item) {
+            if (state.boat !== state[item]) return false;
+            const inBoat = Object.values(state).filter(v => v === 'boat').length;
+            if (inBoat >= 2 && item !== 'farmer') return false;
+            if (item === 'farmer' && state.farmer === 'boat') return false;
+            if (item !== 'farmer' && state[item] === 'boat') return false;
+            return true;
+        }
+
+        // Setup plus button and remove-from-boat click handlers
+        function setupItemButtons() {
+            // Plus buttons
+            document.querySelectorAll('.item-btn').forEach(btn => {
+                btn.onclick = function(e) {
+                    const item = btn.getAttribute('data-item');
+                    if (canAddToBoat(item)) {
+                        state[item] = 'boat';
+                        render();
+                    }
+                    e.stopPropagation();
+                };
+            });
+            // Remove from boat by clicking item
+            document.querySelectorAll('#boat-items .item').forEach(el => {
+                el.onclick = function() {
+                    const item = el.id.replace('item-', '');
+                    // Only allow remove if boat is at a bank
+                    if (state.boat && state[item] === 'boat') {
+                        state[item] = state.boat;
+                        render();
+                    }
+                };
+            });
+        }
+
+        function reset() {
+            state = { ...initialState };
+            render();
+            checkStatus();
+        }
+
+    document.getElementById('move-btn').onclick = move;
+    document.getElementById('reset-btn').onclick = reset;
+
+        // Initial render
+        reset();
+    </script>
+</body>
+</html>
