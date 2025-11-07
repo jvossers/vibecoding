@@ -232,10 +232,20 @@
         // Helper: can add item to boat
         function canAddToBoat(item) {
             if (state.boat !== state[item]) return false;
-            const inBoat = Object.values(state).filter(v => v === 'boat').length;
-            if (inBoat >= 2 && item !== 'farmer') return false;
-            if (item === 'farmer' && state.farmer === 'boat') return false;
-            if (item !== 'farmer' && state[item] === 'boat') return false;
+            // Farmer already in boat?
+            const farmerInBoat = state.farmer === 'boat';
+            // How many non-farmer items in boat?
+            const nonFarmerInBoat = ['fox', 'goose', 'beans'].filter(k => state[k] === 'boat').length;
+            // How many total in boat?
+            const totalInBoat = (farmerInBoat ? 1 : 0) + nonFarmerInBoat;
+            // Can't add if already in boat
+            if (state[item] === 'boat') return false;
+            // Can't add if boat is full
+            if (totalInBoat >= 2) return false;
+            // Only one non-farmer allowed
+            if (item !== 'farmer' && nonFarmerInBoat >= 1) return false;
+            // Farmer can't be added if already in boat
+            if (item === 'farmer' && farmerInBoat) return false;
             return true;
         }
 
