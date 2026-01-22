@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geography Blackjack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #4ecca3;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .target-country {
+            background: #232946;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #4ecca3;
+            text-align: center;
+        }
+
+        .target-country h2 {
+            color: #4ecca3;
+            margin-bottom: 10px;
+        }
+
+        .target-flag {
+            margin-bottom: 15px;
+        }
+
+        .target-flag img {
+            width: 96px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .area-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .area-box {
+            background: #1a1a2e;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .area-box .label {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .area-box .value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .progress-section {
+            margin-bottom: 20px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            height: 30px;
+            background: #1a1a2e;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid #333;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecca3, #45b393);
+            transition: width 0.5s ease, background 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .progress-fill.warning {
+            background: linear-gradient(90deg, #f39c12, #e74c3c);
+        }
+
+        .progress-fill.danger {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+
+        .current-offer {
+            background: #232946;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .current-offer h3 {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .country-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .country-flag {
+            margin-bottom: 15px;
+        }
+
+        .country-flag img {
+            width: 96px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .mystery-text {
+            color: #f39c12;
+            font-style: italic;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .hit-btn {
+            background: #1a3d2e;
+            color: #fff;
+            min-width: 140px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hit-btn .btn-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hit-btn .timer-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(135deg, #4ecca3, #45b393);
+            z-index: 1;
+            transition: width 0.1s linear;
+        }
+
+        .stand-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: #fff;
+        }
+
+        .accepted-countries {
+            background: #232946;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .accepted-countries h3 {
+            margin-bottom: 15px;
+            color: #4ecca3;
+        }
+
+        .country-list {
+        }
+
+        .country-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .country-item:last-child {
+            border-bottom: none;
+        }
+
+        .country-item .item-flag {
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .country-item .item-flag img {
+            width: 48px;
+            height: 32px;
+            object-fit: cover;
+            border-radius: 3px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .country-item .item-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .country-item .item-area {
+            color: #4ecca3;
+            font-weight: bold;
+        }
+
+        .game-over {
+            text-align: center;
+            padding: 30px;
+            background: #232946;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .game-over h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .game-over.bust h2 {
+            color: #e74c3c;
+        }
+
+        .game-over.win h2 {
+            color: #4ecca3;
+        }
+
+        .final-score {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .play-again-btn {
+            background: linear-gradient(135deg, #4ecca3, #45b393);
+            color: #1a1a2e;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .turn-counter {
+            text-align: center;
+            color: #888;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Geography Blackjack</h1>
+        <p class="subtitle">How many countries can fit into one?</p>
+
+        <div class="target-country">
+            <div class="target-flag"><img src="https://flagcdn.com/w160/gl.png" alt="Greenland Flag" /></div>
+            <h2>Target Country: <span id="target-name">Greenland</span></h2>
+            <p>Fill this country with other countries!</p>
+            <div class="area-info">
+                <div class="area-box">
+                    <div class="label">Square Kilometres</div>
+                    <div class="value" id="target-km">2,166,086 km²</div>
+                </div>
+                <div class="area-box">
+                    <div class="label">Square Miles</div>
+                    <div class="value" id="target-miles">836,330 mi²</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-label">
+                <span>Filled</span>
+                <span id="progress-percent">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="turn-counter">Turn: <span id="turn-number">1</span></div>
+
+        <div id="game-active">
+            <div class="current-offer">
+                <h3>COUNTRY OFFERED</h3>
+                <div class="country-flag" id="country-flag"></div>
+                <div class="country-name" id="offered-country">Loading...</div>
+                <p class="mystery-text">Size unknown - do you feel lucky?</p>
+            </div>
+
+            <div class="buttons">
+                <button class="hit-btn" id="hit-btn" onclick="hit()">
+                    <span class="btn-text">HIT</span>
+                    <div class="timer-bar" id="timer-bar"></div>
+                </button>
+                <button class="stand-btn" id="stand-btn" onclick="stand()">STAND</button>
+            </div>
+        </div>
+
+        <div id="game-over" class="game-over hidden">
+            <h2 id="result-title">BUST!</h2>
+            <p id="result-message"></p>
+            <div class="final-score">Final: <span id="final-percent">0%</span></div>
+            <button class="play-again-btn" onclick="startGame()">PLAY AGAIN</button>
+        </div>
+
+        <div class="accepted-countries">
+            <h3>Accepted Countries (<span id="country-count">0</span>)</h3>
+            <div class="country-list" id="country-list">
+                <p style="color: #666;">No countries accepted yet</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Country data: name, area in km², ISO country code for flag
+        const countries = [
+            { name: "Vatican City", area: 0.44, code: "va" },
+            { name: "Monaco", area: 2.02, code: "mc" },
+            { name: "San Marino", area: 61, code: "sm" },
+            { name: "Liechtenstein", area: 160, code: "li" },
+            { name: "Malta", area: 316, code: "mt" },
+            { name: "Maldives", area: 300, code: "mv" },
+            { name: "Barbados", area: 430, code: "bb" },
+            { name: "Singapore", area: 728, code: "sg" },
+            { name: "Bahrain", area: 786, code: "bh" },
+            { name: "Luxembourg", area: 2586, code: "lu" },
+            { name: "Cyprus", area: 9251, code: "cy" },
+            { name: "Lebanon", area: 10452, code: "lb" },
+            { name: "Jamaica", area: 10991, code: "jm" },
+            { name: "Qatar", area: 11581, code: "qa" },
+            { name: "Kuwait", area: 17818, code: "kw" },
+            { name: "Slovenia", area: 20273, code: "si" },
+            { name: "Israel", area: 20770, code: "il" },
+            { name: "Belgium", area: 30528, code: "be" },
+            { name: "Netherlands", area: 41543, code: "nl" },
+            { name: "Switzerland", area: 41285, code: "ch" },
+            { name: "Denmark", area: 42933, code: "dk" },
+            { name: "Estonia", area: 45227, code: "ee" },
+            { name: "Slovakia", area: 49035, code: "sk" },
+            { name: "Costa Rica", area: 51100, code: "cr" },
+            { name: "Croatia", area: 56594, code: "hr" },
+            { name: "Bosnia", area: 51197, code: "ba" },
+            { name: "Lithuania", area: 65300, code: "lt" },
+            { name: "Latvia", area: 64589, code: "lv" },
+            { name: "Ireland", area: 70273, code: "ie" },
+            { name: "Sri Lanka", area: 65610, code: "lk" },
+            { name: "Czech Republic", area: 78865, code: "cz" },
+            { name: "Austria", area: 83871, code: "at" },
+            { name: "United Arab Emirates", area: 83600, code: "ae" },
+            { name: "Portugal", area: 92212, code: "pt" },
+            { name: "Hungary", area: 93028, code: "hu" },
+            { name: "South Korea", area: 100210, code: "kr" },
+            { name: "Iceland", area: 103000, code: "is" },
+            { name: "Cuba", area: 109884, code: "cu" },
+            { name: "Bulgaria", area: 110879, code: "bg" },
+            { name: "Guatemala", area: 108889, code: "gt" },
+            { name: "Greece", area: 131957, code: "gr" },
+            { name: "Nepal", area: 147181, code: "np" },
+            { name: "Bangladesh", area: 147570, code: "bd" },
+            { name: "Tunisia", area: 163610, code: "tn" },
+            { name: "Uruguay", area: 176215, code: "uy" },
+            { name: "Cambodia", area: 181035, code: "kh" },
+            { name: "Syria", area: 185180, code: "sy" },
+            { name: "Senegal", area: 196722, code: "sn" },
+            { name: "Belarus", area: 207600, code: "by" },
+            { name: "United Kingdom", area: 242495, code: "gb" },
+            { name: "Ghana", area: 238533, code: "gh" },
+            { name: "Romania", area: 238397, code: "ro" },
+            { name: "New Zealand", area: 268021, code: "nz" },
+            { name: "Italy", area: 301340, code: "it" },
+            { name: "Philippines", area: 300000, code: "ph" },
+            { name: "Ecuador", area: 276841, code: "ec" },
+            { name: "Poland", area: 312696, code: "pl" },
+            { name: "Norway", area: 323802, code: "no" },
+            { name: "Finland", area: 338424, code: "fi" },
+            { name: "Vietnam", area: 331212, code: "vn" },
+            { name: "Malaysia", area: 330803, code: "my" },
+            { name: "Germany", area: 357114, code: "de" },
+            { name: "Japan", area: 377975, code: "jp" },
+            { name: "Zimbabwe", area: 390757, code: "zw" },
+            { name: "Paraguay", area: 406752, code: "py" },
+            { name: "Iraq", area: 438317, code: "iq" },
+            { name: "Sweden", area: 450295, code: "se" },
+            { name: "Morocco", area: 446550, code: "ma" },
+            { name: "Uzbekistan", area: 447400, code: "uz" },
+            { name: "Spain", area: 505990, code: "es" },
+            { name: "Thailand", area: 513120, code: "th" },
+            { name: "France", area: 551695, code: "fr" },
+            { name: "Kenya", area: 580367, code: "ke" },
+            { name: "Ukraine", area: 603550, code: "ua" },
+            { name: "Madagascar", area: 587041, code: "mg" },
+            { name: "Botswana", area: 581730, code: "bw" },
+            { name: "Afghanistan", area: 652230, code: "af" },
+            { name: "Myanmar", area: 676578, code: "mm" },
+            { name: "Somalia", area: 637657, code: "so" },
+            { name: "Turkey", area: 783562, code: "tr" },
+            { name: "Chile", area: 756102, code: "cl" },
+            { name: "Zambia", area: 752612, code: "zm" },
+            { name: "Pakistan", area: 881912, code: "pk" },
+            { name: "Namibia", area: 825615, code: "na" },
+            { name: "Mozambique", area: 801590, code: "mz" },
+            { name: "Venezuela", area: 916445, code: "ve" },
+            { name: "Nigeria", area: 923768, code: "ng" },
+            { name: "Tanzania", area: 945087, code: "tz" },
+            { name: "Egypt", area: 1002450, code: "eg" },
+            { name: "Bolivia", area: 1098581, code: "bo" },
+            { name: "Ethiopia", area: 1104300, code: "et" },
+            { name: "South Africa", area: 1221037, code: "za" },
+            { name: "Colombia", area: 1141748, code: "co" },
+            { name: "Peru", area: 1285216, code: "pe" },
+            { name: "Chad", area: 1284000, code: "td" },
+            { name: "Niger", area: 1267000, code: "ne" },
+            { name: "Angola", area: 1246700, code: "ao" },
+            { name: "Mali", area: 1240192, code: "ml" },
+            { name: "Iran", area: 1648195, code: "ir" },
+            { name: "Mongolia", area: 1564110, code: "mn" },
+            { name: "Libya", area: 1759540, code: "ly" },
+            { name: "Sudan", area: 1861484, code: "sd" },
+            { name: "Indonesia", area: 1904569, code: "id" },
+            { name: "Mexico", area: 1964375, code: "mx" },
+            { name: "Saudi Arabia", area: 2149690, code: "sa" }
+        ];
+
+        // Target country (Greenland)
+        const targetCountry = {
+            name: "Greenland",
+            area: 2166086, // km²
+            code: "gl"
+        };
+
+        // Helper function to get flag image URL
+        function getFlagUrl(code, size = 80) {
+            return `https://flagcdn.com/w${size}/${code}.png`;
+        }
+
+        // Helper function to create flag img element
+        function getFlagImg(code, size = 80, cssClass = '') {
+            return `<img src="${getFlagUrl(code, size)}" alt="Flag" class="${cssClass}" />`;
+        }
+
+        // Game state
+        let availableCountries = [];
+        let acceptedCountries = [];
+        let currentOffer = null;
+        let totalArea = 0;
+        let turn = 1;
+        let gameEnded = false;
+
+        // Timer state
+        let timeRemaining = 5000; // milliseconds
+        let timerInterval = null;
+        const TURN_TIME = 5000; // 5 seconds in ms
+        const TIMER_TICK = 50; // update every 50ms for smooth animation
+
+        function formatNumber(num) {
+            return num.toLocaleString();
+        }
+
+        function kmToMiles(km) {
+            return km * 0.386102;
+        }
+
+        function updateTimerBar() {
+            const timerBar = document.getElementById('timer-bar');
+            const percent = ((TURN_TIME - timeRemaining) / TURN_TIME) * 100;
+            timerBar.style.width = percent + '%';
+        }
+
+        function startTimer() {
+            stopTimer();
+            timeRemaining = TURN_TIME;
+            updateTimerBar();
+
+            timerInterval = setInterval(() => {
+                timeRemaining -= TIMER_TICK;
+                updateTimerBar();
+
+                if (timeRemaining <= 0) {
+                    stopTimer();
+                    hit(); // Auto-hit when time runs out
+                }
+            }, TIMER_TICK);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function resetTimerBar() {
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.style.width = '0%';
+        }
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function getPercentage() {
+            return (totalArea / targetCountry.area) * 100;
+        }
+
+        function updateProgress() {
+            const percent = getPercentage();
+            const progressFill = document.getElementById('progress-fill');
+            const progressPercent = document.getElementById('progress-percent');
+
+            progressFill.style.width = Math.min(percent, 100) + '%';
+            progressPercent.textContent = percent.toFixed(2) + '%';
+
+            progressFill.classList.remove('warning', 'danger');
+            if (percent > 100) {
+                progressFill.classList.add('danger');
+            } else if (percent > 80) {
+                progressFill.classList.add('warning');
+            }
+        }
+
+        function updateCountryList() {
+            const listEl = document.getElementById('country-list');
+            const countEl = document.getElementById('country-count');
+
+            countEl.textContent = acceptedCountries.length;
+
+            if (acceptedCountries.length === 0) {
+                listEl.innerHTML = '<p style="color: #666;">No countries accepted yet</p>';
+                return;
+            }
+
+            listEl.innerHTML = acceptedCountries.map(c => `
+                <div class="country-item">
+                    <div class="item-info">
+                        <span class="item-flag">${getFlagImg(c.code, 40)}</span>
+                        <span>${c.name}</span>
+                    </div>
+                    <span class="item-area">${formatNumber(c.area)} km²</span>
+                </div>
+            `).join('');
+        }
+
+        function offerNewCountry() {
+            if (availableCountries.length === 0) {
+                endGame(false, "No more countries available!");
+                return;
+            }
+
+            currentOffer = availableCountries.pop();
+            document.getElementById('offered-country').textContent = currentOffer.name;
+            document.getElementById('country-flag').innerHTML = getFlagImg(currentOffer.code, 80);
+            document.getElementById('turn-number').textContent = turn;
+            startTimer();
+        }
+
+        function hit() {
+            if (gameEnded || !currentOffer) return;
+
+            stopTimer();
+
+            // Accept the country
+            acceptedCountries.push(currentOffer);
+            totalArea += currentOffer.area;
+            turn++;
+
+            updateProgress();
+            updateCountryList();
+
+            // Check for bust
+            if (getPercentage() > 100) {
+                endGame(true);
+                return;
+            }
+
+            // Offer next country
+            offerNewCountry();
+        }
+
+        function stand() {
+            if (gameEnded) return;
+            stopTimer();
+            endGame(false);
+        }
+
+        function endGame(busted, message = null) {
+            gameEnded = true;
+            stopTimer();
+
+            document.getElementById('game-active').classList.add('hidden');
+            document.getElementById('game-over').classList.remove('hidden');
+            resetTimerBar();
+
+            const gameOverEl = document.getElementById('game-over');
+            const titleEl = document.getElementById('result-title');
+            const messageEl = document.getElementById('result-message');
+            const finalEl = document.getElementById('final-percent');
+
+            const percent = getPercentage();
+            finalEl.textContent = percent.toFixed(2) + '%';
+
+            gameOverEl.classList.remove('bust', 'win');
+
+            if (busted) {
+                gameOverEl.classList.add('bust');
+                titleEl.textContent = 'BUST!';
+                messageEl.textContent = message || `You went over! ${currentOffer.name} was ${formatNumber(currentOffer.area)} km² - too much!`;
+            } else {
+                gameOverEl.classList.add('win');
+                if (percent >= 95) {
+                    titleEl.textContent = 'PERFECT!';
+                    messageEl.textContent = `Incredible! You filled ${percent.toFixed(2)}% of ${targetCountry.name}!`;
+                } else if (percent >= 80) {
+                    titleEl.textContent = 'GREAT!';
+                    messageEl.textContent = `Well played! You filled ${percent.toFixed(2)}% of ${targetCountry.name}!`;
+                } else if (percent >= 50) {
+                    titleEl.textContent = 'GOOD!';
+                    messageEl.textContent = `Not bad! You filled ${percent.toFixed(2)}% of ${targetCountry.name}.`;
+                } else {
+                    titleEl.textContent = 'STAND';
+                    messageEl.textContent = `You played it safe with ${percent.toFixed(2)}% of ${targetCountry.name}.`;
+                }
+            }
+
+            document.getElementById('hit-btn').disabled = true;
+            document.getElementById('stand-btn').disabled = true;
+        }
+
+        function startGame() {
+            // Reset state
+            availableCountries = shuffleArray(countries);
+            acceptedCountries = [];
+            currentOffer = null;
+            totalArea = 0;
+            turn = 1;
+            gameEnded = false;
+            stopTimer();
+
+            // Reset UI
+            document.getElementById('game-active').classList.remove('hidden');
+            document.getElementById('game-over').classList.add('hidden');
+            document.getElementById('hit-btn').disabled = false;
+            document.getElementById('stand-btn').disabled = false;
+
+            updateProgress();
+            updateCountryList();
+            offerNewCountry();
+        }
+
+        // Start the game on load
+        startGame();
+    </script>
+</body>
+</html>
