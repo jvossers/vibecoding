@@ -296,9 +296,22 @@
             margin-bottom: 20px;
         }
 
-        .play-again-btn {
+        .play-again-btn, .start-btn {
             background: linear-gradient(135deg, #4ecca3, #45b393);
             color: #1a1a2e;
+        }
+
+        .start-screen {
+            text-align: center;
+            padding: 30px;
+            background: #232946;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .start-screen p {
+            color: #888;
+            margin-bottom: 20px;
         }
 
         .hidden {
@@ -528,6 +541,10 @@
                 min-width: 120px;
             }
 
+            .start-screen {
+                padding: 20px;
+            }
+
             .game-over {
                 padding: 20px;
             }
@@ -618,7 +635,12 @@
             </div>
         </div>
 
-        <div id="game-active">
+        <div id="start-screen" class="start-screen">
+            <p>Get as close to 100% as possible without going over!</p>
+            <button class="start-btn" onclick="startGame()">START</button>
+        </div>
+
+        <div id="game-active" class="hidden">
             <div class="current-offer">
                 <h3>COUNTRY OFFERED</h3>
                 <div class="country-flag" id="country-flag"></div>
@@ -1049,6 +1071,7 @@
             stopTimer();
 
             // Reset UI
+            document.getElementById('start-screen').classList.add('hidden');
             document.getElementById('game-active').classList.remove('hidden');
             document.getElementById('game-over').classList.add('hidden');
             document.getElementById('accepted-countries').classList.add('gameplay-hidden');
@@ -1061,8 +1084,8 @@
             offerNewCountry();
         }
 
-        // Start the game on load
-        startGame();
+        // Initialize display on load (don't auto-start game)
+        updateHighscoreDisplay();
     </script>
 </body>
 </html>
