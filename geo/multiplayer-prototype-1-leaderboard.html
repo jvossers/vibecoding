@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplayer Prototype 1 - Live Leaderboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 10px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            color: #4ecca3;
+        }
+        .players-online {
+            text-align: center;
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+        .players-online span { color: #4ecca3; }
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .your-game, .leaderboard {
+            background: #232946;
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .your-game { border: 2px solid #4ecca3; }
+        .section-title {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .your-percent {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4ecca3;
+            text-align: center;
+        }
+        .your-percent.warning { color: #f39c12; }
+        .your-percent.danger { color: #e74c3c; }
+        .your-rank {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 5px;
+        }
+        .your-rank span { color: #fff; font-weight: bold; }
+        .country-offer {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .country-flag img {
+            width: 60px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        .country-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        .timer-bar {
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecca3, #45b393);
+            transition: width 0.1s linear;
+        }
+        .leaderboard-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            font-size: 0.85rem;
+            background: #1a1a2e;
+        }
+        .leaderboard-item.you {
+            background: rgba(78, 204, 163, 0.2);
+            border: 1px solid #4ecca3;
+        }
+        .leaderboard-item.busted {
+            opacity: 0.4;
+            text-decoration: line-through;
+        }
+        .leaderboard-item.stood {
+            opacity: 0.7;
+        }
+        .rank { color: #888; width: 25px; }
+        .player-name { flex: 1; margin-left: 8px; }
+        .player-score { font-weight: bold; color: #4ecca3; }
+        .player-status {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+        .status-playing { background: #4ecca3; color: #1a1a2e; }
+        .status-stood { background: #f39c12; color: #1a1a2e; }
+        .status-busted { background: #e74c3c; color: #fff; }
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            flex: 1;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .hit-btn {
+            background: linear-gradient(135deg, #4ecca3, #45b393);
+            color: #1a1a2e;
+        }
+        .stand-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: #fff;
+        }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .game-over {
+            text-align: center;
+            padding: 20px;
+            background: #232946;
+            border-radius: 12px;
+        }
+        .game-over h2 { font-size: 1.5rem; margin-bottom: 10px; }
+        .game-over.winner h2 { color: #4ecca3; }
+        .game-over.loser h2 { color: #e74c3c; }
+        .hidden { display: none !important; }
+        .final-position { font-size: 1.2rem; margin-bottom: 15px; }
+        .play-again-btn {
+            background: linear-gradient(135deg, #4ecca3, #45b393);
+            color: #1a1a2e;
+            padding: 12px 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Geography Blackjack</h1>
+        <div class="players-online"><span id="player-count">0</span> players in game</div>
+
+        <div id="game-active">
+            <div class="country-offer">
+                <div class="section-title">Everyone's Offer</div>
+                <div class="country-flag"><img id="country-flag" src="" alt="Flag"></div>
+                <div class="country-name" id="country-name">Loading...</div>
+                <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
+            </div>
+
+            <div class="game-area">
+                <div class="your-game">
+                    <div class="section-title">Your Score</div>
+                    <div class="your-percent" id="your-percent">0.00%</div>
+                    <div class="your-rank">Rank: <span id="your-rank">-</span></div>
+                </div>
+                <div class="leaderboard">
+                    <div class="section-title">Live Leaderboard</div>
+                    <div class="leaderboard-list" id="leaderboard"></div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="hit-btn" id="hit-btn" onclick="hit()">HIT</button>
+                <button class="stand-btn" id="stand-btn" onclick="stand()">STAND</button>
+            </div>
+        </div>
+
+        <div id="game-over" class="game-over hidden">
+            <h2 id="result-title">GAME OVER</h2>
+            <div class="final-position" id="final-position"></div>
+            <button class="play-again-btn" onclick="startGame()">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        const countries = [
+            { name: "Vatican City", area: 0.44, code: "va" },
+            { name: "Monaco", area: 2.02, code: "mc" },
+            { name: "Malta", area: 316, code: "mt" },
+            { name: "Maldives", area: 300, code: "mv" },
+            { name: "Singapore", area: 728, code: "sg" },
+            { name: "Bahrain", area: 786, code: "bh" },
+            { name: "Luxembourg", area: 2586, code: "lu" },
+            { name: "Cyprus", area: 9251, code: "cy" },
+            { name: "Lebanon", area: 10452, code: "lb" },
+            { name: "Jamaica", area: 10991, code: "jm" },
+            { name: "Qatar", area: 11581, code: "qa" },
+            { name: "Kuwait", area: 17818, code: "kw" },
+            { name: "Slovenia", area: 20273, code: "si" },
+            { name: "Belgium", area: 30528, code: "be" },
+            { name: "Netherlands", area: 41543, code: "nl" },
+            { name: "Switzerland", area: 41285, code: "ch" },
+            { name: "Denmark", area: 42933, code: "dk" },
+            { name: "Slovakia", area: 49035, code: "sk" },
+            { name: "Croatia", area: 56594, code: "hr" },
+            { name: "Ireland", area: 70273, code: "ie" },
+            { name: "Czech Republic", area: 78865, code: "cz" },
+            { name: "Austria", area: 83871, code: "at" },
+            { name: "Portugal", area: 92212, code: "pt" },
+            { name: "Hungary", area: 93028, code: "hu" },
+            { name: "South Korea", area: 100210, code: "kr" },
+            { name: "Iceland", area: 103000, code: "is" },
+            { name: "Cuba", area: 109884, code: "cu" },
+            { name: "Greece", area: 131957, code: "gr" },
+            { name: "Nepal", area: 147181, code: "np" },
+            { name: "Bangladesh", area: 147570, code: "bd" },
+            { name: "Uruguay", area: 176215, code: "uy" },
+            { name: "Senegal", area: 196722, code: "sn" },
+            { name: "Belarus", area: 207600, code: "by" },
+            { name: "United Kingdom", area: 242495, code: "gb" },
+            { name: "Ghana", area: 238533, code: "gh" },
+            { name: "Romania", area: 238397, code: "ro" },
+            { name: "New Zealand", area: 268021, code: "nz" },
+            { name: "Italy", area: 301340, code: "it" },
+            { name: "Poland", area: 312696, code: "pl" },
+            { name: "Norway", area: 323802, code: "no" },
+            { name: "Finland", area: 338424, code: "fi" },
+            { name: "Germany", area: 357114, code: "de" },
+            { name: "Japan", area: 377975, code: "jp" },
+            { name: "Sweden", area: 450295, code: "se" },
+            { name: "Spain", area: 505990, code: "es" },
+            { name: "Thailand", area: 513120, code: "th" },
+            { name: "France", area: 551695, code: "fr" },
+            { name: "Ukraine", area: 603550, code: "ua" },
+            { name: "Turkey", area: 783562, code: "tr" },
+            { name: "Chile", area: 756102, code: "cl" },
+            { name: "Pakistan", area: 881912, code: "pk" },
+            { name: "Nigeria", area: 923768, code: "ng" },
+            { name: "Egypt", area: 1002450, code: "eg" },
+            { name: "Ethiopia", area: 1104300, code: "et" },
+            { name: "South Africa", area: 1221037, code: "za" },
+            { name: "Peru", area: 1285216, code: "pe" },
+            { name: "Iran", area: 1648195, code: "ir" },
+            { name: "Mongolia", area: 1564110, code: "mn" },
+            { name: "Libya", area: 1759540, code: "ly" },
+            { name: "Sudan", area: 1861484, code: "sd" },
+            { name: "Indonesia", area: 1904569, code: "id" },
+            { name: "Mexico", area: 1964375, code: "mx" },
+            { name: "Saudi Arabia", area: 2149690, code: "sa" }
+        ];
+
+        const targetArea = 2166086;
+        const TURN_TIME = 5000;
+        const BOT_NAMES = ["Alex", "Jordan", "Sam", "Taylor", "Morgan", "Casey", "Riley", "Quinn", "Avery", "Blake", "Cameron", "Drew", "Ellis", "Finley", "Gray", "Harper", "Indigo", "Jamie", "Kelly", "Logan", "Mason", "Noah", "Owen", "Parker", "Reed", "Sage", "Tyler", "Val", "Winter", "Zion"];
+
+        let gameState = {
+            players: [],
+            currentCountry: null,
+            availableCountries: [],
+            timeRemaining: TURN_TIME,
+            timerInterval: null,
+            playerIndex: 0,
+            gameEnded: false
+        };
+
+        function shuffleArray(arr) {
+            const shuffled = [...arr];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function generateBots(count) {
+            const names = shuffleArray(BOT_NAMES);
+            const bots = [];
+            for (let i = 0; i < count; i++) {
+                bots.push({
+                    name: names[i % names.length] + (i >= names.length ? Math.floor(i / names.length) + 1 : ''),
+                    totalArea: 0,
+                    status: 'playing',
+                    isBot: true,
+                    riskTolerance: 0.7 + Math.random() * 0.28
+                });
+            }
+            return bots;
+        }
+
+        function startGame() {
+            const botCount = 30 + Math.floor(Math.random() * 70);
+            const bots = generateBots(botCount);
+
+            gameState = {
+                players: [
+                    { name: 'You', totalArea: 0, status: 'playing', isBot: false },
+                    ...bots
+                ],
+                currentCountry: null,
+                availableCountries: shuffleArray(countries),
+                timeRemaining: TURN_TIME,
+                timerInterval: null,
+                playerIndex: 0,
+                gameEnded: false
+            };
+
+            document.getElementById('game-active').classList.remove('hidden');
+            document.getElementById('game-over').classList.add('hidden');
+            document.getElementById('hit-btn').disabled = false;
+            document.getElementById('stand-btn').disabled = false;
+            document.getElementById('player-count').textContent = gameState.players.length;
+
+            nextRound();
+        }
+
+        function nextRound() {
+            if (gameState.availableCountries.length === 0 || isGameOver()) {
+                endGame();
+                return;
+            }
+
+            gameState.currentCountry = gameState.availableCountries.pop();
+            document.getElementById('country-name').textContent = gameState.currentCountry.name;
+            document.getElementById('country-flag').src = `https://flagcdn.com/w80/${gameState.currentCountry.code}.png`;
+
+            startTimer();
+            updateDisplay();
+        }
+
+        function startTimer() {
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+            gameState.timeRemaining = TURN_TIME;
+
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeRemaining -= 50;
+                document.getElementById('timer-fill').style.width = ((TURN_TIME - gameState.timeRemaining) / TURN_TIME * 100) + '%';
+
+                if (gameState.timeRemaining <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    processRound();
+                }
+            }, 50);
+        }
+
+        function hit() {
+            if (gameState.gameEnded) return;
+            const player = gameState.players[0];
+            if (player.status !== 'playing') return;
+
+            player.totalArea += gameState.currentCountry.area;
+            if (getPercent(player) > 100) {
+                player.status = 'busted';
+            }
+            updateDisplay();
+        }
+
+        function stand() {
+            if (gameState.gameEnded) return;
+            const player = gameState.players[0];
+            if (player.status !== 'playing') return;
+
+            player.status = 'stood';
+            document.getElementById('hit-btn').disabled = true;
+            document.getElementById('stand-btn').disabled = true;
+            updateDisplay();
+        }
+
+        function processRound() {
+            // Bots decide
+            gameState.players.forEach(p => {
+                if (p.isBot && p.status === 'playing') {
+                    const currentPct = getPercent(p);
+                    const potentialPct = (p.totalArea + gameState.currentCountry.area) / targetArea * 100;
+
+                    if (potentialPct > 100) {
+                        p.status = 'stood';
+                    } else if (currentPct >= p.riskTolerance * 100) {
+                        p.status = 'stood';
+                    } else if (Math.random() < 0.85) {
+                        p.totalArea += gameState.currentCountry.area;
+                        if (getPercent(p) > 100) p.status = 'busted';
+                    } else {
+                        p.status = 'stood';
+                    }
+                }
+            });
+
+            // Auto-hit for human if still playing
+            const player = gameState.players[0];
+            if (player.status === 'playing') {
+                player.totalArea += gameState.currentCountry.area;
+                if (getPercent(player) > 100) {
+                    player.status = 'busted';
+                }
+            }
+
+            updateDisplay();
+
+            if (isGameOver()) {
+                endGame();
+            } else {
+                nextRound();
+            }
+        }
+
+        function getPercent(player) {
+            return (player.totalArea / targetArea) * 100;
+        }
+
+        function isGameOver() {
+            const activePlayers = gameState.players.filter(p => p.status === 'playing');
+            return activePlayers.length === 0;
+        }
+
+        function getRankedPlayers() {
+            return [...gameState.players].sort((a, b) => {
+                if (a.status === 'busted' && b.status !== 'busted') return 1;
+                if (b.status === 'busted' && a.status !== 'busted') return -1;
+                return getPercent(b) - getPercent(a);
+            });
+        }
+
+        function updateDisplay() {
+            const player = gameState.players[0];
+            const pct = getPercent(player);
+            const pctEl = document.getElementById('your-percent');
+            pctEl.textContent = pct.toFixed(2) + '%';
+            pctEl.className = 'your-percent' + (pct > 100 ? ' danger' : pct > 80 ? ' warning' : '');
+
+            const ranked = getRankedPlayers();
+            const rank = ranked.findIndex(p => p === player) + 1;
+            document.getElementById('your-rank').textContent = `${rank} of ${gameState.players.length}`;
+
+            // Update leaderboard
+            const leaderboard = document.getElementById('leaderboard');
+            const top10 = ranked.slice(0, 10);
+            const playerInTop10 = top10.includes(player);
+
+            let html = '';
+            top10.forEach((p, i) => {
+                const isYou = p === player;
+                html += `<div class="leaderboard-item ${isYou ? 'you' : ''} ${p.status}">
+                    <span class="rank">#${i + 1}</span>
+                    <span class="player-name">${isYou ? 'You' : p.name}</span>
+                    <span class="player-score">${getPercent(p).toFixed(1)}%</span>
+                    <span class="player-status status-${p.status}">${p.status.toUpperCase()}</span>
+                </div>`;
+            });
+
+            if (!playerInTop10) {
+                html += `<div class="leaderboard-item you ${player.status}">
+                    <span class="rank">#${rank}</span>
+                    <span class="player-name">You</span>
+                    <span class="player-score">${pct.toFixed(1)}%</span>
+                    <span class="player-status status-${player.status}">${player.status.toUpperCase()}</span>
+                </div>`;
+            }
+
+            leaderboard.innerHTML = html;
+        }
+
+        function endGame() {
+            gameState.gameEnded = true;
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+
+            document.getElementById('game-active').classList.add('hidden');
+            document.getElementById('game-over').classList.remove('hidden');
+
+            const ranked = getRankedPlayers();
+            const player = gameState.players[0];
+            const rank = ranked.findIndex(p => p === player) + 1;
+
+            const gameOverEl = document.getElementById('game-over');
+            const titleEl = document.getElementById('result-title');
+            const posEl = document.getElementById('final-position');
+
+            gameOverEl.classList.remove('winner', 'loser');
+
+            if (rank === 1) {
+                gameOverEl.classList.add('winner');
+                titleEl.textContent = 'YOU WIN!';
+                posEl.textContent = `1st place with ${getPercent(player).toFixed(2)}%`;
+            } else {
+                gameOverEl.classList.add('loser');
+                titleEl.textContent = player.status === 'busted' ? 'BUSTED!' : 'GAME OVER';
+                posEl.textContent = `#${rank} of ${gameState.players.length} players`;
+            }
+        }
+
+        startGame();
+    </script>
+</body>
+</html>

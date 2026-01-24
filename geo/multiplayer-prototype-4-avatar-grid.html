@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplayer Prototype 4 - Avatar Grid</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 10px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .header h1 {
+            font-size: 1rem;
+            color: #4ecca3;
+        }
+        .stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+        }
+        .stat { color: #888; }
+        .stat span { color: #fff; font-weight: bold; }
+        .stat.playing span { color: #4ecca3; }
+        .stat.stood span { color: #f39c12; }
+        .stat.busted span { color: #e74c3c; }
+        .player-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            background: #232946;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .player-dot {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            background: #4ecca3;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .player-dot.stood {
+            background: #f39c12;
+        }
+        .player-dot.busted {
+            background: #e74c3c;
+            opacity: 0.4;
+        }
+        .player-dot.you {
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        .player-dot.you::after {
+            content: 'YOU';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 6px;
+            font-weight: bold;
+            color: #1a1a2e;
+        }
+        .your-panel {
+            background: #232946;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 2px solid #4ecca3;
+        }
+        .your-panel.busted {
+            border-color: #e74c3c;
+        }
+        .your-panel.stood {
+            border-color: #f39c12;
+        }
+        .panel-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .your-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+        .your-score.warning { color: #f39c12; }
+        .your-score.danger { color: #e74c3c; }
+        .your-rank {
+            text-align: right;
+        }
+        .rank-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .rank-label {
+            font-size: 0.75rem;
+            color: #888;
+        }
+        .country-bar {
+            background: #1a1a2e;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .country-flag img {
+            width: 50px;
+            height: 34px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .country-info {
+            flex: 1;
+        }
+        .country-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .timer-bar {
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecca3, #45b393);
+            transition: width 0.1s linear;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            flex: 1;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .hit-btn {
+            background: linear-gradient(135deg, #4ecca3, #45b393);
+            color: #1a1a2e;
+        }
+        .stand-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: #fff;
+        }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
+        .game-over {
+            text-align: center;
+            padding: 25px;
+            background: #232946;
+            border-radius: 12px;
+        }
+        .game-over h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        .game-over.winner h2 { color: #4ecca3; }
+        .game-over.loser h2 { color: #e74c3c; }
+        .final-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .final-stat {
+            text-align: center;
+        }
+        .final-stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+        }
+        .final-stat-label {
+            font-size: 0.75rem;
+            color: #888;
+        }
+        .play-again-btn {
+            background: linear-gradient(135deg, #4ecca3, #45b393);
+            color: #1a1a2e;
+            padding: 12px 35px;
+        }
+        .hidden { display: none !important; }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.75rem;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        .legend-dot.playing { background: #4ecca3; }
+        .legend-dot.stood { background: #f39c12; }
+        .legend-dot.busted { background: #e74c3c; opacity: 0.4; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Geography Blackjack</h1>
+            <div class="stats">
+                <div class="stat playing">Playing: <span id="playing-count">0</span></div>
+                <div class="stat stood">Stood: <span id="stood-count">0</span></div>
+                <div class="stat busted">Busted: <span id="busted-count">0</span></div>
+            </div>
+        </div>
+
+        <div id="game-active">
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot playing"></div> Playing</div>
+                <div class="legend-item"><div class="legend-dot stood"></div> Stood</div>
+                <div class="legend-item"><div class="legend-dot busted"></div> Busted</div>
+            </div>
+
+            <div class="player-grid" id="player-grid"></div>
+
+            <div class="your-panel" id="your-panel">
+                <div class="panel-row">
+                    <div class="your-score" id="your-score">0.00%</div>
+                    <div class="your-rank">
+                        <div class="rank-number" id="your-rank">#1</div>
+                        <div class="rank-label">of <span id="total-players">100</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="country-bar">
+                <div class="country-flag"><img id="country-flag" src="" alt="Flag"></div>
+                <div class="country-info">
+                    <div class="country-name" id="country-name">Loading...</div>
+                    <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
+                </div>
+            </div>
+
+            <div class="buttons" id="buttons">
+                <button class="hit-btn" id="hit-btn" onclick="hit()">HIT</button>
+                <button class="stand-btn" id="stand-btn" onclick="stand()">STAND</button>
+            </div>
+        </div>
+
+        <div id="game-over" class="game-over hidden">
+            <h2 id="result-title">GAME OVER</h2>
+            <div class="final-stats">
+                <div class="final-stat">
+                    <div class="final-stat-value" id="final-rank">#1</div>
+                    <div class="final-stat-label">Position</div>
+                </div>
+                <div class="final-stat">
+                    <div class="final-stat-value" id="final-score">0%</div>
+                    <div class="final-stat-label">Score</div>
+                </div>
+            </div>
+            <button class="play-again-btn" onclick="startGame()">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        const countries = [
+            { name: "Vatican City", area: 0.44, code: "va" },
+            { name: "Monaco", area: 2.02, code: "mc" },
+            { name: "Malta", area: 316, code: "mt" },
+            { name: "Singapore", area: 728, code: "sg" },
+            { name: "Luxembourg", area: 2586, code: "lu" },
+            { name: "Cyprus", area: 9251, code: "cy" },
+            { name: "Jamaica", area: 10991, code: "jm" },
+            { name: "Slovenia", area: 20273, code: "si" },
+            { name: "Belgium", area: 30528, code: "be" },
+            { name: "Netherlands", area: 41543, code: "nl" },
+            { name: "Switzerland", area: 41285, code: "ch" },
+            { name: "Denmark", area: 42933, code: "dk" },
+            { name: "Croatia", area: 56594, code: "hr" },
+            { name: "Ireland", area: 70273, code: "ie" },
+            { name: "Austria", area: 83871, code: "at" },
+            { name: "Portugal", area: 92212, code: "pt" },
+            { name: "South Korea", area: 100210, code: "kr" },
+            { name: "Iceland", area: 103000, code: "is" },
+            { name: "Greece", area: 131957, code: "gr" },
+            { name: "Nepal", area: 147181, code: "np" },
+            { name: "Uruguay", area: 176215, code: "uy" },
+            { name: "United Kingdom", area: 242495, code: "gb" },
+            { name: "New Zealand", area: 268021, code: "nz" },
+            { name: "Italy", area: 301340, code: "it" },
+            { name: "Poland", area: 312696, code: "pl" },
+            { name: "Germany", area: 357114, code: "de" },
+            { name: "Japan", area: 377975, code: "jp" },
+            { name: "Spain", area: 505990, code: "es" },
+            { name: "France", area: 551695, code: "fr" },
+            { name: "Turkey", area: 783562, code: "tr" },
+            { name: "Egypt", area: 1002450, code: "eg" },
+            { name: "South Africa", area: 1221037, code: "za" },
+            { name: "Iran", area: 1648195, code: "ir" },
+            { name: "Mexico", area: 1964375, code: "mx" },
+            { name: "Saudi Arabia", area: 2149690, code: "sa" }
+        ];
+
+        const targetArea = 2166086;
+        const TURN_TIME = 5000;
+
+        let game = { players: [], currentCountry: null, availableCountries: [], timerInterval: null, gameEnded: false };
+
+        function shuffleArray(arr) {
+            const s = [...arr];
+            for (let i = s.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [s[i], s[j]] = [s[j], s[i]];
+            }
+            return s;
+        }
+
+        function generateBots(count) {
+            return Array.from({ length: count }, () => ({
+                totalArea: 0, status: 'playing', isBot: true,
+                riskTolerance: 0.65 + Math.random() * 0.33
+            }));
+        }
+
+        function startGame() {
+            const botCount = 99; // Total 100 with player
+            game = {
+                players: [{ totalArea: 0, status: 'playing', isBot: false }, ...generateBots(botCount)],
+                currentCountry: null,
+                availableCountries: shuffleArray(countries),
+                timerInterval: null,
+                gameEnded: false
+            };
+
+            document.getElementById('game-active').classList.remove('hidden');
+            document.getElementById('game-over').classList.add('hidden');
+            document.getElementById('hit-btn').disabled = false;
+            document.getElementById('stand-btn').disabled = false;
+            document.getElementById('buttons').classList.remove('hidden');
+            document.getElementById('your-panel').classList.remove('busted', 'stood');
+            document.getElementById('total-players').textContent = game.players.length;
+
+            renderGrid();
+            nextRound();
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('player-grid');
+            grid.innerHTML = game.players.map((p, i) =>
+                `<div class="player-dot ${p.status} ${i === 0 ? 'you' : ''}" id="dot-${i}"></div>`
+            ).join('');
+        }
+
+        function updateGrid() {
+            game.players.forEach((p, i) => {
+                const dot = document.getElementById(`dot-${i}`);
+                if (dot) {
+                    dot.className = `player-dot ${p.status} ${i === 0 ? 'you' : ''}`;
+                }
+            });
+        }
+
+        function nextRound() {
+            if (game.availableCountries.length === 0 || isGameOver()) {
+                endGame();
+                return;
+            }
+
+            game.currentCountry = game.availableCountries.pop();
+            document.getElementById('country-name').textContent = game.currentCountry.name;
+            document.getElementById('country-flag').src = `https://flagcdn.com/w80/${game.currentCountry.code}.png`;
+
+            startTimer();
+            updateDisplay();
+        }
+
+        function startTimer() {
+            if (game.timerInterval) clearInterval(game.timerInterval);
+            let timeRemaining = TURN_TIME;
+
+            game.timerInterval = setInterval(() => {
+                timeRemaining -= 50;
+                document.getElementById('timer-fill').style.width = ((TURN_TIME - timeRemaining) / TURN_TIME * 100) + '%';
+
+                if (timeRemaining <= 0) {
+                    clearInterval(game.timerInterval);
+                    processRound();
+                }
+            }, 50);
+        }
+
+        function hit() {
+            if (game.gameEnded || game.players[0].status !== 'playing') return;
+            game.players[0].totalArea += game.currentCountry.area;
+            if (getPercent(game.players[0]) > 100) {
+                game.players[0].status = 'busted';
+                document.getElementById('your-panel').classList.add('busted');
+                document.getElementById('hit-btn').disabled = true;
+                document.getElementById('stand-btn').disabled = true;
+            }
+            updateDisplay();
+        }
+
+        function stand() {
+            if (game.gameEnded || game.players[0].status !== 'playing') return;
+            game.players[0].status = 'stood';
+            document.getElementById('your-panel').classList.add('stood');
+            document.getElementById('hit-btn').disabled = true;
+            document.getElementById('stand-btn').disabled = true;
+            updateDisplay();
+        }
+
+        function processRound() {
+            game.players.forEach(p => {
+                if (p.isBot && p.status === 'playing') {
+                    const potentialPct = (p.totalArea + game.currentCountry.area) / targetArea * 100;
+                    if (potentialPct > 100) {
+                        p.status = 'stood';
+                    } else if (getPercent(p) >= p.riskTolerance * 100) {
+                        p.status = 'stood';
+                    } else if (Math.random() < 0.82) {
+                        p.totalArea += game.currentCountry.area;
+                        if (getPercent(p) > 100) p.status = 'busted';
+                    } else {
+                        p.status = 'stood';
+                    }
+                }
+            });
+
+            const player = game.players[0];
+            if (player.status === 'playing') {
+                player.totalArea += game.currentCountry.area;
+                if (getPercent(player) > 100) {
+                    player.status = 'busted';
+                    document.getElementById('your-panel').classList.add('busted');
+                }
+            }
+
+            updateDisplay();
+            isGameOver() ? endGame() : nextRound();
+        }
+
+        function getPercent(p) { return (p.totalArea / targetArea) * 100; }
+
+        function isGameOver() { return game.players.filter(p => p.status === 'playing').length === 0; }
+
+        function getRanked() {
+            return [...game.players].sort((a, b) => {
+                if (a.status === 'busted' && b.status !== 'busted') return 1;
+                if (b.status === 'busted' && a.status !== 'busted') return -1;
+                return getPercent(b) - getPercent(a);
+            });
+        }
+
+        function updateDisplay() {
+            const player = game.players[0];
+            const pct = getPercent(player);
+            const scoreEl = document.getElementById('your-score');
+            scoreEl.textContent = pct.toFixed(2) + '%';
+            scoreEl.className = 'your-score' + (pct > 100 ? ' danger' : pct > 80 ? ' warning' : '');
+
+            const ranked = getRanked();
+            const rank = ranked.findIndex(p => p === player) + 1;
+            document.getElementById('your-rank').textContent = `#${rank}`;
+
+            // Update stats
+            const playing = game.players.filter(p => p.status === 'playing').length;
+            const stood = game.players.filter(p => p.status === 'stood').length;
+            const busted = game.players.filter(p => p.status === 'busted').length;
+            document.getElementById('playing-count').textContent = playing;
+            document.getElementById('stood-count').textContent = stood;
+            document.getElementById('busted-count').textContent = busted;
+
+            updateGrid();
+        }
+
+        function endGame() {
+            game.gameEnded = true;
+            if (game.timerInterval) clearInterval(game.timerInterval);
+
+            document.getElementById('game-active').classList.add('hidden');
+            document.getElementById('game-over').classList.remove('hidden');
+
+            const ranked = getRanked();
+            const player = game.players[0];
+            const rank = ranked.findIndex(p => p === player) + 1;
+
+            const go = document.getElementById('game-over');
+            go.classList.remove('winner', 'loser');
+            go.classList.add(rank === 1 ? 'winner' : 'loser');
+
+            document.getElementById('result-title').textContent = rank === 1 ? 'YOU WIN!' : (player.status === 'busted' ? 'BUSTED!' : 'GAME OVER');
+            document.getElementById('final-rank').textContent = `#${rank}`;
+            document.getElementById('final-score').textContent = getPercent(player).toFixed(1) + '%';
+        }
+
+        startGame();
+    </script>
+</body>
+</html>
