@@ -582,7 +582,7 @@
         <div id="game-over" class="game-over hidden">
             <h2 id="result-title">BUST!</h2>
             <p id="result-message"></p>
-            <div id="dodge-bonus" class="dodge-bonus hidden">+5% DODGE BONUS!</div>
+            <div id="dodge-bonus" class="dodge-bonus hidden">GOOD CALL!</div>
             <div id="dodge-details" class="dodge-details hidden"></div>
             <div class="final-score">Final: <span id="final-percent">0%</span></div>
             <button class="play-again-btn" onclick="startGame()">PLAY AGAIN</button>
@@ -895,16 +895,10 @@
             dodgeBonusEl.classList.add('hidden');
             dodgeDetailsEl.classList.add('hidden');
 
-            let percent = getPercentage();
-            let bonusApplied = false;
+            const percent = getPercentage();
 
-            // Apply dodge bonus if player avoided a bust
+            // Show dodge info if player avoided a bust
             if (dodgedCountry) {
-                const bonus = 5;
-                percent += bonus;
-                bonusApplied = true;
-
-                // Show dodge bonus elements
                 dodgeBonusEl.classList.remove('hidden');
                 dodgeDetailsEl.classList.remove('hidden');
                 const wouldHaveBeen = ((totalArea + dodgedCountry.area) / targetCountry.area) * 100;
