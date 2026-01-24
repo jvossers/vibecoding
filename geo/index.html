@@ -351,105 +351,6 @@
             margin-bottom: 10px;
         }
 
-        .highscore {
-            text-align: center;
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        .highscore .value {
-            color: #888;
-        }
-
-        .new-highscore {
-            color: #4ecca3;
-            font-weight: bold;
-            animation: pulse 0.5s ease-in-out 3;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal {
-            background: #232946;
-            border-radius: 12px;
-            padding: 30px;
-            text-align: center;
-            border: 2px solid #4ecca3;
-            max-width: 400px;
-            width: 90%;
-        }
-
-        .modal h2 {
-            color: #4ecca3;
-            margin-bottom: 10px;
-        }
-
-        .modal p {
-            color: #888;
-            margin-bottom: 20px;
-        }
-
-        .modal input {
-            width: 100%;
-            padding: 12px;
-            font-size: 18px;
-            border: 2px solid #333;
-            border-radius: 8px;
-            background: #1a1a2e;
-            color: #fff;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .modal input:focus {
-            outline: none;
-            border-color: #4ecca3;
-        }
-
-        .modal button {
-            background: linear-gradient(135deg, #4ecca3, #45b393);
-            color: #1a1a2e;
-            padding: 12px 30px;
-        }
-
-        .highscore-name {
-            color: #888;
-        }
-
-        .reset-highscore {
-            background: none;
-            border: none;
-            color: #555;
-            font-size: 12px;
-            padding: 2px 6px;
-            cursor: pointer;
-            margin-left: 8px;
-            transition: color 0.2s;
-        }
-
-        .reset-highscore:hover {
-            color: #e74c3c;
-            transform: none;
-            box-shadow: none;
-        }
-
         .accepted-countries.gameplay-hidden {
             display: none;
         }
@@ -520,10 +421,6 @@
             .turn-counter {
                 margin-bottom: 5px;
                 font-size: 0.9rem;
-            }
-
-            .highscore {
-                margin-bottom: 12px;
             }
 
             .current-offer {
@@ -659,17 +556,6 @@
         </div>
 
         <div class="turn-counter">Turn: <span id="turn-number">1</span></div>
-
-        <div class="highscore">High Score: <span class="value" id="highscore">0.00%</span> <span class="highscore-name" id="highscore-name"></span><button class="reset-highscore" onclick="resetHighscore()" title="Reset high score">reset</button></div>
-
-        <div id="name-modal" class="modal-overlay hidden">
-            <div class="modal">
-                <h2>New High Score!</h2>
-                <p>Enter your name for the leaderboard:</p>
-                <input type="text" id="name-input" maxlength="20" placeholder="Your name">
-                <button onclick="submitHighscoreName()">Submit</button>
-            </div>
-        </div>
 
         <div id="start-screen" class="start-screen">
             <p>Get as close to 100% as possible without going over!</p>
@@ -844,66 +730,6 @@
         let totalArea = 0;
         let turn = 1;
         let gameEnded = false;
-
-        // Highscore functions
-        let pendingHighscore = null;
-
-        function getHighscore() {
-            const data = sessionStorage.getItem('geoblackjack_highscore');
-            if (!data) return { score: 0, name: '' };
-            try {
-                return JSON.parse(data);
-            } catch {
-                return { score: parseFloat(data) || 0, name: '' };
-            }
-        }
-
-        function setHighscore(score, name) {
-            sessionStorage.setItem('geoblackjack_highscore', JSON.stringify({ score, name }));
-            updateHighscoreDisplay(true);
-        }
-
-        function updateHighscoreDisplay(isNew = false) {
-            const scoreEl = document.getElementById('highscore');
-            const nameEl = document.getElementById('highscore-name');
-            const { score, name } = getHighscore();
-
-            scoreEl.textContent = score.toFixed(2) + '%';
-            nameEl.textContent = name ? `by ${name}` : '';
-
-            if (isNew) {
-                scoreEl.classList.add('new-highscore');
-                setTimeout(() => scoreEl.classList.remove('new-highscore'), 1500);
-            }
-        }
-
-        function showNameModal(score) {
-            pendingHighscore = score;
-            document.getElementById('name-modal').classList.remove('hidden');
-            document.getElementById('name-input').value = '';
-            document.getElementById('name-input').focus();
-        }
-
-        function submitHighscoreName() {
-            const name = document.getElementById('name-input').value.trim() || 'Anonymous';
-            document.getElementById('name-modal').classList.add('hidden');
-            if (pendingHighscore !== null) {
-                setHighscore(pendingHighscore, name);
-                pendingHighscore = null;
-            }
-        }
-
-        // Allow Enter key to submit name
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('name-input').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') submitHighscoreName();
-            });
-        });
-
-        function resetHighscore() {
-            sessionStorage.removeItem('geoblackjack_highscore');
-            updateHighscoreDisplay();
-        }
 
         // Timer state
         let timeRemaining = 5000; // milliseconds
@@ -1089,13 +915,6 @@
 
             gameOverEl.classList.remove('bust', 'win', 'dodged');
 
-            // Check for new highscore (only if not busted)
-            let isNewHighscore = false;
-            if (!busted && percent > getHighscore().score) {
-                isNewHighscore = true;
-                showNameModal(percent);
-            }
-
             if (busted) {
                 gameOverEl.classList.add('bust');
                 titleEl.textContent = 'BUST!';
@@ -1103,23 +922,21 @@
             } else if (dodgedCountry) {
                 gameOverEl.classList.add('dodged');
                 titleEl.textContent = 'DODGED!';
-                const highscoreMsg = isNewHighscore ? ' New high score!' : '';
-                messageEl.textContent = `Smart move! You avoided the bust and earned a bonus!${highscoreMsg}`;
+                messageEl.textContent = `Smart move! You avoided the bust and earned a bonus!`;
             } else {
                 gameOverEl.classList.add('win');
-                const highscoreMsg = isNewHighscore ? ' New high score!' : '';
                 if (percent >= 95) {
                     titleEl.textContent = 'PERFECT!';
-                    messageEl.textContent = `Incredible! You filled ${percent.toFixed(2)}% of ${targetCountry.name}!${highscoreMsg}`;
+                    messageEl.textContent = `Incredible! You filled ${percent.toFixed(2)}% of ${targetCountry.name}!`;
                 } else if (percent >= 80) {
                     titleEl.textContent = 'GREAT!';
-                    messageEl.textContent = `Well played! You filled ${percent.toFixed(2)}% of ${targetCountry.name}!${highscoreMsg}`;
+                    messageEl.textContent = `Well played! You filled ${percent.toFixed(2)}% of ${targetCountry.name}!`;
                 } else if (percent >= 50) {
                     titleEl.textContent = 'GOOD!';
-                    messageEl.textContent = `Not bad! You filled ${percent.toFixed(2)}% of ${targetCountry.name}.${highscoreMsg}`;
+                    messageEl.textContent = `Not bad! You filled ${percent.toFixed(2)}% of ${targetCountry.name}.`;
                 } else {
                     titleEl.textContent = 'STAND';
-                    messageEl.textContent = `You played it safe with ${percent.toFixed(2)}% of ${targetCountry.name}.${highscoreMsg}`;
+                    messageEl.textContent = `You played it safe with ${percent.toFixed(2)}% of ${targetCountry.name}.`;
                 }
             }
 
@@ -1147,12 +964,8 @@
 
             updateProgress();
             updateCountryList();
-            updateHighscoreDisplay();
             offerNewCountry();
         }
-
-        // Initialize display on load (don't auto-start game)
-        updateHighscoreDisplay();
     </script>
 </body>
 </html>
