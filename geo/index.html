@@ -409,6 +409,169 @@
             transform: none;
             box-shadow: none;
         }
+
+        .accepted-countries.gameplay-hidden {
+            display: none;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 5px;
+            }
+
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 15px;
+            }
+
+            .target-country {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+
+            .target-country h2 {
+                font-size: 1rem;
+                margin-bottom: 5px;
+            }
+
+            .target-country p {
+                font-size: 0.85rem;
+            }
+
+            .target-flag img {
+                width: 64px;
+                height: 43px;
+            }
+
+            .target-flag {
+                margin-bottom: 8px;
+            }
+
+            .area-info {
+                gap: 6px;
+            }
+
+            .area-box {
+                padding: 6px;
+            }
+
+            .area-box .label {
+                font-size: 10px;
+            }
+
+            .area-box .value {
+                font-size: 14px;
+            }
+
+            .progress-section {
+                margin-bottom: 12px;
+            }
+
+            .progress-bar {
+                height: 24px;
+            }
+
+            .turn-counter {
+                margin-bottom: 5px;
+                font-size: 0.9rem;
+            }
+
+            .highscore {
+                margin-bottom: 12px;
+            }
+
+            .current-offer {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .current-offer h3 {
+                font-size: 12px;
+                margin-bottom: 8px;
+            }
+
+            .country-name {
+                font-size: 22px;
+                margin-bottom: 5px;
+            }
+
+            .country-flag img {
+                width: 72px;
+                height: 48px;
+            }
+
+            .country-flag {
+                margin-bottom: 10px;
+            }
+
+            .mystery-text {
+                font-size: 0.85rem;
+            }
+
+            .buttons {
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+
+            button {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+
+            .hit-btn {
+                min-width: 120px;
+            }
+
+            .game-over {
+                padding: 20px;
+            }
+
+            .game-over h2 {
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+
+            .final-score {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+
+            .accepted-countries {
+                padding: 15px;
+            }
+
+            .accepted-countries h3 {
+                font-size: 1rem;
+                margin-bottom: 10px;
+            }
+
+            .country-item {
+                padding: 8px 0;
+            }
+
+            .country-item .item-flag img {
+                width: 36px;
+                height: 24px;
+            }
+
+            .country-item .item-flag {
+                margin-right: 8px;
+            }
+
+            .country-item .item-info {
+                font-size: 0.9rem;
+            }
+
+            .country-item .item-area {
+                font-size: 0.85rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -479,7 +642,7 @@
             <button class="play-again-btn" onclick="startGame()">PLAY AGAIN</button>
         </div>
 
-        <div class="accepted-countries">
+        <div class="accepted-countries gameplay-hidden" id="accepted-countries">
             <h3>Accepted Countries (<span id="country-count">0</span>)</h3>
             <div class="country-list" id="country-list">
                 <p style="color: #666;">No countries accepted yet</p>
@@ -829,6 +992,7 @@
 
             document.getElementById('game-active').classList.add('hidden');
             document.getElementById('game-over').classList.remove('hidden');
+            document.getElementById('accepted-countries').classList.remove('gameplay-hidden');
             resetTimerBar();
 
             const gameOverEl = document.getElementById('game-over');
@@ -887,6 +1051,7 @@
             // Reset UI
             document.getElementById('game-active').classList.remove('hidden');
             document.getElementById('game-over').classList.add('hidden');
+            document.getElementById('accepted-countries').classList.add('gameplay-hidden');
             document.getElementById('hit-btn').disabled = false;
             document.getElementById('stand-btn').disabled = false;
 
