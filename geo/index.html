@@ -291,6 +291,33 @@
             color: #4ecca3;
         }
 
+        .game-over.dodged h2 {
+            color: #f1c40f;
+        }
+
+        .dodge-bonus {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            color: #1a1a2e;
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 10px 0;
+            font-weight: bold;
+            animation: bonusPop 0.5s ease-out;
+        }
+
+        .dodge-details {
+            color: #888;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        @keyframes bonusPop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
         .final-score {
             font-size: 24px;
             margin-bottom: 20px;
@@ -559,6 +586,15 @@
                 margin-bottom: 15px;
             }
 
+            .dodge-bonus {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .dodge-details {
+                font-size: 12px;
+            }
+
             .accepted-countries {
                 padding: 15px;
             }
@@ -660,6 +696,8 @@
         <div id="game-over" class="game-over hidden">
             <h2 id="result-title">BUST!</h2>
             <p id="result-message"></p>
+            <div id="dodge-bonus" class="dodge-bonus hidden">+5% DODGE BONUS!</div>
+            <div id="dodge-details" class="dodge-details hidden"></div>
             <div class="final-score">Final: <span id="final-percent">0%</span></div>
             <button class="play-again-btn" onclick="startGame()">PLAY AGAIN</button>
         </div>
@@ -1005,10 +1043,13 @@
         function stand() {
             if (gameEnded) return;
             stopTimer();
-            endGame(false);
+
+            // Check if accepting the current offer would have caused a bust
+            const wouldBust = currentOffer && ((totalArea + currentOffer.area) / targetCountry.area) * 100 > 100;
+            endGame(false, null, wouldBust ? currentOffer : null);
         }
 
-        function endGame(busted, message = null) {
+        function endGame(busted, message = null, dodgedCountry = null) {
             gameEnded = true;
             stopTimer();
 
@@ -1021,11 +1062,32 @@
             const titleEl = document.getElementById('result-title');
             const messageEl = document.getElementById('result-message');
             const finalEl = document.getElementById('final-percent');
+            const dodgeBonusEl = document.getElementById('dodge-bonus');
+            const dodgeDetailsEl = document.getElementById('dodge-details');
 
-            const percent = getPercentage();
+            // Hide dodge elements by default
+            dodgeBonusEl.classList.add('hidden');
+            dodgeDetailsEl.classList.add('hidden');
+
+            let percent = getPercentage();
+            let bonusApplied = false;
+
+            // Apply dodge bonus if player avoided a bust
+            if (dodgedCountry) {
+                const bonus = 5;
+                percent += bonus;
+                bonusApplied = true;
+
+                // Show dodge bonus elements
+                dodgeBonusEl.classList.remove('hidden');
+                dodgeDetailsEl.classList.remove('hidden');
+                const wouldHaveBeen = ((totalArea + dodgedCountry.area) / targetCountry.area) * 100;
+                dodgeDetailsEl.innerHTML = `${dodgedCountry.name} would have been ${formatNumber(dodgedCountry.area)} km² (${wouldHaveBeen.toFixed(2)}% total) - BUST!`;
+            }
+
             finalEl.textContent = percent.toFixed(2) + '%';
 
-            gameOverEl.classList.remove('bust', 'win');
+            gameOverEl.classList.remove('bust', 'win', 'dodged');
 
             // Check for new highscore (only if not busted)
             let isNewHighscore = false;
@@ -1038,6 +1100,11 @@
                 gameOverEl.classList.add('bust');
                 titleEl.textContent = 'BUST!';
                 messageEl.textContent = message || `You went over! ${currentOffer.name} was ${formatNumber(currentOffer.area)} km² - too much!`;
+            } else if (dodgedCountry) {
+                gameOverEl.classList.add('dodged');
+                titleEl.textContent = 'DODGED!';
+                const highscoreMsg = isNewHighscore ? ' New high score!' : '';
+                messageEl.textContent = `Smart move! You avoided the bust and earned a bonus!${highscoreMsg}`;
             } else {
                 gameOverEl.classList.add('win');
                 const highscoreMsg = isNewHighscore ? ' New high score!' : '';
