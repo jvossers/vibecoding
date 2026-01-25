@@ -616,7 +616,8 @@
         function generateBots(count) {
             return Array.from({ length: count }, () => ({
                 totalArea: 0, status: 'playing', isBot: true,
-                riskTolerance: 0.65 + Math.random() * 0.33,
+                riskTolerance: 0.70 + Math.random() * 0.35,
+                bustChance: Math.random() * 0.25,  // 0-25% chance to risk busting
                 countriesAccepted: []
             }));
         }
@@ -751,11 +752,21 @@
             game.players.forEach(p => {
                 if (p.isBot && p.status === 'playing') {
                     const potentialPct = (p.totalArea + game.currentCountry.area) / targetCountry.area * 100;
+                    const currentPct = getPercent(p);
+
+                    // Would this bust? Some aggressive bots take the risk anyway
                     if (potentialPct > 100) {
+                        if (Math.random() < p.bustChance && currentPct > 50) {
+                            // Risky bot takes the chance
+                            p.totalArea += game.currentCountry.area;
+                            p.countriesAccepted.push(game.currentCountry);
+                            p.status = 'busted';
+                        } else {
+                            p.status = 'stood';
+                        }
+                    } else if (currentPct >= p.riskTolerance * 100) {
                         p.status = 'stood';
-                    } else if (getPercent(p) >= p.riskTolerance * 100) {
-                        p.status = 'stood';
-                    } else if (Math.random() < 0.82) {
+                    } else if (Math.random() < 0.85) {
                         p.totalArea += game.currentCountry.area;
                         p.countriesAccepted.push(game.currentCountry);
                         if (getPercent(p) > 100) p.status = 'busted';
