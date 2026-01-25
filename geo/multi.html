@@ -897,16 +897,14 @@
                 </div>`;
             });
 
-            // Add busted row
-            if (bustedPlayers.length > 0) {
-                const hasPlayer = bustedPlayers.includes(player);
-                html += `<div class="leaderboard-row busted${hasPlayer ? ' you' : ''}">
-                    <span class="rank">—</span>
-                    <span>—</span>
-                    <span class="percent">BUST</span>
-                    <span class="players">${bustedPlayers.length}${hasPlayer ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
-                </div>`;
-            }
+            // Add busted row (always show)
+            const hasPlayerBusted = bustedPlayers.includes(player);
+            html += `<div class="leaderboard-row busted${hasPlayerBusted ? ' you' : ''}">
+                <span class="rank">—</span>
+                <span>—</span>
+                <span class="percent">BUST</span>
+                <span class="players">${bustedPlayers.length}${hasPlayerBusted ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
+            </div>`;
 
             document.getElementById('leaderboard-rows').innerHTML = html;
 
