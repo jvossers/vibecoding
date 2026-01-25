@@ -55,11 +55,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .player-dot::before {
-            content: '👤';
             font-size: 14px;
-            opacity: 0.5;
         }
         .player-dot.stood {
             background: #f39c12;
@@ -67,9 +63,6 @@
         .player-dot.busted {
             background: #e74c3c;
             opacity: 0.4;
-        }
-        .player-dot.you::before {
-            content: none;
         }
         .player-dot.you {
             border: 2px solid #fff;
@@ -404,7 +397,7 @@
                 gap: 3px;
                 margin-bottom: 8px;
             }
-            .player-dot::before {
+            .player-dot {
                 font-size: 12px;
             }
             .player-dot.you::after {
@@ -606,6 +599,8 @@
         let targetCountry = null;
         const TURN_TIME = 3000;
 
+        const avatars = ['😀','😎','🤠','🥳','😺','🐶','🐵','🦊','🐸','🐷','🐮','🐰','🐻','🐼','🐨','🦁','🐯','🐔','🐧','🐦','🦆','🦉','🐴','🦄','🐝','🦋','🐢','🐙','🦀','🐟','🐬','🐳','🌸','🌺','🌻','🍄','🌵','🎃','⭐','🌙','🔥','💧','❄️','🎈','🎨','🎭','🎪','🚀','🛸','🤖','👻','👽','💀','🎅','🧙','🧛','🧜','🧚','👑','💎','🏆','🎯','🎲','🎮','🎸','🎺','🥁','⚽','🏀','🎾','🏈','⚡','💫','🌈','☀️','🍎','🍊','🍋','🍇','🍓','🍒','🥝','🍕','🍔','🌮','🍦','🧁','🍩','🍪','☕','🍵','🧃','🎂'];
+
         let game = { players: [], currentCountry: null, availableCountries: [], timerInterval: null, gameEnded: false, spectatorArea: 0, isSpectating: false };
 
         function shuffleArray(arr) {
@@ -618,11 +613,13 @@
         }
 
         function generateBots(count) {
-            return Array.from({ length: count }, () => ({
+            const shuffledAvatars = shuffleArray([...avatars]);
+            return Array.from({ length: count }, (_, i) => ({
                 totalArea: 0, status: 'playing', isBot: true,
                 riskTolerance: 0.70 + Math.random() * 0.35,
-                bustChance: Math.random() * 0.25,  // 0-25% chance to risk busting
-                countriesAccepted: []
+                bustChance: Math.random() * 0.25,
+                countriesAccepted: [],
+                avatar: shuffledAvatars[i % shuffledAvatars.length]
             }));
         }
 
@@ -666,7 +663,7 @@
         function renderGrid() {
             const grid = document.getElementById('player-grid');
             grid.innerHTML = game.players.map((p, i) =>
-                `<div class="player-dot ${p.status} ${i === 0 ? 'you' : ''}" id="dot-${i}"></div>`
+                `<div class="player-dot ${p.status} ${i === 0 ? 'you' : ''}" id="dot-${i}">${i === 0 ? '' : p.avatar}</div>`
             ).join('');
         }
 
