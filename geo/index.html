@@ -27,16 +27,13 @@
             font-size: 1rem;
             color: #4ecca3;
         }
-        .stats {
-            display: flex;
-            gap: 15px;
-            font-size: 0.8rem;
+        .player-count {
+            font-size: 0.75rem;
+            color: #666;
         }
-        .stat { color: #888; }
-        .stat span { color: #fff; font-weight: bold; }
-        .stat.playing span { color: #4ecca3; }
-        .stat.stood span { color: #f39c12; }
-        .stat.busted span { color: #e74c3c; }
+        .player-count span {
+            color: #888;
+        }
         .player-grid {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
@@ -95,6 +92,11 @@
         }
         .country-info {
             flex: 1;
+        }
+        .offer-label {
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
         }
         .country-name {
             font-weight: bold;
@@ -363,8 +365,7 @@
             .header h1 {
                 font-size: 1.1rem;
             }
-            .stats {
-                gap: 10px;
+            .player-count {
                 font-size: 0.7rem;
             }
             .target-country {
@@ -418,6 +419,9 @@
             .country-flag img {
                 width: 40px;
                 height: 27px;
+            }
+            .offer-label {
+                font-size: 0.65rem;
             }
             .country-name {
                 font-size: 0.9rem;
@@ -476,11 +480,7 @@
     <div class="container">
         <div class="header">
             <h1>Geography Blackjack</h1>
-            <div class="stats">
-                <div class="stat playing">Playing: <span id="playing-count">0</span></div>
-                <div class="stat stood">Stood: <span id="stood-count">0</span></div>
-                <div class="stat busted">Busted: <span id="busted-count">0</span></div>
-            </div>
+            <div class="player-count"><span id="player-count">0</span> players online</div>
         </div>
 
         <div id="game-active">
@@ -507,6 +507,7 @@
             <div class="country-bar">
                 <div class="country-flag"><img id="country-flag" src="" alt="Flag"></div>
                 <div class="country-info">
+                    <div class="offer-label">Adding</div>
                     <div class="country-name" id="country-name">Loading...</div>
                     <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
                 </div>
@@ -831,13 +832,8 @@
                 }
             }
 
-            // Update stats
-            const playing = game.players.filter(p => p.status === 'playing').length;
-            const stood = game.players.filter(p => p.status === 'stood').length;
-            const busted = game.players.filter(p => p.status === 'busted').length;
-            document.getElementById('playing-count').textContent = playing;
-            document.getElementById('stood-count').textContent = stood;
-            document.getElementById('busted-count').textContent = busted;
+            // Update player count
+            document.getElementById('player-count').textContent = game.players.length;
 
             updateGrid();
         }
