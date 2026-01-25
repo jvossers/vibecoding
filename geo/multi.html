@@ -194,6 +194,7 @@
             gap: 3px;
             flex-wrap: wrap;
             justify-content: center;
+            align-items: center;
             margin-bottom: 15px;
         }
         .winning-flags img {
@@ -202,6 +203,17 @@
             object-fit: cover;
             border-radius: 2px;
             cursor: pointer;
+        }
+        .winning-flags .arrow {
+            margin: 0 6px;
+            color: #4ecca3;
+            font-size: 1rem;
+        }
+        .winning-flags .target-flag {
+            width: 28px;
+            height: 19px;
+            border: 2px solid #4ecca3;
+            border-radius: 3px;
         }
         .play-again-btn {
             background: linear-gradient(135deg, #4ecca3, #45b393);
@@ -429,6 +441,14 @@
             .winning-flags img {
                 width: 18px;
                 height: 12px;
+            }
+            .winning-flags .target-flag {
+                width: 24px;
+                height: 16px;
+            }
+            .winning-flags .arrow {
+                font-size: 0.85rem;
+                margin: 0 4px;
             }
             .spectator-bar {
                 padding: 12px;
@@ -834,11 +854,16 @@
             const winningPct = sortedGroups.length > 0 ? sortedGroups[0].pct : 0;
             const playerWon = player.status !== 'busted' && playerPct.toFixed(1) === winningPct.toFixed(1);
 
-            // Show winning countries flags
+            // Show winning countries flags with arrow to target
             const winningGroup = sortedGroups[0];
-            const winningFlagsHtml = winningGroup ? winningGroup.countriesAccepted.map(c =>
-                `<img src="https://flagcdn.com/w40/${c.code}.png" alt="${c.name}" title="${c.name}">`
-            ).join('') : '';
+            let winningFlagsHtml = '';
+            if (winningGroup) {
+                winningFlagsHtml = winningGroup.countriesAccepted.map(c =>
+                    `<img src="https://flagcdn.com/w40/${c.code}.png" alt="${c.name}" title="${c.name}">`
+                ).join('');
+                winningFlagsHtml += `<span class="arrow">→</span>`;
+                winningFlagsHtml += `<img class="target-flag" src="https://flagcdn.com/w40/${targetCountry.code}.png" alt="${targetCountry.name}" title="${targetCountry.name}">`;
+            }
             document.getElementById('winning-flags').innerHTML = winningFlagsHtml;
 
             // Generate leaderboard HTML
