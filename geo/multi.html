@@ -146,7 +146,7 @@
         }
         .leaderboard-header {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 50px 1fr 1fr 1fr;
             padding: 8px 12px;
             font-size: 0.7rem;
             color: #888;
@@ -155,28 +155,26 @@
         }
         .leaderboard-row {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 50px 1fr 1fr 1fr;
             padding: 10px 12px;
             font-size: 0.9rem;
             border-bottom: 1px solid #1a1a2e;
-        }
-        .leaderboard-row.winner {
-            background: rgba(78, 204, 163, 0.2);
-            border: 1px solid #4ecca3;
-            border-radius: 6px;
+            align-items: center;
         }
         .leaderboard-row.you {
             background: rgba(243, 156, 18, 0.15);
             border: 1px solid #f39c12;
             border-radius: 6px;
         }
-        .leaderboard-row.winner.you {
-            background: rgba(78, 204, 163, 0.3);
-            border: 2px solid #4ecca3;
-        }
         .leaderboard-row.busted {
             color: #e74c3c;
             opacity: 0.6;
+        }
+        .leaderboard-row .rank {
+            font-weight: bold;
+        }
+        .leaderboard-row .medal {
+            margin-left: 4px;
         }
         .leaderboard-row .percent {
             font-weight: bold;
@@ -430,13 +428,18 @@
             .leaderboard-header {
                 font-size: 0.6rem;
                 padding: 6px 10px;
+                grid-template-columns: 40px 1fr 1fr 1fr;
             }
             .leaderboard-row {
                 font-size: 0.8rem;
                 padding: 8px 10px;
+                grid-template-columns: 40px 1fr 1fr 1fr;
             }
             .leaderboard-row .you-marker {
                 font-size: 0.6rem;
+            }
+            .leaderboard-row .medal {
+                margin-left: 2px;
             }
             .winning-flags img {
                 width: 18px;
@@ -524,6 +527,7 @@
             <div class="winning-flags" id="winning-flags"></div>
             <div class="leaderboard">
                 <div class="leaderboard-header">
+                    <span>Rank</span>
                     <span>Countries</span>
                     <span>Filled</span>
                     <span style="text-align:right">Players</span>
@@ -867,15 +871,18 @@
             document.getElementById('winning-flags').innerHTML = winningFlagsHtml;
 
             // Generate leaderboard HTML
+            const medals = ['🥇', '🥈', '🥉'];
             let html = '';
-            sortedGroups.forEach(group => {
-                const isWinner = group.pct === winningPct;
+            sortedGroups.forEach((group, index) => {
                 const hasPlayer = group.players.includes(player);
                 let classes = 'leaderboard-row';
-                if (isWinner) classes += ' winner';
                 if (hasPlayer) classes += ' you';
 
+                const rank = index + 1;
+                const medal = medals[index] || '';
+
                 html += `<div class="${classes}">
+                    <span class="rank">#${rank}${medal ? `<span class="medal">${medal}</span>` : ''}</span>
                     <span>${group.countriesAccepted.length}</span>
                     <span class="percent">${group.pct.toFixed(1)}%</span>
                     <span class="players">${group.players.length}${hasPlayer ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
@@ -886,6 +893,7 @@
             if (bustedPlayers.length > 0) {
                 const hasPlayer = bustedPlayers.includes(player);
                 html += `<div class="leaderboard-row busted${hasPlayer ? ' you' : ''}">
+                    <span class="rank">—</span>
                     <span>—</span>
                     <span class="percent">BUST</span>
                     <span class="players">${bustedPlayers.length}${hasPlayer ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
