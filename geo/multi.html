@@ -171,9 +171,6 @@
             text-align: center;
             border: 2px solid #f39c12;
         }
-        .spectator-bar.busted {
-            border-color: #e74c3c;
-        }
         .spectator-label {
             font-size: 0.75rem;
             color: #888;
@@ -184,9 +181,6 @@
             font-size: 1.1rem;
             font-weight: bold;
             color: #f39c12;
-        }
-        .spectator-bar.busted .spectator-status {
-            color: #e74c3c;
         }
         .spectator-score {
             font-size: 0.85rem;
@@ -263,18 +257,30 @@
             border-radius: 12px;
             overflow: hidden;
             border: 2px solid #333;
+            position: relative;
         }
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #4ecca3, #45b393);
             transition: width 0.3s ease, background 0.3s ease;
             border-radius: 10px;
+            position: absolute;
+            left: 0;
+            top: 0;
         }
         .progress-fill.warning {
             background: linear-gradient(90deg, #f39c12, #e74c3c);
         }
         .progress-fill.danger {
             background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+        .progress-fill.stood {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+            z-index: 2;
+        }
+        .progress-fill.spectator {
+            background: linear-gradient(90deg, #3d5a80, #293241);
+            z-index: 1;
         }
 
         /* Mobile optimizations */
@@ -408,6 +414,7 @@
                     <span id="progress-percent">0.00%</span>
                 </div>
                 <div class="progress-bar">
+                    <div class="progress-fill spectator" id="spectator-fill" style="width: 0%"></div>
                     <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
                 </div>
             </div>
@@ -512,7 +519,7 @@
         let targetCountry = null;
         const TURN_TIME = 3000;
 
-        let game = { players: [], currentCountry: null, availableCountries: [], timerInterval: null, gameEnded: false };
+        let game = { players: [], currentCountry: null, availableCountries: [], timerInterval: null, gameEnded: false, spectatorArea: 0, isSpectating: false };
 
         function shuffleArray(arr) {
             const s = [...arr];
@@ -549,7 +556,9 @@
                 availableCountries: shuffleArray(eligibleCountries),
                 timerInterval: null,
                 gameEnded: false,
-                playerActed: false
+                playerActed: false,
+                spectatorArea: 0,
+                isSpectating: false
             };
 
             document.getElementById('game-active').classList.remove('hidden');
@@ -558,6 +567,8 @@
             document.getElementById('stand-btn').disabled = false;
             document.getElementById('buttons').classList.remove('hidden');
             document.getElementById('spectator-bar').classList.add('hidden');
+            document.getElementById('progress-fill').classList.remove('stood', 'warning', 'danger');
+            document.getElementById('spectator-fill').style.width = '0%';
 
             renderGrid();
             nextRound();
@@ -623,7 +634,6 @@
             document.getElementById('stand-btn').disabled = true;
             if (getPercent(game.players[0]) > 100) {
                 game.players[0].status = 'busted';
-                enterSpectatorMode();
             }
             updateDisplay();
         }
@@ -640,18 +650,16 @@
         function enterSpectatorMode() {
             const player = game.players[0];
             const pct = getPercent(player).toFixed(1);
-            const spectatorBar = document.getElementById('spectator-bar');
-            const spectatorStatus = document.getElementById('spectator-status');
+
+            game.isSpectating = true;
+            game.spectatorArea = player.totalArea;
 
             document.getElementById('buttons').classList.add('hidden');
-            spectatorBar.classList.remove('hidden', 'busted');
+            document.getElementById('spectator-bar').classList.remove('hidden');
+            document.getElementById('spectator-status').textContent = `You stood at ${pct}%`;
 
-            if (player.status === 'busted') {
-                spectatorBar.classList.add('busted');
-                spectatorStatus.textContent = `Busted at ${pct}%`;
-            } else {
-                spectatorStatus.textContent = `You stood at ${pct}%`;
-            }
+            // Change progress bar to stood color
+            document.getElementById('progress-fill').classList.add('stood');
         }
 
         function processRound() {
@@ -677,8 +685,12 @@
                 player.totalArea += game.currentCountry.area;
                 if (getPercent(player) > 100) {
                     player.status = 'busted';
-                    enterSpectatorMode();
                 }
+            }
+
+            // Track what would have happened if player kept hitting
+            if (game.isSpectating) {
+                game.spectatorArea += game.currentCountry.area;
             }
 
             updateDisplay();
@@ -703,14 +715,24 @@
 
             // Update progress bar
             const progressFill = document.getElementById('progress-fill');
+            const spectatorFill = document.getElementById('spectator-fill');
             const progressPercent = document.getElementById('progress-percent');
+
             progressFill.style.width = Math.min(pct, 100) + '%';
-            progressPercent.textContent = pct.toFixed(2) + '%';
-            progressFill.classList.remove('warning', 'danger');
-            if (pct > 100) {
-                progressFill.classList.add('danger');
-            } else if (pct > 80) {
-                progressFill.classList.add('warning');
+
+            if (game.isSpectating) {
+                // Show spectator area (what would have happened)
+                const spectatorPct = (game.spectatorArea / targetCountry.area) * 100;
+                spectatorFill.style.width = Math.min(spectatorPct, 100) + '%';
+                progressPercent.textContent = pct.toFixed(2) + '% (would be ' + spectatorPct.toFixed(1) + '%)';
+            } else {
+                progressPercent.textContent = pct.toFixed(2) + '%';
+                progressFill.classList.remove('warning', 'danger');
+                if (pct > 100) {
+                    progressFill.classList.add('danger');
+                } else if (pct > 80) {
+                    progressFill.classList.add('warning');
+                }
             }
 
             // Update stats
