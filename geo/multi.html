@@ -189,6 +189,19 @@
             color: #f39c12;
             margin-left: 5px;
         }
+        .leaderboard-row .flags {
+            display: flex;
+            gap: 2px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+            grid-column: 1 / -1;
+        }
+        .leaderboard-row .flags img {
+            width: 16px;
+            height: 11px;
+            object-fit: cover;
+            border-radius: 1px;
+        }
         .play-again-btn {
             background: linear-gradient(135deg, #4ecca3, #45b393);
             color: #1a1a2e;
@@ -412,6 +425,10 @@
             .leaderboard-row .you-marker {
                 font-size: 0.6rem;
             }
+            .leaderboard-row .flags img {
+                width: 14px;
+                height: 10px;
+            }
             .spectator-bar {
                 padding: 12px;
             }
@@ -566,7 +583,7 @@
             return Array.from({ length: count }, () => ({
                 totalArea: 0, status: 'playing', isBot: true,
                 riskTolerance: 0.65 + Math.random() * 0.33,
-                countriesAccepted: 0
+                countriesAccepted: []
             }));
         }
 
@@ -584,7 +601,7 @@
 
             const botCount = 99; // Total 100 with player
             game = {
-                players: [{ totalArea: 0, status: 'playing', isBot: false, countriesAccepted: 0 }, ...generateBots(botCount)],
+                players: [{ totalArea: 0, status: 'playing', isBot: false, countriesAccepted: [] }, ...generateBots(botCount)],
                 currentCountry: null,
                 availableCountries: shuffleArray(eligibleCountries),
                 timerInterval: null,
@@ -663,7 +680,7 @@
             if (game.gameEnded || game.players[0].status !== 'playing' || game.playerActed) return;
             game.playerActed = true;
             game.players[0].totalArea += game.currentCountry.area;
-            game.players[0].countriesAccepted++;
+            game.players[0].countriesAccepted.push(game.currentCountry);
             document.getElementById('hit-btn').disabled = true;
             document.getElementById('stand-btn').disabled = true;
             if (getPercent(game.players[0]) > 100) {
@@ -706,7 +723,7 @@
                         p.status = 'stood';
                     } else if (Math.random() < 0.82) {
                         p.totalArea += game.currentCountry.area;
-                        p.countriesAccepted++;
+                        p.countriesAccepted.push(game.currentCountry);
                         if (getPercent(p) > 100) p.status = 'busted';
                     } else {
                         p.status = 'stood';
@@ -718,7 +735,7 @@
             if (player.status === 'playing' && !game.playerActed) {
                 // Auto-hit if player didn't act
                 player.totalArea += game.currentCountry.area;
-                player.countriesAccepted++;
+                player.countriesAccepted.push(game.currentCountry);
                 if (getPercent(player) > 100) {
                     player.status = 'busted';
                 }
@@ -824,10 +841,15 @@
                 if (isWinner) classes += ' winner';
                 if (hasPlayer) classes += ' you';
 
+                const flagsHtml = group.countriesAccepted.map(c =>
+                    `<img src="https://flagcdn.com/w40/${c.code}.png" alt="${c.name}" title="${c.name}">`
+                ).join('');
+
                 html += `<div class="${classes}">
-                    <span>${group.countriesAccepted}</span>
+                    <span>${group.countriesAccepted.length}</span>
                     <span class="percent">${group.pct.toFixed(1)}%</span>
                     <span class="players">${group.players.length}${hasPlayer ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
+                    <div class="flags">${flagsHtml}</div>
                 </div>`;
             });
 
