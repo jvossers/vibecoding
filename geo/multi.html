@@ -736,7 +736,7 @@
 
         function enterSpectatorMode() {
             const player = game.players[0];
-            const pct = getPercent(player).toFixed(1);
+            const pct = getPercent(player).toFixed(2);
 
             game.isSpectating = true;
             game.spectatorArea = player.totalArea;
@@ -823,7 +823,7 @@
                 // Show spectator area (what would have happened)
                 const spectatorPct = (game.spectatorArea / targetCountry.area) * 100;
                 spectatorFill.style.width = Math.min(spectatorPct, 100) + '%';
-                progressPercent.textContent = pct.toFixed(2) + '% (would be ' + spectatorPct.toFixed(1) + '%)';
+                progressPercent.textContent = pct.toFixed(2) + '% (would be ' + spectatorPct.toFixed(2) + '%)';
             } else {
                 progressPercent.textContent = pct.toFixed(2) + '%';
                 progressFill.classList.remove('warning', 'danger');
@@ -863,7 +863,7 @@
                 if (p.status === 'busted') {
                     bustedPlayers.push(p);
                 } else {
-                    const pct = getPercent(p).toFixed(1);
+                    const pct = getPercent(p).toFixed(2);
                     if (!groups[pct]) {
                         groups[pct] = { pct: parseFloat(pct), players: [], countriesAccepted: p.countriesAccepted };
                     }
@@ -900,7 +900,7 @@
                 html += `<div class="${classes}">
                     <span class="rank"><span class="rank-num">#${rank}</span>${medal ? `<span class="medal">${medal}</span>` : ''}${hasPlayer ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
                     <span>${group.countriesAccepted.length}</span>
-                    <span class="percent">${group.pct.toFixed(1)}%</span>
+                    <span class="percent">${group.pct.toFixed(2)}%</span>
                     <span class="players">${group.players.length}</span>
                 </div>`;
             });
