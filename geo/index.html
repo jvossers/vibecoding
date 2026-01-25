@@ -5,961 +5,912 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geography Blackjack</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             color: #fff;
-            padding: 20px;
+            padding: 10px;
         }
-
         .container {
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
         }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 10px;
-            color: #4ecca3;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #888;
-            margin-bottom: 30px;
-        }
-
-        .target-country {
-            background: #232946;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 2px solid #4ecca3;
-            text-align: center;
-        }
-
-        .target-country h2 {
-            color: #4ecca3;
-            margin-bottom: 10px;
-        }
-
-        .target-flag {
-            margin-bottom: 15px;
-        }
-
-        .target-flag img {
-            width: 96px;
-            height: 64px;
-            object-fit: cover;
-            border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .area-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .area-box {
-            background: #1a1a2e;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .area-box .label {
-            font-size: 12px;
-            color: #888;
-        }
-
-        .area-box .value {
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .progress-section {
-            margin-bottom: 20px;
-        }
-
-        .progress-label {
+        .header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .progress-bar {
-            height: 30px;
-            background: #1a1a2e;
-            border-radius: 15px;
-            overflow: hidden;
-            border: 2px solid #333;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4ecca3, #45b393);
-            transition: width 0.5s ease, background 0.3s ease;
-            display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .progress-fill.warning {
-            background: linear-gradient(90deg, #f39c12, #e74c3c);
-        }
-
-        .progress-fill.danger {
-            background: linear-gradient(90deg, #e74c3c, #c0392b);
-        }
-
-        .current-offer {
-            background: #232946;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .current-offer h3 {
-            color: #888;
-            font-size: 14px;
             margin-bottom: 10px;
         }
-
-        .country-name {
-            font-size: 28px;
-            font-weight: bold;
-            color: #fff;
-            margin-bottom: 10px;
+        .header h1 {
+            font-size: 1rem;
+            color: #4ecca3;
         }
-
-        .country-flag {
-            margin-bottom: 15px;
-        }
-
-        .country-flag img {
-            width: 96px;
-            height: 64px;
-            object-fit: cover;
-            border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .mystery-text {
-            color: #f39c12;
-            font-style: italic;
-        }
-
-        .buttons {
+        .stats {
             display: flex;
             gap: 15px;
-            justify-content: center;
-            margin-bottom: 20px;
+            font-size: 0.8rem;
         }
-
-        button {
-            padding: 15px 40px;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+        .stat { color: #888; }
+        .stat span { color: #fff; font-weight: bold; }
+        .stat.playing span { color: #4ecca3; }
+        .stat.stood span { color: #f39c12; }
+        .stat.busted span { color: #e74c3c; }
+        .player-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            background: #232946;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
         }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .hit-btn {
-            background: #1a3d2e;
-            color: #fff;
-            min-width: 140px;
+        .player-dot {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            background: #4ecca3;
             position: relative;
+            transition: all 0.3s ease;
+        }
+        .player-dot.stood {
+            background: #f39c12;
+        }
+        .player-dot.busted {
+            background: #e74c3c;
+            opacity: 0.4;
+        }
+        .player-dot.you {
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        .player-dot.you::after {
+            content: 'YOU';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bold;
+            color: #1a1a2e;
+        }
+        .country-bar {
+            background: #1a1a2e;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .country-flag img {
+            width: 50px;
+            height: 34px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .country-info {
+            flex: 1;
+        }
+        .country-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .timer-bar {
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
             overflow: hidden;
         }
-
-        .hit-btn .btn-text {
-            position: relative;
-            z-index: 2;
-        }
-
-        .hit-btn .timer-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .timer-fill {
             height: 100%;
-            width: 0%;
-            background: linear-gradient(135deg, #4ecca3, #45b393);
-            z-index: 1;
+            background: linear-gradient(90deg, #4ecca3, #45b393);
             transition: width 0.1s linear;
         }
-
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            flex: 1;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .hit-btn {
+            background: linear-gradient(135deg, #4ecca3, #45b393);
+            color: #1a1a2e;
+        }
         .stand-btn {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
             color: #fff;
         }
-
-        .accepted-countries {
-            background: #232946;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .accepted-countries h3 {
-            margin-bottom: 15px;
-            color: #4ecca3;
-        }
-
-        .country-list {
-        }
-
-        .country-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #333;
-        }
-
-        .country-item:last-child {
-            border-bottom: none;
-        }
-
-        .country-item .item-flag {
-            margin-right: 12px;
-            display: flex;
-            align-items: center;
-        }
-
-        .country-item .item-flag img {
-            width: 48px;
-            height: 32px;
-            object-fit: cover;
-            border-radius: 3px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .country-item .item-info {
-            display: flex;
-            align-items: center;
-            flex: 1;
-        }
-
-        .country-item .item-area {
-            color: #4ecca3;
-            font-weight: bold;
-        }
-
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
         .game-over {
             text-align: center;
-            padding: 30px;
+            padding: 20px;
             background: #232946;
             border-radius: 12px;
-            margin-bottom: 20px;
         }
-
-        .game-over h2 {
-            font-size: 36px;
+        .leaderboard {
             margin-bottom: 15px;
         }
-
-        .game-over.bust h2 {
-            color: #e74c3c;
-        }
-
-        .game-over.win h2 {
-            color: #4ecca3;
-        }
-
-        .game-over.dodged h2 {
-            color: #f1c40f;
-        }
-
-        .dodge-bonus {
-            background: linear-gradient(135deg, #f1c40f, #f39c12);
-            color: #1a1a2e;
-            padding: 10px 20px;
-            border-radius: 8px;
-            display: inline-block;
-            margin: 10px 0;
-            font-weight: bold;
-            animation: bonusPop 0.5s ease-out;
-        }
-
-        .dodge-details {
+        .leaderboard-header {
+            display: grid;
+            grid-template-columns: 90px 1fr 1fr 1fr;
+            padding: 8px 12px;
+            font-size: 0.7rem;
             color: #888;
-            font-size: 14px;
-            margin-top: 10px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #333;
         }
-
-        @keyframes bonusPop {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); opacity: 1; }
+        .leaderboard-row {
+            display: grid;
+            grid-template-columns: 90px 1fr 1fr 1fr;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #1a1a2e;
+            align-items: center;
         }
-
-        .final-score {
-            font-size: 24px;
-            margin-bottom: 20px;
+        .leaderboard-row.you {
+            background: rgba(243, 156, 18, 0.15);
+            border: 1px solid #f39c12;
+            border-radius: 6px;
         }
-
-        .play-again-btn, .start-btn {
+        .leaderboard-row.busted {
+            color: #e74c3c;
+            opacity: 0.6;
+        }
+        .leaderboard-row .rank {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        .leaderboard-row .rank-num {
+            width: 20px;
+        }
+        .leaderboard-row .medal {
+            font-size: 0.85rem;
+        }
+        .leaderboard-row .percent {
+            font-weight: bold;
+        }
+        .leaderboard-row .players {
+            text-align: right;
+        }
+        .leaderboard-row .you-marker {
+            font-size: 0.65rem;
+            color: #f39c12;
+            margin-left: 4px;
+        }
+        .winning-flags {
+            display: flex;
+            gap: 3px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .winning-flags img {
+            width: 20px;
+            height: 14px;
+            object-fit: cover;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+        .winning-flags .arrow {
+            margin: 0 6px;
+            color: #4ecca3;
+            font-size: 1rem;
+        }
+        .winning-flags .target-flag {
+            width: 28px;
+            height: 19px;
+            border: 2px solid #4ecca3;
+            border-radius: 3px;
+        }
+        .play-again-btn {
             background: linear-gradient(135deg, #4ecca3, #45b393);
             color: #1a1a2e;
+            padding: 12px 35px;
         }
-
-        .start-screen {
+        .spectator-bar {
+            background: #232946;
+            border-radius: 10px;
+            padding: 15px;
             text-align: center;
-            padding: 30px;
+            border: 2px solid #f39c12;
+        }
+        .spectator-label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .spectator-status {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #f39c12;
+        }
+        .spectator-score {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 5px;
+        }
+        .hidden { display: none !important; }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.75rem;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        .legend-dot.playing { background: #4ecca3; }
+        .legend-dot.stood { background: #f39c12; }
+        .legend-dot.busted { background: #e74c3c; opacity: 0.4; }
+        .target-country {
             background: #232946;
             border-radius: 12px;
-            margin-bottom: 20px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 2px solid #4ecca3;
         }
-
-        .start-screen p {
+        .target-flag img {
+            width: 50px;
+            height: 34px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .target-info {
+            flex: 1;
+        }
+        .target-label {
+            font-size: 0.7rem;
             color: #888;
-            margin-bottom: 20px;
+            text-transform: uppercase;
         }
-
-        .hidden {
-            display: none !important;
+        .target-name {
+            font-weight: bold;
+            color: #4ecca3;
         }
-
-        .turn-counter {
-            text-align: center;
+        .target-size {
+            font-size: 0.8rem;
             color: #888;
+            text-align: right;
+        }
+        .progress-section {
             margin-bottom: 10px;
         }
-
-        .accepted-countries.gameplay-hidden {
-            display: none;
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+        }
+        .progress-label .label { color: #888; }
+        .progress-bar {
+            height: 24px;
+            background: #1a1a2e;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #333;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecca3, #45b393);
+            transition: width 0.3s ease, background 0.3s ease;
+            border-radius: 10px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .progress-fill.warning {
+            background: linear-gradient(90deg, #f39c12, #e74c3c);
+        }
+        .progress-fill.danger {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+        .progress-fill.stood {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+            z-index: 2;
+        }
+        .progress-fill.spectator {
+            background: linear-gradient(90deg, #3d5a80, #293241);
+            z-index: 1;
         }
 
         /* Mobile optimizations */
         @media (max-width: 480px) {
             body {
-                padding: 10px;
+                padding: 8px;
             }
-
-            h1 {
-                font-size: 1.5rem;
-                margin-bottom: 5px;
-            }
-
-            .subtitle {
-                font-size: 0.85rem;
-                margin-bottom: 15px;
-            }
-
-            .target-country {
-                padding: 12px;
-                margin-bottom: 12px;
-            }
-
-            .target-country h2 {
-                font-size: 1rem;
-                margin-bottom: 5px;
-            }
-
-            .target-country p {
-                font-size: 0.85rem;
-            }
-
-            .target-flag img {
-                width: 64px;
-                height: 43px;
-            }
-
-            .target-flag {
+            .header {
+                flex-direction: column;
+                gap: 5px;
                 margin-bottom: 8px;
             }
-
-            .area-info {
-                gap: 6px;
+            .header h1 {
+                font-size: 1.1rem;
             }
-
-            .area-box {
-                padding: 6px;
+            .stats {
+                gap: 10px;
+                font-size: 0.7rem;
             }
-
-            .area-box .label {
+            .target-country {
+                padding: 10px;
+                margin-bottom: 8px;
+            }
+            .target-flag img {
+                width: 40px;
+                height: 27px;
+            }
+            .target-label {
+                font-size: 0.65rem;
+            }
+            .target-name {
+                font-size: 0.9rem;
+            }
+            .target-size {
+                font-size: 0.7rem;
+            }
+            .progress-section {
+                margin-bottom: 8px;
+            }
+            .progress-label {
+                font-size: 0.8rem;
+            }
+            .progress-bar {
+                height: 20px;
+            }
+            .legend {
+                gap: 10px;
+                margin-bottom: 8px;
+                font-size: 0.65rem;
+            }
+            .legend-dot {
+                width: 10px;
+                height: 10px;
+            }
+            .player-grid {
+                padding: 8px;
+                gap: 3px;
+                margin-bottom: 8px;
+            }
+            .player-dot.you::after {
                 font-size: 10px;
             }
-
-            .area-box .value {
-                font-size: 14px;
-            }
-
-            .progress-section {
-                margin-bottom: 12px;
-            }
-
-            .progress-bar {
-                height: 24px;
-            }
-
-            .turn-counter {
-                margin-bottom: 5px;
-                font-size: 0.9rem;
-            }
-
-            .current-offer {
-                padding: 15px;
-                margin-bottom: 15px;
-            }
-
-            .current-offer h3 {
-                font-size: 12px;
+            .country-bar {
+                padding: 10px;
+                gap: 10px;
                 margin-bottom: 8px;
             }
-
-            .country-name {
-                font-size: 22px;
-                margin-bottom: 5px;
-            }
-
             .country-flag img {
-                width: 72px;
-                height: 48px;
+                width: 40px;
+                height: 27px;
             }
-
-            .country-flag {
-                margin-bottom: 10px;
-            }
-
-            .mystery-text {
-                font-size: 0.85rem;
-            }
-
-            .buttons {
-                gap: 10px;
-                margin-bottom: 15px;
-            }
-
-            button {
-                padding: 12px 30px;
-                font-size: 16px;
-            }
-
-            .hit-btn {
-                min-width: 120px;
-            }
-
-            .start-screen {
-                padding: 20px;
-            }
-
-            .game-over {
-                padding: 20px;
-            }
-
-            .game-over h2 {
-                font-size: 28px;
-                margin-bottom: 10px;
-            }
-
-            .final-score {
-                font-size: 20px;
-                margin-bottom: 15px;
-            }
-
-            .dodge-bonus {
-                padding: 8px 16px;
-                font-size: 14px;
-            }
-
-            .dodge-details {
-                font-size: 12px;
-            }
-
-            .accepted-countries {
-                padding: 15px;
-            }
-
-            .accepted-countries h3 {
-                font-size: 1rem;
-                margin-bottom: 10px;
-            }
-
-            .country-item {
-                padding: 8px 0;
-            }
-
-            .country-item .item-flag img {
-                width: 36px;
-                height: 24px;
-            }
-
-            .country-item .item-flag {
-                margin-right: 8px;
-            }
-
-            .country-item .item-info {
+            .country-name {
                 font-size: 0.9rem;
             }
-
-            .country-item .item-area {
+            .timer-bar {
+                height: 5px;
+            }
+            .buttons {
+                gap: 8px;
+            }
+            button {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+            .game-over {
+                padding: 15px;
+            }
+            .leaderboard-header {
+                font-size: 0.6rem;
+                padding: 6px 10px;
+                grid-template-columns: 75px 1fr 1fr 1fr;
+            }
+            .leaderboard-row {
+                font-size: 0.8rem;
+                padding: 8px 10px;
+                grid-template-columns: 75px 1fr 1fr 1fr;
+            }
+            .leaderboard-row .you-marker {
+                font-size: 0.55rem;
+            }
+            .leaderboard-row .rank-num {
+                width: 18px;
+            }
+            .leaderboard-row .medal {
+                font-size: 0.75rem;
+            }
+            .winning-flags img {
+                width: 18px;
+                height: 12px;
+            }
+            .winning-flags .target-flag {
+                width: 24px;
+                height: 16px;
+            }
+            .winning-flags .arrow {
                 font-size: 0.85rem;
+                margin: 0 4px;
+            }
+            .spectator-bar {
+                padding: 12px;
+            }
+            .spectator-status {
+                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Geography Blackjack</h1>
-        <p class="subtitle">How many countries can fit into one?</p>
+        <div class="header">
+            <h1>Geography Blackjack</h1>
+            <div class="stats">
+                <div class="stat playing">Playing: <span id="playing-count">0</span></div>
+                <div class="stat stood">Stood: <span id="stood-count">0</span></div>
+                <div class="stat busted">Busted: <span id="busted-count">0</span></div>
+            </div>
+        </div>
 
-        <div class="target-country">
-            <div class="target-flag"><img src="https://flagcdn.com/w160/gl.png" alt="Greenland Flag" /></div>
-            <h2>Target Country: <span id="target-name">Greenland</span></h2>
-            <p>Fill this country with other countries!</p>
-            <div class="area-info">
-                <div class="area-box">
-                    <div class="label">Square Kilometres</div>
-                    <div class="value" id="target-km">2,166,086 km²</div>
+        <div id="game-active">
+            <div class="target-country">
+                <div class="target-flag"><img id="target-flag" src="" alt="Flag"></div>
+                <div class="target-info">
+                    <div class="target-label">Filling</div>
+                    <div class="target-name" id="target-name">Loading...</div>
                 </div>
-                <div class="area-box">
-                    <div class="label">Square Miles</div>
-                    <div class="value" id="target-miles">836,330 mi²</div>
+                <div class="target-size" id="target-size"></div>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-label">
+                    <span class="label">Filled</span>
+                    <span id="progress-percent">0.00%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill spectator" id="spectator-fill" style="width: 0%"></div>
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
                 </div>
             </div>
-        </div>
 
-        <div class="progress-section">
-            <div class="progress-label">
-                <span>Filled</span>
-                <span id="progress-percent">0%</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
-            </div>
-        </div>
-
-        <div class="turn-counter">Turn: <span id="turn-number">1</span></div>
-
-        <div id="start-screen" class="start-screen">
-            <p>Get as close to 100% as possible without going over!</p>
-            <button class="start-btn" onclick="startGame()">START</button>
-        </div>
-
-        <div id="game-active" class="hidden">
-            <div class="current-offer">
-                <h3>COUNTRY OFFERED</h3>
-                <div class="country-flag" id="country-flag"></div>
-                <div class="country-name" id="offered-country">Loading...</div>
-                <p class="mystery-text">Size unknown - do you feel lucky?</p>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot playing"></div> Playing</div>
+                <div class="legend-item"><div class="legend-dot stood"></div> Stood</div>
+                <div class="legend-item"><div class="legend-dot busted"></div> Busted</div>
             </div>
 
-            <div class="buttons">
-                <button class="hit-btn" id="hit-btn" onclick="hit()">
-                    <span class="btn-text">HIT</span>
-                    <div class="timer-bar" id="timer-bar"></div>
-                </button>
+            <div class="player-grid" id="player-grid"></div>
+
+            <div class="country-bar">
+                <div class="country-flag"><img id="country-flag" src="" alt="Flag"></div>
+                <div class="country-info">
+                    <div class="country-name" id="country-name">Loading...</div>
+                    <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
+                </div>
+            </div>
+
+            <div class="buttons" id="buttons">
+                <button class="hit-btn" id="hit-btn" onclick="hit()">HIT</button>
                 <button class="stand-btn" id="stand-btn" onclick="stand()">STAND</button>
+            </div>
+
+            <div class="spectator-bar hidden" id="spectator-bar">
+                <div class="spectator-label">Spectating</div>
+                <div class="spectator-status" id="spectator-status">You stood at 85.2%</div>
+                <div class="spectator-score">Waiting for other players...</div>
             </div>
         </div>
 
         <div id="game-over" class="game-over hidden">
-            <h2 id="result-title">BUST!</h2>
-            <p id="result-message"></p>
-            <div id="dodge-bonus" class="dodge-bonus hidden">GOOD CALL!</div>
-            <div id="dodge-details" class="dodge-details hidden"></div>
-            <div class="final-score">Final: <span id="final-percent">0%</span></div>
-            <button class="play-again-btn" onclick="startGame()">PLAY AGAIN</button>
-        </div>
-
-        <div class="accepted-countries gameplay-hidden" id="accepted-countries">
-            <h3>Accepted Countries (<span id="country-count">0</span>)</h3>
-            <div class="country-list" id="country-list">
-                <p style="color: #666;">No countries accepted yet</p>
+            <div class="winning-flags" id="winning-flags"></div>
+            <div class="leaderboard">
+                <div class="leaderboard-header">
+                    <span>Rank</span>
+                    <span>Countries</span>
+                    <span>Filled</span>
+                    <span style="text-align:right">Players</span>
+                </div>
+                <div id="leaderboard-rows"></div>
             </div>
+            <button class="play-again-btn" onclick="startGame()">PLAY AGAIN</button>
         </div>
     </div>
 
     <script>
-        // Country data: name, area in km², ISO country code for flag
         const countries = [
             { name: "Vatican City", area: 0.44, code: "va" },
             { name: "Monaco", area: 2.02, code: "mc" },
-            { name: "San Marino", area: 61, code: "sm" },
-            { name: "Liechtenstein", area: 160, code: "li" },
             { name: "Malta", area: 316, code: "mt" },
-            { name: "Maldives", area: 300, code: "mv" },
-            { name: "Barbados", area: 430, code: "bb" },
             { name: "Singapore", area: 728, code: "sg" },
-            { name: "Bahrain", area: 786, code: "bh" },
             { name: "Luxembourg", area: 2586, code: "lu" },
             { name: "Cyprus", area: 9251, code: "cy" },
-            { name: "Lebanon", area: 10452, code: "lb" },
             { name: "Jamaica", area: 10991, code: "jm" },
-            { name: "Qatar", area: 11581, code: "qa" },
-            { name: "Kuwait", area: 17818, code: "kw" },
             { name: "Slovenia", area: 20273, code: "si" },
-            { name: "Israel", area: 20770, code: "il" },
             { name: "Belgium", area: 30528, code: "be" },
             { name: "Netherlands", area: 41543, code: "nl" },
             { name: "Switzerland", area: 41285, code: "ch" },
             { name: "Denmark", area: 42933, code: "dk" },
-            { name: "Estonia", area: 45227, code: "ee" },
-            { name: "Slovakia", area: 49035, code: "sk" },
-            { name: "Costa Rica", area: 51100, code: "cr" },
             { name: "Croatia", area: 56594, code: "hr" },
-            { name: "Bosnia", area: 51197, code: "ba" },
-            { name: "Lithuania", area: 65300, code: "lt" },
-            { name: "Latvia", area: 64589, code: "lv" },
             { name: "Ireland", area: 70273, code: "ie" },
-            { name: "Sri Lanka", area: 65610, code: "lk" },
-            { name: "Czech Republic", area: 78865, code: "cz" },
             { name: "Austria", area: 83871, code: "at" },
-            { name: "United Arab Emirates", area: 83600, code: "ae" },
             { name: "Portugal", area: 92212, code: "pt" },
-            { name: "Hungary", area: 93028, code: "hu" },
             { name: "South Korea", area: 100210, code: "kr" },
             { name: "Iceland", area: 103000, code: "is" },
-            { name: "Cuba", area: 109884, code: "cu" },
-            { name: "Bulgaria", area: 110879, code: "bg" },
-            { name: "Guatemala", area: 108889, code: "gt" },
             { name: "Greece", area: 131957, code: "gr" },
             { name: "Nepal", area: 147181, code: "np" },
-            { name: "Bangladesh", area: 147570, code: "bd" },
-            { name: "Tunisia", area: 163610, code: "tn" },
             { name: "Uruguay", area: 176215, code: "uy" },
-            { name: "Cambodia", area: 181035, code: "kh" },
-            { name: "Syria", area: 185180, code: "sy" },
-            { name: "Senegal", area: 196722, code: "sn" },
-            { name: "Belarus", area: 207600, code: "by" },
             { name: "United Kingdom", area: 242495, code: "gb" },
-            { name: "Ghana", area: 238533, code: "gh" },
-            { name: "Romania", area: 238397, code: "ro" },
             { name: "New Zealand", area: 268021, code: "nz" },
             { name: "Italy", area: 301340, code: "it" },
-            { name: "Philippines", area: 300000, code: "ph" },
-            { name: "Ecuador", area: 276841, code: "ec" },
             { name: "Poland", area: 312696, code: "pl" },
-            { name: "Norway", area: 323802, code: "no" },
-            { name: "Finland", area: 338424, code: "fi" },
-            { name: "Vietnam", area: 331212, code: "vn" },
-            { name: "Malaysia", area: 330803, code: "my" },
             { name: "Germany", area: 357114, code: "de" },
             { name: "Japan", area: 377975, code: "jp" },
-            { name: "Zimbabwe", area: 390757, code: "zw" },
-            { name: "Paraguay", area: 406752, code: "py" },
-            { name: "Iraq", area: 438317, code: "iq" },
-            { name: "Sweden", area: 450295, code: "se" },
-            { name: "Morocco", area: 446550, code: "ma" },
-            { name: "Uzbekistan", area: 447400, code: "uz" },
             { name: "Spain", area: 505990, code: "es" },
-            { name: "Thailand", area: 513120, code: "th" },
             { name: "France", area: 551695, code: "fr" },
-            { name: "Kenya", area: 580367, code: "ke" },
-            { name: "Ukraine", area: 603550, code: "ua" },
-            { name: "Madagascar", area: 587041, code: "mg" },
-            { name: "Botswana", area: 581730, code: "bw" },
-            { name: "Afghanistan", area: 652230, code: "af" },
-            { name: "Myanmar", area: 676578, code: "mm" },
-            { name: "Somalia", area: 637657, code: "so" },
             { name: "Turkey", area: 783562, code: "tr" },
-            { name: "Chile", area: 756102, code: "cl" },
-            { name: "Zambia", area: 752612, code: "zm" },
-            { name: "Pakistan", area: 881912, code: "pk" },
-            { name: "Namibia", area: 825615, code: "na" },
-            { name: "Mozambique", area: 801590, code: "mz" },
-            { name: "Venezuela", area: 916445, code: "ve" },
-            { name: "Nigeria", area: 923768, code: "ng" },
-            { name: "Tanzania", area: 945087, code: "tz" },
             { name: "Egypt", area: 1002450, code: "eg" },
-            { name: "Bolivia", area: 1098581, code: "bo" },
-            { name: "Ethiopia", area: 1104300, code: "et" },
             { name: "South Africa", area: 1221037, code: "za" },
-            { name: "Colombia", area: 1141748, code: "co" },
-            { name: "Peru", area: 1285216, code: "pe" },
-            { name: "Chad", area: 1284000, code: "td" },
-            { name: "Niger", area: 1267000, code: "ne" },
-            { name: "Angola", area: 1246700, code: "ao" },
-            { name: "Mali", area: 1240192, code: "ml" },
             { name: "Iran", area: 1648195, code: "ir" },
-            { name: "Mongolia", area: 1564110, code: "mn" },
-            { name: "Libya", area: 1759540, code: "ly" },
-            { name: "Sudan", area: 1861484, code: "sd" },
-            { name: "Indonesia", area: 1904569, code: "id" },
             { name: "Mexico", area: 1964375, code: "mx" },
             { name: "Saudi Arabia", area: 2149690, code: "sa" }
         ];
 
-        // Target country (Greenland)
-        const targetCountry = {
-            name: "Greenland",
-            area: 2166086, // km²
-            code: "gl"
-        };
+        // Countries/territories similar in size to Greenland (±25% of 2,166,086 km²)
+        const targetCountries = [
+            { name: "Kazakhstan", area: 2724900, code: "kz" },
+            { name: "Algeria", area: 2381741, code: "dz" },
+            { name: "DR Congo", area: 2344858, code: "cd" },
+            { name: "Greenland", area: 2166086, code: "gl" },
+            { name: "Saudi Arabia", area: 2149690, code: "sa" },
+            { name: "Mexico", area: 1964375, code: "mx" },
+            { name: "Indonesia", area: 1904569, code: "id" },
+            { name: "Sudan", area: 1861484, code: "sd" },
+            { name: "Libya", area: 1759540, code: "ly" },
+            { name: "Iran", area: 1648195, code: "ir" }
+        ];
 
-        // Helper function to get flag image URL
-        function getFlagUrl(code, size = 80) {
-            return `https://flagcdn.com/w${size}/${code}.png`;
-        }
+        let targetCountry = null;
+        const TURN_TIME = 3000;
 
-        // Helper function to create flag img element
-        function getFlagImg(code, size = 80, cssClass = '') {
-            return `<img src="${getFlagUrl(code, size)}" alt="Flag" class="${cssClass}" />`;
-        }
+        let game = { players: [], currentCountry: null, availableCountries: [], timerInterval: null, gameEnded: false, spectatorArea: 0, isSpectating: false };
 
-        // Game state
-        let availableCountries = [];
-        let acceptedCountries = [];
-        let currentOffer = null;
-        let totalArea = 0;
-        let turn = 1;
-        let gameEnded = false;
-
-        // Timer state
-        let timeRemaining = 5000; // milliseconds
-        let timerInterval = null;
-        const TURN_TIME = 5000; // 5 seconds in ms
-        const TIMER_TICK = 50; // update every 50ms for smooth animation
-
-        function formatNumber(num) {
-            return num.toLocaleString();
-        }
-
-        function kmToMiles(km) {
-            return km * 0.386102;
-        }
-
-        function updateTimerBar() {
-            const timerBar = document.getElementById('timer-bar');
-            const percent = ((TURN_TIME - timeRemaining) / TURN_TIME) * 100;
-            timerBar.style.width = percent + '%';
-        }
-
-        function startTimer() {
-            stopTimer();
-            timeRemaining = TURN_TIME;
-            updateTimerBar();
-
-            timerInterval = setInterval(() => {
-                timeRemaining -= TIMER_TICK;
-                updateTimerBar();
-
-                if (timeRemaining <= 0) {
-                    stopTimer();
-                    hit(); // Auto-hit when time runs out
-                }
-            }, TIMER_TICK);
-        }
-
-        function stopTimer() {
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-            }
-        }
-
-        function resetTimerBar() {
-            const timerBar = document.getElementById('timer-bar');
-            timerBar.style.width = '0%';
-        }
-
-        function shuffleArray(array) {
-            const shuffled = [...array];
-            for (let i = shuffled.length - 1; i > 0; i--) {
+        function shuffleArray(arr) {
+            const s = [...arr];
+            for (let i = s.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                [s[i], s[j]] = [s[j], s[i]];
             }
-            return shuffled;
+            return s;
         }
 
-        function getPercentage() {
-            return (totalArea / targetCountry.area) * 100;
-        }
-
-        function updateProgress() {
-            const percent = getPercentage();
-            const progressFill = document.getElementById('progress-fill');
-            const progressPercent = document.getElementById('progress-percent');
-
-            progressFill.style.width = Math.min(percent, 100) + '%';
-            progressPercent.textContent = percent.toFixed(2) + '%';
-
-            progressFill.classList.remove('warning', 'danger');
-            if (percent > 100) {
-                progressFill.classList.add('danger');
-            } else if (percent > 80) {
-                progressFill.classList.add('warning');
-            }
-        }
-
-        function updateCountryList() {
-            const listEl = document.getElementById('country-list');
-            const countEl = document.getElementById('country-count');
-
-            countEl.textContent = acceptedCountries.length;
-
-            if (acceptedCountries.length === 0) {
-                listEl.innerHTML = '<p style="color: #666;">No countries accepted yet</p>';
-                return;
-            }
-
-            listEl.innerHTML = acceptedCountries.map(c => `
-                <div class="country-item">
-                    <div class="item-info">
-                        <span class="item-flag">${getFlagImg(c.code, 40)}</span>
-                        <span>${c.name}</span>
-                    </div>
-                    <span class="item-area">${formatNumber(c.area)} km²</span>
-                </div>
-            `).join('');
-        }
-
-        function offerNewCountry() {
-            if (availableCountries.length === 0) {
-                endGame(false, "No more countries available!");
-                return;
-            }
-
-            currentOffer = availableCountries.pop();
-            document.getElementById('offered-country').textContent = currentOffer.name;
-            document.getElementById('country-flag').innerHTML = getFlagImg(currentOffer.code, 80);
-            document.getElementById('turn-number').textContent = turn;
-            startTimer();
-        }
-
-        function hit() {
-            if (gameEnded || !currentOffer) return;
-
-            stopTimer();
-
-            // Accept the country
-            acceptedCountries.push(currentOffer);
-            totalArea += currentOffer.area;
-            turn++;
-
-            updateProgress();
-            updateCountryList();
-
-            // Check for bust
-            if (getPercentage() > 100) {
-                endGame(true);
-                return;
-            }
-
-            // Offer next country
-            offerNewCountry();
-        }
-
-        function stand() {
-            if (gameEnded) return;
-            stopTimer();
-
-            // Check if accepting the current offer would have caused a bust
-            const wouldBust = currentOffer && ((totalArea + currentOffer.area) / targetCountry.area) * 100 > 100;
-            endGame(false, null, wouldBust ? currentOffer : null);
-        }
-
-        function endGame(busted, message = null, dodgedCountry = null) {
-            gameEnded = true;
-            stopTimer();
-
-            document.getElementById('game-active').classList.add('hidden');
-            document.getElementById('game-over').classList.remove('hidden');
-            document.getElementById('accepted-countries').classList.remove('gameplay-hidden');
-            resetTimerBar();
-
-            const gameOverEl = document.getElementById('game-over');
-            const titleEl = document.getElementById('result-title');
-            const messageEl = document.getElementById('result-message');
-            const finalEl = document.getElementById('final-percent');
-            const dodgeBonusEl = document.getElementById('dodge-bonus');
-            const dodgeDetailsEl = document.getElementById('dodge-details');
-
-            // Hide dodge elements by default
-            dodgeBonusEl.classList.add('hidden');
-            dodgeDetailsEl.classList.add('hidden');
-
-            const percent = getPercentage();
-
-            // Show dodge info if player avoided a bust
-            if (dodgedCountry) {
-                dodgeBonusEl.classList.remove('hidden');
-                dodgeDetailsEl.classList.remove('hidden');
-                const wouldHaveBeen = ((totalArea + dodgedCountry.area) / targetCountry.area) * 100;
-                dodgeDetailsEl.innerHTML = `${dodgedCountry.name} would have been ${formatNumber(dodgedCountry.area)} km² (${wouldHaveBeen.toFixed(2)}% total) - BUST!`;
-            }
-
-            finalEl.textContent = percent.toFixed(2) + '%';
-
-            gameOverEl.classList.remove('bust', 'win', 'dodged');
-
-            if (busted) {
-                gameOverEl.classList.add('bust');
-                titleEl.textContent = 'BUST!';
-                messageEl.textContent = message || `You went over! ${currentOffer.name} was ${formatNumber(currentOffer.area)} km² - too much!`;
-            } else if (dodgedCountry) {
-                gameOverEl.classList.add('dodged');
-                titleEl.textContent = 'DODGED!';
-                messageEl.textContent = `Smart move! You avoided the bust and earned a bonus!`;
-            } else {
-                gameOverEl.classList.add('win');
-                if (percent >= 95) {
-                    titleEl.textContent = 'PERFECT!';
-                    messageEl.textContent = `Incredible! You filled ${percent.toFixed(2)}% of ${targetCountry.name}!`;
-                } else if (percent >= 80) {
-                    titleEl.textContent = 'GREAT!';
-                    messageEl.textContent = `Well played! You filled ${percent.toFixed(2)}% of ${targetCountry.name}!`;
-                } else if (percent >= 50) {
-                    titleEl.textContent = 'GOOD!';
-                    messageEl.textContent = `Not bad! You filled ${percent.toFixed(2)}% of ${targetCountry.name}.`;
-                } else {
-                    titleEl.textContent = 'STAND';
-                    messageEl.textContent = `You played it safe with ${percent.toFixed(2)}% of ${targetCountry.name}.`;
-                }
-            }
-
-            document.getElementById('hit-btn').disabled = true;
-            document.getElementById('stand-btn').disabled = true;
+        function generateBots(count) {
+            return Array.from({ length: count }, () => ({
+                totalArea: 0, status: 'playing', isBot: true,
+                riskTolerance: 0.70 + Math.random() * 0.35,
+                bustChance: Math.random() * 0.25,  // 0-25% chance to risk busting
+                countriesAccepted: []
+            }));
         }
 
         function startGame() {
-            // Reset state
-            availableCountries = shuffleArray(countries);
-            acceptedCountries = [];
-            currentOffer = null;
-            totalArea = 0;
-            turn = 1;
-            gameEnded = false;
-            stopTimer();
+            // Randomly select target country
+            targetCountry = targetCountries[Math.floor(Math.random() * targetCountries.length)];
 
-            // Reset UI
-            document.getElementById('start-screen').classList.add('hidden');
+            // Update target display
+            document.getElementById('target-flag').src = `https://flagcdn.com/w80/${targetCountry.code}.png`;
+            document.getElementById('target-name').textContent = targetCountry.name;
+            document.getElementById('target-size').textContent = targetCountry.area.toLocaleString() + ' km²';
+
+            // Filter countries smaller than target
+            const eligibleCountries = countries.filter(c => c.area < targetCountry.area);
+
+            const botCount = 99; // Total 100 with player
+            game = {
+                players: [{ totalArea: 0, status: 'playing', isBot: false, countriesAccepted: [] }, ...generateBots(botCount)],
+                currentCountry: null,
+                availableCountries: shuffleArray(eligibleCountries),
+                timerInterval: null,
+                gameEnded: false,
+                playerActed: false,
+                spectatorArea: 0,
+                isSpectating: false
+            };
+
             document.getElementById('game-active').classList.remove('hidden');
             document.getElementById('game-over').classList.add('hidden');
-            document.getElementById('accepted-countries').classList.add('gameplay-hidden');
             document.getElementById('hit-btn').disabled = false;
             document.getElementById('stand-btn').disabled = false;
+            document.getElementById('buttons').classList.remove('hidden');
+            document.getElementById('spectator-bar').classList.add('hidden');
+            document.getElementById('progress-fill').classList.remove('stood', 'warning', 'danger');
+            document.getElementById('spectator-fill').style.width = '0%';
 
-            updateProgress();
-            updateCountryList();
-            offerNewCountry();
+            renderGrid();
+            nextRound();
         }
+
+        function renderGrid() {
+            const grid = document.getElementById('player-grid');
+            grid.innerHTML = game.players.map((p, i) =>
+                `<div class="player-dot ${p.status} ${i === 0 ? 'you' : ''}" id="dot-${i}"></div>`
+            ).join('');
+        }
+
+        function updateGrid() {
+            game.players.forEach((p, i) => {
+                const dot = document.getElementById(`dot-${i}`);
+                if (dot) {
+                    dot.className = `player-dot ${p.status} ${i === 0 ? 'you' : ''}`;
+                }
+            });
+        }
+
+        function nextRound() {
+            if (game.availableCountries.length === 0 || isGameOver()) {
+                endGame();
+                return;
+            }
+
+            game.currentCountry = game.availableCountries.pop();
+            game.playerActed = false; // Reset for new round
+            document.getElementById('country-name').textContent = game.currentCountry.name;
+            document.getElementById('country-flag').src = `https://flagcdn.com/w80/${game.currentCountry.code}.png`;
+
+            // Re-enable buttons if player is still playing
+            if (game.players[0].status === 'playing') {
+                document.getElementById('hit-btn').disabled = false;
+                document.getElementById('stand-btn').disabled = false;
+            }
+
+            startTimer();
+            updateDisplay();
+        }
+
+        function startTimer() {
+            if (game.timerInterval) clearInterval(game.timerInterval);
+            let timeRemaining = TURN_TIME;
+
+            game.timerInterval = setInterval(() => {
+                timeRemaining -= 50;
+                document.getElementById('timer-fill').style.width = ((TURN_TIME - timeRemaining) / TURN_TIME * 100) + '%';
+
+                if (timeRemaining <= 0) {
+                    clearInterval(game.timerInterval);
+                    processRound();
+                }
+            }, 50);
+        }
+
+        function hit() {
+            if (game.gameEnded || game.players[0].status !== 'playing' || game.playerActed) return;
+            game.playerActed = true;
+            game.players[0].totalArea += game.currentCountry.area;
+            game.players[0].countriesAccepted.push(game.currentCountry);
+            document.getElementById('hit-btn').disabled = true;
+            document.getElementById('stand-btn').disabled = true;
+            if (getPercent(game.players[0]) > 100) {
+                game.players[0].status = 'busted';
+            }
+            updateDisplay();
+        }
+
+        function stand() {
+            if (game.gameEnded || game.players[0].status !== 'playing') return;
+            game.players[0].status = 'stood';
+            document.getElementById('hit-btn').disabled = true;
+            document.getElementById('stand-btn').disabled = true;
+            enterSpectatorMode();
+            updateDisplay();
+        }
+
+        function enterSpectatorMode() {
+            const player = game.players[0];
+            const pct = getPercent(player).toFixed(2);
+
+            game.isSpectating = true;
+            game.spectatorArea = player.totalArea;
+
+            document.getElementById('buttons').classList.add('hidden');
+            document.getElementById('spectator-bar').classList.remove('hidden');
+            document.getElementById('spectator-status').textContent = `You stood at ${pct}%`;
+
+            // Change progress bar to stood color
+            document.getElementById('progress-fill').classList.add('stood');
+        }
+
+        function processRound() {
+            game.players.forEach(p => {
+                if (p.isBot && p.status === 'playing') {
+                    const potentialPct = (p.totalArea + game.currentCountry.area) / targetCountry.area * 100;
+                    const currentPct = getPercent(p);
+
+                    // Would this bust? Some aggressive bots take the risk anyway
+                    if (potentialPct > 100) {
+                        if (Math.random() < p.bustChance && currentPct > 50) {
+                            // Risky bot takes the chance
+                            p.totalArea += game.currentCountry.area;
+                            p.countriesAccepted.push(game.currentCountry);
+                            p.status = 'busted';
+                        } else {
+                            p.status = 'stood';
+                        }
+                    } else if (currentPct >= p.riskTolerance * 100) {
+                        p.status = 'stood';
+                    } else if (Math.random() < 0.85) {
+                        p.totalArea += game.currentCountry.area;
+                        p.countriesAccepted.push(game.currentCountry);
+                        if (getPercent(p) > 100) p.status = 'busted';
+                    } else {
+                        p.status = 'stood';
+                    }
+                }
+            });
+
+            const player = game.players[0];
+            if (player.status === 'playing' && !game.playerActed) {
+                // Auto-hit if player didn't act
+                player.totalArea += game.currentCountry.area;
+                player.countriesAccepted.push(game.currentCountry);
+                if (getPercent(player) > 100) {
+                    player.status = 'busted';
+                }
+            }
+
+            // Track what would have happened if player kept hitting
+            if (game.isSpectating) {
+                game.spectatorArea += game.currentCountry.area;
+            }
+
+            updateDisplay();
+            isGameOver() ? endGame() : nextRound();
+        }
+
+        function getPercent(p) { return (p.totalArea / targetCountry.area) * 100; }
+
+        function isGameOver() { return game.players.filter(p => p.status === 'playing').length === 0; }
+
+        function getRanked() {
+            return [...game.players].sort((a, b) => {
+                if (a.status === 'busted' && b.status !== 'busted') return 1;
+                if (b.status === 'busted' && a.status !== 'busted') return -1;
+                return getPercent(b) - getPercent(a);
+            });
+        }
+
+        function updateDisplay() {
+            const player = game.players[0];
+            const pct = getPercent(player);
+
+            // Update progress bar
+            const progressFill = document.getElementById('progress-fill');
+            const spectatorFill = document.getElementById('spectator-fill');
+            const progressPercent = document.getElementById('progress-percent');
+
+            progressFill.style.width = Math.min(pct, 100) + '%';
+
+            if (game.isSpectating) {
+                // Show spectator area (what would have happened)
+                const spectatorPct = (game.spectatorArea / targetCountry.area) * 100;
+                spectatorFill.style.width = Math.min(spectatorPct, 100) + '%';
+                if (spectatorPct > pct) {
+                    progressPercent.textContent = pct.toFixed(2) + '% (would be ' + spectatorPct.toFixed(2) + '%)';
+                } else {
+                    progressPercent.textContent = pct.toFixed(2) + '%';
+                }
+            } else {
+                progressPercent.textContent = pct.toFixed(2) + '%';
+                progressFill.classList.remove('warning', 'danger');
+                if (pct > 100) {
+                    progressFill.classList.add('danger');
+                } else if (pct > 80) {
+                    progressFill.classList.add('warning');
+                }
+            }
+
+            // Update stats
+            const playing = game.players.filter(p => p.status === 'playing').length;
+            const stood = game.players.filter(p => p.status === 'stood').length;
+            const busted = game.players.filter(p => p.status === 'busted').length;
+            document.getElementById('playing-count').textContent = playing;
+            document.getElementById('stood-count').textContent = stood;
+            document.getElementById('busted-count').textContent = busted;
+
+            updateGrid();
+        }
+
+        function endGame() {
+            game.gameEnded = true;
+            if (game.timerInterval) clearInterval(game.timerInterval);
+
+            document.getElementById('game-active').classList.add('hidden');
+            document.getElementById('game-over').classList.remove('hidden');
+
+            const player = game.players[0];
+            const playerPct = getPercent(player);
+
+            // Group players by score (rounded to 1 decimal)
+            const groups = {};
+            const bustedPlayers = [];
+
+            game.players.forEach(p => {
+                if (p.status === 'busted') {
+                    bustedPlayers.push(p);
+                } else {
+                    const pct = getPercent(p).toFixed(2);
+                    if (!groups[pct]) {
+                        groups[pct] = { pct: parseFloat(pct), players: [], countriesAccepted: p.countriesAccepted };
+                    }
+                    groups[pct].players.push(p);
+                }
+            });
+
+            // Sort groups by percentage descending
+            const sortedGroups = Object.values(groups).sort((a, b) => b.pct - a.pct);
+
+            // Show winning countries flags with arrow to target
+            const winningGroup = sortedGroups[0];
+            let winningFlagsHtml = '';
+            if (winningGroup) {
+                winningFlagsHtml = winningGroup.countriesAccepted.map(c =>
+                    `<img src="https://flagcdn.com/w40/${c.code}.png" alt="${c.name}" title="${c.name}">`
+                ).join('');
+                winningFlagsHtml += `<span class="arrow">→</span>`;
+                winningFlagsHtml += `<img class="target-flag" src="https://flagcdn.com/w40/${targetCountry.code}.png" alt="${targetCountry.name}" title="${targetCountry.name}">`;
+            }
+            document.getElementById('winning-flags').innerHTML = winningFlagsHtml;
+
+            // Generate leaderboard HTML
+            const medals = ['🥇', '🥈', '🥉'];
+            let html = '';
+            sortedGroups.forEach((group, index) => {
+                const hasPlayer = group.players.includes(player);
+                let classes = 'leaderboard-row';
+                if (hasPlayer) classes += ' you';
+
+                const rank = index + 1;
+                const medal = medals[index] || '';
+
+                html += `<div class="${classes}">
+                    <span class="rank"><span class="rank-num">#${rank}</span>${medal ? `<span class="medal">${medal}</span>` : ''}${hasPlayer ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
+                    <span>${group.countriesAccepted.length}</span>
+                    <span class="percent">${group.pct.toFixed(2)}%</span>
+                    <span class="players">${group.players.length}</span>
+                </div>`;
+            });
+
+            // Add busted row (always show)
+            const hasPlayerBusted = bustedPlayers.includes(player);
+            html += `<div class="leaderboard-row busted${hasPlayerBusted ? ' you' : ''}">
+                <span class="rank">—${hasPlayerBusted ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
+                <span>—</span>
+                <span class="percent">BUST</span>
+                <span class="players">${bustedPlayers.length}</span>
+            </div>`;
+
+            document.getElementById('leaderboard-rows').innerHTML = html;
+        }
+
+        startGame();
     </script>
 </body>
 </html>
