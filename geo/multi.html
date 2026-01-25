@@ -172,9 +172,14 @@
         }
         .leaderboard-row .rank {
             font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        .leaderboard-row .rank-num {
+            width: 20px;
         }
         .leaderboard-row .medal {
-            margin-left: 4px;
+            font-size: 0.85rem;
         }
         .leaderboard-row .percent {
             font-weight: bold;
@@ -438,8 +443,11 @@
             .leaderboard-row .you-marker {
                 font-size: 0.6rem;
             }
+            .leaderboard-row .rank-num {
+                width: 18px;
+            }
             .leaderboard-row .medal {
-                margin-left: 2px;
+                font-size: 0.75rem;
             }
             .winning-flags img {
                 width: 18px;
@@ -882,7 +890,7 @@
                 const medal = medals[index] || '';
 
                 html += `<div class="${classes}">
-                    <span class="rank">#${rank}${medal ? `<span class="medal">${medal}</span>` : ''}</span>
+                    <span class="rank"><span class="rank-num">#${rank}</span>${medal ? `<span class="medal">${medal}</span>` : ''}</span>
                     <span>${group.countriesAccepted.length}</span>
                     <span class="percent">${group.pct.toFixed(1)}%</span>
                     <span class="players">${group.players.length}${hasPlayer ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
