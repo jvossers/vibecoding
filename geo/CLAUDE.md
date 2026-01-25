@@ -21,13 +21,15 @@ The original single-player version with:
 
 ### multi.html (Multiplayer Prototype)
 A multiplayer UX prototype simulating 100 concurrent players:
-- Random target country from top 15 largest countries/territories by land area
+- Random target country from 10 Greenland-sized countries (±25% of 2,166,086 km²)
 - Only offers countries smaller than the selected target
 - 3-second timer per round
 - Visual avatar grid showing all players' status (playing/stood/busted)
 - Progress bar showing fill percentage
-- Simulated bot opponents with varying risk tolerances
+- Spectator mode when standing: watch remaining players, shows "would be" score
+- Simulated bot opponents with varying risk tolerances (some will bust)
 - Round ends when all players have acted or timer expires
+- Game results leaderboard: ranks, medals (🥇🥈🥉), grouped by score, winning country flags
 
 ## Architecture
 
@@ -37,12 +39,14 @@ Both files are standalone HTML with:
 
 Key data:
 - `countries` array: Static data with name, area (km²), and ISO code
-- `targetCountries` (multi.html): Top 15 countries/territories by land area
+- `targetCountries` (multi.html): 10 countries similar in size to Greenland (±25%)
 
 Core functions:
 - `startGame()`: Initializes/resets game state
 - `hit()`: Accepts current country, checks for bust
-- `stand()`: Ends game/locks in score
+- `stand()`: Locks in score, enters spectator mode
 - `processRound()`: Handles bot decisions and auto-hit
+- `enterSpectatorMode()`: Shows spectator UI when player stands
+- `endGame()`: Generates grouped leaderboard with rankings and medals
 
 External dependency: Flag images from `flagcdn.com`
