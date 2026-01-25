@@ -17,12 +17,17 @@ The main multiplayer version simulating 10-100 concurrent players:
 - Random target country from 10 Greenland-sized countries (±25% of 2,166,086 km²)
 - Only offers countries smaller than the selected target
 - 3-second auto-hit timer per round (no manual hit button)
+- "Adding" label clarifies which country is being offered
 - Visual grid showing all players' status with colored dots (playing/stood/busted)
+- "Competing against X online players in realtime" message above grid
 - Progress bar showing fill percentage
 - Spectator mode when standing: watch remaining players, shows "would be" score
 - Simulated bot opponents with varying risk tolerances (some will bust)
 - Stand button fixed to bottom of screen on mobile
 - Game results leaderboard: ranks, medals (🥇🥈🥉), grouped by score, winning country flags
+
+### MULTIPLAYER_PLAN.md
+Implementation plan for converting to real multiplayer with Node.js/Express/Socket.io backend, targeting Azure App Service (Linux) deployment.
 
 ### original.html (Single Player)
 The original single-player version (backup):
