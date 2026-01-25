@@ -17,7 +17,7 @@ The main multiplayer version simulating 100 concurrent players:
 - Random target country from 10 Greenland-sized countries (±25% of 2,166,086 km²)
 - Only offers countries smaller than the selected target
 - 3-second timer per round
-- Visual avatar grid showing all players' status (playing/stood/busted)
+- Visual avatar grid with unique emoji avatars showing all players' status (playing/stood/busted)
 - Progress bar showing fill percentage
 - Spectator mode when standing: watch remaining players, shows "would be" score
 - Simulated bot opponents with varying risk tolerances (some will bust)
@@ -40,6 +40,7 @@ Both files are standalone HTML with:
 Key data:
 - `countries` array: Static data with name, area (km²), and ISO code
 - `targetCountries` (index.html): 10 countries similar in size to Greenland (±25%)
+- `avatars` array: ~100 diverse emojis for unique bot avatars
 
 Core functions:
 - `startGame()`: Initializes/resets game state
