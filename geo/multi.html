@@ -70,7 +70,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 6px;
+            font-size: 9px;
             font-weight: bold;
             color: #1a1a2e;
         }
@@ -306,7 +306,7 @@
                 margin-bottom: 8px;
             }
             .player-dot.you::after {
-                font-size: 5px;
+                font-size: 7px;
             }
             .country-bar {
                 padding: 10px;
@@ -512,7 +512,8 @@
                 currentCountry: null,
                 availableCountries: shuffleArray(eligibleCountries),
                 timerInterval: null,
-                gameEnded: false
+                gameEnded: false,
+                playerActed: false
             };
 
             document.getElementById('game-active').classList.remove('hidden');
@@ -548,6 +549,7 @@
             }
 
             game.currentCountry = game.availableCountries.pop();
+            game.playerActed = false; // Reset for new round
             document.getElementById('country-name').textContent = game.currentCountry.name;
             document.getElementById('country-flag').src = `https://flagcdn.com/w80/${game.currentCountry.code}.png`;
 
@@ -577,7 +579,8 @@
         }
 
         function hit() {
-            if (game.gameEnded || game.players[0].status !== 'playing') return;
+            if (game.gameEnded || game.players[0].status !== 'playing' || game.playerActed) return;
+            game.playerActed = true;
             game.players[0].totalArea += game.currentCountry.area;
             document.getElementById('hit-btn').disabled = true;
             document.getElementById('stand-btn').disabled = true;
@@ -613,7 +616,8 @@
             });
 
             const player = game.players[0];
-            if (player.status === 'playing') {
+            if (player.status === 'playing' && !game.playerActed) {
+                // Auto-hit if player didn't act
                 player.totalArea += game.currentCountry.area;
                 if (getPercent(player) > 100) {
                     player.status = 'busted';
