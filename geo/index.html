@@ -52,6 +52,14 @@
             background: #4ecca3;
             position: relative;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .player-dot::before {
+            content: '👤';
+            font-size: 10px;
+            opacity: 0.3;
         }
         .player-dot.stood {
             background: #f39c12;
@@ -59,6 +67,9 @@
         .player-dot.busted {
             background: #e74c3c;
             opacity: 0.4;
+        }
+        .player-dot.you::before {
+            content: none;
         }
         .player-dot.you {
             border: 2px solid #fff;
@@ -392,6 +403,9 @@
                 padding: 8px;
                 gap: 3px;
                 margin-bottom: 8px;
+            }
+            .player-dot::before {
+                font-size: 8px;
             }
             .player-dot.you::after {
                 font-size: 10px;
