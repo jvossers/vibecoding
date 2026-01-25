@@ -74,42 +74,6 @@
             font-weight: bold;
             color: #1a1a2e;
         }
-        .your-panel {
-            background: #232946;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 10px;
-            border: 2px solid #4ecca3;
-        }
-        .your-panel.busted {
-            border-color: #e74c3c;
-        }
-        .your-panel.stood {
-            border-color: #f39c12;
-        }
-        .panel-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .your-score {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #4ecca3;
-        }
-        .your-score.warning { color: #f39c12; }
-        .your-score.danger { color: #e74c3c; }
-        .your-rank {
-            text-align: right;
-        }
-        .rank-number {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        .rank-label {
-            font-size: 0.75rem;
-            color: #888;
-        }
         .country-bar {
             background: #1a1a2e;
             border-radius: 10px;
@@ -221,6 +185,165 @@
         .legend-dot.playing { background: #4ecca3; }
         .legend-dot.stood { background: #f39c12; }
         .legend-dot.busted { background: #e74c3c; opacity: 0.4; }
+        .target-country {
+            background: #232946;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 2px solid #4ecca3;
+        }
+        .target-flag img {
+            width: 50px;
+            height: 34px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .target-info {
+            flex: 1;
+        }
+        .target-label {
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+        .target-name {
+            font-weight: bold;
+            color: #4ecca3;
+        }
+        .target-size {
+            font-size: 0.8rem;
+            color: #888;
+            text-align: right;
+        }
+        .progress-section {
+            margin-bottom: 10px;
+        }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+        }
+        .progress-label .label { color: #888; }
+        .progress-bar {
+            height: 24px;
+            background: #1a1a2e;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #333;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecca3, #45b393);
+            transition: width 0.3s ease, background 0.3s ease;
+            border-radius: 10px;
+        }
+        .progress-fill.warning {
+            background: linear-gradient(90deg, #f39c12, #e74c3c);
+        }
+        .progress-fill.danger {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            .header {
+                flex-direction: column;
+                gap: 5px;
+                margin-bottom: 8px;
+            }
+            .header h1 {
+                font-size: 1.1rem;
+            }
+            .stats {
+                gap: 10px;
+                font-size: 0.7rem;
+            }
+            .target-country {
+                padding: 10px;
+                margin-bottom: 8px;
+            }
+            .target-flag img {
+                width: 40px;
+                height: 27px;
+            }
+            .target-label {
+                font-size: 0.65rem;
+            }
+            .target-name {
+                font-size: 0.9rem;
+            }
+            .target-size {
+                font-size: 0.7rem;
+            }
+            .progress-section {
+                margin-bottom: 8px;
+            }
+            .progress-label {
+                font-size: 0.8rem;
+            }
+            .progress-bar {
+                height: 20px;
+            }
+            .legend {
+                gap: 10px;
+                margin-bottom: 8px;
+                font-size: 0.65rem;
+            }
+            .legend-dot {
+                width: 10px;
+                height: 10px;
+            }
+            .player-grid {
+                padding: 8px;
+                gap: 3px;
+                margin-bottom: 8px;
+            }
+            .player-dot.you::after {
+                font-size: 5px;
+            }
+            .country-bar {
+                padding: 10px;
+                gap: 10px;
+                margin-bottom: 8px;
+            }
+            .country-flag img {
+                width: 40px;
+                height: 27px;
+            }
+            .country-name {
+                font-size: 0.9rem;
+            }
+            .timer-bar {
+                height: 5px;
+            }
+            .buttons {
+                gap: 8px;
+            }
+            button {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+            .game-over {
+                padding: 20px;
+            }
+            .game-over h2 {
+                font-size: 1.5rem;
+            }
+            .final-stats {
+                gap: 20px;
+                margin: 15px 0;
+            }
+            .final-stat-value {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -235,6 +358,25 @@
         </div>
 
         <div id="game-active">
+            <div class="target-country">
+                <div class="target-flag"><img id="target-flag" src="" alt="Flag"></div>
+                <div class="target-info">
+                    <div class="target-label">Filling</div>
+                    <div class="target-name" id="target-name">Loading...</div>
+                </div>
+                <div class="target-size" id="target-size"></div>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-label">
+                    <span class="label">Filled</span>
+                    <span id="progress-percent">0.00%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
             <div class="legend">
                 <div class="legend-item"><div class="legend-dot playing"></div> Playing</div>
                 <div class="legend-item"><div class="legend-dot stood"></div> Stood</div>
@@ -242,16 +384,6 @@
             </div>
 
             <div class="player-grid" id="player-grid"></div>
-
-            <div class="your-panel" id="your-panel">
-                <div class="panel-row">
-                    <div class="your-score" id="your-score">0.00%</div>
-                    <div class="your-rank">
-                        <div class="rank-number" id="your-rank">#1</div>
-                        <div class="rank-label">of <span id="total-players">100</span></div>
-                    </div>
-                </div>
-            </div>
 
             <div class="country-bar">
                 <div class="country-flag"><img id="country-flag" src="" alt="Flag"></div>
@@ -322,7 +454,26 @@
             { name: "Saudi Arabia", area: 2149690, code: "sa" }
         ];
 
-        const targetArea = 2166086;
+        // Top 15 countries/territories by land area
+        const targetCountries = [
+            { name: "Russia", area: 17098242, code: "ru" },
+            { name: "Canada", area: 9984670, code: "ca" },
+            { name: "United States", area: 9833517, code: "us" },
+            { name: "China", area: 9596960, code: "cn" },
+            { name: "Brazil", area: 8515767, code: "br" },
+            { name: "Australia", area: 7741220, code: "au" },
+            { name: "India", area: 3287263, code: "in" },
+            { name: "Argentina", area: 2780400, code: "ar" },
+            { name: "Kazakhstan", area: 2724900, code: "kz" },
+            { name: "Algeria", area: 2381741, code: "dz" },
+            { name: "DR Congo", area: 2344858, code: "cd" },
+            { name: "Greenland", area: 2166086, code: "gl" },
+            { name: "Saudi Arabia", area: 2149690, code: "sa" },
+            { name: "Mexico", area: 1964375, code: "mx" },
+            { name: "Indonesia", area: 1904569, code: "id" }
+        ];
+
+        let targetCountry = null;
         const TURN_TIME = 5000;
 
         let game = { players: [], currentCountry: null, availableCountries: [], timerInterval: null, gameEnded: false };
@@ -344,11 +495,22 @@
         }
 
         function startGame() {
+            // Randomly select target country
+            targetCountry = targetCountries[Math.floor(Math.random() * targetCountries.length)];
+
+            // Update target display
+            document.getElementById('target-flag').src = `https://flagcdn.com/w80/${targetCountry.code}.png`;
+            document.getElementById('target-name').textContent = targetCountry.name;
+            document.getElementById('target-size').textContent = targetCountry.area.toLocaleString() + ' km²';
+
+            // Filter countries smaller than target
+            const eligibleCountries = countries.filter(c => c.area < targetCountry.area);
+
             const botCount = 99; // Total 100 with player
             game = {
                 players: [{ totalArea: 0, status: 'playing', isBot: false }, ...generateBots(botCount)],
                 currentCountry: null,
-                availableCountries: shuffleArray(countries),
+                availableCountries: shuffleArray(eligibleCountries),
                 timerInterval: null,
                 gameEnded: false
             };
@@ -358,8 +520,6 @@
             document.getElementById('hit-btn').disabled = false;
             document.getElementById('stand-btn').disabled = false;
             document.getElementById('buttons').classList.remove('hidden');
-            document.getElementById('your-panel').classList.remove('busted', 'stood');
-            document.getElementById('total-players').textContent = game.players.length;
 
             renderGrid();
             nextRound();
@@ -391,6 +551,12 @@
             document.getElementById('country-name').textContent = game.currentCountry.name;
             document.getElementById('country-flag').src = `https://flagcdn.com/w80/${game.currentCountry.code}.png`;
 
+            // Re-enable buttons if player is still playing
+            if (game.players[0].status === 'playing') {
+                document.getElementById('hit-btn').disabled = false;
+                document.getElementById('stand-btn').disabled = false;
+            }
+
             startTimer();
             updateDisplay();
         }
@@ -413,11 +579,10 @@
         function hit() {
             if (game.gameEnded || game.players[0].status !== 'playing') return;
             game.players[0].totalArea += game.currentCountry.area;
+            document.getElementById('hit-btn').disabled = true;
+            document.getElementById('stand-btn').disabled = true;
             if (getPercent(game.players[0]) > 100) {
                 game.players[0].status = 'busted';
-                document.getElementById('your-panel').classList.add('busted');
-                document.getElementById('hit-btn').disabled = true;
-                document.getElementById('stand-btn').disabled = true;
             }
             updateDisplay();
         }
@@ -425,7 +590,6 @@
         function stand() {
             if (game.gameEnded || game.players[0].status !== 'playing') return;
             game.players[0].status = 'stood';
-            document.getElementById('your-panel').classList.add('stood');
             document.getElementById('hit-btn').disabled = true;
             document.getElementById('stand-btn').disabled = true;
             updateDisplay();
@@ -434,7 +598,7 @@
         function processRound() {
             game.players.forEach(p => {
                 if (p.isBot && p.status === 'playing') {
-                    const potentialPct = (p.totalArea + game.currentCountry.area) / targetArea * 100;
+                    const potentialPct = (p.totalArea + game.currentCountry.area) / targetCountry.area * 100;
                     if (potentialPct > 100) {
                         p.status = 'stood';
                     } else if (getPercent(p) >= p.riskTolerance * 100) {
@@ -453,7 +617,6 @@
                 player.totalArea += game.currentCountry.area;
                 if (getPercent(player) > 100) {
                     player.status = 'busted';
-                    document.getElementById('your-panel').classList.add('busted');
                 }
             }
 
@@ -461,7 +624,7 @@
             isGameOver() ? endGame() : nextRound();
         }
 
-        function getPercent(p) { return (p.totalArea / targetArea) * 100; }
+        function getPercent(p) { return (p.totalArea / targetCountry.area) * 100; }
 
         function isGameOver() { return game.players.filter(p => p.status === 'playing').length === 0; }
 
@@ -476,13 +639,18 @@
         function updateDisplay() {
             const player = game.players[0];
             const pct = getPercent(player);
-            const scoreEl = document.getElementById('your-score');
-            scoreEl.textContent = pct.toFixed(2) + '%';
-            scoreEl.className = 'your-score' + (pct > 100 ? ' danger' : pct > 80 ? ' warning' : '');
 
-            const ranked = getRanked();
-            const rank = ranked.findIndex(p => p === player) + 1;
-            document.getElementById('your-rank').textContent = `#${rank}`;
+            // Update progress bar
+            const progressFill = document.getElementById('progress-fill');
+            const progressPercent = document.getElementById('progress-percent');
+            progressFill.style.width = Math.min(pct, 100) + '%';
+            progressPercent.textContent = pct.toFixed(2) + '%';
+            progressFill.classList.remove('warning', 'danger');
+            if (pct > 100) {
+                progressFill.classList.add('danger');
+            } else if (pct > 80) {
+                progressFill.classList.add('warning');
+            }
 
             // Update stats
             const playing = game.players.filter(p => p.status === 'playing').length;
