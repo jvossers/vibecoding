@@ -139,8 +139,6 @@
             font-size: 1.5rem;
             margin-bottom: 15px;
         }
-        .game-over.winner h2 { color: #4ecca3; }
-        .game-over.loser h2 { color: #e74c3c; }
         .leaderboard {
             margin-bottom: 15px;
         }
@@ -531,7 +529,7 @@
         </div>
 
         <div id="game-over" class="game-over hidden">
-            <h2 id="result-title">GAME OVER</h2>
+            <h2>Results</h2>
             <div class="winning-flags" id="winning-flags"></div>
             <div class="leaderboard">
                 <div class="leaderboard-header">
@@ -873,10 +871,6 @@
             // Sort groups by percentage descending
             const sortedGroups = Object.values(groups).sort((a, b) => b.pct - a.pct);
 
-            // Find winning group (highest score)
-            const winningPct = sortedGroups.length > 0 ? sortedGroups[0].pct : 0;
-            const playerWon = player.status !== 'busted' && playerPct.toFixed(1) === winningPct.toFixed(1);
-
             // Show winning countries flags with arrow to target
             const winningGroup = sortedGroups[0];
             let winningFlagsHtml = '';
@@ -918,12 +912,6 @@
             </div>`;
 
             document.getElementById('leaderboard-rows').innerHTML = html;
-
-            // Update title
-            const go = document.getElementById('game-over');
-            go.classList.remove('winner', 'loser');
-            go.classList.add(playerWon ? 'winner' : 'loser');
-            document.getElementById('result-title').textContent = playerWon ? 'YOU WIN!' : (player.status === 'busted' ? 'BUSTED!' : 'GAME OVER');
         }
 
         startGame();
