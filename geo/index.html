@@ -112,21 +112,31 @@
             transition: width 0.1s linear;
         }
         .buttons {
-            display: flex;
-            gap: 10px;
+            margin-top: 10px;
+        }
+        @media (max-width: 480px) {
+            .buttons {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 10px;
+                background: linear-gradient(to top, #1a1a2e 80%, transparent);
+                margin-top: 0;
+                z-index: 100;
+            }
+            .container {
+                padding-bottom: 70px;
+            }
         }
         button {
-            flex: 1;
+            width: 100%;
             padding: 15px;
             font-size: 1rem;
             font-weight: bold;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-        }
-        .hit-btn {
-            background: linear-gradient(135deg, #4ecca3, #45b393);
-            color: #1a1a2e;
         }
         .stand-btn {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
@@ -415,9 +425,6 @@
             .timer-bar {
                 height: 5px;
             }
-            .buttons {
-                gap: 8px;
-            }
             button {
                 padding: 12px;
                 font-size: 0.9rem;
@@ -477,14 +484,6 @@
         </div>
 
         <div id="game-active">
-            <div class="player-grid" id="player-grid"></div>
-
-            <div class="legend">
-                <div class="legend-item"><div class="legend-dot playing"></div> Playing</div>
-                <div class="legend-item"><div class="legend-dot stood"></div> Stood</div>
-                <div class="legend-item"><div class="legend-dot busted"></div> Busted</div>
-            </div>
-
             <div class="target-country">
                 <div class="target-flag"><img id="target-flag" src="" alt="Flag"></div>
                 <div class="target-info">
@@ -513,8 +512,15 @@
                 </div>
             </div>
 
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot playing"></div> Playing</div>
+                <div class="legend-item"><div class="legend-dot stood"></div> Stood</div>
+                <div class="legend-item"><div class="legend-dot busted"></div> Busted</div>
+            </div>
+
+            <div class="player-grid" id="player-grid"></div>
+
             <div class="buttons" id="buttons">
-                <button class="hit-btn" id="hit-btn" onclick="hit()">HIT</button>
                 <button class="stand-btn" id="stand-btn" onclick="stand()">STAND</button>
             </div>
 
@@ -645,7 +651,6 @@
 
             document.getElementById('game-active').classList.remove('hidden');
             document.getElementById('game-over').classList.add('hidden');
-            document.getElementById('hit-btn').disabled = false;
             document.getElementById('stand-btn').disabled = false;
             document.getElementById('buttons').classList.remove('hidden');
             document.getElementById('spectator-bar').classList.add('hidden');
@@ -690,9 +695,8 @@
             document.getElementById('country-name').textContent = game.currentCountry.name;
             document.getElementById('country-flag').src = `https://flagcdn.com/w80/${game.currentCountry.code}.png`;
 
-            // Re-enable buttons if player is still playing
+            // Re-enable stand button if player is still playing
             if (game.players[0].status === 'playing') {
-                document.getElementById('hit-btn').disabled = false;
                 document.getElementById('stand-btn').disabled = false;
             }
 
@@ -715,23 +719,9 @@
             }, 50);
         }
 
-        function hit() {
-            if (game.gameEnded || game.players[0].status !== 'playing' || game.playerActed) return;
-            game.playerActed = true;
-            game.players[0].totalArea += game.currentCountry.area;
-            game.players[0].countriesAccepted.push(game.currentCountry);
-            document.getElementById('hit-btn').disabled = true;
-            document.getElementById('stand-btn').disabled = true;
-            if (getPercent(game.players[0]) > 100) {
-                game.players[0].status = 'busted';
-            }
-            updateDisplay();
-        }
-
         function stand() {
             if (game.gameEnded || game.players[0].status !== 'playing') return;
             game.players[0].status = 'stood';
-            document.getElementById('hit-btn').disabled = true;
             document.getElementById('stand-btn').disabled = true;
             enterSpectatorMode();
             updateDisplay();

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Geography Blackjack - a browser game where players try to fill a target country with other countries' land areas without exceeding 100%. Similar to blackjack, players can "hit" to accept a randomly offered country or "stand" to stop.
+Geography Blackjack - a browser game where players try to fill a target country with other countries' land areas without exceeding 100%. Countries are auto-accepted when the timer expires; players can only choose to "stand" to lock in their score.
 
 ## Development
 
@@ -13,15 +13,15 @@ No build system or dependencies. Open HTML files directly in a browser to run.
 ## Files
 
 ### index.html (Multiplayer)
-The main multiplayer version simulating 100 concurrent players:
+The main multiplayer version simulating 10-100 concurrent players:
 - Random target country from 10 Greenland-sized countries (±25% of 2,166,086 km²)
 - Only offers countries smaller than the selected target
-- 3-second timer per round
-- Visual avatar grid with unique emoji avatars showing all players' status (playing/stood/busted)
+- 3-second auto-hit timer per round (no manual hit button)
+- Visual grid showing all players' status with colored dots (playing/stood/busted)
 - Progress bar showing fill percentage
 - Spectator mode when standing: watch remaining players, shows "would be" score
 - Simulated bot opponents with varying risk tolerances (some will bust)
-- Round ends when all players have acted or timer expires
+- Stand button fixed to bottom of screen on mobile
 - Game results leaderboard: ranks, medals (🥇🥈🥉), grouped by score, winning country flags
 
 ### original.html (Single Player)
@@ -40,13 +40,11 @@ Both files are standalone HTML with:
 Key data:
 - `countries` array: Static data with name, area (km²), and ISO code
 - `targetCountries` (index.html): 10 countries similar in size to Greenland (±25%)
-- `avatars` array: ~100 diverse emojis for unique bot avatars
 
 Core functions:
-- `startGame()`: Initializes/resets game state
-- `hit()`: Accepts current country, checks for bust
+- `startGame()`: Initializes/resets game state with random player count
 - `stand()`: Locks in score, enters spectator mode
-- `processRound()`: Handles bot decisions and auto-hit
+- `processRound()`: Handles bot decisions and auto-hit for player
 - `enterSpectatorMode()`: Shows spectator UI when player stands
 - `endGame()`: Generates grouped leaderboard with rankings and medals
 
