@@ -812,7 +812,11 @@
                 // Show spectator area (what would have happened)
                 const spectatorPct = (game.spectatorArea / targetCountry.area) * 100;
                 spectatorFill.style.width = Math.min(spectatorPct, 100) + '%';
-                progressPercent.textContent = pct.toFixed(2) + '% (would be ' + spectatorPct.toFixed(2) + '%)';
+                if (spectatorPct > pct) {
+                    progressPercent.textContent = pct.toFixed(2) + '% (would be ' + spectatorPct.toFixed(2) + '%)';
+                } else {
+                    progressPercent.textContent = pct.toFixed(2) + '%';
+                }
             } else {
                 progressPercent.textContent = pct.toFixed(2) + '%';
                 progressFill.classList.remove('warning', 'danger');
