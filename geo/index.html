@@ -53,6 +53,10 @@
             position: relative;
             transition: all 0.3s ease;
         }
+        .player-dot.empty {
+            background: #1a1a2e;
+            border: 1px dashed #333;
+        }
         .player-dot.stood {
             background: #f39c12;
         }
@@ -624,9 +628,12 @@
             // Filter countries smaller than target
             const eligibleCountries = countries.filter(c => c.area < targetCountry.area);
 
-            const botCount = 99; // Total 100 with player
+            // Random number of players (10-100 total including you)
+            const totalPlayers = Math.floor(Math.random() * 91) + 10;
+            const botCount = totalPlayers - 1;
             game = {
                 players: [{ totalArea: 0, status: 'playing', isBot: false, countriesAccepted: [] }, ...generateBots(botCount)],
+                totalSlots: 100,
                 currentCountry: null,
                 availableCountries: shuffleArray(eligibleCountries),
                 timerInterval: null,
@@ -651,9 +658,16 @@
 
         function renderGrid() {
             const grid = document.getElementById('player-grid');
-            grid.innerHTML = game.players.map((p, i) =>
-                `<div class="player-dot ${p.status} ${i === 0 ? 'you' : ''}" id="dot-${i}"></div>`
-            ).join('');
+            let html = '';
+            for (let i = 0; i < game.totalSlots; i++) {
+                if (i < game.players.length) {
+                    const p = game.players[i];
+                    html += `<div class="player-dot ${p.status} ${i === 0 ? 'you' : ''}" id="dot-${i}"></div>`;
+                } else {
+                    html += `<div class="player-dot empty"></div>`;
+                }
+            }
+            grid.innerHTML = html;
         }
 
         function updateGrid() {
