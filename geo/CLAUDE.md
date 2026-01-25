@@ -12,15 +12,8 @@ No build system or dependencies. Open HTML files directly in a browser to run.
 
 ## Files
 
-### index.html (Single Player)
-The original single-player version with:
-- Fixed target: Greenland (2,166,086 km²)
-- 5-second auto-hit timer per turn
-- Dodge bonus celebration when standing before a bust country
-- Mobile-responsive layout
-
-### multi.html (Multiplayer Prototype)
-A multiplayer UX prototype simulating 100 concurrent players:
+### index.html (Multiplayer)
+The main multiplayer version simulating 100 concurrent players:
 - Random target country from 10 Greenland-sized countries (±25% of 2,166,086 km²)
 - Only offers countries smaller than the selected target
 - 3-second timer per round
@@ -31,6 +24,13 @@ A multiplayer UX prototype simulating 100 concurrent players:
 - Round ends when all players have acted or timer expires
 - Game results leaderboard: ranks, medals (🥇🥈🥉), grouped by score, winning country flags
 
+### original.html (Single Player)
+The original single-player version (backup):
+- Fixed target: Greenland (2,166,086 km²)
+- 5-second auto-hit timer per turn
+- Dodge bonus celebration when standing before a bust country
+- Mobile-responsive layout
+
 ## Architecture
 
 Both files are standalone HTML with:
@@ -39,7 +39,7 @@ Both files are standalone HTML with:
 
 Key data:
 - `countries` array: Static data with name, area (km²), and ISO code
-- `targetCountries` (multi.html): 10 countries similar in size to Greenland (±25%)
+- `targetCountries` (index.html): 10 countries similar in size to Greenland (±25%)
 
 Core functions:
 - `startGame()`: Initializes/resets game state
