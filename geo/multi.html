@@ -143,6 +143,7 @@
         .game-over.loser h2 { color: #e74c3c; }
         .leaderboard {
             margin-bottom: 15px;
+            padding-right: 40px;
         }
         .leaderboard-header {
             display: grid;
@@ -186,11 +187,15 @@
         }
         .leaderboard-row .players {
             text-align: right;
+            position: relative;
         }
         .leaderboard-row .you-marker {
-            font-size: 0.7rem;
+            position: absolute;
+            right: -38px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.65rem;
             color: #f39c12;
-            margin-left: 5px;
         }
         .winning-flags {
             display: flex;
@@ -441,7 +446,8 @@
                 grid-template-columns: 40px 1fr 1fr 1fr;
             }
             .leaderboard-row .you-marker {
-                font-size: 0.6rem;
+                font-size: 0.55rem;
+                right: -32px;
             }
             .leaderboard-row .rank-num {
                 width: 18px;
