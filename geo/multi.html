@@ -131,33 +131,63 @@
         button:disabled { opacity: 0.4; cursor: not-allowed; }
         .game-over {
             text-align: center;
-            padding: 25px;
+            padding: 20px;
             background: #232946;
             border-radius: 12px;
         }
         .game-over h2 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
         }
         .game-over.winner h2 { color: #4ecca3; }
         .game-over.loser h2 { color: #e74c3c; }
-        .final-stats {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 20px 0;
+        .leaderboard {
+            margin-bottom: 15px;
         }
-        .final-stat {
-            text-align: center;
-        }
-        .final-stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #fff;
-        }
-        .final-stat-label {
-            font-size: 0.75rem;
+        .leaderboard-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 8px 12px;
+            font-size: 0.7rem;
             color: #888;
+            text-transform: uppercase;
+            border-bottom: 1px solid #333;
+        }
+        .leaderboard-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #1a1a2e;
+        }
+        .leaderboard-row.winner {
+            background: rgba(78, 204, 163, 0.2);
+            border: 1px solid #4ecca3;
+            border-radius: 6px;
+        }
+        .leaderboard-row.you {
+            background: rgba(243, 156, 18, 0.15);
+            border: 1px solid #f39c12;
+            border-radius: 6px;
+        }
+        .leaderboard-row.winner.you {
+            background: rgba(78, 204, 163, 0.3);
+            border: 2px solid #4ecca3;
+        }
+        .leaderboard-row.busted {
+            color: #e74c3c;
+            opacity: 0.6;
+        }
+        .leaderboard-row .percent {
+            font-weight: bold;
+        }
+        .leaderboard-row .players {
+            text-align: right;
+        }
+        .leaderboard-row .you-marker {
+            font-size: 0.7rem;
+            color: #f39c12;
+            margin-left: 5px;
         }
         .play-again-btn {
             background: linear-gradient(135deg, #4ecca3, #45b393);
@@ -366,17 +396,21 @@
                 font-size: 0.9rem;
             }
             .game-over {
-                padding: 20px;
+                padding: 15px;
             }
             .game-over h2 {
-                font-size: 1.5rem;
+                font-size: 1.3rem;
             }
-            .final-stats {
-                gap: 20px;
-                margin: 15px 0;
+            .leaderboard-header {
+                font-size: 0.6rem;
+                padding: 6px 10px;
             }
-            .final-stat-value {
-                font-size: 1.5rem;
+            .leaderboard-row {
+                font-size: 0.8rem;
+                padding: 8px 10px;
+            }
+            .leaderboard-row .you-marker {
+                font-size: 0.6rem;
             }
             .spectator-bar {
                 padding: 12px;
@@ -449,15 +483,13 @@
 
         <div id="game-over" class="game-over hidden">
             <h2 id="result-title">GAME OVER</h2>
-            <div class="final-stats">
-                <div class="final-stat">
-                    <div class="final-stat-value" id="final-rank">#1</div>
-                    <div class="final-stat-label">Position</div>
+            <div class="leaderboard">
+                <div class="leaderboard-header">
+                    <span>Countries</span>
+                    <span>Filled</span>
+                    <span style="text-align:right">Players</span>
                 </div>
-                <div class="final-stat">
-                    <div class="final-stat-value" id="final-score">0%</div>
-                    <div class="final-stat-label">Score</div>
-                </div>
+                <div id="leaderboard-rows"></div>
             </div>
             <button class="play-again-btn" onclick="startGame()">PLAY AGAIN</button>
         </div>
@@ -533,7 +565,8 @@
         function generateBots(count) {
             return Array.from({ length: count }, () => ({
                 totalArea: 0, status: 'playing', isBot: true,
-                riskTolerance: 0.65 + Math.random() * 0.33
+                riskTolerance: 0.65 + Math.random() * 0.33,
+                countriesAccepted: 0
             }));
         }
 
@@ -551,7 +584,7 @@
 
             const botCount = 99; // Total 100 with player
             game = {
-                players: [{ totalArea: 0, status: 'playing', isBot: false }, ...generateBots(botCount)],
+                players: [{ totalArea: 0, status: 'playing', isBot: false, countriesAccepted: 0 }, ...generateBots(botCount)],
                 currentCountry: null,
                 availableCountries: shuffleArray(eligibleCountries),
                 timerInterval: null,
@@ -630,6 +663,7 @@
             if (game.gameEnded || game.players[0].status !== 'playing' || game.playerActed) return;
             game.playerActed = true;
             game.players[0].totalArea += game.currentCountry.area;
+            game.players[0].countriesAccepted++;
             document.getElementById('hit-btn').disabled = true;
             document.getElementById('stand-btn').disabled = true;
             if (getPercent(game.players[0]) > 100) {
@@ -672,6 +706,7 @@
                         p.status = 'stood';
                     } else if (Math.random() < 0.82) {
                         p.totalArea += game.currentCountry.area;
+                        p.countriesAccepted++;
                         if (getPercent(p) > 100) p.status = 'busted';
                     } else {
                         p.status = 'stood';
@@ -683,6 +718,7 @@
             if (player.status === 'playing' && !game.playerActed) {
                 // Auto-hit if player didn't act
                 player.totalArea += game.currentCountry.area;
+                player.countriesAccepted++;
                 if (getPercent(player) > 100) {
                     player.status = 'busted';
                 }
@@ -753,17 +789,65 @@
             document.getElementById('game-active').classList.add('hidden');
             document.getElementById('game-over').classList.remove('hidden');
 
-            const ranked = getRanked();
             const player = game.players[0];
-            const rank = ranked.findIndex(p => p === player) + 1;
+            const playerPct = getPercent(player);
 
+            // Group players by score (rounded to 1 decimal)
+            const groups = {};
+            const bustedPlayers = [];
+
+            game.players.forEach(p => {
+                if (p.status === 'busted') {
+                    bustedPlayers.push(p);
+                } else {
+                    const pct = getPercent(p).toFixed(1);
+                    if (!groups[pct]) {
+                        groups[pct] = { pct: parseFloat(pct), players: [], countriesAccepted: p.countriesAccepted };
+                    }
+                    groups[pct].players.push(p);
+                }
+            });
+
+            // Sort groups by percentage descending
+            const sortedGroups = Object.values(groups).sort((a, b) => b.pct - a.pct);
+
+            // Find winning group (highest score)
+            const winningPct = sortedGroups.length > 0 ? sortedGroups[0].pct : 0;
+            const playerWon = player.status !== 'busted' && playerPct.toFixed(1) === winningPct.toFixed(1);
+
+            // Generate leaderboard HTML
+            let html = '';
+            sortedGroups.forEach(group => {
+                const isWinner = group.pct === winningPct;
+                const hasPlayer = group.players.includes(player);
+                let classes = 'leaderboard-row';
+                if (isWinner) classes += ' winner';
+                if (hasPlayer) classes += ' you';
+
+                html += `<div class="${classes}">
+                    <span>${group.countriesAccepted}</span>
+                    <span class="percent">${group.pct.toFixed(1)}%</span>
+                    <span class="players">${group.players.length}${hasPlayer ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
+                </div>`;
+            });
+
+            // Add busted row
+            if (bustedPlayers.length > 0) {
+                const hasPlayer = bustedPlayers.includes(player);
+                html += `<div class="leaderboard-row busted${hasPlayer ? ' you' : ''}">
+                    <span>—</span>
+                    <span class="percent">BUST</span>
+                    <span class="players">${bustedPlayers.length}${hasPlayer ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
+                </div>`;
+            }
+
+            document.getElementById('leaderboard-rows').innerHTML = html;
+
+            // Update title
             const go = document.getElementById('game-over');
             go.classList.remove('winner', 'loser');
-            go.classList.add(rank === 1 ? 'winner' : 'loser');
-
-            document.getElementById('result-title').textContent = rank === 1 ? 'YOU WIN!' : (player.status === 'busted' ? 'BUSTED!' : 'GAME OVER');
-            document.getElementById('final-rank').textContent = `#${rank}`;
-            document.getElementById('final-score').textContent = getPercent(player).toFixed(1) + '%';
+            go.classList.add(playerWon ? 'winner' : 'loser');
+            document.getElementById('result-title').textContent = playerWon ? 'YOU WIN!' : (player.status === 'busted' ? 'BUSTED!' : 'GAME OVER');
         }
 
         startGame();
