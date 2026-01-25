@@ -823,14 +823,21 @@
                 // Show spectator area (what would have happened)
                 const spectatorPct = (game.spectatorArea / targetCountry.area) * 100;
                 spectatorFill.style.width = Math.min(spectatorPct, 100) + '%';
-                progressPercent.textContent = pct.toFixed(2) + '% (would be ' + spectatorPct.toFixed(1) + '%)';
+                const spectatorDisplay = spectatorPct > 100
+                    ? `100% + ${(spectatorPct - 100).toFixed(1)}%`
+                    : `${spectatorPct.toFixed(1)}%`;
+                progressPercent.textContent = pct.toFixed(2) + '% (would be ' + spectatorDisplay + ')';
             } else {
-                progressPercent.textContent = pct.toFixed(2) + '%';
-                progressFill.classList.remove('warning', 'danger');
                 if (pct > 100) {
+                    progressPercent.textContent = `100% + ${(pct - 100).toFixed(2)}%`;
+                    progressFill.classList.remove('warning');
                     progressFill.classList.add('danger');
-                } else if (pct > 80) {
-                    progressFill.classList.add('warning');
+                } else {
+                    progressPercent.textContent = pct.toFixed(2) + '%';
+                    progressFill.classList.remove('warning', 'danger');
+                    if (pct > 80) {
+                        progressFill.classList.add('warning');
+                    }
                 }
             }
 
