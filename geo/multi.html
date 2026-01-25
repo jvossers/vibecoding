@@ -143,11 +143,10 @@
         .game-over.loser h2 { color: #e74c3c; }
         .leaderboard {
             margin-bottom: 15px;
-            padding-right: 40px;
         }
         .leaderboard-header {
             display: grid;
-            grid-template-columns: 50px 1fr 1fr 1fr;
+            grid-template-columns: 90px 1fr 1fr 1fr;
             padding: 8px 12px;
             font-size: 0.7rem;
             color: #888;
@@ -156,7 +155,7 @@
         }
         .leaderboard-row {
             display: grid;
-            grid-template-columns: 50px 1fr 1fr 1fr;
+            grid-template-columns: 90px 1fr 1fr 1fr;
             padding: 10px 12px;
             font-size: 0.9rem;
             border-bottom: 1px solid #1a1a2e;
@@ -187,15 +186,11 @@
         }
         .leaderboard-row .players {
             text-align: right;
-            position: relative;
         }
         .leaderboard-row .you-marker {
-            position: absolute;
-            right: -38px;
-            top: 50%;
-            transform: translateY(-50%);
             font-size: 0.65rem;
             color: #f39c12;
+            margin-left: 4px;
         }
         .winning-flags {
             display: flex;
@@ -438,16 +433,15 @@
             .leaderboard-header {
                 font-size: 0.6rem;
                 padding: 6px 10px;
-                grid-template-columns: 40px 1fr 1fr 1fr;
+                grid-template-columns: 75px 1fr 1fr 1fr;
             }
             .leaderboard-row {
                 font-size: 0.8rem;
                 padding: 8px 10px;
-                grid-template-columns: 40px 1fr 1fr 1fr;
+                grid-template-columns: 75px 1fr 1fr 1fr;
             }
             .leaderboard-row .you-marker {
                 font-size: 0.55rem;
-                right: -32px;
             }
             .leaderboard-row .rank-num {
                 width: 18px;
@@ -896,20 +890,20 @@
                 const medal = medals[index] || '';
 
                 html += `<div class="${classes}">
-                    <span class="rank"><span class="rank-num">#${rank}</span>${medal ? `<span class="medal">${medal}</span>` : ''}</span>
+                    <span class="rank"><span class="rank-num">#${rank}</span>${medal ? `<span class="medal">${medal}</span>` : ''}${hasPlayer ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
                     <span>${group.countriesAccepted.length}</span>
                     <span class="percent">${group.pct.toFixed(1)}%</span>
-                    <span class="players">${group.players.length}${hasPlayer ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
+                    <span class="players">${group.players.length}</span>
                 </div>`;
             });
 
             // Add busted row (always show)
             const hasPlayerBusted = bustedPlayers.includes(player);
             html += `<div class="leaderboard-row busted${hasPlayerBusted ? ' you' : ''}">
-                <span class="rank">—</span>
+                <span class="rank">—${hasPlayerBusted ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
                 <span>—</span>
                 <span class="percent">BUST</span>
-                <span class="players">${bustedPlayers.length}${hasPlayerBusted ? '<span class="you-marker">◀ YOU</span>' : ''}</span>
+                <span class="players">${bustedPlayers.length}</span>
             </div>`;
 
             document.getElementById('leaderboard-rows').innerHTML = html;
