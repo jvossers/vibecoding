@@ -164,6 +164,35 @@
             color: #1a1a2e;
             padding: 12px 35px;
         }
+        .spectator-bar {
+            background: #232946;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid #f39c12;
+        }
+        .spectator-bar.busted {
+            border-color: #e74c3c;
+        }
+        .spectator-label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .spectator-status {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #f39c12;
+        }
+        .spectator-bar.busted .spectator-status {
+            color: #e74c3c;
+        }
+        .spectator-score {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 5px;
+        }
         .hidden { display: none !important; }
         .legend {
             display: flex;
@@ -343,6 +372,12 @@
             .final-stat-value {
                 font-size: 1.5rem;
             }
+            .spectator-bar {
+                padding: 12px;
+            }
+            .spectator-status {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -396,6 +431,12 @@
             <div class="buttons" id="buttons">
                 <button class="hit-btn" id="hit-btn" onclick="hit()">HIT</button>
                 <button class="stand-btn" id="stand-btn" onclick="stand()">STAND</button>
+            </div>
+
+            <div class="spectator-bar hidden" id="spectator-bar">
+                <div class="spectator-label">Spectating</div>
+                <div class="spectator-status" id="spectator-status">You stood at 85.2%</div>
+                <div class="spectator-score">Waiting for other players...</div>
             </div>
         </div>
 
@@ -516,6 +557,7 @@
             document.getElementById('hit-btn').disabled = false;
             document.getElementById('stand-btn').disabled = false;
             document.getElementById('buttons').classList.remove('hidden');
+            document.getElementById('spectator-bar').classList.add('hidden');
 
             renderGrid();
             nextRound();
@@ -581,6 +623,7 @@
             document.getElementById('stand-btn').disabled = true;
             if (getPercent(game.players[0]) > 100) {
                 game.players[0].status = 'busted';
+                enterSpectatorMode();
             }
             updateDisplay();
         }
@@ -590,7 +633,25 @@
             game.players[0].status = 'stood';
             document.getElementById('hit-btn').disabled = true;
             document.getElementById('stand-btn').disabled = true;
+            enterSpectatorMode();
             updateDisplay();
+        }
+
+        function enterSpectatorMode() {
+            const player = game.players[0];
+            const pct = getPercent(player).toFixed(1);
+            const spectatorBar = document.getElementById('spectator-bar');
+            const spectatorStatus = document.getElementById('spectator-status');
+
+            document.getElementById('buttons').classList.add('hidden');
+            spectatorBar.classList.remove('hidden', 'busted');
+
+            if (player.status === 'busted') {
+                spectatorBar.classList.add('busted');
+                spectatorStatus.textContent = `Busted at ${pct}%`;
+            } else {
+                spectatorStatus.textContent = `You stood at ${pct}%`;
+            }
         }
 
         function processRound() {
@@ -616,6 +677,7 @@
                 player.totalArea += game.currentCountry.area;
                 if (getPercent(player) > 100) {
                     player.status = 'busted';
+                    enterSpectatorMode();
                 }
             }
 
