@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trace Table Stepper — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="2.1.2" data-sim-slug="trace-table">
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Trace Table Stepper</h2>
+        <p class="sim-subtitle">Step through pseudocode line by line and watch the trace table build up — just like in the exam.</p>
+
+        <!-- Program selector toolbar -->
+        <div class="sim-toolbar">
+          <label for="program-select">Program</label>
+          <select id="program-select">
+            <option value="0">Linear Search</option>
+            <option value="1">Running Total</option>
+            <option value="2">Maximum Finder</option>
+            <option value="3">FizzBuzz Counter</option>
+            <option value="4">Swap Variables</option>
+            <option value="5">Countdown</option>
+          </select>
+        </div>
+
+        <!-- Two-column code + trace layout -->
+        <div class="trace-layout">
+          <div class="code-panel">
+            <h3 class="panel-heading">Pseudocode</h3>
+            <div id="code-display" class="code-display"></div>
+          </div>
+          <div class="table-panel">
+            <h3 class="panel-heading">Trace Table</h3>
+            <div class="table-scroll">
+              <table id="trace-table" class="comparison-table trace-table">
+                <thead id="trace-head"><tr></tr></thead>
+                <tbody id="trace-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls (play/pause/step/reset/speed) -->
+        <div id="controls"></div>
+
+        <!-- Stats bar -->
+        <div class="stats-bar">
+          <div class="stat-item"><span class="stat-label">Step:</span> <span class="stat-value" id="stat-step">0 / 0</span></div>
+          <div class="stat-item"><span class="stat-label">Line:</span> <span class="stat-value" id="stat-line">—</span></div>
+        </div>
+
+        <!-- Output console -->
+        <div class="output-panel">
+          <h3 class="panel-heading">Output</h3>
+          <pre id="output-display" class="output-display"></pre>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Trace table</strong> — A trace table records the values of variables as a program executes, line by line. It is used to dry-run code and find errors.
+          </div>
+          <div class="key-fact">
+            <strong>Columns &amp; rows</strong> — Each column represents a variable (or output). Each row represents one step of execution.
+          </div>
+          <div class="key-fact">
+            <strong>Logic errors</strong> — Trace tables help you identify logic errors — when the program runs but produces wrong results.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> In trace table questions, work through EVERY line — don't skip steps. Show all variable changes, even when a variable doesn't change (repeat the value or leave blank). Always include an Output column for PRINT statements.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

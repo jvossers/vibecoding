@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secondary Storage Comparator — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.2.2" data-sim-slug="secondary-storage">
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Secondary Storage Comparator</h2>
+        <p class="sim-subtitle">Compare storage devices — watch animated data transfers and explore speed, capacity and cost.</p>
+
+        <!-- File size selector toolbar -->
+        <div class="sim-toolbar">
+          <label>File Size:</label>
+          <button class="algo-btn active" data-size="1">1 MB</button>
+          <button class="algo-btn" data-size="100">100 MB</button>
+          <button class="algo-btn" data-size="1024">1 GB</button>
+          <button class="algo-btn" data-size="10240">10 GB</button>
+        </div>
+
+        <!-- Canvas -->
+        <div class="canvas-container">
+          <canvas id="storage-canvas"></canvas>
+        </div>
+
+        <!-- Controls (play/pause/step/reset/speed) -->
+        <div id="controls"></div>
+
+        <!-- Comparison stats table -->
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>HDD</th>
+              <th>SSD</th>
+              <th>Optical</th>
+              <th>USB</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Capacity</td>
+              <td>1–4 TB</td>
+              <td>256 GB – 4 TB</td>
+              <td>4.7–50 GB</td>
+              <td>8–256 GB</td>
+            </tr>
+            <tr>
+              <td>Speed</td>
+              <td>~150 MB/s</td>
+              <td>~550 MB/s</td>
+              <td>~36 MB/s</td>
+              <td>~100 MB/s</td>
+            </tr>
+            <tr>
+              <td>Cost/GB</td>
+              <td>~£0.03</td>
+              <td>~£0.08</td>
+              <td>~£0.02</td>
+              <td>~£0.15</td>
+            </tr>
+            <tr>
+              <td>Durability</td>
+              <td>Medium</td>
+              <td>High</td>
+              <td>Medium</td>
+              <td>High</td>
+            </tr>
+            <tr>
+              <td>Portability</td>
+              <td>Low</td>
+              <td>Medium</td>
+              <td>High</td>
+              <td>High</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Magnetic (HDD)</strong> stores data on spinning platters using magnetism. High capacity, low cost, but has moving parts.
+          </div>
+          <div class="key-fact">
+            <strong>Solid-state (SSD/USB)</strong> uses flash memory with no moving parts. Faster, more durable, but more expensive per GB.
+          </div>
+          <div class="key-fact">
+            <strong>Optical (CD/DVD/Blu-ray)</strong> uses a laser to read pits and lands on a disc. Good for distribution, limited capacity.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> In comparison questions, consider: capacity, speed, cost, durability, and portability. Always relate your answer to the scenario given.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

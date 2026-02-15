@@ -1,0 +1,29 @@
+/* ── Secondary Storage Comparator — sim-specific styles ───────────── */
+.canvas-container {
+  min-height: 300px;
+}
+
+#storage-canvas {
+  width: 100%;
+  display: block;
+}
+
+/* ── Comparison table spacing ─────────────────────────────────────── */
+.comparison-table {
+  margin-top: var(--sp-4);
+}
+.comparison-table td:first-child {
+  font-weight: 600;
+  color: var(--clr-text-muted);
+}
+
+/* ── Responsive tweaks ────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .sim-toolbar { gap: var(--sp-1); }
+  .algo-btn { padding: var(--sp-1) var(--sp-2); font-size: var(--fs-xs); }
+  .comparison-table { font-size: var(--fs-xs); }
+  .comparison-table th,
+  .comparison-table td {
+    padding: var(--sp-1) var(--sp-2);
+  }
+}

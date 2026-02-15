@@ -18,7 +18,7 @@ window.TopicsData = [
       {
         ref: '1.1.2', title: 'CPU Performance',
         subtopics: ['Clock speed', 'Cache size', 'Core count'],
-        simulations: []
+        simulations: [{ slug: 'cpu-performance', name: 'CPU Performance Simulator' }]
       },
       {
         ref: '1.1.3', title: 'Embedded Systems',
@@ -38,12 +38,12 @@ window.TopicsData = [
       {
         ref: '1.2.2', title: 'Secondary Storage',
         subtopics: ['HDDs', 'SSDs', 'USB', 'Optical storage'],
-        simulations: []
+        simulations: [{ slug: 'secondary-storage', name: 'Secondary Storage Comparator' }]
       },
       {
         ref: '1.2.3', title: 'Units',
         subtopics: ['Bit through terabyte', 'File size calculations'],
-        simulations: []
+        simulations: [{ slug: 'file-size-calculator', name: 'File Size Calculator' }]
       },
       {
         ref: '1.2.4', title: 'Data Storage',
@@ -55,7 +55,9 @@ window.TopicsData = [
         simulations: [
           { slug: 'binary-converter', name: 'Binary / Denary / Hex Converter' },
           { slug: 'binary-arithmetic', name: 'Binary Arithmetic Visualiser' },
-          { slug: 'image-representation', name: 'Image Representation Explorer' }
+          { slug: 'image-representation', name: 'Image Representation Explorer' },
+          { slug: 'ascii-unicode', name: 'ASCII / Unicode Explorer' },
+          { slug: 'sound-representation', name: 'Sound Representation Explorer' }
         ]
       },
       {
@@ -104,7 +106,7 @@ window.TopicsData = [
           'Penetration testing', 'Anti-malware', 'Firewalls',
           'Access levels', 'Passwords', 'Encryption', 'Physical security'
         ],
-        simulations: []
+        simulations: [{ slug: 'cipher-encryption', name: 'Cipher & Encryption Tool' }]
       }
     ]
   },
@@ -117,12 +119,12 @@ window.TopicsData = [
           'GUI/CLI', 'Multitasking', 'Memory management',
           'Drivers', 'User/file management'
         ],
-        simulations: []
+        simulations: [{ slug: 'memory-management', name: 'Memory Management Visualiser' }]
       },
       {
         ref: '1.5.2', title: 'Utility Software',
         subtopics: ['Encryption', 'Defragmentation', 'Compression', 'Backup'],
-        simulations: []
+        simulations: [{ slug: 'defragmentation', name: 'Defragmentation Visualiser' }]
       }
     ]
   },
@@ -152,7 +154,7 @@ window.TopicsData = [
       {
         ref: '2.1.2', title: 'Designing Algorithms',
         subtopics: ['Flowcharts', 'Pseudocode', 'Trace tables', 'Logic errors'],
-        simulations: []
+        simulations: [{ slug: 'trace-table', name: 'Trace Table Stepper' }]
       },
       {
         ref: '2.1.3', title: 'Searching and Sorting',
@@ -191,7 +193,7 @@ window.TopicsData = [
           'String manipulation', 'Arrays', 'Functions/procedures',
           'File handling', 'Scope', 'SQL', 'Random numbers'
         ],
-        simulations: []
+        simulations: [{ slug: 'sql-playground', name: 'SQL Query Playground' }]
       }
     ]
   },

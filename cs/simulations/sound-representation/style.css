@@ -1,0 +1,58 @@
+/* ── Sound Representation Explorer ─────────────────────────────────── */
+
+/* ── Slider toolbar layout ────────────────────────────────────────── */
+.slider-toolbar {
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+}
+
+.slider-group {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.slider-group label {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--clr-text-muted);
+  white-space: nowrap;
+}
+
+.slider-group input[type="range"] {
+  width: 120px;
+  accent-color: var(--clr-primary);
+}
+
+.slider-value {
+  min-width: 5ch;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--clr-text);
+  text-align: right;
+}
+
+/* ── Canvas ───────────────────────────────────────────────────────── */
+#sound-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ── Responsive adjustments ───────────────────────────────────────── */
+@media (max-width: 600px) {
+  .slider-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-3);
+  }
+
+  .slider-group input[type="range"] {
+    width: 100px;
+  }
+
+  .slider-value {
+    min-width: 4ch;
+  }
+}

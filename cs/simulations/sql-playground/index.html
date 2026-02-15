@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Query Playground — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="2.2.3" data-sim-slug="sql-playground">
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">SQL Query Playground</h2>
+        <p class="sim-subtitle">Write and run SQL queries against a sample database — see results instantly.</p>
+        <div id="controls"></div>
+      </div>
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>SQL</strong> (Structured Query Language) is used to search, sort and manage data in relational databases.
+          </div>
+          <div class="key-fact">
+            <strong>SELECT</strong> specifies which columns to return. Use <code>*</code> for all columns.
+          </div>
+          <div class="key-fact">
+            <strong>WHERE</strong> filters rows based on conditions. You can combine conditions with <code>AND</code>/<code>OR</code>.
+          </div>
+          <div class="key-fact">
+            <strong>ORDER BY</strong> sorts results. <code>ASC</code> = ascending (default), <code>DESC</code> = descending.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> In exams, SQL keywords are not case-sensitive, but write them in CAPITALS for clarity: SELECT, FROM, WHERE, ORDER BY, AND, OR.
+          </div>
+        </div>
+        <div class="info-panel">
+          <h3>Available Table</h3>
+          <p><strong>Students</strong></p>
+          <table class="comparison-table">
+            <thead><tr><th>Column</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td>id</td><td>Integer</td></tr>
+              <tr><td>firstName</td><td>Text</td></tr>
+              <tr><td>lastName</td><td>Text</td></tr>
+              <tr><td>age</td><td>Integer</td></tr>
+              <tr><td>grade</td><td>Integer</td></tr>
+              <tr><td>house</td><td>Text</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

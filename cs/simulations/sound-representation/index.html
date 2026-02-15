@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sound Representation Explorer — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.2.4" data-sim-slug="sound-representation">
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Sound Representation Explorer</h2>
+        <p class="sim-subtitle">See how sample rate and bit depth affect digital sound quality and file size.</p>
+
+        <div class="sim-toolbar" id="waveform-toolbar">
+          <label>Waveform</label>
+          <button type="button" class="algo-btn active" data-wave="sine">Sine</button>
+          <button type="button" class="algo-btn" data-wave="square">Square</button>
+          <button type="button" class="algo-btn" data-wave="sawtooth">Sawtooth</button>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="sound-canvas"></canvas>
+        </div>
+
+        <div class="sim-toolbar slider-toolbar">
+          <div class="slider-group">
+            <label for="sample-rate-slider">Sample rate</label>
+            <input type="range" id="sample-rate-slider" min="0" max="7" value="3" step="1">
+            <span class="slider-value" id="sample-rate-value">32</span>
+          </div>
+          <div class="slider-group">
+            <label for="bit-depth-slider">Bit depth</label>
+            <input type="range" id="bit-depth-slider" min="2" max="16" value="4" step="1">
+            <span class="slider-value" id="bit-depth-value">4-bit</span>
+          </div>
+          <div class="slider-group">
+            <label>Duration</label>
+            <span class="slider-value">1 second</span>
+          </div>
+          <div class="slider-group">
+            <label for="channel-toggle">Channels</label>
+            <button type="button" class="algo-btn active" id="channel-toggle">Mono</button>
+          </div>
+        </div>
+
+        <div class="stats-bar">
+          <div class="stat-item"><span class="stat-label">Sample rate:</span> <span class="stat-value" id="stat-rate">32</span></div>
+          <div class="stat-item"><span class="stat-label">Bit depth:</span> <span class="stat-value" id="stat-depth">4-bit</span></div>
+          <div class="stat-item"><span class="stat-label">Levels:</span> <span class="stat-value" id="stat-levels">16</span></div>
+          <div class="stat-item"><span class="stat-label">File size:</span> <span class="stat-value" id="stat-size">16 B</span></div>
+        </div>
+
+        <div id="controls"></div>
+      </div>
+
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Sample rate</strong> is the number of audio samples captured per second, measured in Hertz (Hz). CD quality = 44,100 Hz.
+          </div>
+          <div class="key-fact">
+            <strong>Bit depth</strong> is the number of bits used to record each sample. Higher bit depth = more precise amplitude values.
+          </div>
+          <div class="key-fact">
+            <strong>Nyquist theorem:</strong> the sample rate must be at least double the highest frequency to accurately reproduce sound.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> File size = sample rate &times; bit depth &times; duration &times; channels &divide; 8 bytes. Always show this formula in exams.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

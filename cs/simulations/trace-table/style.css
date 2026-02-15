@@ -1,0 +1,179 @@
+/* ── Trace Table Stepper — simulation-specific styles ──────────────── */
+
+/* ── Two-column layout: code + trace table ─────────────────────────── */
+.trace-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+@media (min-width: 640px) {
+  .trace-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-4);
+    align-items: start;
+  }
+}
+
+/* ── Panel containers ──────────────────────────────────────────────── */
+.code-panel,
+.table-panel,
+.output-panel {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.panel-heading {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--clr-surface-alt);
+  border-bottom: 1px solid var(--clr-border);
+  color: var(--clr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Code display ──────────────────────────────────────────────────── */
+.code-display {
+  padding: var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  overflow-x: auto;
+  min-height: 180px;
+}
+
+.code-line {
+  display: flex;
+  gap: var(--sp-3);
+  padding: 1px var(--sp-2);
+  border-radius: var(--radius-sm);
+  transition: background 150ms ease;
+  white-space: pre;
+}
+
+.code-line.active {
+  background: var(--clr-primary-light);
+}
+
+.code-line.executed {
+  opacity: 0.55;
+}
+
+.code-line.active.executed {
+  opacity: 1;
+}
+
+.line-num {
+  color: var(--clr-text-muted);
+  min-width: 2.5ch;
+  text-align: right;
+  user-select: none;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.line-text {
+  white-space: pre;
+}
+
+/* ── Trace table ───────────────────────────────────────────────────── */
+.table-scroll {
+  max-height: 380px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.trace-table {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+}
+
+.trace-table th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--clr-surface-alt);
+  white-space: nowrap;
+}
+
+.trace-table td {
+  white-space: nowrap;
+  min-width: 4ch;
+}
+
+.trace-table tr.step-current {
+  background: var(--clr-primary-light);
+}
+
+.trace-table td.changed {
+  color: var(--clr-primary);
+  font-weight: 700;
+}
+
+.trace-table .col-step {
+  color: var(--clr-text-muted);
+  font-weight: 400;
+  font-size: var(--fs-xs);
+}
+
+.trace-table .col-output {
+  color: var(--clr-accent);
+  font-weight: 600;
+}
+
+/* ── Output display (console) ──────────────────────────────────────── */
+.output-panel {
+  margin-top: var(--sp-2);
+}
+
+.output-display {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  padding: var(--sp-3);
+  margin: 0;
+  min-height: 2.4em;
+  max-height: 160px;
+  overflow-y: auto;
+  background: var(--clr-bg);
+  color: var(--clr-accent);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ── Dark theme overrides ──────────────────────────────────────────── */
+[data-theme="dark"] .code-line.active {
+  background: var(--clr-primary-light);
+}
+
+[data-theme="dark"] .output-display {
+  background: #0c1222;
+  color: #34d399;
+}
+
+[data-theme="dark"] .trace-table td.changed {
+  color: #60a5fa;
+}
+
+[data-theme="dark"] .trace-table .col-output {
+  color: #34d399;
+}
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .code-display {
+    font-size: var(--fs-xs);
+    line-height: 1.5;
+  }
+  .trace-table {
+    font-size: 0.65rem;
+  }
+  .trace-table th,
+  .trace-table td {
+    padding: var(--sp-1) var(--sp-2);
+  }
+}

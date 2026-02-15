@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cipher &amp; Encryption Tool — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.4.2" data-sim-slug="cipher-encryption">
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Cipher &amp; Encryption Tool</h2>
+        <p class="sim-subtitle">Encrypt and decrypt messages using the Caesar cipher — watch letter substitution in action.</p>
+
+        <div class="sim-toolbar">
+          <button class="algo-btn active" data-tab="encrypt-decrypt">Encrypt / Decrypt</button>
+          <button class="algo-btn" data-tab="brute-force">Brute Force</button>
+        </div>
+
+        <!-- Encrypt / Decrypt tab -->
+        <div id="encrypt-decrypt-panel" class="cipher-panel">
+          <div class="cipher-input-row">
+            <label for="plaintext-input">Plaintext</label>
+            <textarea id="plaintext-input" rows="3" class="cipher-textarea" placeholder="Enter your message here...">HELLO WORLD</textarea>
+          </div>
+
+          <div class="cipher-controls-row">
+            <div class="shift-control">
+              <label for="shift-slider">Key (shift):</label>
+              <input type="range" id="shift-slider" min="1" max="25" value="3">
+              <span id="shift-value" class="shift-value">3</span>
+            </div>
+            <div class="direction-toggle">
+              <button id="dir-encrypt" class="dir-btn active" type="button">Encrypt</button>
+              <button id="dir-decrypt" class="dir-btn" type="button">Decrypt</button>
+            </div>
+          </div>
+
+          <div class="cipher-input-row">
+            <label>Output</label>
+            <div id="cipher-output" class="cipher-output"></div>
+          </div>
+
+          <div class="alphabet-map">
+            <h4 class="map-title">Alphabet Mapping</h4>
+            <div class="map-row">
+              <span class="map-label">Plain:</span>
+              <div id="plain-alpha" class="alpha-cells"></div>
+            </div>
+            <div class="map-row">
+              <span class="map-label">Cipher:</span>
+              <div id="cipher-alpha" class="alpha-cells"></div>
+            </div>
+            <svg id="mapping-lines" class="mapping-lines"></svg>
+          </div>
+
+          <div class="letter-breakdown">
+            <h4 class="map-title">Letter-by-Letter Breakdown</h4>
+            <div id="letter-detail" class="letter-detail"></div>
+          </div>
+        </div>
+
+        <!-- Brute Force tab -->
+        <div id="brute-force-panel" class="cipher-panel" style="display:none">
+          <div class="cipher-input-row">
+            <label for="brute-input">Ciphertext to crack</label>
+            <textarea id="brute-input" rows="3" class="cipher-textarea" placeholder="Enter ciphertext to brute-force...">KHOOR ZRUOG</textarea>
+          </div>
+          <div id="brute-grid" class="brute-grid"></div>
+        </div>
+
+        <div id="controls"></div>
+      </div>
+
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Caesar cipher</strong> is a substitution cipher that shifts each letter by a fixed number of positions in the alphabet.
+          </div>
+          <div class="key-fact">
+            <strong>Symmetric encryption</strong> — the same key is used to encrypt and decrypt the message.
+          </div>
+          <div class="key-fact">
+            <strong>Only 26 possible keys</strong> — with so few possibilities, the Caesar cipher is vulnerable to brute-force attacks.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> Know the difference between encryption (securing data) and encoding (converting format). Encryption requires a key; encoding does not.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

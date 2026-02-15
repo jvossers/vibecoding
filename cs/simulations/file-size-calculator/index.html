@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Size Calculator — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.2.3" data-sim-slug="file-size-calculator">
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">File Size Calculator</h2>
+        <p class="sim-subtitle">Calculate file sizes for images, sounds and text with step-by-step breakdowns.</p>
+
+        <!-- Tab bar for Image / Sound / Text -->
+        <div class="sim-toolbar">
+          <button class="algo-btn active" data-tab="image">Image</button>
+          <button class="algo-btn" data-tab="sound">Sound</button>
+          <button class="algo-btn" data-tab="text">Text</button>
+        </div>
+
+        <!-- Image tab -->
+        <div id="image-panel" class="calc-panel">
+          <div class="calc-inputs">
+            <div class="input-group">
+              <label for="img-width">Width (px)</label>
+              <input type="range" id="img-width" min="1" max="4000" value="1920" class="calc-range">
+              <span class="range-value" id="img-width-val">1920</span>
+            </div>
+            <div class="input-group">
+              <label for="img-height">Height (px)</label>
+              <input type="range" id="img-height" min="1" max="4000" value="1080" class="calc-range">
+              <span class="range-value" id="img-height-val">1080</span>
+            </div>
+            <div class="input-group">
+              <label for="img-depth">Colour Depth</label>
+              <select id="img-depth" class="calc-select">
+                <option value="1">1-bit (black &amp; white)</option>
+                <option value="8">8-bit (256 colours)</option>
+                <option value="16">16-bit (65,536 colours)</option>
+                <option value="24" selected>24-bit (16.7 million colours)</option>
+                <option value="32">32-bit (with transparency)</option>
+              </select>
+            </div>
+          </div>
+          <div id="image-breakdown" class="calc-breakdown"></div>
+        </div>
+
+        <!-- Sound tab -->
+        <div id="sound-panel" class="calc-panel" style="display:none">
+          <div class="calc-inputs">
+            <div class="input-group">
+              <label for="snd-rate">Sample Rate</label>
+              <select id="snd-rate" class="calc-select">
+                <option value="8000">8,000 Hz (telephone)</option>
+                <option value="11025">11,025 Hz (low quality)</option>
+                <option value="22050">22,050 Hz (FM radio)</option>
+                <option value="44100" selected>44,100 Hz (CD quality)</option>
+                <option value="48000">48,000 Hz (DVD quality)</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="snd-depth">Bit Depth</label>
+              <select id="snd-depth" class="calc-select">
+                <option value="8">8-bit</option>
+                <option value="16" selected>16-bit</option>
+                <option value="24">24-bit</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="snd-duration">Duration (seconds)</label>
+              <input type="range" id="snd-duration" min="1" max="600" value="10" class="calc-range">
+              <span class="range-value" id="snd-duration-val">10</span>
+            </div>
+            <div class="input-group">
+              <label for="snd-channels">Channels</label>
+              <select id="snd-channels" class="calc-select">
+                <option value="1">1 (Mono)</option>
+                <option value="2" selected>2 (Stereo)</option>
+              </select>
+            </div>
+          </div>
+          <div id="sound-breakdown" class="calc-breakdown"></div>
+        </div>
+
+        <!-- Text tab -->
+        <div id="text-panel" class="calc-panel" style="display:none">
+          <div class="calc-inputs">
+            <div class="input-group">
+              <label for="txt-chars">Character Count</label>
+              <input type="range" id="txt-chars" min="1" max="100000" value="500" class="calc-range">
+              <span class="range-value" id="txt-chars-val">500</span>
+            </div>
+            <div class="input-group">
+              <label for="txt-encoding">Character Encoding</label>
+              <select id="txt-encoding" class="calc-select">
+                <option value="7">ASCII (7-bit)</option>
+                <option value="8" selected>Extended ASCII (8-bit)</option>
+                <option value="16">Unicode (16-bit)</option>
+              </select>
+            </div>
+          </div>
+          <div id="text-breakdown" class="calc-breakdown"></div>
+        </div>
+
+        <div id="controls"></div>
+      </div>
+
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Unit conversions:</strong> 1 byte = 8 bits. 1 KB = 1,000 bytes. 1 MB = 1,000,000 bytes. 1 GB = 1,000,000,000 bytes.
+          </div>
+          <div class="key-fact">
+            <strong>Colour depth</strong> is the number of bits used to represent each pixel. More bits = more colours but larger files.
+          </div>
+          <div class="key-fact">
+            <strong>Sample rate</strong> is the number of samples taken per second. Higher sample rates capture more detail in the sound.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> Always show your working in file size calculations. Write the formula first, substitute values, then convert units step by step.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+/* ── Calculator panels ─────────────────────────────────────────────── */
+.calc-panel {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+}
+
+/* ── Input groups ─────────────────────────────────────────────────── */
+.calc-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+.input-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.input-group label {
+  flex: 0 0 160px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--clr-text-muted);
+}
+.calc-range {
+  flex: 1 1 120px;
+  min-width: 100px;
+  accent-color: var(--clr-primary);
+}
+.range-value {
+  flex: 0 0 60px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--clr-text);
+}
+.calc-select {
+  flex: 1 1 180px;
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  outline-color: var(--clr-primary);
+}
+
+/* ── Breakdown area ───────────────────────────────────────────────── */
+.calc-breakdown {
+  background: var(--clr-bg);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  padding: var(--sp-4);
+}
+.breakdown-title {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--clr-primary);
+  margin-bottom: var(--sp-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.breakdown-formula {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--clr-text);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border-muted);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-3);
+  margin-bottom: var(--sp-3);
+  line-height: 1.8;
+}
+.breakdown-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.step-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-sm);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border-muted);
+}
+.step-label {
+  flex: 0 0 auto;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  min-width: 80px;
+}
+.step-calc {
+  flex: 1 1 auto;
+  font-family: var(--font-mono);
+  color: var(--clr-text);
+  word-break: break-all;
+}
+.step-result {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--clr-primary);
+}
+.step-row.final {
+  background: var(--clr-primary-light);
+  border-color: var(--clr-primary);
+}
+.step-row.final .step-label {
+  color: var(--clr-primary);
+  font-weight: 700;
+}
+.step-row.final .step-result {
+  font-size: var(--fs-base);
+}
+.step-arrow {
+  color: var(--clr-text-muted);
+  font-weight: 700;
+}
+
+/* ── Dark mode input overrides ────────────────────────────────────── */
+[data-theme="dark"] .calc-select {
+  background: var(--clr-bg);
+  color: var(--clr-text);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .input-group label {
+    flex: 0 0 100%;
+  }
+  .range-value {
+    flex: 0 0 50px;
+  }
+  .step-row {
+    flex-direction: column;
+    gap: var(--sp-1);
+  }
+}

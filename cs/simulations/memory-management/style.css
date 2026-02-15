@@ -1,0 +1,120 @@
+/* ── Memory Management Visualiser — sim-specific styles ─────────────── */
+
+.canvas-container {
+  min-height: 300px;
+}
+
+#mem-canvas {
+  width: 100%;
+  display: block;
+}
+
+/* ── Toolbar extras ─────────────────────────────────────────────────── */
+.toolbar-sep {
+  display: inline-block;
+  width: 1px;
+  height: 24px;
+  background: var(--clr-border-muted);
+  margin: 0 var(--sp-1);
+}
+
+.toolbar-label {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--clr-text-muted);
+}
+
+.sim-toolbar select {
+  min-width: 100px;
+}
+
+/* ── Event log ──────────────────────────────────────────────────────── */
+.event-log {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.event-log-header {
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  background: var(--clr-surface-alt);
+  border-bottom: 1px solid var(--clr-border);
+  color: var(--clr-text-muted);
+}
+
+.event-log-body {
+  max-height: 120px;
+  overflow-y: auto;
+  padding: var(--sp-2) var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+  line-height: 1.6;
+}
+
+.event-log-body .log-entry {
+  padding: var(--sp-1) 0;
+  border-bottom: 1px solid var(--clr-border-muted);
+}
+
+.event-log-body .log-entry:last-child {
+  border-bottom: none;
+}
+
+.event-log-body .log-entry .log-proc {
+  font-weight: 700;
+}
+
+.event-log-body .log-entry.log-swap {
+  color: var(--clr-accent);
+}
+
+.event-log-body .log-entry.log-error {
+  color: #ef4444;
+}
+
+.event-log-body .log-entry.log-end {
+  color: var(--clr-text-muted);
+}
+
+/* ── Legend ──────────────────────────────────────────────────────────── */
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.legend-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.legend-note {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+  line-height: 1.5;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .sim-toolbar { gap: var(--sp-1); }
+  .algo-btn { padding: var(--sp-1) var(--sp-2); font-size: var(--fs-xs); }
+  .stats-bar { gap: var(--sp-2); }
+  .toolbar-sep { display: none; }
+}

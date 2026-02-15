@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Defragmentation Visualiser — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.5.2" data-sim-slug="defragmentation">
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Defragmentation Visualiser</h2>
+        <p class="sim-subtitle">See how files become fragmented on disk and watch the defragmentation process consolidate them.</p>
+
+        <!-- Toolbar -->
+        <div class="sim-toolbar">
+          <label for="file-count">Files</label>
+          <input type="range" id="file-count" min="3" max="8" value="5">
+          <span id="file-count-label" class="range-label">5</span>
+          <button type="button" class="algo-btn" id="btn-fragment">Fragment</button>
+          <button type="button" class="algo-btn" id="btn-defragment">Defragment</button>
+        </div>
+
+        <!-- Canvas -->
+        <div class="canvas-container">
+          <canvas id="defrag-canvas"></canvas>
+        </div>
+
+        <!-- Controls (play/pause/step/reset/speed) -->
+        <div id="controls"></div>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+          <div class="stat-item"><span class="stat-label">Fragmentation:</span> <span class="stat-value" id="stat-frag">0%</span></div>
+          <div class="stat-item"><span class="stat-label">Blocks Moved:</span> <span class="stat-value" id="stat-moves">0</span></div>
+          <div class="stat-item"><span class="stat-label">Files:</span> <span class="stat-value" id="stat-files">0</span></div>
+        </div>
+        <div class="stats-bar stats-bar--secondary">
+          <div class="stat-item"><span class="stat-label">Read head distance &mdash; Before:</span> <span class="stat-value" id="stat-dist-before">0</span> <span class="stat-label">blocks</span></div>
+          <div class="stat-item"><span class="stat-label">After:</span> <span class="stat-value" id="stat-dist-after">0</span> <span class="stat-label">blocks</span></div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Fragmentation</strong> occurs when files are split into pieces stored in non-contiguous locations on a hard drive.
+          </div>
+          <div class="key-fact">
+            <strong>Defragmentation</strong> reorganises the data so each file's blocks are stored together. This reduces read/write head movement and speeds up access.
+          </div>
+          <div class="key-fact">
+            <strong>SSDs</strong> do not need defragmentation because they have no moving parts &mdash; any memory cell can be accessed equally fast (no seek time).
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> In exams, explain that defragmentation improves HDD performance by reducing the distance the read/write head must travel, decreasing access time.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

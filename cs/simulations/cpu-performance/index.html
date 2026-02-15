@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CPU Performance Simulator — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.1.2" data-sim-slug="cpu-performance">
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">CPU Performance Simulator</h2>
+        <p class="sim-subtitle">Compare two CPUs side by side — adjust clock speed, cores and cache to see how they affect task processing.</p>
+
+        <!-- CPU config toolbar -->
+        <div class="sim-toolbar cpu-toolbar">
+          <div class="cpu-config-group">
+            <span class="cpu-config-label">CPU A</span>
+            <label for="cpu-a-clock">Clock</label>
+            <select id="cpu-a-clock">
+              <option value="1">1 GHz</option>
+              <option value="2" selected>2 GHz</option>
+              <option value="3">3 GHz</option>
+              <option value="4">4 GHz</option>
+            </select>
+            <label for="cpu-a-cores">Cores</label>
+            <select id="cpu-a-cores">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="4">4</option>
+            </select>
+            <label for="cpu-a-cache">Cache</label>
+            <select id="cpu-a-cache">
+              <option value="small">Small</option>
+              <option value="medium" selected>Medium</option>
+              <option value="large">Large</option>
+            </select>
+          </div>
+          <div class="cpu-config-group">
+            <span class="cpu-config-label">CPU B</span>
+            <label for="cpu-b-clock">Clock</label>
+            <select id="cpu-b-clock">
+              <option value="1" selected>1 GHz</option>
+              <option value="2">2 GHz</option>
+              <option value="3">3 GHz</option>
+              <option value="4">4 GHz</option>
+            </select>
+            <label for="cpu-b-cores">Cores</label>
+            <select id="cpu-b-cores">
+              <option value="1" selected>1</option>
+              <option value="2">2</option>
+              <option value="4">4</option>
+            </select>
+            <label for="cpu-b-cache">Cache</label>
+            <select id="cpu-b-cache">
+              <option value="small" selected>Small</option>
+              <option value="medium">Medium</option>
+              <option value="large">Large</option>
+            </select>
+          </div>
+          <button class="algo-btn generate-btn" id="btn-generate" type="button">Generate Tasks</button>
+        </div>
+
+        <!-- Canvas -->
+        <div class="canvas-container">
+          <canvas id="cpu-canvas"></canvas>
+        </div>
+
+        <!-- Controls (play/pause/step/reset/speed) -->
+        <div id="controls"></div>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+          <div class="stat-item"><span class="stat-label">CPU A Steps:</span> <span class="stat-value" id="stat-a-steps">0</span></div>
+          <div class="stat-item"><span class="stat-label">CPU A Tasks/step:</span> <span class="stat-value" id="stat-a-rate">0.0</span></div>
+          <div class="stat-item stat-divider"></div>
+          <div class="stat-item"><span class="stat-label">CPU B Steps:</span> <span class="stat-value" id="stat-b-steps">0</span></div>
+          <div class="stat-item"><span class="stat-label">CPU B Tasks/step:</span> <span class="stat-value" id="stat-b-rate">0.0</span></div>
+          <div class="stat-item" id="stat-winner"></div>
+        </div>
+      </div>
+
+      <!-- ── Sidebar ─────────────────────────────────────────── -->
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Clock Speed (GHz)</strong> determines how many instructions the CPU can execute per second. Higher clock speed = faster processing.
+          </div>
+          <div class="key-fact">
+            <strong>More Cores</strong> allow the CPU to process multiple tasks simultaneously (parallel processing). But not all tasks can be split across cores.
+          </div>
+          <div class="key-fact">
+            <strong>Cache</strong> is small, fast memory on the CPU chip. Frequently used data is stored here to avoid slower RAM access. Larger cache = fewer delays.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> When asked "explain how X affects CPU performance", always link the factor to processing speed and give a specific example.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

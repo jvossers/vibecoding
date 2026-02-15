@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCII / Unicode Explorer — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.2.4" data-sim-slug="ascii-unicode">
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+
+    <div class="sim-page">
+      <!-- Simulation area -->
+      <div class="sim-area">
+        <h2 class="sim-title">ASCII / Unicode Explorer</h2>
+        <p class="sim-subtitle">Type text to see character codes, or click the character map to explore.</p>
+
+        <!-- Mode toggle toolbar -->
+        <div class="sim-toolbar" id="mode-toolbar">
+          <label>Encoding:</label>
+          <button type="button" class="algo-btn active" id="btn-ascii">ASCII (7-bit)</button>
+          <button type="button" class="algo-btn" id="btn-unicode">Unicode (16-bit)</button>
+        </div>
+
+        <!-- Text input -->
+        <div class="text-input-area">
+          <label for="text-input">Type text to convert:</label>
+          <input type="text" id="text-input" class="text-field" placeholder="Hello, World!" autocomplete="off">
+        </div>
+
+        <!-- Live conversion table -->
+        <div class="conversion-table-wrap" id="conversion-table-wrap">
+          <table class="conversion-table" id="conversion-table">
+            <thead>
+              <tr>
+                <th>Character</th>
+                <th>Decimal</th>
+                <th>Binary</th>
+                <th>Hex</th>
+              </tr>
+            </thead>
+            <tbody id="conversion-tbody"></tbody>
+          </table>
+          <p class="empty-hint" id="empty-hint">Type something above to see conversions here.</p>
+        </div>
+
+        <!-- Character map -->
+        <div class="charmap-section">
+          <h3 class="charmap-heading">Character Map <span class="charmap-range">(ASCII 32–126)</span></h3>
+          <div class="charmap-grid" id="charmap-grid"></div>
+        </div>
+
+        <!-- Selected character detail -->
+        <div class="char-detail" id="char-detail" style="display:none">
+          <h3>Character Detail</h3>
+          <div class="detail-fields">
+            <div class="detail-field">
+              <span class="detail-label">Character</span>
+              <span class="detail-value" id="detail-char"></span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Decimal</span>
+              <span class="detail-value" id="detail-dec"></span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Binary</span>
+              <span class="detail-value" id="detail-bin"></span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Hex</span>
+              <span class="detail-value" id="detail-hex"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls (reset only) -->
+        <div id="controls"></div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>ASCII</strong> uses 7 bits to represent 128 characters (0–127), including letters, digits, and symbols.
+          </div>
+          <div class="key-fact">
+            <strong>Unicode</strong> uses 16+ bits and can represent over 143,000 characters from all writing systems.
+          </div>
+          <div class="key-fact">
+            The first 128 Unicode characters are <strong>identical to ASCII</strong>.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> In exams, you may be asked to convert between a character and its ASCII binary code. Remember: A=65, a=97, 0=48.
+          </div>
+        </div>
+
+        <div class="challenge-panel" id="challenge">
+          <h3>Practice Mode</h3>
+          <p id="challenge-question" class="challenge-question"></p>
+          <input type="text" id="challenge-answer" class="challenge-input" placeholder="Type your answer…" autocomplete="off">
+          <p id="challenge-feedback" class="challenge-feedback"></p>
+          <p id="challenge-streak" class="challenge-streak"></p>
+          <button type="button" id="challenge-new" class="filter-btn" style="margin-top:0.5rem">New Challenge</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

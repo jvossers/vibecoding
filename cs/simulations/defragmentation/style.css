@@ -1,0 +1,37 @@
+/* ── Defragmentation-specific styles ───────────────────────────────── */
+
+.canvas-container {
+  min-height: 400px;
+}
+
+#defrag-canvas {
+  width: 100%;
+  display: block;
+}
+
+/* Range slider in toolbar */
+.sim-toolbar input[type="range"] {
+  width: 100px;
+  accent-color: var(--clr-primary);
+}
+
+.range-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  min-width: 2ch;
+  color: var(--clr-text);
+}
+
+/* Secondary stats bar */
+.stats-bar--secondary {
+  margin-top: calc(-1 * var(--sp-3));
+}
+
+/* ── Responsive tweaks ────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .sim-toolbar { gap: var(--sp-1); }
+  .sim-toolbar input[type="range"] { width: 70px; }
+  .stats-bar { gap: var(--sp-2); font-size: var(--fs-xs); }
+  .canvas-container { min-height: 300px; }
+}

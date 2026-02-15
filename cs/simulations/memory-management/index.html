@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Management Visualiser — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.5.1" data-sim-slug="memory-management">
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Memory Management Visualiser</h2>
+        <p class="sim-subtitle">Watch processes load into RAM, see paging in action, and understand virtual memory swapping.</p>
+
+        <!-- Toolbar -->
+        <div class="sim-toolbar">
+          <button class="algo-btn" id="btn-new-process" type="button">+ New Process</button>
+          <label for="end-process-select">End:</label>
+          <select id="end-process-select">
+            <option value="">— select —</option>
+          </select>
+          <button class="algo-btn" id="btn-end-process" type="button">End Process</button>
+
+          <span class="toolbar-sep"></span>
+
+          <label class="toolbar-label">RAM:</label>
+          <button class="algo-btn active" data-ram="32">32</button>
+          <button class="algo-btn" data-ram="16">16</button>
+          <button class="algo-btn" data-ram="64">64</button>
+
+          <span class="toolbar-sep"></span>
+
+          <label class="toolbar-label">Mode:</label>
+          <button class="algo-btn active" data-mode="paging">Paging</button>
+          <button class="algo-btn" data-mode="contiguous">Contiguous</button>
+        </div>
+
+        <!-- Canvas -->
+        <div class="canvas-container">
+          <canvas id="mem-canvas"></canvas>
+        </div>
+
+        <!-- Controls (play/pause/step/reset/speed) -->
+        <div id="controls"></div>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+          <div class="stat-item"><span class="stat-label">RAM Usage:</span> <span class="stat-value" id="stat-usage">0%</span></div>
+          <div class="stat-item"><span class="stat-label">Processes:</span> <span class="stat-value" id="stat-procs">0</span></div>
+          <div class="stat-item"><span class="stat-label">Page Faults:</span> <span class="stat-value" id="stat-faults">0</span></div>
+          <div class="stat-item"><span class="stat-label">Swaps:</span> <span class="stat-value" id="stat-swaps">0</span></div>
+        </div>
+
+        <!-- Event log -->
+        <div class="event-log" id="event-log">
+          <div class="event-log-header">Event Log</div>
+          <div class="event-log-body" id="event-log-body"></div>
+        </div>
+      </div>
+
+      <!-- ── Sidebar ─────────────────────────────────────────── -->
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>RAM</strong> (Random Access Memory) is volatile primary storage. It holds data and instructions currently in use by the CPU.
+          </div>
+          <div class="key-fact">
+            <strong>Virtual memory</strong> uses a section of the hard drive as if it were RAM. When RAM is full, pages are swapped to disk.
+          </div>
+          <div class="key-fact">
+            <strong>Paging</strong> divides memory into fixed-size blocks (pages). It avoids the problem of external fragmentation.
+          </div>
+          <div class="key-fact">
+            <strong>Contiguous allocation</strong> requires a process to occupy a single continuous block of memory. It can lead to external fragmentation.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> Be able to explain why virtual memory can slow down the computer: constant swapping between RAM and disk (thrashing) is much slower than accessing RAM directly.
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="info-panel">
+          <h3>Legend</h3>
+          <div id="legend-items" class="legend-items"></div>
+          <p class="legend-note">Empty cells represent free memory frames. Coloured cells show pages belonging to a process.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

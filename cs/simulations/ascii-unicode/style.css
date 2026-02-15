@@ -1,0 +1,183 @@
+/* ── Text Input ────────────────────────────────────────────────────── */
+.text-input-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+.text-input-area label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--clr-text-muted);
+}
+.text-field {
+  width: 100%;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+  outline-color: var(--clr-primary);
+  background: var(--clr-bg);
+  color: var(--clr-text);
+}
+.text-field:focus {
+  border-color: var(--clr-primary);
+  box-shadow: 0 0 0 3px var(--clr-primary-light);
+}
+
+/* ── Conversion Table ─────────────────────────────────────────────── */
+.conversion-table-wrap {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+  overflow-x: auto;
+}
+.conversion-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+.conversion-table th,
+.conversion-table td {
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--clr-border);
+  text-align: center;
+}
+.conversion-table th {
+  background: var(--clr-surface-alt);
+  font-weight: 600;
+  color: var(--clr-text-muted);
+}
+.conversion-table td {
+  font-family: var(--font-mono);
+}
+.conversion-table td:first-child {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+.conversion-table tbody tr:hover {
+  background: var(--clr-primary-light);
+}
+.empty-hint {
+  text-align: center;
+  color: var(--clr-text-muted);
+  font-size: var(--fs-sm);
+  padding: var(--sp-3) 0;
+  margin: 0;
+}
+
+/* ── Character Map ────────────────────────────────────────────────── */
+.charmap-section {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+}
+.charmap-heading {
+  font-size: var(--fs-base);
+  font-weight: 700;
+  margin-bottom: var(--sp-3);
+}
+.charmap-range {
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--clr-text-muted);
+}
+.charmap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+  gap: var(--sp-1);
+}
+.charmap-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-base);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  border: 1px solid var(--clr-border-muted);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  user-select: none;
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  transition: background var(--transition), color var(--transition),
+              border-color var(--transition), transform var(--transition);
+}
+.charmap-cell:hover {
+  border-color: var(--clr-primary);
+  background: var(--clr-primary-light);
+  transform: scale(1.1);
+  z-index: 1;
+}
+.charmap-cell.selected {
+  background: var(--clr-primary);
+  color: var(--clr-primary-fg);
+  border-color: var(--clr-primary);
+  transform: scale(1.1);
+  z-index: 1;
+}
+.charmap-cell.space-char {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+}
+
+/* ── Character Detail Panel ───────────────────────────────────────── */
+.char-detail {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+}
+.char-detail h3 {
+  font-size: var(--fs-base);
+  font-weight: 700;
+  margin-bottom: var(--sp-3);
+}
+.detail-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--sp-3);
+}
+.detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  text-align: center;
+  padding: var(--sp-3);
+  background: var(--clr-surface-alt);
+  border: 1px solid var(--clr-border-muted);
+  border-radius: var(--radius);
+}
+.detail-label {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.detail-value {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--clr-primary);
+  word-break: break-all;
+}
+.detail-field:first-child .detail-value {
+  font-size: var(--fs-2xl);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .charmap-grid {
+    grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+  }
+  .charmap-cell {
+    font-size: var(--fs-sm);
+  }
+  .detail-fields {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,80 @@
+/* ── CPU Performance Simulator — sim-specific styles ───────────────── */
+
+.canvas-container {
+  min-height: 300px;
+}
+#cpu-canvas {
+  width: 100%;
+  display: block;
+}
+
+/* ── CPU config toolbar ───────────────────────────────────────────── */
+.cpu-toolbar {
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+.cpu-config-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--clr-border-muted);
+  border-radius: var(--radius-sm);
+  background: var(--clr-surface-alt);
+}
+.cpu-config-label {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--clr-primary);
+  margin-right: var(--sp-1);
+}
+.generate-btn {
+  margin-left: auto;
+  background: var(--clr-primary);
+  color: var(--clr-primary-fg);
+  border-color: var(--clr-primary);
+  font-weight: 600;
+}
+.generate-btn:hover {
+  opacity: 0.9;
+}
+
+/* ── Stats divider ────────────────────────────────────────────────── */
+.stat-divider {
+  width: 1px;
+  height: 1.2em;
+  background: var(--clr-border);
+}
+#stat-winner {
+  margin-left: auto;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .cpu-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .cpu-config-group {
+    justify-content: center;
+  }
+  .generate-btn {
+    margin-left: 0;
+    text-align: center;
+  }
+  .stats-bar {
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+  .stat-divider {
+    width: 100%;
+    height: 1px;
+  }
+  #stat-winner {
+    margin-left: 0;
+    text-align: center;
+  }
+}
