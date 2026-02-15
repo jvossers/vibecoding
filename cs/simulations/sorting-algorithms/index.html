@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorting Algorithm Visualiser — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="2.1.3" data-sim-slug="sorting-algorithms">
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+
+    <div class="sim-page">
+      <!-- ── Simulation area ─────────────────────────────────── -->
+      <div class="sim-area">
+        <h2 class="sim-title">Sorting Algorithm Visualiser</h2>
+        <p class="sim-subtitle">Watch bubble sort, insertion sort and merge sort step by step.</p>
+
+        <!-- Algorithm & config toolbar -->
+        <div class="sim-toolbar">
+          <button class="algo-btn active" data-algo="bubble">Bubble Sort</button>
+          <button class="algo-btn" data-algo="insertion">Insertion Sort</button>
+          <button class="algo-btn" data-algo="merge">Merge Sort</button>
+
+          <label for="arr-size">Size</label>
+          <select id="arr-size">
+            <option value="8">8</option>
+            <option value="16" selected>16</option>
+            <option value="32">32</option>
+            <option value="64">64</option>
+          </select>
+
+          <label for="arr-order">Order</label>
+          <select id="arr-order">
+            <option value="random" selected>Random</option>
+            <option value="nearly">Nearly Sorted</option>
+            <option value="reversed">Reversed</option>
+          </select>
+        </div>
+
+        <!-- Canvas -->
+        <div class="canvas-container">
+          <canvas id="sort-canvas"></canvas>
+        </div>
+
+        <!-- Controls (play/pause/step/reset/speed) -->
+        <div id="controls"></div>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+          <div class="stat-item"><span class="stat-label">Comparisons:</span> <span class="stat-value" id="stat-comparisons">0</span></div>
+          <div class="stat-item"><span class="stat-label">Swaps:</span> <span class="stat-value" id="stat-swaps">0</span></div>
+          <div class="stat-item"><span class="stat-label">Step:</span> <span class="stat-value" id="stat-step">0</span></div>
+        </div>
+      </div>
+
+      <!-- ── Sidebar ─────────────────────────────────────────── -->
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Bubble Sort</strong> repeatedly compares adjacent pairs and swaps them if they're in the wrong order. Simple but slow — O(n&sup2;).
+          </div>
+          <div class="key-fact">
+            <strong>Insertion Sort</strong> builds a sorted section one item at a time, inserting each new item into its correct position. O(n&sup2;) worst case.
+          </div>
+          <div class="key-fact">
+            <strong>Merge Sort</strong> divides the list in half recursively, then merges sorted halves back together. Efficient at O(n log n) but uses extra memory.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> You must be able to trace through each algorithm step-by-step and state the number of comparisons/swaps made.
+          </div>
+        </div>
+
+        <div class="info-panel">
+          <h3>Comparison</h3>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Algorithm</th><th>Best</th><th>Worst</th><th>Memory</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Bubble</td><td>O(n)</td><td>O(n&sup2;)</td><td>O(1)</td></tr>
+              <tr><td>Insertion</td><td>O(n)</td><td>O(n&sup2;)</td><td>O(1)</td></tr>
+              <tr><td>Merge</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

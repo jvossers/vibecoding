@@ -1,0 +1,142 @@
+/* ── Arithmetic panels ─────────────────────────────────────────────── */
+.arith-panel {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+}
+.arith-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-4);
+}
+.arith-inputs label {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--clr-text-muted);
+}
+.bin-input {
+  width: 10ch;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+  text-align: center;
+  outline-color: var(--clr-primary);
+}
+
+/* ── Addition grid ─────────────────────────────────────────────────── */
+.addition-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+}
+.add-row {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+.add-row .row-label {
+  width: 2.5em;
+  text-align: right;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  padding-right: var(--sp-2);
+}
+.add-cell {
+  width: 36px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  background: var(--clr-bg);
+  transition: background var(--transition), color var(--transition);
+}
+.add-cell.highlight {
+  background: var(--clr-primary);
+  color: #fff;
+  font-weight: 700;
+}
+.add-cell.carry-cell {
+  background: #fef3c7;
+  color: #92400e;
+  font-size: var(--fs-sm);
+  height: 28px;
+}
+.add-cell.carry-cell.highlight {
+  background: #f59e0b;
+  color: #fff;
+}
+.add-row.result-row .add-cell {
+  border-top: 2px solid var(--clr-text);
+}
+.add-row.result-row .add-cell.highlight {
+  background: var(--clr-accent);
+  color: #fff;
+}
+
+.overflow-msg {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  min-height: 1.4em;
+}
+.overflow-msg.error { color: #dc2626; }
+.overflow-msg.ok { color: #047857; }
+
+/* ── Shift display ─────────────────────────────────────────────────── */
+.shift-display {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  align-items: center;
+}
+.shift-row {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+.shift-row .row-label {
+  width: 5em;
+  text-align: right;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  padding-right: var(--sp-2);
+}
+.shift-cell {
+  width: 36px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+  background: var(--clr-bg);
+}
+.shift-cell.active { background: var(--clr-primary); color: #fff; font-weight: 700; }
+.shift-cell.lost { background: #fee2e2; color: #dc2626; text-decoration: line-through; }
+.shift-cell.new { background: #ecfdf5; color: #047857; }
+.shift-value-label {
+  font-size: var(--fs-sm);
+  color: var(--clr-text-muted);
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .add-cell, .shift-cell { width: 28px; height: 32px; font-size: var(--fs-base); }
+  .add-cell.carry-cell { height: 22px; font-size: var(--fs-xs); }
+}

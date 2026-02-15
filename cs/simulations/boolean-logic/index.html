@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boolean Logic Gate Simulator — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="2.4.1" data-sim-slug="boolean-logic">
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Boolean Logic Gate Simulator</h2>
+        <p class="sim-subtitle">Build circuits with AND, OR and NOT gates. Toggle inputs to see outputs change live.</p>
+
+        <div class="sim-toolbar">
+          <span class="toolbar-label">Add gate:</span>
+          <button class="algo-btn" data-gate="AND">AND</button>
+          <button class="algo-btn" data-gate="OR">OR</button>
+          <button class="algo-btn" data-gate="NOT">NOT</button>
+          <button class="algo-btn" data-gate="INPUT">Input</button>
+          <button class="algo-btn" data-gate="OUTPUT">Output</button>
+          <button class="algo-btn clear-btn" id="clear-circuit">Clear All</button>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="logic-canvas"></canvas>
+        </div>
+
+        <p class="canvas-hint">Click a gate button then click the canvas to place it. Drag between connection points to wire. Click an Input node to toggle 0/1.</p>
+
+        <div id="controls"></div>
+
+        <div id="truth-table-wrap"></div>
+      </div>
+
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>AND gate:</strong> Output is 1 only when ALL inputs are 1.
+          </div>
+          <div class="key-fact">
+            <strong>OR gate:</strong> Output is 1 when ANY input is 1.
+          </div>
+          <div class="key-fact">
+            <strong>NOT gate:</strong> Inverts the input — 0 becomes 1, 1 becomes 0.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> You must be able to complete truth tables for AND, OR and NOT gates, and combinations of gates.
+          </div>
+        </div>
+
+        <div class="info-panel">
+          <h3>Truth Tables</h3>
+          <table class="comparison-table">
+            <thead><tr><th>A</th><th>B</th><th>AND</th><th>OR</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+              <tr><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+              <tr><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+              <tr><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+            </tbody>
+          </table>
+          <table class="comparison-table" style="margin-top:var(--sp-3)">
+            <thead><tr><th>A</th><th>NOT</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>1</td></tr>
+              <tr><td>1</td><td>0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Packet Switching Simulator — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.3.2" data-sim-slug="packet-switching">
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Packet Switching Simulator</h2>
+        <p class="sim-subtitle">Type a message, watch it split into packets, route across a network, and reassemble.</p>
+
+        <div class="sim-toolbar">
+          <label for="msg-input">Message</label>
+          <input type="text" id="msg-input" value="Hello GCSE CS!" class="msg-input" maxlength="40" autocomplete="off">
+          <label for="pkt-size">Packet size</label>
+          <select id="pkt-size">
+            <option value="3">3 chars</option>
+            <option value="4" selected>4 chars</option>
+            <option value="6">6 chars</option>
+          </select>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="pkt-canvas"></canvas>
+        </div>
+
+        <div id="controls"></div>
+
+        <!-- Packet table -->
+        <div class="packet-table-wrap">
+          <table class="comparison-table" id="pkt-table">
+            <thead>
+              <tr><th>#</th><th>Data</th><th>Seq</th><th>Source</th><th>Dest</th><th>Status</th></tr>
+            </thead>
+            <tbody id="pkt-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Reassembled message -->
+        <div class="reassembly-bar">
+          <span class="stat-label">Reassembled:</span>
+          <span class="stat-value" id="reassembled">—</span>
+        </div>
+      </div>
+
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Packet switching</strong> splits data into small packets. Each packet has a header containing the source, destination, and sequence number.
+          </div>
+          <div class="key-fact">
+            <strong>Packets can take different routes</strong> through the network and may arrive out of order. The receiving device uses sequence numbers to reassemble them.
+          </div>
+          <div class="key-fact">
+            <strong>Routers</strong> direct each packet towards its destination based on the destination address in the header.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> You must describe how data is split into packets, how packets are routed, and how they are reassembled at the destination using sequence numbers.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+/* ── FDE Canvas ─────────────────────────────────────────────────────── */
+.canvas-container { min-height: 360px; }
+#fde-canvas { width: 100%; display: block; }

@@ -1,0 +1,39 @@
+/* ── Packet Switching ───────────────────────────────────────────────── */
+.canvas-container { min-height: 300px; }
+#pkt-canvas { width: 100%; display: block; }
+
+.msg-input {
+  flex: 1 1 160px;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  outline-color: var(--clr-primary);
+}
+
+.packet-table-wrap {
+  margin-top: var(--sp-4);
+  overflow-x: auto;
+}
+
+.reassembly-bar {
+  margin-top: var(--sp-3);
+  padding: var(--sp-3);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--fs-base);
+}
+.reassembly-bar .stat-label { color: var(--clr-text-muted); font-size: var(--fs-sm); }
+
+/* packet colour chips in table */
+.pkt-chip {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: #fff;
+}

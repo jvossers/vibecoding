@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binary Arithmetic Visualiser — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.2.4" data-sim-slug="binary-arithmetic">
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Binary Arithmetic Visualiser</h2>
+        <p class="sim-subtitle">Watch binary addition column-by-column with carry bits, or explore bit shifts.</p>
+
+        <div class="sim-toolbar">
+          <button class="algo-btn active" data-mode="addition">Addition</button>
+          <button class="algo-btn" data-mode="shift">Bit Shift</button>
+        </div>
+
+        <!-- Addition mode -->
+        <div id="addition-panel" class="arith-panel">
+          <div class="arith-inputs">
+            <label>A <input type="text" id="input-a" value="00110101" maxlength="8" class="bin-input" autocomplete="off"></label>
+            <label>B <input type="text" id="input-b" value="00011010" maxlength="8" class="bin-input" autocomplete="off"></label>
+          </div>
+          <div class="addition-grid" id="addition-grid"></div>
+          <div id="overflow-msg" class="overflow-msg"></div>
+        </div>
+
+        <!-- Shift mode -->
+        <div id="shift-panel" class="arith-panel" style="display:none">
+          <div class="arith-inputs">
+            <label>Value <input type="text" id="shift-input" value="00101100" maxlength="8" class="bin-input" autocomplete="off"></label>
+            <label>Shift
+              <select id="shift-dir">
+                <option value="left">Left (×2)</option>
+                <option value="right">Right (÷2)</option>
+              </select>
+            </label>
+            <label>Places
+              <select id="shift-places">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+            </label>
+          </div>
+          <div class="shift-display" id="shift-display"></div>
+        </div>
+
+        <div id="controls"></div>
+      </div>
+
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Binary addition</strong> rules: 0+0=0, 0+1=1, 1+0=1, 1+1=10 (write 0, carry 1). 1+1+1=11 (write 1, carry 1).
+          </div>
+          <div class="key-fact">
+            <strong>Overflow</strong> occurs when the result needs more bits than are available (e.g. 8-bit result exceeds 255).
+          </div>
+          <div class="key-fact">
+            <strong>Left shift</strong> by 1 place multiplies by 2. <strong>Right shift</strong> by 1 place divides by 2 (integer division).
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> Always work right to left for binary addition — just like denary addition. Don't forget to check for overflow!
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

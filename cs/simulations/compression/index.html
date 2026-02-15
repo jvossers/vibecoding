@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compression Demonstrator — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.2.5" data-sim-slug="compression">
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Compression Demonstrator</h2>
+        <p class="sim-subtitle">See lossless (RLE) and lossy compression in action.</p>
+
+        <div class="sim-toolbar">
+          <button class="algo-btn active" data-tab="lossless">Lossless (RLE)</button>
+          <button class="algo-btn" data-tab="lossy">Lossy (Image)</button>
+        </div>
+
+        <!-- Lossless tab -->
+        <div id="lossless-panel" class="comp-panel">
+          <div class="comp-row">
+            <div class="comp-col">
+              <label for="rle-input">Original text</label>
+              <textarea id="rle-input" rows="4" class="comp-textarea" placeholder="Type text with repeated characters, e.g. AAABBBCCCC">AAAAAABBBBCCCDDDDDDEEEF</textarea>
+            </div>
+            <div class="comp-col">
+              <label>RLE Encoded</label>
+              <div id="rle-output" class="comp-output"></div>
+            </div>
+          </div>
+          <div class="comp-row">
+            <div id="rle-steps" class="rle-steps"></div>
+          </div>
+          <div class="stats-bar" style="margin-top:var(--sp-3)">
+            <div class="stat-item"><span class="stat-label">Original:</span> <span class="stat-value" id="rle-orig-size">0</span> chars</div>
+            <div class="stat-item"><span class="stat-label">Compressed:</span> <span class="stat-value" id="rle-comp-size">0</span> chars</div>
+            <div class="stat-item"><span class="stat-label">Ratio:</span> <span class="stat-value" id="rle-ratio">0%</span></div>
+          </div>
+        </div>
+
+        <!-- Lossy tab -->
+        <div id="lossy-panel" class="comp-panel" style="display:none">
+          <div class="comp-row">
+            <div class="comp-col">
+              <label>Original</label>
+              <canvas id="lossy-orig" width="200" height="200"></canvas>
+            </div>
+            <div class="comp-col">
+              <label>Compressed (quality: <span id="quality-val">80</span>%)</label>
+              <canvas id="lossy-comp" width="200" height="200"></canvas>
+            </div>
+          </div>
+          <div class="quality-control">
+            <label for="quality-slider">Quality</label>
+            <input type="range" id="quality-slider" min="5" max="100" value="80">
+            <span class="speed-label" id="quality-pct">80%</span>
+          </div>
+          <div class="stats-bar" style="margin-top:var(--sp-3)">
+            <div class="stat-item"><span class="stat-label">Original pixels:</span> <span class="stat-value" id="lossy-orig-size">40000</span></div>
+            <div class="stat-item"><span class="stat-label">Unique colours after:</span> <span class="stat-value" id="lossy-comp-colours">—</span></div>
+            <div class="stat-item"><span class="stat-label">Detail lost:</span> <span class="stat-value" id="lossy-loss">—</span></div>
+          </div>
+        </div>
+
+        <div id="controls"></div>
+      </div>
+
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Lossless compression</strong> reduces file size without losing any data. The original can be perfectly reconstructed. Example: Run-Length Encoding (RLE).
+          </div>
+          <div class="key-fact">
+            <strong>Lossy compression</strong> permanently removes some data to achieve smaller file sizes. Quality degrades but the file is much smaller. Example: JPEG.
+          </div>
+          <div class="key-fact">
+            <strong>RLE</strong> replaces runs of the same character with a count and the character. "AAABBB" becomes "3A3B".
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> You must explain the difference between lossy and lossless, give examples, and state when each is appropriate (lossless for text/programs, lossy for images/audio).
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

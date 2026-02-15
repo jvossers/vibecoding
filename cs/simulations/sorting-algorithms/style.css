@@ -1,0 +1,17 @@
+/* ── Sorting-specific overrides ─────────────────────────────────────── */
+.canvas-container {
+  min-height: 280px;
+}
+
+/* Ensure canvas fills its container on resize */
+#sort-canvas {
+  width: 100%;
+  display: block;
+}
+
+/* ── Responsive tweaks ─────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .sim-toolbar { gap: var(--sp-1); }
+  .algo-btn { padding: var(--sp-1) var(--sp-2); font-size: var(--fs-xs); }
+  .stats-bar { gap: var(--sp-2); }
+}

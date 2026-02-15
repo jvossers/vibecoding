@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OCR GCSE Computer Science — Interactive Simulations</title>
+  <link rel="stylesheet" href="css/main.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <p class="intro">
+      Interactive simulations covering the OCR J277 GCSE Computer Science syllabus.
+      Click any topic with an <strong>Interactive</strong> badge to launch its simulation.
+    </p>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="1">Paper 1</button>
+      <button class="filter-btn" data-filter="2">Paper 2</button>
+      <button class="filter-btn" data-filter="interactive">Interactive Only</button>
+      <input type="search" class="search-input" placeholder="Search topics…" aria-label="Search topics">
+    </div>
+
+    <div id="topic-container"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+      This is an independent study aid — not endorsed by OCR.
+    </div>
+  </footer>
+
+  <script src="js/theme.js"></script>
+  <script src="js/topics-data.js"></script>
+  <script src="js/nav.js"></script>
+</body>
+</html>

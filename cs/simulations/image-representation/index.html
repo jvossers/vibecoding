@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Representation Explorer — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.2.4" data-sim-slug="image-representation">
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Image Representation Explorer</h2>
+        <p class="sim-subtitle">Draw pixels and see how resolution and colour depth affect file size and quality.</p>
+
+        <div class="sim-toolbar">
+          <label for="img-resolution">Resolution</label>
+          <select id="img-resolution">
+            <option value="4">4 × 4</option>
+            <option value="8" selected>8 × 8</option>
+            <option value="16">16 × 16</option>
+            <option value="32">32 × 32</option>
+          </select>
+
+          <label for="img-depth">Colour depth</label>
+          <select id="img-depth">
+            <option value="1">1-bit (2 colours)</option>
+            <option value="2">2-bit (4 colours)</option>
+            <option value="4">4-bit (16 colours)</option>
+            <option value="8" selected>8-bit (256 colours)</option>
+            <option value="24">24-bit (16M colours)</option>
+          </select>
+        </div>
+
+        <div class="pixel-grid-wrap">
+          <canvas id="pixel-canvas"></canvas>
+        </div>
+
+        <div class="colour-palette" id="palette"></div>
+
+        <div class="stats-bar">
+          <div class="stat-item"><span class="stat-label">Pixels:</span> <span class="stat-value" id="stat-pixels">64</span></div>
+          <div class="stat-item"><span class="stat-label">Colour depth:</span> <span class="stat-value" id="stat-depth">8 bits</span></div>
+          <div class="stat-item"><span class="stat-label">File size:</span> <span class="stat-value" id="stat-size">64 B</span></div>
+        </div>
+
+        <div id="controls"></div>
+      </div>
+
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>File size</strong> = width × height × colour depth (in bits) ÷ 8 to get bytes. This is the uncompressed, metadata-free size.
+          </div>
+          <div class="key-fact">
+            <strong>Colour depth</strong> is the number of bits used per pixel. 1-bit = 2 colours, 8-bit = 256 colours, 24-bit = ~16.7 million colours.
+          </div>
+          <div class="key-fact">
+            <strong>Resolution</strong> is the number of pixels in the image. Higher resolution = more detail but larger file size.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> You must be able to calculate file sizes. Remember: file size (bits) = width × height × colour depth.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

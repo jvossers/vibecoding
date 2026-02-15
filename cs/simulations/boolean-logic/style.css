@@ -1,0 +1,30 @@
+/* ── Logic canvas ──────────────────────────────────────────────────── */
+.canvas-container { min-height: 350px; cursor: default; }
+#logic-canvas { width: 100%; display: block; }
+
+.canvas-hint {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+  margin-top: var(--sp-2);
+}
+
+.toolbar-label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--clr-text-muted);
+}
+
+.clear-btn {
+  margin-left: auto;
+  color: #dc2626 !important;
+  border-color: #fca5a5 !important;
+}
+.clear-btn:hover { background: #fee2e2 !important; }
+
+/* ── Generated truth table ─────────────────────────────────────────── */
+#truth-table-wrap {
+  margin-top: var(--sp-4);
+}
+#truth-table-wrap table {
+  width: 100%;
+}

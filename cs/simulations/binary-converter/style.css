@@ -1,0 +1,90 @@
+/* ── Bit Grid ──────────────────────────────────────────────────────── */
+.bit-grid {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+  overflow-x: auto;
+}
+
+.place-values, .bit-cells {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: var(--sp-2);
+  max-width: 480px;
+  margin-inline: auto;
+}
+
+.place-value {
+  text-align: center;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--clr-text-muted);
+  padding-bottom: var(--sp-1);
+}
+
+.bit-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  font-family: var(--font-mono);
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--transition), color var(--transition),
+              border-color var(--transition), transform var(--transition);
+  background: var(--clr-bg);
+  color: var(--clr-text-muted);
+}
+.bit-cell:hover {
+  border-color: var(--clr-primary);
+  transform: scale(1.05);
+}
+.bit-cell.on {
+  background: var(--clr-primary);
+  color: var(--clr-primary-fg);
+  border-color: var(--clr-primary);
+}
+
+/* ── Conversion Fields ─────────────────────────────────────────────── */
+.conversion-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--sp-4);
+  margin-top: var(--sp-4);
+}
+.conv-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+.conv-field label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--clr-text-muted);
+}
+.conv-field input {
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+  text-align: center;
+  outline-color: var(--clr-primary);
+}
+.conv-field input:focus {
+  border-color: var(--clr-primary);
+  box-shadow: 0 0 0 3px var(--clr-primary-light);
+}
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .place-values, .bit-cells { gap: var(--sp-1); }
+  .bit-cell { font-size: var(--fs-base); }
+  .place-value { font-size: 0.625rem; }
+}

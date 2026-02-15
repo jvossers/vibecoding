@@ -1,0 +1,87 @@
+/* ── Compression panels ────────────────────────────────────────────── */
+.comp-panel {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+}
+.comp-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-3);
+}
+.comp-col {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.comp-col label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--clr-text-muted);
+}
+.comp-textarea {
+  width: 100%;
+  padding: var(--sp-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--fs-base);
+  resize: vertical;
+  outline-color: var(--clr-primary);
+}
+.comp-output {
+  padding: var(--sp-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--fs-base);
+  background: var(--clr-bg);
+  min-height: 5em;
+  word-break: break-all;
+}
+
+/* ── RLE step-by-step ──────────────────────────────────────────────── */
+.rle-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
+.rle-group {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.rle-group .rle-count {
+  color: #fff;
+  border-radius: 3px;
+  padding: 0 4px;
+  margin-right: 2px;
+}
+
+/* ── Lossy canvases ────────────────────────────────────────────────── */
+#lossy-orig, #lossy-comp {
+  width: 100%;
+  max-width: 200px;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  image-rendering: pixelated;
+}
+.quality-control {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--clr-text-muted);
+}
+.quality-control input[type="range"] {
+  flex: 1;
+  max-width: 200px;
+  accent-color: var(--clr-primary);
+}

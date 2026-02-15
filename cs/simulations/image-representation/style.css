@@ -1,0 +1,43 @@
+/* ── Pixel grid ────────────────────────────────────────────────────── */
+.pixel-grid-wrap {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+  display: flex;
+  justify-content: center;
+}
+#pixel-canvas {
+  cursor: crosshair;
+  image-rendering: pixelated;
+  border: 1px solid var(--clr-border);
+}
+
+/* ── Colour palette ────────────────────────────────────────────────── */
+.colour-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: var(--sp-3);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  margin-top: var(--sp-4);
+}
+.palette-swatch {
+  width: 28px;
+  height: 28px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--transition), transform var(--transition);
+}
+.palette-swatch:hover { transform: scale(1.15); }
+.palette-swatch.active {
+  border-color: var(--clr-text);
+  box-shadow: 0 0 0 2px var(--clr-primary-light);
+}
+
+@media (max-width: 480px) {
+  .palette-swatch { width: 22px; height: 22px; }
+}

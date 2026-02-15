@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fetch-Execute Cycle Simulator — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.1.1" data-sim-slug="fetch-execute">
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Fetch-Execute Cycle Simulator</h2>
+        <p class="sim-subtitle">Step through the FDE cycle and watch data flow between CPU registers and memory.</p>
+
+        <div class="sim-toolbar">
+          <label for="program-select">Program</label>
+          <select id="program-select">
+            <option value="add">Add two numbers</option>
+            <option value="count">Count to 5</option>
+            <option value="load-store">Load &amp; Store</option>
+          </select>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="fde-canvas"></canvas>
+        </div>
+
+        <div id="controls"></div>
+
+        <div class="stats-bar">
+          <div class="stat-item"><span class="stat-label">Phase:</span> <span class="stat-value" id="stat-phase">—</span></div>
+          <div class="stat-item"><span class="stat-label">Cycle:</span> <span class="stat-value" id="stat-cycle">0</span></div>
+        </div>
+      </div>
+
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Fetch:</strong> The address in the PC is copied to the MAR. The instruction at that address is loaded into the MDR, then copied to the CIR. The PC is incremented.
+          </div>
+          <div class="key-fact">
+            <strong>Decode:</strong> The Control Unit decodes the instruction in the CIR, identifying the opcode and operand.
+          </div>
+          <div class="key-fact">
+            <strong>Execute:</strong> The instruction is carried out — this may involve the ALU for calculations, or reading/writing memory.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> You must know all five registers: PC (Program Counter), MAR (Memory Address Register), MDR (Memory Data Register), CIR (Current Instruction Register), ACC (Accumulator).
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>
