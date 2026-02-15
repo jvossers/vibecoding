@@ -135,7 +135,7 @@
       for (var x = 0; x < resolution; x++) {
         ctx.fillStyle = pixels[y * resolution + x];
         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-        ctx.strokeStyle = '#e2e6ea';
+        ctx.strokeStyle = SimulationEngine.themeColors().border;
         ctx.lineWidth = 0.5;
         ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
       }
@@ -179,8 +179,7 @@
     }
   }
 
-  var rt;
-  window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(drawGrid, 100); });
+  SimulationEngine.debounceResize(drawGrid);
 
   engine.reset();
 })();

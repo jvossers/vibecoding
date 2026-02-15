@@ -136,6 +136,25 @@
   text-align: center;
 }
 
+/* ── Dark theme overrides ──────────────────────────────────────────── */
+[data-theme="dark"] .add-cell.carry-cell {
+  background: #422006;
+  color: #fbbf24;
+}
+[data-theme="dark"] .add-cell.carry-cell.highlight {
+  background: #f59e0b;
+  color: #000;
+}
+[data-theme="dark"] .overflow-msg.error { color: #fca5a5; }
+[data-theme="dark"] .overflow-msg.ok { color: #6ee7b7; }
+[data-theme="dark"] .shift-cell.lost {
+  background: #450a0a;
+  color: #fca5a5;
+}
+[data-theme="dark"] .shift-cell.new {
+  background: #064e3b;
+  color: #6ee7b7;
+}
 @media (max-width: 480px) {
   .add-cell, .shift-cell { width: 28px; height: 32px; font-size: var(--fs-base); }
   .add-cell.carry-cell { height: 22px; font-size: var(--fs-xs); }

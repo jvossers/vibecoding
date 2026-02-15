@@ -16,12 +16,8 @@
   var clearBtn   = document.getElementById('clear-circuit');
   var ttWrap     = document.getElementById('truth-table-wrap');
 
-  /* ── Colours ─────────────────────────────────────────────────── */
-  var CLR = {
-    bg: '#f8fafc', gate: '#ffffff', border: '#94a3b8', text: '#1e293b',
-    hi: '#10b981', lo: '#cbd5e1', wire: '#64748b', wireHi: '#10b981',
-    pin: '#2563eb', pinHover: '#dbeafe', selected: '#2563eb'
-  };
+  /* ── Colours (accent colours stay fixed, structural from theme) ─ */
+  var CLR_ACCENT = { hi: '#10b981', wireHi: '#10b981' };
 
   /* ── Constants ───────────────────────────────────────────────── */
   var GW = 80, GH = 50, PIN_R = 6;
@@ -125,27 +121,18 @@
     });
   }
 
-  /* ── Canvas sizing ───────────────────────────────────────────── */
-  function resize() {
-    var dpr = window.devicePixelRatio || 1;
-    var w = canvas.parentElement.clientWidth;
-    var h = Math.max(350, w * 0.5);
-    canvas.width = w * dpr; canvas.height = h * dpr;
-    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
   /* ── Draw ─────────────────────────────────────────────────────── */
   function draw() {
     evaluate();
-    resize();
-    var w = parseFloat(canvas.style.width);
-    var h = parseFloat(canvas.style.height);
+    var size = SimulationEngine.resizeCanvas(canvas, 350, 0.5);
+    var w = size.w;
+    var h = size.h;
 
-    ctx.fillStyle = CLR.bg; ctx.fillRect(0, 0, w, h);
+    var tc = SimulationEngine.themeColors();
+    ctx.fillStyle = tc.bg; ctx.fillRect(0, 0, w, h);
 
     // Grid dots
-    ctx.fillStyle = '#e2e6ea';
+    ctx.fillStyle = tc.border;
     for (var gx = 20; gx < w; gx += 20)
       for (var gy = 20; gy < h; gy += 20)
         ctx.fillRect(gx - 0.5, gy - 0.5, 1, 1);
@@ -155,7 +142,7 @@
       var fromPins = getPins(wr.from.node).outputs[wr.from.pin];
       var toPins = getPins(wr.to.node).inputs[wr.to.pin];
       if (!fromPins || !toPins) return;
-      ctx.strokeStyle = wr.from.node.value ? CLR.wireHi : CLR.wire;
+      ctx.strokeStyle = wr.from.node.value ? CLR_ACCENT.wireHi : tc.muted;
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(fromPins.x, fromPins.y);
@@ -166,7 +153,7 @@
 
     // Dragging wire preview
     if (draggingWire) {
-      ctx.strokeStyle = CLR.pin; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = tc.primary; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
       ctx.beginPath(); ctx.moveTo(draggingWire.sx, draggingWire.sy);
       ctx.lineTo(draggingWire.mx, draggingWire.my); ctx.stroke();
       ctx.setLineDash([]);
@@ -175,24 +162,24 @@
     // Nodes
     nodes.forEach(function (n) {
       // Box
-      ctx.fillStyle = CLR.gate;
-      ctx.strokeStyle = CLR.border; ctx.lineWidth = 1.5;
+      ctx.fillStyle = tc.surface;
+      ctx.strokeStyle = tc.muted; ctx.lineWidth = 1.5;
       ctx.fillRect(n.x, n.y, GW, GH);
       ctx.strokeRect(n.x, n.y, GW, GH);
 
       // Value indicator (top-right corner)
-      ctx.fillStyle = n.value ? CLR.hi : CLR.lo;
+      ctx.fillStyle = n.value ? CLR_ACCENT.hi : tc.borderMuted;
       ctx.beginPath(); ctx.arc(n.x + GW - 10, n.y + 10, 5, 0, Math.PI * 2); ctx.fill();
 
       // Label
-      ctx.fillStyle = CLR.text; ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'center';
+      ctx.fillStyle = tc.text; ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'center';
       ctx.fillText(n.type, n.x + GW / 2, n.y + GH / 2 + 5);
       ctx.textAlign = 'left';
 
       // Pins
       var pins = getPins(n);
       pins.inputs.concat(pins.outputs).forEach(function (p) {
-        ctx.fillStyle = CLR.pin;
+        ctx.fillStyle = tc.primary;
         ctx.beginPath(); ctx.arc(p.x, p.y, PIN_R, 0, Math.PI * 2); ctx.fill();
       });
     });
@@ -309,7 +296,7 @@
   }
 
   /* ── Resize ──────────────────────────────────────────────────── */
-  var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(draw, 100); });
+  SimulationEngine.debounceResize(draw);
 
   draw();
 })();

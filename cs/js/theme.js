@@ -18,6 +18,7 @@
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem(STORAGE_KEY, theme);
     updateIcon();
+    window.dispatchEvent(new CustomEvent('themechange'));
   }
 
   function updateIcon() {

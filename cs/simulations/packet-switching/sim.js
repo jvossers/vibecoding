@@ -120,24 +120,16 @@
   }
 
   /* ── Drawing ─────────────────────────────────────────────────── */
-  function resize() {
-    var dpr = window.devicePixelRatio || 1;
-    var w = canvas.parentElement.clientWidth;
-    var h = Math.max(300, w * 0.45);
-    canvas.width = w * dpr; canvas.height = h * dpr;
-    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
   function drawFrame() {
     if (!steps.length) return;
-    resize();
-    var w = parseFloat(canvas.style.width);
-    var h = parseFloat(canvas.style.height);
+    var size = SimulationEngine.resizeCanvas(canvas, 300, 0.45);
+    var w = size.w;
+    var h = size.h;
     var pad = 30;
     var snap = steps[stepIndex];
 
-    ctx.fillStyle = '#f8fafc'; ctx.fillRect(0, 0, w, h);
+    var tc = SimulationEngine.themeColors();
+    ctx.fillStyle = tc.bg; ctx.fillRect(0, 0, w, h);
 
     // Scale node positions
     var nodePos = {};
@@ -146,7 +138,7 @@
     });
 
     // Draw edges
-    ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.5;
+    ctx.strokeStyle = tc.borderMuted; ctx.lineWidth = 1.5;
     NET_EDGES.forEach(function (e) {
       var a = nodePos[e[0]], b = nodePos[e[1]];
       ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
@@ -166,7 +158,7 @@
       var pos = nodePos[n.id];
       var isEndpoint = n.id === 'src' || n.id === 'dst';
       var r = isEndpoint ? 22 : 16;
-      ctx.fillStyle = isEndpoint ? '#2563eb' : '#94a3b8';
+      ctx.fillStyle = isEndpoint ? tc.primary : tc.muted;
       ctx.beginPath(); ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#fff'; ctx.font = (isEndpoint ? 'bold ' : '') + '10px system-ui'; ctx.textAlign = 'center';
       ctx.fillText(n.label, pos.x, pos.y + 3);
@@ -223,7 +215,7 @@
   }
 
   /* ── Resize ──────────────────────────────────────────────────── */
-  var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(drawFrame, 100); });
+  SimulationEngine.debounceResize(drawFrame);
 
   engine.reset();
 })();

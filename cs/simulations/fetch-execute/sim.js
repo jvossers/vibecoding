@@ -15,13 +15,8 @@
   var statPhase   = document.getElementById('stat-phase');
   var statCycle   = document.getElementById('stat-cycle');
 
-  /* ── Colours ─────────────────────────────────────────────────── */
-  var C = {
-    bg:      '#f8fafc', box:     '#ffffff', border:  '#cbd5e1',
-    text:    '#1e293b', muted:   '#64748b', active:  '#2563eb',
-    activeBg:'#dbeafe', fetch:   '#6366f1', decode:  '#f59e0b',
-    execute: '#10b981', bus:     '#ef4444'
-  };
+  /* ── Colours (phase/accent colours stay fixed, structural from theme) */
+  var C_PHASE = { fetch: '#6366f1', decode: '#f59e0b', execute: '#10b981', bus: '#ef4444' };
 
   /* ── Programs ────────────────────────────────────────────────── */
   var PROGRAMS = {
@@ -165,26 +160,18 @@
   }
 
   /* ── Drawing ─────────────────────────────────────────────────── */
-  function resizeCanvas() {
-    var dpr = window.devicePixelRatio || 1;
-    var w = canvas.parentElement.clientWidth;
-    var h = Math.max(360, w * 0.55);
-    canvas.width = w * dpr; canvas.height = h * dpr;
-    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
   function drawFrame() {
     if (!steps.length) return;
     var s = steps[stepIndex];
-    resizeCanvas();
-    var w = parseFloat(canvas.style.width);
-    var h = parseFloat(canvas.style.height);
+    var size = SimulationEngine.resizeCanvas(canvas, 360, 0.55);
+    var w = size.w;
+    var h = size.h;
 
-    ctx.fillStyle = C.bg;
+    var tc = SimulationEngine.themeColors();
+    ctx.fillStyle = tc.bg;
     ctx.fillRect(0, 0, w, h);
 
-    var phaseColor = s.phase === 'fetch' ? C.fetch : s.phase === 'decode' ? C.decode : s.phase === 'execute' ? C.execute : C.muted;
+    var phaseColor = s.phase === 'fetch' ? C_PHASE.fetch : s.phase === 'decode' ? C_PHASE.decode : s.phase === 'execute' ? C_PHASE.execute : tc.muted;
 
     // Layout
     var regW = 130, regH = 44, gap = 10;
@@ -194,7 +181,7 @@
 
     // CPU box
     ctx.strokeStyle = phaseColor; ctx.lineWidth = 2;
-    ctx.fillStyle = '#f1f5f9';
+    ctx.fillStyle = tc.surfaceAlt;
     ctx.fillRect(cpuX, cpuY, cpuW, cpuH);
     ctx.strokeRect(cpuX, cpuY, cpuW, cpuH);
     ctx.fillStyle = phaseColor; ctx.font = 'bold 13px system-ui';
@@ -211,20 +198,20 @@
 
     regDefs.forEach(function (r) {
       var isActive = s.busTo === r.name || s.busFrom === r.name;
-      ctx.fillStyle = isActive ? C.activeBg : C.box;
+      ctx.fillStyle = isActive ? tc.primaryLight : tc.surface;
       ctx.fillRect(r.x, r.y, regW, regH);
-      ctx.strokeStyle = isActive ? C.active : C.border;
+      ctx.strokeStyle = isActive ? tc.primary : tc.borderMuted;
       ctx.lineWidth = isActive ? 2 : 1;
       ctx.strokeRect(r.x, r.y, regW, regH);
 
-      ctx.fillStyle = C.muted; ctx.font = 'bold 11px system-ui';
+      ctx.fillStyle = tc.muted; ctx.font = 'bold 11px system-ui';
       ctx.fillText(r.name, r.x + 6, r.y + 16);
-      ctx.fillStyle = C.text; ctx.font = '14px monospace';
+      ctx.fillStyle = tc.text; ctx.font = '14px monospace';
       ctx.fillText('' + r.val, r.x + 6, r.y + 34);
     });
 
     // ALU / CU labels
-    ctx.fillStyle = C.muted; ctx.font = '11px system-ui';
+    ctx.fillStyle = tc.muted; ctx.font = '11px system-ui';
     ctx.fillText('ALU', cpuX + gap + regW + gap + regW - 26, cpuY + 18);
 
     // Memory panel
@@ -233,11 +220,11 @@
     var memH = cpuH;
     var isMemActive = s.busFrom === 'Memory' || s.busTo === 'Memory';
 
-    ctx.fillStyle = isMemActive ? '#fef3c7' : '#f1f5f9';
+    ctx.fillStyle = isMemActive ? tc.highlight : tc.surfaceAlt;
     ctx.fillRect(memX, cpuY, memW, memH);
-    ctx.strokeStyle = isMemActive ? C.decode : C.border; ctx.lineWidth = isMemActive ? 2 : 1;
+    ctx.strokeStyle = isMemActive ? C_PHASE.decode : tc.borderMuted; ctx.lineWidth = isMemActive ? 2 : 1;
     ctx.strokeRect(memX, cpuY, memW, memH);
-    ctx.fillStyle = C.muted; ctx.font = 'bold 13px system-ui';
+    ctx.fillStyle = tc.muted; ctx.font = 'bold 13px system-ui';
     ctx.fillText('Memory', memX + 6, cpuY + 18);
 
     var rowH = Math.min(26, (memH - 30) / 10);
@@ -246,23 +233,23 @@
       var ry = cpuY + 26 + i * rowH;
       var isAddr = s.regs.MAR === m.addr && (s.busFrom === 'Memory' || s.busTo === 'Memory');
       if (isAddr) {
-        ctx.fillStyle = C.activeBg;
+        ctx.fillStyle = tc.primaryLight;
         ctx.fillRect(memX + 2, ry - 2, memW - 4, rowH - 2);
       }
-      ctx.fillStyle = C.muted; ctx.font = '11px monospace';
+      ctx.fillStyle = tc.muted; ctx.font = '11px monospace';
       ctx.fillText(m.addr + ':', memX + 8, ry + 12);
-      ctx.fillStyle = C.text; ctx.font = '12px monospace';
+      ctx.fillStyle = tc.text; ctx.font = '12px monospace';
       ctx.fillText(m.raw, memX + 32, ry + 12);
     });
 
     // Bus line
     if (s.busFrom && s.busTo) {
-      ctx.strokeStyle = C.bus; ctx.lineWidth = 2;
+      ctx.strokeStyle = C_PHASE.bus; ctx.lineWidth = 2;
       ctx.setLineDash([4, 4]);
       var busY = cpuY + cpuH + 10;
       ctx.beginPath(); ctx.moveTo(cpuX + cpuW / 2, busY); ctx.lineTo(memX + memW / 2, busY); ctx.stroke();
       ctx.setLineDash([]);
-      ctx.fillStyle = C.bus; ctx.font = 'bold 11px system-ui';
+      ctx.fillStyle = C_PHASE.bus; ctx.font = 'bold 11px system-ui';
       ctx.fillText(s.busFrom + ' → ' + s.busTo, cpuX + cpuW / 2 + 4, busY - 4);
     }
 
@@ -282,6 +269,6 @@
     statCycle.textContent = cycleNum;
   }
 
-  var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(drawFrame, 100); });
+  SimulationEngine.debounceResize(drawFrame);
   engine.reset();
 })();

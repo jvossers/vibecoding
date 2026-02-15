@@ -279,11 +279,28 @@
 }
 .comparison-table tr:hover { background: var(--clr-primary-light); }
 
+/* ── Clear / destructive button ───────────────────────────────────── */
+.clear-btn {
+  margin-left: auto;
+  color: #dc2626 !important;
+  border-color: #fca5a5 !important;
+}
+.clear-btn:hover { background: #fee2e2 !important; }
+
 /* ── Dark theme overrides ──────────────────────────────────────────── */
 [data-theme="dark"] .challenge-feedback.correct { color: #6ee7b7; }
 [data-theme="dark"] .challenge-feedback.incorrect { color: #fca5a5; }
+[data-theme="dark"] .clear-btn {
+  color: #fca5a5 !important;
+  border-color: #7f1d1d !important;
+}
+[data-theme="dark"] .clear-btn:hover { background: #450a0a !important; }
 [data-theme="dark"] .challenge-input,
-[data-theme="dark"] .sim-toolbar select {
+[data-theme="dark"] .sim-toolbar select,
+[data-theme="dark"] .msg-input,
+[data-theme="dark"] .comp-textarea,
+[data-theme="dark"] .target-input,
+[data-theme="dark"] .bin-input {
   background: var(--clr-bg);
   color: var(--clr-text);
 }

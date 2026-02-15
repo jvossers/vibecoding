@@ -41,10 +41,40 @@
     this._rafId     = null;
     this._els       = {};
 
+    // Re-render when theme changes so canvases pick up new colours
+    var self = this;
+    window.addEventListener('themechange', function () { self.render(); });
+
     if (containerEl) {
       this._buildControls(containerEl);
     }
   }
+
+  /* ── Theme-aware colours for canvas drawing ────────────────────── */
+  SimulationEngine.themeColors = (function () {
+    var cache = null;
+    window.addEventListener('themechange', function () { cache = null; });
+    return function () {
+      if (!cache) {
+        var s = getComputedStyle(document.documentElement);
+        cache = {
+          bg:          s.getPropertyValue('--clr-bg').trim(),
+          surface:     s.getPropertyValue('--clr-surface').trim(),
+          surfaceAlt:  s.getPropertyValue('--clr-surface-alt').trim(),
+          border:      s.getPropertyValue('--clr-border').trim(),
+          borderMuted: s.getPropertyValue('--clr-border-muted').trim(),
+          text:        s.getPropertyValue('--clr-text').trim(),
+          muted:       s.getPropertyValue('--clr-text-muted').trim(),
+          primary:     s.getPropertyValue('--clr-primary').trim(),
+          primaryFg:   s.getPropertyValue('--clr-primary-fg').trim(),
+          primaryLight:s.getPropertyValue('--clr-primary-light').trim(),
+          accent:      s.getPropertyValue('--clr-accent').trim(),
+          highlight:   s.getPropertyValue('--clr-highlight').trim()
+        };
+      }
+      return cache;
+    };
+  })();
 
   /* ── Fluent callback registration ────────────────────────────── */
   SimulationEngine.prototype.onReset = function (fn) { this._onReset = fn; return this; };
@@ -200,6 +230,40 @@
     }
 
     container.appendChild(bar);
+  };
+
+  /* ── Shared utilities ────────────────────────────────────────────── */
+
+  /** DPR-aware canvas resize. Returns { w, h } in CSS pixels. */
+  SimulationEngine.resizeCanvas = function (canvas, minH, ratio, maxH) {
+    var dpr = window.devicePixelRatio || 1;
+    var w = canvas.parentElement.clientWidth;
+    var h = Math.max(minH, w * ratio);
+    if (maxH) h = Math.min(maxH, h);
+    canvas.width  = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
+    canvas.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { w: w, h: h };
+  };
+
+  /** Fisher-Yates shuffle (in-place). */
+  SimulationEngine.fisherYates = function (arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    }
+    return arr;
+  };
+
+  /** Debounced window-resize handler (100 ms). */
+  SimulationEngine.debounceResize = function (fn) {
+    var timer;
+    window.addEventListener('resize', function () {
+      clearTimeout(timer);
+      timer = setTimeout(fn, 100);
+    });
   };
 
   window.SimulationEngine = SimulationEngine;

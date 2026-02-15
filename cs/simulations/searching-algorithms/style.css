@@ -80,6 +80,25 @@
   cursor: pointer;
 }
 
+/* ── Dark theme overrides ──────────────────────────────────────────── */
+[data-theme="dark"] .search-item.checking {
+  background: #422006;
+  border-color: #f59e0b;
+  color: #fbbf24;
+}
+[data-theme="dark"] .search-item.found {
+  background: #064e3b;
+  border-color: #10b981;
+  color: #6ee7b7;
+}
+[data-theme="dark"] .search-item.eliminated {
+  background: var(--clr-surface);
+  border-color: var(--clr-border);
+  color: var(--clr-border);
+}
+[data-theme="dark"] .search-item.in-range {
+  border-color: #64748b;
+}
 @media (max-width: 480px) {
   .search-item { width: 34px; height: 38px; font-size: var(--fs-sm); }
 }

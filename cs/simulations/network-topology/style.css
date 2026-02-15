@@ -12,9 +12,3 @@
   font-weight: 600;
   color: var(--clr-text-muted);
 }
-.clear-btn {
-  margin-left: auto;
-  color: #dc2626 !important;
-  border-color: #fca5a5 !important;
-}
-.clear-btn:hover { background: #fee2e2 !important; }

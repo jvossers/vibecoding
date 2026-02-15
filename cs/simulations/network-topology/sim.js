@@ -155,24 +155,16 @@
   }
 
   /* ── Canvas ──────────────────────────────────────────────────── */
-  function resize() {
-    var dpr = window.devicePixelRatio || 1;
-    var w = canvas.parentElement.clientWidth;
-    var h = Math.max(360, w * 0.55);
-    canvas.width = w * dpr; canvas.height = h * dpr;
-    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
   function draw() {
-    resize();
-    var w = parseFloat(canvas.style.width);
-    var h = parseFloat(canvas.style.height);
-    ctx.fillStyle = '#f8fafc'; ctx.fillRect(0, 0, w, h);
+    var size = SimulationEngine.resizeCanvas(canvas, 360, 0.55);
+    var w = size.w;
+    var h = size.h;
+    var tc = SimulationEngine.themeColors();
+    ctx.fillStyle = tc.bg; ctx.fillRect(0, 0, w, h);
 
     // Links
     links.forEach(function (l) {
-      ctx.strokeStyle = l.failed ? '#fca5a5' : '#94a3b8';
+      ctx.strokeStyle = l.failed ? '#fca5a5' : tc.muted;
       ctx.lineWidth = l.failed ? 1 : 2;
       ctx.setLineDash(l.failed ? [6, 4] : []);
       ctx.beginPath(); ctx.moveTo(l.a.x, l.a.y); ctx.lineTo(l.b.x, l.b.y); ctx.stroke();
@@ -198,7 +190,7 @@
 
     // Devices
     devices.forEach(function (d) {
-      ctx.fillStyle = d.failed ? '#f1f5f9' : (DEVICE_CLR[d.type] || '#64748b');
+      ctx.fillStyle = d.failed ? tc.surfaceAlt : (DEVICE_CLR[d.type] || tc.muted);
       ctx.globalAlpha = d.failed ? 0.4 : 1;
       ctx.beginPath(); ctx.arc(d.x, d.y, NODE_R, 0, Math.PI * 2); ctx.fill();
       ctx.globalAlpha = 1;
@@ -299,6 +291,6 @@
 
   canvas.addEventListener('mouseup', function () { dragging = null; });
 
-  var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(draw, 100); });
+  SimulationEngine.debounceResize(draw);
   draw();
 })();

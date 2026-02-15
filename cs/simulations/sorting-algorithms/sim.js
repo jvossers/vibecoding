@@ -20,11 +20,9 @@
   var statStep    = document.getElementById('stat-step');
 
   /* ── Colours ─────────────────────────────────────────────────── */
-  var CLR_DEFAULT   = '#94a3b8'; // slate-400
   var CLR_COMPARING = '#f59e0b'; // amber
   var CLR_SWAPPING  = '#ef4444'; // red
   var CLR_SORTED    = '#10b981'; // green
-  var CLR_BG        = '#f8fafc';
 
   /* ── State ───────────────────────────────────────────────────── */
   var currentAlgo = 'bubble';
@@ -92,12 +90,7 @@
     return arr;
   }
 
-  function fisherYates(arr) {
-    for (var i = arr.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
-    }
-  }
+  var fisherYates = SimulationEngine.fisherYates;
 
   /* ── Step generation (pre-compute entire sort) ───────────────── */
   function generateSteps() {
@@ -290,18 +283,6 @@
   }
 
   /* ── Canvas drawing ──────────────────────────────────────────── */
-  function resizeCanvas() {
-    var dpr = window.devicePixelRatio || 1;
-    var w = canvas.parentElement.clientWidth;
-    var h = Math.max(280, Math.min(400, w * 0.5));
-
-    canvas.width  = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width  = w + 'px';
-    canvas.style.height = h + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
   function drawBars() {
     if (steps.length === 0) return;
     var frame = steps[stepIndex];
@@ -310,11 +291,12 @@
     var n   = arr.length;
     var maxVal = n;
 
-    resizeCanvas();
-    var w = canvas.width / (window.devicePixelRatio || 1);
-    var h = canvas.height / (window.devicePixelRatio || 1);
+    var size = SimulationEngine.resizeCanvas(canvas, 280, 0.5, 400);
+    var w = size.w;
+    var h = size.h;
 
-    ctx.fillStyle = CLR_BG;
+    var tc = SimulationEngine.themeColors();
+    ctx.fillStyle = tc.bg;
     ctx.fillRect(0, 0, w, h);
 
     var pad = 4;
@@ -339,7 +321,7 @@
       }
 
       var y = h - pad - barH;
-      ctx.fillStyle = hl[i] || CLR_DEFAULT;
+      ctx.fillStyle = hl[i] || tc.muted;
       ctx.fillRect(x, y, usableBarW, barH);
     }
 
@@ -349,11 +331,7 @@
   }
 
   /* ── Resize handling ─────────────────────────────────────────── */
-  var resizeTimer;
-  window.addEventListener('resize', function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () { drawBars(); }, 100);
-  });
+  SimulationEngine.debounceResize(drawBars);
 
   /* ── Init ────────────────────────────────────────────────────── */
   engine.reset();
