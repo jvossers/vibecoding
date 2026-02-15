@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ethics &amp; Law Scenario Sorter — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.6.1" data-sim-slug="ethics-law">
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Ethics &amp; Law Scenario Sorter</h2>
+        <p class="sim-subtitle">Match scenarios to laws and explore ethical dilemmas in computing.</p>
+
+        <!-- Tab toolbar -->
+        <div class="sim-toolbar">
+          <button class="algo-btn active" data-tab="laws" type="button">Identify the Law</button>
+          <button class="algo-btn" data-tab="ethics" type="button">Ethical Dilemmas</button>
+          <button class="algo-btn" data-tab="opensource" type="button">Open Source vs Proprietary</button>
+        </div>
+
+        <!-- ── Tab 1: Identify the Law ──────────────────────────── -->
+        <div id="panel-laws" class="tab-panel">
+          <!-- Progress bar -->
+          <div class="progress-wrap">
+            <div class="progress-label"><span id="laws-progress">0 / 15</span></div>
+            <div class="progress-track">
+              <div class="progress-fill" id="laws-progress-fill"></div>
+            </div>
+            <div class="score-label">Score: <span id="laws-score">0</span></div>
+          </div>
+
+          <!-- Scenario card -->
+          <div id="laws-card" class="scenario-card">
+            <div class="scenario-number" id="laws-number"></div>
+            <p class="scenario-text" id="laws-text"></p>
+          </div>
+
+          <!-- Law buttons -->
+          <div class="law-buttons" id="laws-buttons">
+            <button class="law-btn law-btn--dpa" data-law="DPA" type="button">Data Protection Act 2018</button>
+            <button class="law-btn law-btn--cma" data-law="CMA" type="button">Computer Misuse Act 1990</button>
+            <button class="law-btn law-btn--cdpa" data-law="CDPA" type="button">Copyright Designs &amp; Patents Act 1988</button>
+          </div>
+
+          <!-- Feedback area -->
+          <div class="feedback-area" id="laws-feedback"></div>
+
+          <!-- Summary -->
+          <div id="laws-summary" class="summary-wrap" style="display:none;">
+            <h3 class="summary-heading">Results</h3>
+            <div class="summary-score" id="laws-summary-score"></div>
+            <table class="comparison-table summary-table">
+              <thead>
+                <tr>
+                  <th>Scenario</th>
+                  <th>Correct Law</th>
+                  <th>Your Answer</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody id="laws-summary-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── Tab 2: Ethical Dilemmas ──────────────────────────── -->
+        <div id="panel-ethics" class="tab-panel" style="display:none;">
+          <!-- Progress -->
+          <div class="progress-wrap">
+            <div class="progress-label"><span id="ethics-progress">0 / 6</span></div>
+            <div class="progress-track">
+              <div class="progress-fill" id="ethics-progress-fill"></div>
+            </div>
+          </div>
+
+          <!-- Dilemma card -->
+          <div id="ethics-card" class="scenario-card">
+            <p class="scenario-text scenario-text--dilemma" id="ethics-question"></p>
+            <div class="viewpoints" id="ethics-viewpoints">
+              <button class="viewpoint-btn viewpoint-btn--for" id="ethics-for" type="button">
+                <span class="viewpoint-label">For</span>
+                <span class="viewpoint-text" id="ethics-for-text"></span>
+              </button>
+              <button class="viewpoint-btn viewpoint-btn--against" id="ethics-against" type="button">
+                <span class="viewpoint-label">Against</span>
+                <span class="viewpoint-text" id="ethics-against-text"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Model answer reveal -->
+          <div class="model-answer" id="ethics-model" style="display:none;">
+            <h4 class="model-answer-heading">Model Answer</h4>
+            <p class="model-answer-text" id="ethics-model-text"></p>
+            <button class="next-btn" id="ethics-next" type="button">Next Dilemma</button>
+          </div>
+
+          <!-- Summary -->
+          <div id="ethics-summary" class="summary-wrap" style="display:none;">
+            <h3 class="summary-heading">All Dilemmas Complete</h3>
+            <div class="summary-score">You have explored all 6 ethical dilemmas. Press reset to try again.</div>
+          </div>
+        </div>
+
+        <!-- ── Tab 3: Open Source vs Proprietary ────────────────── -->
+        <div id="panel-opensource" class="tab-panel" style="display:none;">
+          <!-- Progress -->
+          <div class="progress-wrap">
+            <div class="progress-label"><span id="os-progress">0 / 12</span></div>
+            <div class="progress-track">
+              <div class="progress-fill" id="os-progress-fill"></div>
+            </div>
+            <div class="score-label">Score: <span id="os-score">0</span></div>
+          </div>
+
+          <!-- Characteristic cards pool -->
+          <div class="os-layout">
+            <div class="os-column os-column--open" id="os-col-open">
+              <h4 class="os-column-heading">Open Source</h4>
+              <div class="os-drop-zone" id="os-drop-open"></div>
+            </div>
+
+            <div class="os-pool" id="os-pool">
+              <!-- Characteristic cards inserted by JS -->
+            </div>
+
+            <div class="os-column os-column--prop" id="os-col-prop">
+              <h4 class="os-column-heading">Proprietary</h4>
+              <div class="os-drop-zone" id="os-drop-prop"></div>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div id="os-summary" class="summary-wrap" style="display:none;">
+            <h3 class="summary-heading">All Sorted!</h3>
+            <div class="summary-score" id="os-summary-score"></div>
+          </div>
+        </div>
+
+        <!-- Controls (reset only) -->
+        <div id="controls"></div>
+      </div>
+
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Data Protection Act 2018</strong> (UK GDPR) — governs how personal data is collected, stored, and used. Requires consent, security, and data minimisation.
+          </div>
+          <div class="key-fact">
+            <strong>Computer Misuse Act 1990</strong> — makes it illegal to gain unauthorised access to computer systems, modify data without permission, or create/distribute malware.
+          </div>
+          <div class="key-fact">
+            <strong>Copyright, Designs and Patents Act 1988</strong> — protects creative and intellectual works including software, music, images, and text from unauthorised copying.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> In 'discuss' questions, always give BOTH sides: 'On one hand... On the other hand... Overall...' This structure guarantees marks for balance.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

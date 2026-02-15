@@ -1,0 +1,86 @@
+/* ── Language Translator Visualiser ─────────────────────────────────── */
+.canvas-container {
+  min-height: 380px;
+}
+
+#sim-canvas {
+  width: 100%;
+  display: block;
+}
+
+/* ── Error toggle in toolbar ──────────────────────────────────────── */
+.error-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-left: auto;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--clr-text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+.error-toggle input[type="checkbox"] {
+  accent-color: #ef4444;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* ── Level Panel (reference table below canvas) ───────────────────── */
+#level-panel {
+  margin-top: var(--sp-4);
+}
+.level-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.level-table th,
+.level-table td {
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--clr-border);
+  text-align: left;
+}
+.level-table th {
+  background: var(--clr-surface-alt);
+  font-weight: 600;
+  color: var(--clr-text);
+}
+.level-table td {
+  color: var(--clr-text-muted);
+}
+.level-table code {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  background: var(--clr-surface-alt);
+  padding: var(--sp-1);
+  border-radius: var(--radius-sm);
+  color: var(--clr-text);
+}
+.level-table caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-size: var(--fs-base);
+  padding: var(--sp-3);
+  color: var(--clr-text);
+}
+
+/* ── Stats bar overrides ──────────────────────────────────────────── */
+#stats-bar .stat-value {
+  font-family: var(--font-mono);
+}
+
+/* ── Responsive tweaks ────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .sim-toolbar { gap: var(--sp-1); }
+  .algo-btn { padding: var(--sp-1) var(--sp-2); font-size: var(--fs-xs); }
+  .stats-bar { gap: var(--sp-2); }
+  .error-toggle { margin-left: 0; flex-basis: 100%; margin-top: var(--sp-1); }
+  .canvas-container { min-height: 320px; }
+}

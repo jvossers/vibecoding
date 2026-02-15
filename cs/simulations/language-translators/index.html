@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Language Translator Visualiser — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="2.5.1" data-sim-slug="language-translators">
+  <header class="site-header"><div class="container"><h1><a href="../../index.html">GCSE CS Simulations</a></h1></div></header>
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Language Translator Visualiser</h2>
+        <p class="sim-subtitle">See how compilers and interpreters translate source code differently.</p>
+        <div class="sim-toolbar">
+          <button class="algo-btn active" data-tab="compiler">Compiler</button>
+          <button class="algo-btn" data-tab="interpreter">Interpreter</button>
+          <button class="algo-btn" data-tab="comparison">Comparison</button>
+          <label class="error-toggle" id="error-toggle-wrap">
+            <input type="checkbox" id="error-toggle">
+            <span>Add Error (line 3)</span>
+          </label>
+        </div>
+        <div class="canvas-container">
+          <canvas id="sim-canvas"></canvas>
+        </div>
+        <div id="controls"></div>
+        <div class="stats-bar" id="stats-bar"></div>
+        <div id="level-panel"></div>
+      </div>
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>High-level languages</strong> (Python, Java) are human-readable and portable across different CPUs. They must be translated to machine code before execution.
+          </div>
+          <div class="key-fact">
+            <strong>Low-level languages</strong> include assembly (mnemonics) and machine code (binary). They are CPU-specific and harder to write but very fast.
+          </div>
+          <div class="key-fact">
+            A <strong>compiler</strong> translates the entire program at once before execution. It produces an object code file that can be run repeatedly without retranslation.
+          </div>
+          <div class="key-fact">
+            An <strong>interpreter</strong> translates and executes one line at a time. No object code is saved &mdash; the source must be re-interpreted every time it runs.
+          </div>
+          <div class="key-fact">
+            If there's an error: a <strong>compiler</strong> reports it before any code runs. An <strong>interpreter</strong> stops at the error line &mdash; previous lines may have already executed.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> Compiler = faster runtime (object code), slower development (compile after every change). Interpreter = slower runtime (retranslates each time), faster development (immediate feedback, easier to debug).
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="container">Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.</div></footer>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

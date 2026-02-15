@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Embedded Systems Identifier — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.1.3" data-sim-slug="embedded-systems">
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Embedded Systems Identifier</h2>
+        <p class="sim-subtitle">Categorise devices as embedded or general-purpose systems.</p>
+
+        <!-- Progress bar -->
+        <div class="progress-wrap">
+          <div class="progress-label"><span id="progress-text">0 / 10</span></div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <div class="score-label">Score: <span id="score-text">0</span></div>
+        </div>
+
+        <!-- Device card -->
+        <div id="device-card" class="device-card">
+          <div class="device-icon" id="device-icon"></div>
+          <h3 class="device-name" id="device-name"></h3>
+          <p class="device-desc" id="device-desc"></p>
+        </div>
+
+        <!-- Category buttons -->
+        <div class="category-buttons" id="category-buttons">
+          <button class="cat-btn cat-btn--embedded" data-answer="Embedded" type="button">Embedded</button>
+          <button class="cat-btn cat-btn--general" data-answer="General-Purpose" type="button">General-Purpose</button>
+          <button class="cat-btn cat-btn--unsure" data-answer="Not Sure" type="button">Not Sure</button>
+        </div>
+
+        <!-- Feedback area -->
+        <div class="feedback-area" id="feedback-area"></div>
+
+        <!-- Summary table (shown after all 10) -->
+        <div id="summary-wrap" class="summary-wrap" style="display:none;">
+          <h3 class="summary-heading">Results</h3>
+          <div class="summary-score" id="summary-score"></div>
+          <table class="comparison-table summary-table">
+            <thead>
+              <tr>
+                <th>Device</th>
+                <th>Correct Answer</th>
+                <th>Your Answer</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody id="summary-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Controls (reset only) -->
+        <div id="controls"></div>
+      </div>
+
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            An <strong>embedded system</strong> is a computer built into a larger device with a dedicated function. It is designed for one specific task.
+          </div>
+          <div class="key-fact">
+            A <strong>general-purpose system</strong> (like a PC or smartphone) can run many different programs and perform a variety of tasks.
+          </div>
+          <div class="key-fact">
+            Embedded systems are typically <strong>low-power</strong>, <strong>low-cost</strong>, and have <strong>limited storage</strong>. They usually don't have a standard OS.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> Check: Is it built into a larger device? Does it have a dedicated function? Can you install new software on it? If built-in + dedicated + no new software = embedded.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

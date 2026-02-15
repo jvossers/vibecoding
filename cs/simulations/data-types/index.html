@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Types Explorer — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="2.2.2" data-sim-slug="data-types">
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+
+    <div class="sim-page">
+      <!-- Simulation area -->
+      <div class="sim-area">
+        <h2 class="sim-title">Data Types Explorer</h2>
+        <p class="sim-subtitle">Understand data types, casting, and how values are stored in memory.</p>
+
+        <!-- Value input -->
+        <div class="value-input-area">
+          <label for="value-input">Enter a value:</label>
+          <input type="text" id="value-input" class="value-field" placeholder="e.g. 42, 3.14, true, Hello" autocomplete="off">
+        </div>
+
+        <!-- Data type buttons -->
+        <div class="type-buttons-row">
+          <span class="type-buttons-label">Detected types:</span>
+          <div class="type-buttons" id="type-buttons">
+            <button type="button" class="type-btn" data-type="integer" id="btn-integer">Integer</button>
+            <button type="button" class="type-btn" data-type="real" id="btn-real">Real</button>
+            <button type="button" class="type-btn" data-type="boolean" id="btn-boolean">Boolean</button>
+            <button type="button" class="type-btn" data-type="character" id="btn-character">Character</button>
+            <button type="button" class="type-btn" data-type="string" id="btn-string">String</button>
+          </div>
+        </div>
+
+        <!-- Cast To -->
+        <div class="cast-row">
+          <label for="cast-select">Cast To:</label>
+          <select id="cast-select" class="cast-select">
+            <option value="">-- Select type --</option>
+            <option value="integer">Integer</option>
+            <option value="real">Real</option>
+            <option value="boolean">Boolean</option>
+            <option value="character">Character</option>
+            <option value="string">String</option>
+          </select>
+        </div>
+
+        <!-- Casting demo -->
+        <div class="casting-demo" id="casting-demo" style="display:none">
+          <h3>Casting Result</h3>
+          <div class="cast-steps" id="cast-steps"></div>
+        </div>
+
+        <!-- Memory representation -->
+        <div class="memory-section" id="memory-section" style="display:none">
+          <h3>Memory Representation</h3>
+          <div class="memory-cards" id="memory-cards"></div>
+        </div>
+
+        <!-- Type comparison table -->
+        <div class="type-table-wrap">
+          <h3>Data Type Reference</h3>
+          <table class="comparison-table" id="type-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Example</th>
+                <th>Memory</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Integer</strong></td>
+                <td>Whole number</td>
+                <td class="mono">42, -7, 0</td>
+                <td>Stores as binary</td>
+              </tr>
+              <tr>
+                <td><strong>Real (Float)</strong></td>
+                <td>Decimal number</td>
+                <td class="mono">3.14, -0.5</td>
+                <td>Stores with decimal point</td>
+              </tr>
+              <tr>
+                <td><strong>Boolean</strong></td>
+                <td>True or False</td>
+                <td class="mono">True, False</td>
+                <td>1 bit (0 or 1)</td>
+              </tr>
+              <tr>
+                <td><strong>Character</strong></td>
+                <td>Single character</td>
+                <td class="mono">'A', '7', '#'</td>
+                <td>ASCII code (1 byte)</td>
+              </tr>
+              <tr>
+                <td><strong>String</strong></td>
+                <td>Text (sequence of chars)</td>
+                <td class="mono">"Hello", "42"</td>
+                <td>ASCII codes per character</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Controls (reset only) -->
+        <div id="controls"></div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Integer</strong> — a whole number (positive, negative, or zero). Used for counting and calculations without decimals.
+          </div>
+          <div class="key-fact">
+            <strong>Real (Float)</strong> — a number with a decimal point. Used when precision matters (prices, measurements).
+          </div>
+          <div class="key-fact">
+            <strong>Boolean</strong> — True or False only. Used for conditions and flags.
+          </div>
+          <div class="key-fact">
+            <strong>Character</strong> — a single letter, digit, or symbol. Stored as an ASCII code (0-127).
+          </div>
+          <div class="key-fact">
+            <strong>String</strong> — a sequence of characters. Even numbers can be strings ('07700') — no arithmetic possible.
+          </div>
+          <div class="key-fact">
+            <strong>Casting</strong> converts a value from one data type to another. Not all casts are valid (e.g., int('Hello') fails).
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> Phone number → String (leading zeros, no maths). Age → Integer. Price → Real. Yes/No → Boolean. Always explain WHY.
+          </div>
+        </div>
+
+        <div class="challenge-panel" id="challenge">
+          <h3>Challenge</h3>
+          <p id="challenge-question" class="challenge-question"></p>
+          <div class="challenge-options" id="challenge-options"></div>
+          <p id="challenge-feedback" class="challenge-feedback"></p>
+          <p id="challenge-streak" class="challenge-streak">Streak: 0</p>
+          <button type="button" id="challenge-new" class="filter-btn" style="margin-top:0.5rem">Next Question</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

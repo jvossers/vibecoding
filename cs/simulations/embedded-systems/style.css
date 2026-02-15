@@ -1,0 +1,243 @@
+/* ── Embedded Systems Identifier — sim-specific styles ────────────── */
+
+/* ── Progress bar ────────────────────────────────────────────────── */
+.progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+}
+.progress-label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--clr-text);
+  white-space: nowrap;
+}
+.progress-track {
+  flex: 1;
+  height: 10px;
+  background: var(--clr-surface-alt);
+  border: 1px solid var(--clr-border-muted);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--clr-primary);
+  border-radius: 999px;
+  transition: width 300ms ease;
+}
+.score-label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--clr-text);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+
+/* ── Device card ─────────────────────────────────────────────────── */
+.device-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-8) var(--sp-6);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  box-shadow: var(--shadow);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.device-icon {
+  font-size: 3.5rem;
+  line-height: 1;
+}
+.device-name {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--clr-text);
+}
+.device-desc {
+  font-size: var(--fs-sm);
+  color: var(--clr-text-muted);
+  max-width: 440px;
+}
+
+/* ── Category buttons ────────────────────────────────────────────── */
+.category-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  justify-content: center;
+}
+.cat-btn {
+  flex: 1 1 140px;
+  max-width: 200px;
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius);
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition),
+              color var(--transition), transform var(--transition);
+}
+.cat-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.cat-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* Button variants — hover colours */
+.cat-btn--embedded:hover:not(:disabled) {
+  border-color: var(--clr-primary);
+  background: var(--clr-primary-light);
+  color: var(--clr-primary);
+}
+.cat-btn--general:hover:not(:disabled) {
+  border-color: #f59e0b;
+  background: var(--clr-highlight);
+  color: #b45309;
+}
+.cat-btn--unsure:hover:not(:disabled) {
+  border-color: var(--clr-border-muted);
+  background: var(--clr-surface-alt);
+  color: var(--clr-text-muted);
+}
+
+/* Correct / wrong states */
+.cat-btn--correct {
+  border-color: #10b981 !important;
+  background: #10b981 !important;
+  color: #ffffff !important;
+}
+.cat-btn--wrong {
+  border-color: #ef4444 !important;
+  background: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+/* ── Feedback area ───────────────────────────────────────────────── */
+.feedback-area {
+  display: none;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  border-radius: var(--radius);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  animation: feedbackSlide 250ms ease;
+}
+.feedback--correct {
+  background: #ecfdf5;
+  border: 1px solid #10b981;
+  color: #065f46;
+}
+.feedback--wrong {
+  background: #fef2f2;
+  border: 1px solid #ef4444;
+  color: #991b1b;
+}
+.feedback-icon {
+  font-size: var(--fs-xl);
+  flex-shrink: 0;
+  line-height: 1;
+}
+.feedback-text strong {
+  display: block;
+  margin-bottom: var(--sp-1);
+}
+
+@keyframes feedbackSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Dark-mode feedback overrides ────────────────────────────────── */
+[data-theme="dark"] .feedback--correct {
+  background: #064e3b;
+  border-color: #10b981;
+  color: #a7f3d0;
+}
+[data-theme="dark"] .feedback--wrong {
+  background: #450a0a;
+  border-color: #ef4444;
+  color: #fecaca;
+}
+[data-theme="dark"] .cat-btn--general:hover:not(:disabled) {
+  color: #fbbf24;
+}
+
+/* ── Summary ─────────────────────────────────────────────────────── */
+.summary-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.summary-heading {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--clr-text);
+}
+.summary-score {
+  font-size: var(--fs-lg);
+  color: var(--clr-text);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+}
+.summary-score strong {
+  color: var(--clr-primary);
+}
+.summary-table td:first-child {
+  font-weight: 600;
+}
+.summary-table td:last-child {
+  text-align: center;
+  font-size: var(--fs-lg);
+}
+.summary-row--wrong {
+  background: var(--clr-highlight);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .device-card {
+    padding: var(--sp-6) var(--sp-4);
+  }
+  .device-icon {
+    font-size: 2.5rem;
+  }
+  .device-name {
+    font-size: var(--fs-lg);
+  }
+  .cat-btn {
+    flex: 1 1 100%;
+    max-width: none;
+    padding: var(--sp-3);
+    font-size: var(--fs-sm);
+  }
+  .progress-wrap {
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+  .summary-table {
+    font-size: var(--fs-xs);
+  }
+  .summary-table th,
+  .summary-table td {
+    padding: var(--sp-1) var(--sp-2);
+  }
+}

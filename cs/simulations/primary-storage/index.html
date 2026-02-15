@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Primary Storage Explorer — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.2.1" data-sim-slug="primary-storage">
+
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Primary Storage Explorer</h2>
+        <p class="sim-subtitle">Explore RAM, ROM, virtual memory and cache in action.</p>
+
+        <div class="sim-toolbar">
+          <button class="algo-btn active" data-tab="ram-rom">RAM vs ROM</button>
+          <button class="algo-btn" data-tab="virtual-memory">Virtual Memory</button>
+          <button class="algo-btn" data-tab="cache">Cache Demo</button>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="sim-canvas"></canvas>
+        </div>
+
+        <div id="controls"></div>
+
+        <div class="stats-bar" id="stats-bar">
+          <!-- Dynamic stats per tab -->
+        </div>
+      </div>
+
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>RAM (Random Access Memory)</strong> is volatile — it loses all data when power is turned off. It stores currently running programs and data.
+          </div>
+          <div class="key-fact">
+            <strong>ROM (Read Only Memory)</strong> is non-volatile — it retains data without power. It stores the boot-up instructions (BIOS/firmware).
+          </div>
+          <div class="key-fact">
+            <strong>Virtual memory</strong> uses a section of the hard drive as if it were extra RAM. Pages of data are swapped between RAM and disk.
+          </div>
+          <div class="key-fact">
+            <strong>Thrashing</strong> occurs when the system spends more time swapping pages than executing programs — caused by too little RAM.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> When asked "explain why adding more RAM speeds up a computer", say: more programs can be held in RAM simultaneously, reducing virtual memory swapping, which means less thrashing and faster access times.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

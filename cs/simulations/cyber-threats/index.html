@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Threats Simulator — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="1.4.1" data-sim-slug="cyber-threats">
+  <header class="site-header">
+    <div class="container">
+      <h1><a href="../../index.html">GCSE CS Simulations</a></h1>
+    </div>
+  </header>
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+    <div class="sim-page">
+      <!-- Simulation area -->
+      <div class="sim-area">
+        <h2 class="sim-title">Cyber Threats Simulator</h2>
+        <p class="sim-subtitle">Explore how different cyber attacks work and learn to identify them.</p>
+
+        <!-- Main toolbar -->
+        <div class="sim-toolbar" id="main-toolbar">
+          <button class="algo-btn active" data-mode="malware">Malware</button>
+          <button class="algo-btn" data-mode="social-engineering">Social Engineering</button>
+          <button class="algo-btn" data-mode="brute-force">Brute Force</button>
+          <button class="algo-btn" data-mode="dos">DoS/DDoS</button>
+          <button class="algo-btn" data-mode="sql-injection">SQL Injection</button>
+          <button class="algo-btn" data-mode="quiz">Quiz Mode</button>
+        </div>
+
+        <!-- Malware sub-toolbar -->
+        <div class="sim-toolbar sub-toolbar" id="malware-subtoolbar">
+          <button class="algo-btn sub-btn active" data-malware="virus">Virus</button>
+          <button class="algo-btn sub-btn" data-malware="worm">Worm</button>
+          <button class="algo-btn sub-btn" data-malware="trojan">Trojan</button>
+          <button class="algo-btn sub-btn" data-malware="spyware">Spyware</button>
+          <button class="algo-btn sub-btn" data-malware="ransomware">Ransomware</button>
+        </div>
+
+        <!-- Walkthrough panel -->
+        <div id="walkthrough-panel" class="walkthrough-panel"></div>
+
+        <!-- Brute force panel -->
+        <div id="brute-force-panel" class="attack-panel" style="display:none"></div>
+
+        <!-- DoS panel -->
+        <div id="dos-panel" class="attack-panel" style="display:none"></div>
+
+        <!-- SQL Injection panel -->
+        <div id="sql-panel" class="attack-panel" style="display:none"></div>
+
+        <!-- Quiz panel -->
+        <div id="quiz-panel" class="attack-panel" style="display:none"></div>
+
+        <div id="controls"></div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Malware</strong> is malicious software designed to damage, disrupt, or gain unauthorised access. Types: virus, worm, trojan, spyware, ransomware.
+          </div>
+          <div class="key-fact">
+            <strong>Social engineering</strong> manipulates people into revealing confidential information. Phishing uses fake emails/websites.
+          </div>
+          <div class="key-fact">
+            <strong>SQL injection</strong> inserts malicious SQL code into input fields to access or modify a database.
+          </div>
+          <div class="key-fact">
+            <strong>Brute force</strong> tries every possible combination until the correct password is found.
+          </div>
+          <div class="key-fact">
+            <strong>DoS/DDoS</strong> floods a server with requests to make it unavailable. DDoS uses multiple compromised machines (botnet).
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> For any threat question, state: (1) what it is, (2) how it attacks, (3) what damage it causes.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.
+    </div>
+  </footer>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

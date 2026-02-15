@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Defensive Design Tester — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="2.3.1" data-sim-slug="defensive-design">
+  <header class="site-header"><div class="container"><h1><a href="../../index.html">GCSE CS Simulations</a></h1></div></header>
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Defensive Design Tester</h2>
+        <p class="sim-subtitle">Test input validation, authentication, and code quality techniques.</p>
+        <div class="sim-toolbar">
+          <button class="algo-btn active" data-tab="validation">Input Validation</button>
+          <button class="algo-btn" data-tab="auth">Authentication</button>
+          <button class="algo-btn" data-tab="quality">Code Quality</button>
+        </div>
+        <!-- content panels -->
+        <div id="controls"></div>
+
+        <!-- Tab 1: Input Validation -->
+        <div id="validation-panel" class="dd-panel">
+          <div id="validation-fields"></div>
+          <div class="dd-summary-table-wrap">
+            <h3 class="dd-section-title">Validation Check Summary</h3>
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>Check Type</th>
+                  <th>What It Validates</th>
+                  <th>Example</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Range</td><td>Value within set bounds</td><td>Score 0-100</td></tr>
+                <tr><td>Length</td><td>Number of characters</td><td>Username 3-15 chars</td></tr>
+                <tr><td>Presence</td><td>Field not empty</td><td>Required email</td></tr>
+                <tr><td>Format</td><td>Matches a pattern</td><td>Date DD/MM/YYYY</td></tr>
+                <tr><td>Type</td><td>Correct data type</td><td>Age must be integer</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 2: Authentication -->
+        <div id="auth-panel" class="dd-panel" style="display:none">
+          <div class="dd-auth-section">
+            <h3 class="dd-section-title">Password Strength Meter</h3>
+            <div class="dd-password-wrap">
+              <label for="password-input" class="dd-label">Enter a password:</label>
+              <input type="text" id="password-input" class="dd-input dd-input-lg" placeholder="Type a password..." autocomplete="off" spellcheck="false">
+            </div>
+            <div class="dd-strength-bar-wrap">
+              <div class="dd-strength-bar">
+                <div id="strength-fill" class="dd-strength-fill"></div>
+              </div>
+              <span id="strength-label" class="dd-strength-label">---</span>
+            </div>
+            <ul id="password-checklist" class="dd-checklist">
+              <li data-check="length"><span class="dd-check-icon">&#9744;</span> At least 8 characters</li>
+              <li data-check="upper"><span class="dd-check-icon">&#9744;</span> Contains uppercase letter</li>
+              <li data-check="lower"><span class="dd-check-icon">&#9744;</span> Contains lowercase letter</li>
+              <li data-check="digit"><span class="dd-check-icon">&#9744;</span> Contains a digit</li>
+              <li data-check="special"><span class="dd-check-icon">&#9744;</span> Contains a special character (!@#$%^&*)</li>
+            </ul>
+          </div>
+
+          <div class="dd-auth-section">
+            <h3 class="dd-section-title">Plaintext vs Hashed Storage</h3>
+            <div class="dd-storage-compare">
+              <div class="dd-storage-box dd-storage-plain">
+                <div class="dd-storage-header dd-insecure">Plaintext Storage <span class="dd-badge dd-badge-red">INSECURE</span></div>
+                <table class="dd-db-table">
+                  <thead><tr><th>User</th><th>Password</th></tr></thead>
+                  <tbody>
+                    <tr><td>alice</td><td id="plain-pw" class="dd-pw-cell dd-pw-plain">---</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="dd-storage-box dd-storage-hash">
+                <div class="dd-storage-header dd-secure">Hashed Storage <span class="dd-badge dd-badge-green">SECURE</span></div>
+                <table class="dd-db-table">
+                  <thead><tr><th>User</th><th>Password Hash</th></tr></thead>
+                  <tbody>
+                    <tr><td>alice</td><td id="hashed-pw" class="dd-pw-cell dd-pw-hashed">---</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <p class="dd-explain">If the database is breached, plaintext passwords are immediately exposed. Hashed passwords cannot be reversed, so they remain protected.</p>
+          </div>
+        </div>
+
+        <!-- Tab 3: Code Quality -->
+        <div id="quality-panel" class="dd-panel" style="display:none">
+          <div class="dd-quality-nav">
+            <button class="dd-example-btn active" data-example="0">1. Variable Naming</button>
+            <button class="dd-example-btn" data-example="1">2. Indentation</button>
+            <button class="dd-example-btn" data-example="2">3. Comments</button>
+            <button class="dd-example-btn" data-example="3">4. Input Validation</button>
+          </div>
+          <div class="dd-code-compare">
+            <div class="dd-code-panel dd-code-bad">
+              <div class="dd-code-header dd-insecure">Bad Code <span class="dd-badge dd-badge-red">Problems</span></div>
+              <pre id="bad-code" class="dd-code-block"></pre>
+            </div>
+            <div class="dd-code-panel dd-code-good">
+              <div class="dd-code-header dd-secure">Good Code <span class="dd-badge dd-badge-green">Improved</span></div>
+              <pre id="good-code" class="dd-code-block"></pre>
+            </div>
+          </div>
+          <div class="dd-issues-section">
+            <h3 class="dd-section-title">Issues Found</h3>
+            <ul id="issues-checklist" class="dd-checklist dd-issues-list"></ul>
+            <p id="issues-hint" class="dd-hint">Click on the highlighted lines in the bad code to reveal issues.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            <strong>Input validation</strong> checks that data entered by a user is reasonable and correct before processing. Types: range, length, presence, format, type.
+          </div>
+          <div class="key-fact">
+            <strong>Authentication</strong> verifies a user's identity. Strong passwords use 8+ characters with uppercase, lowercase, digits, and symbols.
+          </div>
+          <div class="key-fact">
+            Passwords should be stored as <strong>hashes</strong>, not plaintext. A hash is a one-way function &mdash; it cannot be reversed to reveal the original password.
+          </div>
+          <div class="key-fact">
+            <strong>Good coding practices</strong> include: meaningful variable names, comments explaining logic, proper indentation, and input validation.
+          </div>
+          <div class="exam-tip">
+            <strong>Exam Tip:</strong> When asked about validation, name the check type AND give the pseudocode. Example: &ldquo;A range check ensures the value is between 0 and 100: <code>IF score &gt;= 0 AND score &lt;= 100 THEN...</code>&rdquo;
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="container">Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.</div></footer>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>

@@ -23,7 +23,7 @@ window.TopicsData = [
       {
         ref: '1.1.3', title: 'Embedded Systems',
         subtopics: ['Definition', 'Examples', 'vs general-purpose systems'],
-        simulations: []
+        simulations: [{ slug: 'embedded-systems', name: 'Embedded Systems Identifier' }]
       }
     ]
   },
@@ -33,7 +33,7 @@ window.TopicsData = [
       {
         ref: '1.2.1', title: 'Primary Storage',
         subtopics: ['RAM', 'ROM', 'Virtual memory', 'Cache'],
-        simulations: []
+        simulations: [{ slug: 'primary-storage', name: 'Primary Storage Explorer' }]
       },
       {
         ref: '1.2.2', title: 'Secondary Storage',
@@ -98,7 +98,7 @@ window.TopicsData = [
           'Social engineering', 'Phishing', 'Brute-force',
           'DoS/DDoS', 'SQL injection'
         ],
-        simulations: []
+        simulations: [{ slug: 'cyber-threats', name: 'Cyber Threats Simulator' }]
       },
       {
         ref: '1.4.2', title: 'Preventing Vulnerabilities',
@@ -137,7 +137,7 @@ window.TopicsData = [
           'Privacy', 'Data Protection Act 2018', 'Computer Misuse Act 1990',
           'Copyright Act 1988', 'Open-source vs proprietary'
         ],
-        simulations: []
+        simulations: [{ slug: 'ethics-law', name: 'Ethics & Law Scenario Sorter' }]
       }
     ]
   },
@@ -149,7 +149,7 @@ window.TopicsData = [
       {
         ref: '2.1.1', title: 'Computational Thinking',
         subtopics: ['Abstraction', 'Decomposition', 'Algorithmic thinking'],
-        simulations: []
+        simulations: [{ slug: 'computational-thinking', name: 'Computational Thinking Workshop' }]
       },
       {
         ref: '2.1.2', title: 'Designing Algorithms',
@@ -178,14 +178,14 @@ window.TopicsData = [
           'Variables', 'Constants', 'Operators',
           'Sequence/selection/iteration'
         ],
-        simulations: []
+        simulations: [{ slug: 'programming-fundamentals', name: 'Programming Fundamentals Playground' }]
       },
       {
         ref: '2.2.2', title: 'Data Types',
         subtopics: [
           'Integer', 'Real/float', 'Boolean', 'Character', 'String', 'Casting'
         ],
-        simulations: []
+        simulations: [{ slug: 'data-types', name: 'Data Types Explorer' }]
       },
       {
         ref: '2.2.3', title: 'Additional Techniques',
@@ -206,7 +206,7 @@ window.TopicsData = [
           'Input validation', 'Authentication',
           'Naming conventions', 'Comments'
         ],
-        simulations: []
+        simulations: [{ slug: 'defensive-design', name: 'Defensive Design Tester' }]
       },
       {
         ref: '2.3.2', title: 'Testing',
@@ -214,7 +214,7 @@ window.TopicsData = [
           'Logic/syntax errors', 'Iterative/terminal testing',
           'Normal/boundary/invalid/erroneous data'
         ],
-        simulations: []
+        simulations: [{ slug: 'testing', name: 'Testing & Test Data Workshop' }]
       }
     ]
   },
@@ -234,7 +234,7 @@ window.TopicsData = [
       {
         ref: '2.5.1', title: 'Languages',
         subtopics: ['High-level vs low-level', 'Compiler vs interpreter'],
-        simulations: []
+        simulations: [{ slug: 'language-translators', name: 'Language Translator Visualiser' }]
       },
       {
         ref: '2.5.2', title: 'The IDE',

@@ -1,0 +1,582 @@
+/* ── Programming Fundamentals Playground — simulation-specific styles ── */
+
+/* ── Tab content area ─────────────────────────────────────────────────── */
+.tab-panel {
+  display: none;
+}
+.tab-panel.active {
+  display: block;
+}
+
+/* ── Shared panel containers ──────────────────────────────────────────── */
+.pf-panel {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.pf-panel-heading {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--clr-surface-alt);
+  border-bottom: 1px solid var(--clr-border);
+  color: var(--clr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.pf-panel-body {
+  padding: var(--sp-3);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TAB 1: Variables & Constants
+   ══════════════════════════════════════════════════════════════════════ */
+
+.var-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+@media (min-width: 640px) {
+  .var-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-4);
+    align-items: start;
+  }
+}
+
+/* ── Program selector ──────────────────────────────────────────────────── */
+.var-program-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+}
+.var-program-bar label {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--clr-text-muted);
+}
+.var-program-bar select {
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  outline-color: var(--clr-primary);
+}
+.var-program-bar .ctrl-btn {
+  font-size: var(--fs-sm);
+  width: auto;
+  padding: 0 var(--sp-3);
+}
+
+/* ── Code display ──────────────────────────────────────────────────────── */
+.var-code-display {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.8;
+  padding: var(--sp-3);
+  min-height: 160px;
+}
+.var-code-line {
+  display: flex;
+  gap: var(--sp-3);
+  padding: 2px var(--sp-2);
+  border-radius: var(--radius-sm);
+  transition: background 150ms ease;
+  white-space: pre;
+}
+.var-code-line.active {
+  background: var(--clr-primary-light);
+}
+.var-code-line.executed {
+  opacity: 0.5;
+}
+.var-code-line.active.executed {
+  opacity: 1;
+}
+.var-code-line.error {
+  background: rgba(239, 68, 68, 0.15);
+}
+.var-line-num {
+  color: var(--clr-text-muted);
+  min-width: 2ch;
+  text-align: right;
+  user-select: none;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+.var-line-text {
+  white-space: pre;
+}
+.var-line-comment {
+  color: var(--clr-text-muted);
+  font-style: italic;
+  margin-left: var(--sp-2);
+}
+
+/* ── Variable boxes ────────────────────────────────────────────────────── */
+.var-boxes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+}
+.var-box {
+  background: var(--clr-bg);
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius);
+  padding: var(--sp-3);
+  text-align: center;
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+.var-box.updated {
+  border-color: var(--clr-primary);
+  box-shadow: var(--shadow), 0 0 0 3px var(--clr-primary-light);
+  transform: scale(1.05);
+}
+.var-box.const-box {
+  border-color: var(--clr-accent);
+  border-style: dashed;
+}
+.var-box.const-box .var-box-lock {
+  position: absolute;
+  top: var(--sp-1);
+  right: var(--sp-2);
+  font-size: var(--fs-sm);
+}
+.var-box.error-flash {
+  border-color: #ef4444;
+  box-shadow: var(--shadow), 0 0 0 3px rgba(239, 68, 68, 0.3);
+  animation: error-shake 0.4s ease;
+}
+@keyframes error-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+.var-box-name {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  text-transform: none;
+  margin-bottom: var(--sp-1);
+}
+.var-box-value {
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--clr-text);
+  word-break: break-all;
+  min-height: 1.5em;
+}
+.var-box-type {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+  margin-top: var(--sp-1);
+}
+
+/* ── Operation log ─────────────────────────────────────────────────────── */
+.var-log {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  padding: var(--sp-3);
+  max-height: 180px;
+  overflow-y: auto;
+  background: var(--clr-bg);
+}
+.var-log-entry {
+  padding: 2px 0;
+  border-bottom: 1px solid var(--clr-border-muted);
+}
+.var-log-entry:last-child {
+  border-bottom: none;
+}
+.var-log-entry.log-error {
+  color: #ef4444;
+  font-weight: 600;
+}
+.var-log-entry .log-step {
+  color: var(--clr-text-muted);
+  margin-right: var(--sp-2);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TAB 2: Operators
+   ══════════════════════════════════════════════════════════════════════ */
+
+.op-builder {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-4);
+}
+.op-builder input {
+  width: 100px;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--fs-base);
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  outline-color: var(--clr-primary);
+}
+.op-builder select {
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--fs-base);
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  outline-color: var(--clr-primary);
+}
+.op-equals {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--clr-text-muted);
+  padding: 0 var(--sp-2);
+}
+.op-result {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--clr-primary);
+  min-width: 80px;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--clr-primary-light);
+  border-radius: var(--radius);
+  text-align: center;
+}
+.op-result.result-bool-true {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+.op-result.result-bool-false {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+.op-result.result-error {
+  color: #ef4444;
+  font-size: var(--fs-sm);
+}
+.op-explanation {
+  width: 100%;
+  font-size: var(--fs-sm);
+  color: var(--clr-text-muted);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--clr-highlight);
+  border-radius: var(--radius-sm);
+  margin-top: var(--sp-2);
+  font-style: italic;
+}
+
+/* ── Operator reference table ──────────────────────────────────────────── */
+.op-ref-table {
+  margin-top: var(--sp-4);
+}
+.op-ref-table .comparison-table th {
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.op-ref-table .comparison-table td {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+}
+.op-ref-table .op-category {
+  background: var(--clr-primary-light);
+  font-weight: 700;
+  font-family: var(--font-sans);
+  color: var(--clr-primary);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TAB 3: Selection & Iteration
+   ══════════════════════════════════════════════════════════════════════ */
+
+.flow-sub-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+}
+.flow-sub-btn {
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  background: var(--clr-surface);
+  cursor: pointer;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--clr-text-muted);
+  transition: background var(--transition), color var(--transition),
+              border-color var(--transition);
+}
+.flow-sub-btn:hover {
+  border-color: var(--clr-primary);
+  color: var(--clr-primary);
+}
+.flow-sub-btn.active {
+  background: var(--clr-primary);
+  color: var(--clr-primary-fg);
+  border-color: var(--clr-primary);
+}
+.flow-sub-panel {
+  display: none;
+}
+.flow-sub-panel.active {
+  display: block;
+}
+
+/* ── IF/ELSE section ───────────────────────────────────────────────────── */
+.if-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+@media (min-width: 640px) {
+  .if-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-4);
+    align-items: start;
+  }
+}
+.if-sliders {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+}
+.if-slider-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.if-slider-row label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  min-width: 80px;
+  color: var(--clr-text);
+}
+.if-slider-row input[type="range"] {
+  flex: 1;
+  accent-color: var(--clr-primary);
+}
+.if-slider-row .slider-val {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  min-width: 3ch;
+  text-align: right;
+  color: var(--clr-primary);
+}
+.if-code-block {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.8;
+  padding: var(--sp-3);
+}
+.if-code-line {
+  padding: 2px var(--sp-2);
+  border-radius: var(--radius-sm);
+  transition: background 200ms ease, opacity 200ms ease;
+  white-space: pre;
+}
+.if-code-line.active-branch {
+  background: rgba(16, 185, 129, 0.15);
+}
+.if-code-line.inactive-branch {
+  opacity: 0.35;
+}
+.if-result-display {
+  padding: var(--sp-3);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.if-result-display .result-val {
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+  color: var(--clr-primary);
+}
+
+/* ── FOR loop section ──────────────────────────────────────────────────── */
+.for-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+}
+.for-controls label {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--clr-text-muted);
+}
+.for-controls input {
+  width: 70px;
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  outline-color: var(--clr-primary);
+  text-align: center;
+}
+.for-controls .ctrl-btn {
+  font-size: var(--fs-sm);
+  width: auto;
+  padding: 0 var(--sp-3);
+}
+.for-code-block {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.8;
+  padding: var(--sp-3);
+}
+.for-table-scroll {
+  max-height: 280px;
+  overflow-y: auto;
+}
+.for-table {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+}
+.for-table tr.row-current {
+  background: var(--clr-primary-light);
+}
+.for-table td.changed {
+  color: var(--clr-primary);
+  font-weight: 700;
+}
+
+/* ── WHILE loop section ────────────────────────────────────────────────── */
+.while-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+}
+.while-controls label {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--clr-text-muted);
+}
+.while-controls input {
+  width: 70px;
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  outline-color: var(--clr-primary);
+  text-align: center;
+}
+.while-controls select {
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  outline-color: var(--clr-primary);
+}
+.while-controls .ctrl-btn {
+  font-size: var(--fs-sm);
+  width: auto;
+  padding: 0 var(--sp-3);
+}
+.while-code-block {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.8;
+  padding: var(--sp-3);
+}
+.while-table-scroll {
+  max-height: 280px;
+  overflow-y: auto;
+}
+.while-table {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+}
+.while-table tr.row-current {
+  background: var(--clr-primary-light);
+}
+.while-warning {
+  padding: var(--sp-3);
+  color: #ef4444;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: var(--radius-sm);
+  margin-top: var(--sp-2);
+}
+
+/* ── Dark theme overrides ──────────────────────────────────────────────── */
+[data-theme="dark"] .var-program-bar select,
+[data-theme="dark"] .op-builder input,
+[data-theme="dark"] .op-builder select,
+[data-theme="dark"] .for-controls input,
+[data-theme="dark"] .while-controls input,
+[data-theme="dark"] .while-controls select {
+  background: var(--clr-bg);
+  color: var(--clr-text);
+}
+[data-theme="dark"] .var-log {
+  background: #0c1222;
+}
+[data-theme="dark"] .var-code-line.error {
+  background: rgba(239, 68, 68, 0.2);
+}
+[data-theme="dark"] .if-code-line.active-branch {
+  background: rgba(52, 211, 153, 0.15);
+}
+[data-theme="dark"] .op-explanation {
+  background: var(--clr-highlight);
+}
+[data-theme="dark"] .op-result.result-bool-true {
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.12);
+}
+[data-theme="dark"] .op-result.result-bool-false {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .var-code-display {
+    font-size: var(--fs-xs);
+    line-height: 1.5;
+  }
+  .var-boxes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+  .op-builder {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .op-builder input {
+    width: 100%;
+  }
+}

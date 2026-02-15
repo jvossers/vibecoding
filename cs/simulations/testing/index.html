@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testing &amp; Test Data Workshop — GCSE CS Simulations</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/simulation.css">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(localStorage.getItem('gcse-cs-theme')!=='light')document.documentElement.setAttribute('data-theme','dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+</head>
+<body data-topic-ref="2.3.2" data-sim-slug="testing">
+  <header class="site-header"><div class="container"><h1><a href="../../index.html">GCSE CS Simulations</a></h1></div></header>
+  <main class="container">
+    <nav id="breadcrumb"></nav>
+    <div class="sim-page">
+      <div class="sim-area">
+        <h2 class="sim-title">Testing &amp; Test Data Workshop</h2>
+        <p class="sim-subtitle">Identify errors, classify test data, and design test plans.</p>
+        <div class="sim-toolbar">
+          <button class="algo-btn active" data-tab="errors">Error Types</button>
+          <button class="algo-btn" data-tab="testdata">Test Data Categories</button>
+          <button class="algo-btn" data-tab="design">Design Tests</button>
+        </div>
+        <!-- content panels -->
+        <div id="controls"></div>
+      </div>
+      <div class="sim-sidebar">
+        <div class="info-panel">
+          <h3>Key Facts</h3>
+          <div class="key-fact">
+            A <strong>syntax error</strong> is a mistake in the grammar/rules of the language. The program will NOT run. E.g., missing brackets, colons, or misspelled keywords.
+          </div>
+          <div class="key-fact">
+            A <strong>logic error</strong> means the program runs but produces incorrect results. E.g., wrong formula, incorrect comparison, off-by-one error.
+          </div>
+          <div class="key-fact">
+            <strong>Normal test data</strong> — typical, valid values that the program should handle correctly.
+          </div>
+          <div class="key-fact">
+            <strong>Boundary test data</strong> — values at the edges of valid ranges (e.g., 0, 1, 99, 100 for range 0-100).
+          </div>
+          <div class="key-fact">
+            <strong>Invalid test data</strong> — values outside the valid range but of the correct type (e.g., -1, 101).
+          </div>
+          <div class="key-fact">
+            <strong>Erroneous test data</strong> — completely wrong data type (e.g., text when expecting a number).
+          </div>
+          <div class="exam-tip">
+            <strong>Exam tip:</strong> For boundary testing of range 1-100, always test: 0 (just below), 1 (lower boundary), 2 (just above lower), 99 (just below upper), 100 (upper boundary), 101 (just above). This shows the examiner you understand boundaries.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="container">Based on the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>.</div></footer>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/topics-data.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script src="../../js/simulation-engine.js"></script>
+  <script src="sim.js"></script>
+</body>
+</html>
