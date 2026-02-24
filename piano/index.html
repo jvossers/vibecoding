@@ -536,10 +536,12 @@
             return note.replace(/[0-9]/g, '');
         }
 
-        // Highscore: { time } (fastest time to 10 correct)
+        // Highscore: { ms } (fastest time in milliseconds to 10 correct)
         function loadHighscore() {
             try {
-                return JSON.parse(localStorage.getItem(STORAGE_KEY));
+                const hs = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                if (hs && !hs.ms) return null; // discard old format
+                return hs;
             } catch { return null; }
         }
 
@@ -552,7 +554,7 @@
         function displayHighscore() {
             const hs = loadHighscore();
             if (hs) {
-                highscoreEl.textContent = `Best: ${formatTime(hs.time * 1000)}`;
+                highscoreEl.textContent = `Best: ${formatTime(hs.ms)}`;
                 resetHsEl.classList.add('visible');
             } else {
                 highscoreEl.textContent = '';
@@ -574,16 +576,37 @@
             return min > 0 ? `${min}:${sec.padStart(4, '0')}` : `${sec}s`;
         }
 
+        let elapsedBeforePause = 0;
+
         function startTimer() {
             startTime = performance.now();
+            elapsedBeforePause = 0;
             timerInterval = setInterval(() => {
-                timerEl.textContent = formatTime(performance.now() - startTime);
+                timerEl.textContent = formatTime(elapsedBeforePause + performance.now() - startTime);
+            }, 100);
+        }
+
+        function pauseTimer() {
+            elapsedBeforePause += performance.now() - startTime;
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function resumeTimer() {
+            startTime = performance.now();
+            timerInterval = setInterval(() => {
+                timerEl.textContent = formatTime(elapsedBeforePause + performance.now() - startTime);
             }, 100);
         }
 
         function stopTimer() {
+            elapsedBeforePause += performance.now() - startTime;
             clearInterval(timerInterval);
             timerInterval = null;
+        }
+
+        function totalElapsed() {
+            return elapsedBeforePause;
         }
 
         function updateProgress() {
@@ -595,12 +618,14 @@
         function showNextBtn() {
             nextBtnReady = false;
             nextBtn.classList.add('visible');
+            pauseTimer();
             setTimeout(() => { nextBtnReady = true; }, 200);
         }
 
         function hideNextBtn() {
             nextBtn.classList.remove('visible');
             nextBtnReady = false;
+            if (gameStarted && !roundOver) resumeTimer();
         }
 
         function handleGuess(guess) {
@@ -620,6 +645,8 @@
 
                 feedbackEl.innerHTML = `<div class="result correct">Correct!</div>`;
             } else {
+                if (correctCount > 0) correctCount--;
+                updateProgress();
                 feedbackEl.innerHTML = `<div class="result incorrect">Incorrect</div>
                    <div class="answer">The note was ${correct} (${currentNote})</div>`;
             }
@@ -634,21 +661,21 @@
         function showSummary() {
             roundOver = true;
             stopTimer();
-            const elapsed = formatTime(performance.now() - startTime);
+            const elapsedMs = totalElapsed();
             const accuracy = Math.round((ROUND_SIZE / totalGuesses) * 100);
 
-            summaryTimeEl.innerHTML = `Time: <strong>${formatTime(parseFloat(elapsed) * 1000)}</strong>`;
+            summaryTimeEl.innerHTML = `Time: <strong>${formatTime(elapsedMs)}</strong>`;
             summaryAccuracyEl.innerHTML = `Accuracy: <strong>${accuracy}%</strong> (${ROUND_SIZE}/${totalGuesses})`;
 
             const hs = loadHighscore();
             let isNewBest = false;
-            if (!hs || parseFloat(elapsed) < hs.time) {
+            if (!hs || elapsedMs < hs.ms) {
                 isNewBest = true;
-                saveHighscore({ time: parseFloat(elapsed) });
+                saveHighscore({ ms: elapsedMs });
             }
 
             const best = loadHighscore();
-            summaryBestEl.innerHTML = `Best time: ${formatTime(best.time * 1000)}`;
+            summaryBestEl.innerHTML = `Best time: ${formatTime(best.ms)}`;
 
             if (isNewBest) {
                 newBestEl.textContent = 'New Best Time!';
