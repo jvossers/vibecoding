@@ -56,6 +56,22 @@
             color: #777;
         }
 
+        .reset-hs {
+            display: none;
+            font-size: 0.7rem;
+            color: #555;
+            cursor: pointer;
+            margin-left: -4px;
+        }
+
+        .reset-hs.visible {
+            display: inline;
+        }
+
+        .reset-hs:active {
+            color: #e5383b;
+        }
+
         .staff-container {
             width: 90%;
             max-width: 460px;
@@ -182,6 +198,33 @@
             background: #3a9d6e;
         }
 
+        .next-btn {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: #52b788;
+            cursor: pointer;
+            user-select: none;
+            z-index: 10;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: 0.05em;
+        }
+
+        .next-btn:active {
+            background: #3a9d6e;
+        }
+
+        .next-btn.visible {
+            display: flex;
+        }
+
         .piano {
             position: fixed;
             bottom: 0;
@@ -259,6 +302,7 @@
         <span class="progress" id="progress">1 / 10</span>
         <span class="timer" id="timer">0.0s</span>
         <span class="highscore" id="highscore"></span>
+        <span class="reset-hs" id="resetHs" title="Reset high score">&#x2715;</span>
     </div>
 
     <div class="staff-container">
@@ -277,6 +321,8 @@
         <div class="stat" id="summaryBest"></div>
         <button id="playAgain">Play Again</button>
     </div>
+
+    <div class="next-btn" id="nextBtn">NEXT</div>
 
     <div class="piano">
         <div class="keys">
@@ -484,6 +530,7 @@
         let gameStarted = false;
 
         const startBtn = document.getElementById('startBtn');
+        const nextBtn = document.getElementById('nextBtn');
 
         function noteLetter(note) {
             return note.replace(/[0-9]/g, '');
@@ -500,23 +547,37 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(entry));
         }
 
+        const resetHsEl = document.getElementById('resetHs');
+
         function displayHighscore() {
             const hs = loadHighscore();
             if (hs) {
-                highscoreEl.textContent = `Best: ${hs.time}s`;
+                highscoreEl.textContent = `Best: ${formatTime(hs.time * 1000)}`;
+                resetHsEl.classList.add('visible');
             } else {
                 highscoreEl.textContent = '';
+                resetHsEl.classList.remove('visible');
             }
         }
 
+        resetHsEl.addEventListener('click', () => {
+            if (confirm('Reset high score?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                displayHighscore();
+            }
+        });
+
         function formatTime(ms) {
-            return (ms / 1000).toFixed(1);
+            const totalSec = ms / 1000;
+            const min = Math.floor(totalSec / 60);
+            const sec = (totalSec % 60).toFixed(1);
+            return min > 0 ? `${min}:${sec.padStart(4, '0')}` : `${sec}s`;
         }
 
         function startTimer() {
             startTime = performance.now();
             timerInterval = setInterval(() => {
-                timerEl.textContent = formatTime(performance.now() - startTime) + 's';
+                timerEl.textContent = formatTime(performance.now() - startTime);
             }, 100);
         }
 
@@ -529,6 +590,19 @@
             progressEl.textContent = `${correctCount} / ${ROUND_SIZE}`;
         }
 
+        let nextBtnReady = false;
+
+        function showNextBtn() {
+            nextBtnReady = false;
+            nextBtn.classList.add('visible');
+            setTimeout(() => { nextBtnReady = true; }, 200);
+        }
+
+        function hideNextBtn() {
+            nextBtn.classList.remove('visible');
+            nextBtnReady = false;
+        }
+
         function handleGuess(guess) {
             const correct = noteLetter(currentNote);
             const isCorrect = guess === correct;
@@ -539,19 +613,18 @@
                 updateProgress();
 
                 if (correctCount >= ROUND_SIZE) {
-                    // Round complete
                     feedbackEl.innerHTML = `<div class="result correct">Correct!</div>`;
                     showSummary();
                     return;
                 }
 
-                feedbackEl.innerHTML = `<div class="result correct">Correct!</div>
-                   <div class="next-hint">Tap any key for next note</div>`;
+                feedbackEl.innerHTML = `<div class="result correct">Correct!</div>`;
             } else {
                 feedbackEl.innerHTML = `<div class="result incorrect">Incorrect</div>
-                   <div class="answer">The note was ${correct} (${currentNote})</div>
-                   <div class="next-hint">Tap any key for next note</div>`;
+                   <div class="answer">The note was ${correct} (${currentNote})</div>`;
             }
+
+            showNextBtn();
         }
 
         function clearFeedback() {
@@ -564,7 +637,7 @@
             const elapsed = formatTime(performance.now() - startTime);
             const accuracy = Math.round((ROUND_SIZE / totalGuesses) * 100);
 
-            summaryTimeEl.innerHTML = `Time: <strong>${elapsed}s</strong>`;
+            summaryTimeEl.innerHTML = `Time: <strong>${formatTime(parseFloat(elapsed) * 1000)}</strong>`;
             summaryAccuracyEl.innerHTML = `Accuracy: <strong>${accuracy}%</strong> (${ROUND_SIZE}/${totalGuesses})`;
 
             const hs = loadHighscore();
@@ -575,7 +648,7 @@
             }
 
             const best = loadHighscore();
-            summaryBestEl.innerHTML = `Best time: ${best.time}s`;
+            summaryBestEl.innerHTML = `Best time: ${formatTime(best.time * 1000)}`;
 
             if (isNewBest) {
                 newBestEl.textContent = 'New Best Time!';
@@ -595,6 +668,7 @@
             roundOver = false;
             gameStarted = false;
             summaryEl.classList.remove('visible');
+            hideNextBtn();
             clearFeedback();
             displayHighscore();
             updateProgress();
@@ -640,17 +714,19 @@
                 key.classList.add('active');
                 if (audioCtx.state === 'suspended') audioCtx.resume();
                 playNote(key.dataset.note);
-                if (roundOver || !gameStarted) return;
+                if (roundOver || !gameStarted || guessed) return;
 
-                if (guessed) {
-                    nextNote();
-                } else {
-                    guessed = true;
-                    handleGuess(key.dataset.note);
-                }
+                guessed = true;
+                handleGuess(key.dataset.note);
             });
             key.addEventListener('pointerup', () => key.classList.remove('active'));
             key.addEventListener('pointerleave', () => key.classList.remove('active'));
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (!nextBtnReady) return;
+            hideNextBtn();
+            nextNote();
         });
 
         startBtn.addEventListener('click', startGame);
