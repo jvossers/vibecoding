@@ -300,6 +300,52 @@
         const ROUND_SIZE = 10;
         const STORAGE_KEY = 'sightReadingHighscore';
 
+        // --- Web Audio piano synth ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Frequencies for one octave (C4–B4 + sharps)
+        const NOTE_FREQ = {
+            'C': 261.63, 'C#': 277.18,
+            'D': 293.66, 'D#': 311.13,
+            'E': 329.63,
+            'F': 349.23, 'F#': 369.99,
+            'G': 392.00, 'G#': 415.30,
+            'A': 440.00, 'A#': 466.16,
+            'B': 493.88
+        };
+
+        function playNote(noteName) {
+            const freq = NOTE_FREQ[noteName];
+            if (!freq) return;
+            const t = audioCtx.currentTime;
+
+            // Fundamental
+            const osc1 = audioCtx.createOscillator();
+            osc1.type = 'triangle';
+            osc1.frequency.value = freq;
+
+            // Soft overtone for richness
+            const osc2 = audioCtx.createOscillator();
+            osc2.type = 'sine';
+            osc2.frequency.value = freq * 2;
+
+            const gain1 = audioCtx.createGain();
+            gain1.gain.setValueAtTime(0.35, t);
+            gain1.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+
+            const gain2 = audioCtx.createGain();
+            gain2.gain.setValueAtTime(0.1, t);
+            gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
+
+            osc1.connect(gain1).connect(audioCtx.destination);
+            osc2.connect(gain2).connect(audioCtx.destination);
+
+            osc1.start(t);
+            osc2.start(t);
+            osc1.stop(t + 1.2);
+            osc2.stop(t + 0.8);
+        }
+
         const canvas = document.getElementById('staff');
         const ctx = canvas.getContext('2d');
         const feedbackEl = document.getElementById('feedback');
@@ -592,6 +638,8 @@
             key.addEventListener('pointerdown', e => {
                 e.preventDefault();
                 key.classList.add('active');
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                playNote(key.dataset.note);
                 if (roundOver || !gameStarted) return;
 
                 if (guessed) {
