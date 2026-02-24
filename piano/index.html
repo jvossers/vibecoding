@@ -221,6 +221,14 @@
             background: #3a9d6e;
         }
 
+        .next-btn.wrong {
+            background: #e5383b;
+        }
+
+        .next-btn.wrong:active {
+            background: #c1292e;
+        }
+
         .next-btn.visible {
             display: flex;
         }
@@ -615,15 +623,16 @@
 
         let nextBtnReady = false;
 
-        function showNextBtn() {
+        function showNextBtn(wrong) {
             nextBtnReady = false;
+            nextBtn.classList.toggle('wrong', !!wrong);
             nextBtn.classList.add('visible');
             pauseTimer();
             setTimeout(() => { nextBtnReady = true; }, 200);
         }
 
         function hideNextBtn() {
-            nextBtn.classList.remove('visible');
+            nextBtn.classList.remove('visible', 'wrong');
             nextBtnReady = false;
             if (gameStarted && !roundOver) resumeTimer();
         }
@@ -644,14 +653,14 @@
                 }
 
                 feedbackEl.innerHTML = `<div class="result correct">Correct!</div>`;
+                showNextBtn(false);
             } else {
                 if (correctCount > 0) correctCount--;
                 updateProgress();
                 feedbackEl.innerHTML = `<div class="result incorrect">Incorrect</div>
                    <div class="answer">The note was ${correct} (${currentNote})</div>`;
+                showNextBtn(true);
             }
-
-            showNextBtn();
         }
 
         function clearFeedback() {
