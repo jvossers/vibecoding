@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Sight Reading Practice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: 140px;
+        }
+
+        h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #f0f0f0;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .hud {
+            width: 90%;
+            max-width: 460px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .hud .progress {
+            font-weight: 600;
+            color: #ccc;
+        }
+
+        .hud .timer {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .hud .highscore {
+            font-size: 0.75rem;
+            color: #777;
+        }
+
+        .staff-container {
+            width: 90%;
+            max-width: 460px;
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 16px 8px;
+        }
+
+        canvas#staff {
+            width: 100%;
+            display: block;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            min-height: 2.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .feedback .result {
+            padding: 6px 20px;
+            border-radius: 8px;
+        }
+
+        .feedback .result.correct {
+            background: #1b4332;
+            color: #52b788;
+        }
+
+        .feedback .result.incorrect {
+            background: #461220;
+            color: #e5383b;
+        }
+
+        .feedback .answer {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .feedback .next-hint {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .start-btn {
+            display: none;
+            margin-top: 24px;
+            padding: 14px 48px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            background: #52b788;
+            color: #1a1a1a;
+            cursor: pointer;
+        }
+
+        .start-btn:active {
+            background: #3a9d6e;
+        }
+
+        .start-btn.visible {
+            display: block;
+        }
+
+        /* Round summary overlay */
+        .summary {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-align: center;
+        }
+
+        .summary.visible {
+            display: flex;
+        }
+
+        .summary h2 {
+            font-size: 1.5rem;
+            color: #f0f0f0;
+        }
+
+        .summary .stat {
+            font-size: 1.1rem;
+            color: #ccc;
+        }
+
+        .summary .stat strong {
+            color: #52b788;
+        }
+
+        .summary .new-best {
+            color: #f9c74f;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .summary button {
+            margin-top: 12px;
+            padding: 12px 32px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            background: #52b788;
+            color: #1a1a1a;
+            cursor: pointer;
+        }
+
+        .summary button:active {
+            background: #3a9d6e;
+        }
+
+        .piano {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            background: #111;
+            padding: 0 2px;
+            user-select: none;
+        }
+
+        .keys {
+            position: relative;
+            display: flex;
+            width: 100%;
+            max-width: 500px;
+            height: 100%;
+        }
+
+        .key {
+            position: relative;
+            flex: 1;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #555;
+            cursor: pointer;
+            z-index: 1;
+            transition: background 0.08s;
+        }
+
+        .key:active, .key.active {
+            background: #ddd;
+        }
+
+        .key.black {
+            position: absolute;
+            top: 0;
+            width: 9%;
+            height: 65%;
+            background: #222;
+            border: 1px solid #000;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            color: #aaa;
+            font-size: 0.6rem;
+            z-index: 2;
+            padding-bottom: 6px;
+        }
+
+        .key.black:active, .key.black.active {
+            background: #444;
+        }
+
+        .key.black[data-note="C#"] { left: calc(100% / 7 * 1 - 4.5%); }
+        .key.black[data-note="D#"] { left: calc(100% / 7 * 2 - 4.5%); }
+        .key.black[data-note="F#"] { left: calc(100% / 7 * 4 - 4.5%); }
+        .key.black[data-note="G#"] { left: calc(100% / 7 * 5 - 4.5%); }
+        .key.black[data-note="A#"] { left: calc(100% / 7 * 6 - 4.5%); }
+    </style>
+</head>
+<body>
+    <h1>Sight Reading Practice</h1>
+
+    <div class="hud">
+        <span class="progress" id="progress">1 / 10</span>
+        <span class="timer" id="timer">0.0s</span>
+        <span class="highscore" id="highscore"></span>
+    </div>
+
+    <div class="staff-container">
+        <canvas id="staff"></canvas>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <button class="start-btn" id="startBtn">Start</button>
+
+    <div class="summary" id="summary">
+        <h2>Round Complete</h2>
+        <div class="stat" id="summaryTime"></div>
+        <div class="stat" id="summaryAccuracy"></div>
+        <div class="new-best" id="newBest" style="display:none"></div>
+        <div class="stat" id="summaryBest"></div>
+        <button id="playAgain">Play Again</button>
+    </div>
+
+    <div class="piano">
+        <div class="keys">
+            <div class="key" data-note="C"><span>C</span></div>
+            <div class="key" data-note="D"><span>D</span></div>
+            <div class="key" data-note="E"><span>E</span></div>
+            <div class="key" data-note="F"><span>F</span></div>
+            <div class="key" data-note="G"><span>G</span></div>
+            <div class="key" data-note="A"><span>A</span></div>
+            <div class="key" data-note="B"><span>B</span></div>
+
+            <div class="key black" data-note="C#"><span>C#</span></div>
+            <div class="key black" data-note="D#"><span>D#</span></div>
+            <div class="key black" data-note="F#"><span>F#</span></div>
+            <div class="key black" data-note="G#"><span>G#</span></div>
+            <div class="key black" data-note="A#"><span>A#</span></div>
+        </div>
+    </div>
+
+    <script>
+        const ROUND_SIZE = 10;
+        const STORAGE_KEY = 'sightReadingHighscore';
+
+        const canvas = document.getElementById('staff');
+        const ctx = canvas.getContext('2d');
+        const feedbackEl = document.getElementById('feedback');
+        const progressEl = document.getElementById('progress');
+        const timerEl = document.getElementById('timer');
+        const highscoreEl = document.getElementById('highscore');
+        const summaryEl = document.getElementById('summary');
+        const summaryTimeEl = document.getElementById('summaryTime');
+        const summaryAccuracyEl = document.getElementById('summaryAccuracy');
+        const summaryBestEl = document.getElementById('summaryBest');
+        const newBestEl = document.getElementById('newBest');
+
+        // Hi-DPI support
+        function sizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const w = rect.width - 16;
+            const h = 180;
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            return { w, h };
+        }
+
+        const LINE_GAP = 12;
+        const NOTE_RADIUS = 7;
+
+        function drawStaff(w, h) {
+            const staffTop = h / 2 - 2 * LINE_GAP;
+            ctx.strokeStyle = '#8899aa';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 5; i++) {
+                const y = staffTop + i * LINE_GAP;
+                ctx.beginPath();
+                ctx.moveTo(30, y);
+                ctx.lineTo(w - 10, y);
+                ctx.stroke();
+            }
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(30, staffTop);
+            ctx.lineTo(30, staffTop + 4 * LINE_GAP);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(w - 10, staffTop);
+            ctx.lineTo(w - 10, staffTop + 4 * LINE_GAP);
+            ctx.stroke();
+            return staffTop;
+        }
+
+        function drawTrebleClef(staffTop) {
+            ctx.font = '62px Bravura, Noto Music, serif';
+            ctx.fillStyle = '#ddeeff';
+            ctx.fillText('\u{1D11E}', 34, staffTop + 4 * LINE_GAP + 4);
+        }
+
+        function drawBassClef(staffTop) {
+            ctx.font = '40px Bravura, Noto Music, serif';
+            ctx.fillStyle = '#ddeeff';
+            ctx.fillText('\u{1D122}', 36, staffTop + 2.1 * LINE_GAP);
+        }
+
+        const trebleNotes = {
+            'F5': 0, 'E5': 1, 'D5': 2, 'C5': 3, 'B4': 4,
+            'A4': 5, 'G4': 6, 'F4': 7, 'E4': 8,
+            'D4': 9, 'C4': 10
+        };
+
+        const bassNotes = {
+            'B3': -1, 'A3': 0, 'G3': 1, 'F3': 2, 'E3': 3,
+            'D3': 4, 'C3': 5, 'B2': 6, 'A2': 7, 'G2': 8
+        };
+
+        function randomNote(clef) {
+            const pool = clef === 'treble' ? Object.keys(trebleNotes) : Object.keys(bassNotes);
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        function drawNote(note, clef, w, staffTop) {
+            const map = clef === 'treble' ? trebleNotes : bassNotes;
+            const offset = map[note];
+            const y = staffTop + offset * (LINE_GAP / 2);
+            const x = w / 2 + 20;
+
+            ctx.strokeStyle = '#8899aa';
+            ctx.lineWidth = 1;
+            if (offset > 8) {
+                for (let i = 10; i <= offset; i += 2) {
+                    const ly = staffTop + i * (LINE_GAP / 2);
+                    ctx.beginPath();
+                    ctx.moveTo(x - 12, ly);
+                    ctx.lineTo(x + 12, ly);
+                    ctx.stroke();
+                }
+            }
+            if (offset < 0) {
+                for (let i = -2; i >= offset; i -= 2) {
+                    const ly = staffTop + i * (LINE_GAP / 2);
+                    ctx.beginPath();
+                    ctx.moveTo(x - 12, ly);
+                    ctx.lineTo(x + 12, ly);
+                    ctx.stroke();
+                }
+            }
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.ellipse(x, y, NOTE_RADIUS + 1, NOTE_RADIUS - 1, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.5;
+            const stemUp = offset >= 4;
+            ctx.beginPath();
+            if (stemUp) {
+                ctx.moveTo(x + NOTE_RADIUS, y);
+                ctx.lineTo(x + NOTE_RADIUS, y - 30);
+            } else {
+                ctx.moveTo(x - NOTE_RADIUS, y);
+                ctx.lineTo(x - NOTE_RADIUS, y + 30);
+            }
+            ctx.stroke();
+        }
+
+        // Game state
+        let currentClef = 'treble';
+        let currentNote = '';
+        let guessed = false;
+        let correctCount = 0;
+        let totalGuesses = 0;
+        let startTime = 0;
+        let timerInterval = null;
+        let roundOver = false;
+        let gameStarted = false;
+
+        const startBtn = document.getElementById('startBtn');
+
+        function noteLetter(note) {
+            return note.replace(/[0-9]/g, '');
+        }
+
+        // Highscore: { time } (fastest time to 10 correct)
+        function loadHighscore() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY));
+            } catch { return null; }
+        }
+
+        function saveHighscore(entry) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(entry));
+        }
+
+        function displayHighscore() {
+            const hs = loadHighscore();
+            if (hs) {
+                highscoreEl.textContent = `Best: ${hs.time}s`;
+            } else {
+                highscoreEl.textContent = '';
+            }
+        }
+
+        function formatTime(ms) {
+            return (ms / 1000).toFixed(1);
+        }
+
+        function startTimer() {
+            startTime = performance.now();
+            timerInterval = setInterval(() => {
+                timerEl.textContent = formatTime(performance.now() - startTime) + 's';
+            }, 100);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function updateProgress() {
+            progressEl.textContent = `${correctCount} / ${ROUND_SIZE}`;
+        }
+
+        function handleGuess(guess) {
+            const correct = noteLetter(currentNote);
+            const isCorrect = guess === correct;
+            totalGuesses++;
+
+            if (isCorrect) {
+                correctCount++;
+                updateProgress();
+
+                if (correctCount >= ROUND_SIZE) {
+                    // Round complete
+                    feedbackEl.innerHTML = `<div class="result correct">Correct!</div>`;
+                    showSummary();
+                    return;
+                }
+
+                feedbackEl.innerHTML = `<div class="result correct">Correct!</div>
+                   <div class="next-hint">Tap any key for next note</div>`;
+            } else {
+                feedbackEl.innerHTML = `<div class="result incorrect">Incorrect</div>
+                   <div class="answer">The note was ${correct} (${currentNote})</div>
+                   <div class="next-hint">Tap any key for next note</div>`;
+            }
+        }
+
+        function clearFeedback() {
+            feedbackEl.innerHTML = '';
+        }
+
+        function showSummary() {
+            roundOver = true;
+            stopTimer();
+            const elapsed = formatTime(performance.now() - startTime);
+            const accuracy = Math.round((ROUND_SIZE / totalGuesses) * 100);
+
+            summaryTimeEl.innerHTML = `Time: <strong>${elapsed}s</strong>`;
+            summaryAccuracyEl.innerHTML = `Accuracy: <strong>${accuracy}%</strong> (${ROUND_SIZE}/${totalGuesses})`;
+
+            const hs = loadHighscore();
+            let isNewBest = false;
+            if (!hs || parseFloat(elapsed) < hs.time) {
+                isNewBest = true;
+                saveHighscore({ time: parseFloat(elapsed) });
+            }
+
+            const best = loadHighscore();
+            summaryBestEl.innerHTML = `Best time: ${best.time}s`;
+
+            if (isNewBest) {
+                newBestEl.textContent = 'New Best Time!';
+                newBestEl.style.display = '';
+            } else {
+                newBestEl.style.display = 'none';
+            }
+
+            summaryEl.classList.add('visible');
+            displayHighscore();
+        }
+
+        function showStartScreen() {
+            correctCount = 0;
+            totalGuesses = 0;
+            guessed = false;
+            roundOver = false;
+            gameStarted = false;
+            summaryEl.classList.remove('visible');
+            clearFeedback();
+            displayHighscore();
+            updateProgress();
+            timerEl.textContent = '0.0s';
+            // Draw empty staff
+            const { w, h } = sizeCanvas();
+            ctx.clearRect(0, 0, w, h);
+            drawStaff(w, h);
+            startBtn.classList.add('visible');
+        }
+
+        function startGame() {
+            startBtn.classList.remove('visible');
+            gameStarted = true;
+            nextNote();
+            startTimer();
+        }
+
+        function nextNote() {
+            currentClef = Math.random() < 0.5 ? 'treble' : 'bass';
+            currentNote = randomNote(currentClef);
+            guessed = false;
+            clearFeedback();
+            render();
+        }
+
+        function render() {
+            const { w, h } = sizeCanvas();
+            ctx.clearRect(0, 0, w, h);
+            const staffTop = drawStaff(w, h);
+            if (currentClef === 'treble') {
+                drawTrebleClef(staffTop);
+            } else {
+                drawBassClef(staffTop);
+            }
+            drawNote(currentNote, currentClef, w, staffTop);
+        }
+
+        // Piano key handling
+        document.querySelectorAll('.key').forEach(key => {
+            key.addEventListener('pointerdown', e => {
+                e.preventDefault();
+                key.classList.add('active');
+                if (roundOver || !gameStarted) return;
+
+                if (guessed) {
+                    nextNote();
+                } else {
+                    guessed = true;
+                    handleGuess(key.dataset.note);
+                }
+            });
+            key.addEventListener('pointerup', () => key.classList.remove('active'));
+            key.addEventListener('pointerleave', () => key.classList.remove('active'));
+        });
+
+        startBtn.addEventListener('click', startGame);
+        document.getElementById('playAgain').addEventListener('click', showStartScreen);
+
+        // Start
+        displayHighscore();
+        showStartScreen();
+        window.addEventListener('resize', render);
+    </script>
+</body>
+</html>
