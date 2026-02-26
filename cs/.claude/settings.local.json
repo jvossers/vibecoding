@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:www.ocr.org.uk)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(ls:*)",
+      "Bash(node -e:*)",
+      "Bash(for dir in file-size-calculator ascii-unicode cipher-encryption sound-representation secondary-storage cpu-performance memory-management defragmentation sql-playground trace-table)",
+      "Bash(do echo -n \"$dir: \")",
+      "Bash(node --check:*)",
+      "Bash(done)"
+    ]
+  }
+}
