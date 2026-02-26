@@ -123,9 +123,69 @@
             margin-top: 2px;
         }
 
-        .start-btn {
+        .start-panel {
             display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
             margin-top: 24px;
+        }
+
+        .start-panel.visible {
+            display: flex;
+        }
+
+        .clef-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .clef-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            color: #ccc;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .clef-options input[type="checkbox"] {
+            display: none;
+        }
+
+        .toggle-track {
+            position: relative;
+            width: 36px;
+            height: 20px;
+            background: #555;
+            border-radius: 10px;
+            transition: background 0.2s;
+        }
+
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: #aaa;
+            border-radius: 50%;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        input:checked + .toggle-track {
+            background: #2d7a56;
+        }
+
+        input:checked + .toggle-track::after {
+            transform: translateX(16px);
+            background: #52b788;
+        }
+
+        .start-btn {
             padding: 14px 48px;
             font-size: 1.1rem;
             font-weight: 600;
@@ -138,10 +198,6 @@
 
         .start-btn:active {
             background: #3a9d6e;
-        }
-
-        .start-btn.visible {
-            display: block;
         }
 
         /* Round summary overlay */
@@ -319,7 +375,13 @@
 
     <div class="feedback" id="feedback"></div>
 
-    <button class="start-btn" id="startBtn">Start</button>
+    <div class="start-panel" id="startPanel">
+        <div class="clef-options">
+            <label><input type="checkbox" id="trebleCheck" checked><span class="toggle-track"></span> Treble clef</label>
+            <label><input type="checkbox" id="bassCheck" checked><span class="toggle-track"></span> Bass clef</label>
+        </div>
+        <button class="start-btn" id="startBtn">Start</button>
+    </div>
 
     <div class="summary" id="summary">
         <h2>Round Complete</h2>
@@ -352,7 +414,26 @@
 
     <script>
         const ROUND_SIZE = 10;
-        const STORAGE_KEY = 'sightReadingHighscore';
+        const STORAGE_KEY_PREFIX = 'sightReadingHighscore';
+
+        let enabledClefs = ['treble', 'bass'];
+
+        function currentClefSelection() {
+            const treble = document.getElementById('trebleCheck');
+            const bass = document.getElementById('bassCheck');
+            if (treble && bass) {
+                const clefs = [];
+                if (treble.checked) clefs.push('treble');
+                if (bass.checked) clefs.push('bass');
+                return clefs.length > 0 ? clefs : ['treble'];
+            }
+            return enabledClefs;
+        }
+
+        function storageKey() {
+            const suffix = currentClefSelection().slice().sort().join('+');
+            return `${STORAGE_KEY_PREFIX}_${suffix}`;
+        }
 
         // --- Web Audio piano synth ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -547,14 +628,14 @@
         // Highscore: { ms } (fastest time in milliseconds to 10 correct)
         function loadHighscore() {
             try {
-                const hs = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                const hs = JSON.parse(localStorage.getItem(storageKey()));
                 if (hs && !hs.ms) return null; // discard old format
                 return hs;
             } catch { return null; }
         }
 
         function saveHighscore(entry) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(entry));
+            localStorage.setItem(storageKey(), JSON.stringify(entry));
         }
 
         const resetHsEl = document.getElementById('resetHs');
@@ -572,7 +653,7 @@
 
         resetHsEl.addEventListener('click', () => {
             if (confirm('Reset high score?')) {
-                localStorage.removeItem(STORAGE_KEY);
+                localStorage.removeItem(storageKey());
                 displayHighscore();
             }
         });
@@ -697,6 +778,10 @@
             displayHighscore();
         }
 
+        const startPanel = document.getElementById('startPanel');
+        const trebleCheck = document.getElementById('trebleCheck');
+        const bassCheck = document.getElementById('bassCheck');
+
         function showStartScreen() {
             correctCount = 0;
             totalGuesses = 0;
@@ -713,18 +798,53 @@
             const { w, h } = sizeCanvas();
             ctx.clearRect(0, 0, w, h);
             drawStaff(w, h);
-            startBtn.classList.add('visible');
+            startPanel.classList.add('visible');
         }
 
+        // Persist clef selection
+        const CLEF_STORAGE_KEY = 'sightReadingClefs';
+
+        function loadClefSelection() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(CLEF_STORAGE_KEY));
+                if (saved) {
+                    trebleCheck.checked = !!saved.treble;
+                    bassCheck.checked = !!saved.bass;
+                    if (!trebleCheck.checked && !bassCheck.checked) trebleCheck.checked = true;
+                }
+            } catch {}
+        }
+
+        function saveClefSelection() {
+            localStorage.setItem(CLEF_STORAGE_KEY, JSON.stringify({
+                treble: trebleCheck.checked,
+                bass: bassCheck.checked
+            }));
+        }
+
+        loadClefSelection();
+
+        // Update highscore display and save selection when clef checkboxes change
+        trebleCheck.addEventListener('change', () => { saveClefSelection(); displayHighscore(); });
+        bassCheck.addEventListener('change', () => { saveClefSelection(); displayHighscore(); });
+
         function startGame() {
-            startBtn.classList.remove('visible');
+            const clefs = [];
+            if (trebleCheck.checked) clefs.push('treble');
+            if (bassCheck.checked) clefs.push('bass');
+            if (clefs.length === 0) {
+                trebleCheck.checked = true;
+                clefs.push('treble');
+            }
+            enabledClefs = clefs;
+            startPanel.classList.remove('visible');
             gameStarted = true;
             nextNote();
             startTimer();
         }
 
         function nextNote() {
-            currentClef = Math.random() < 0.5 ? 'treble' : 'bass';
+            currentClef = enabledClefs[Math.floor(Math.random() * enabledClefs.length)];
             currentNote = randomNote(currentClef);
             guessed = false;
             clearFeedback();
