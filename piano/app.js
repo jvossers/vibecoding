@@ -508,6 +508,7 @@ function render() {
     const { w, h } = sizeCanvas();
     ctx.clearRect(0, 0, w, h);
     const staffTop = drawStaff(w, h);
+    if (!gameStarted) return;
     if (currentClef === 'treble') {
         drawTrebleClef(staffTop);
     } else {
