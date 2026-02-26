@@ -419,6 +419,7 @@ function showSummary() {
 }
 
 const startPanel = document.getElementById('startPanel');
+const hudEl = document.querySelector('.hud');
 
 function showStartScreen() {
     correctCount = 0;
@@ -429,9 +430,8 @@ function showStartScreen() {
     summaryEl.classList.remove('visible');
     hideNextBtn();
     clearFeedback();
-    displayHighscore();
-    updateProgress();
     timerEl.textContent = '0.0s';
+    hudEl.style.display = 'none';
     canvas.parentElement.style.display = 'none';
     startPanel.classList.add('visible');
 }
@@ -486,8 +486,11 @@ function startGame() {
     enabledClefs = currentClefSelection();
     noteCount = currentNoteCount();
     startPanel.classList.remove('visible');
+    hudEl.style.display = '';
     canvas.parentElement.style.display = '';
     gameStarted = true;
+    displayHighscore();
+    updateProgress();
     nextRound();
     startTimer();
 }

@@ -50,6 +50,12 @@ Two-oscillator synthesis per note: triangle wave fundamental (0.35 gain, 1.2s de
 
 Dark theme (#1a1a1a bg, #52b788 green accent, #e5383b red errors). Responsive layout using flexbox and max-width constraints. Staff rendered on canvas with LINE_GAP=18, NOTE_RADIUS=8.
 
+### Screen states
+
+- **Start screen**: Only the title, config options, and start button are visible. HUD (score, timer, highscore) and staff canvas are hidden.
+- **Playing**: HUD and staff are shown, start panel is hidden. Piano keys are always fixed at the bottom.
+- **Summary overlay**: Full-screen overlay with round stats, shown on round completion.
+
 ## Running
 
 Open `index.html` in any modern browser. No server or build required (Web Audio API may need HTTPS in some browsers).
