@@ -432,10 +432,7 @@ function showStartScreen() {
     displayHighscore();
     updateProgress();
     timerEl.textContent = '0.0s';
-    // Draw empty staff
-    const { w, h } = sizeCanvas();
-    ctx.clearRect(0, 0, w, h);
-    drawStaff(w, h);
+    canvas.parentElement.style.display = 'none';
     startPanel.classList.add('visible');
 }
 
@@ -489,6 +486,7 @@ function startGame() {
     enabledClefs = currentClefSelection();
     noteCount = currentNoteCount();
     startPanel.classList.remove('visible');
+    canvas.parentElement.style.display = '';
     gameStarted = true;
     nextRound();
     startTimer();
