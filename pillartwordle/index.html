@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pillar Twordle: Global Minimum Tax Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #121213;
+            color: #d7dadc;
+            font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 2rem;
+        }
+
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #3a3a3c;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            color: #d7dadc;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        header p {
+            color: #818384;
+            font-size: 0.75rem;
+            margin-top: 0.15rem;
+        }
+
+        /* Attempt tracker */
+        #attempt-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: 0.6rem 1rem;
+            font-size: 0.8rem;
+            color: #818384;
+        }
+
+        #attempt-bar .val {
+            color: #d7dadc;
+            font-weight: 700;
+        }
+
+        /* Row grid: 6 rows x 5 columns of result tiles */
+        #row-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 46px);
+            grid-template-rows: repeat(6, 46px);
+            gap: 5px;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .tile {
+            width: 46px;
+            height: 46px;
+            border: 2px solid #3a3a3c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #d7dadc;
+            transition: all 0.3s;
+        }
+
+        .tile.current {
+            border-color: #565758;
+            cursor: pointer;
+        }
+
+        .tile.active-tile {
+            border-color: #818384;
+        }
+
+        .tile.correct, .tile.locked {
+            background: #538d4e;
+            border-color: #538d4e;
+            color: #fff;
+        }
+
+        .tile.wrong {
+            background: #3a3a3c;
+            border-color: #3a3a3c;
+            color: #fff;
+        }
+
+        .tile.misplaced {
+            background: #b59f3b;
+            border-color: #b59f3b;
+            color: #fff;
+        }
+
+        /* Single clue card */
+        #clue-area {
+            width: 100%;
+            max-width: 540px;
+            padding: 0 1rem;
+            margin-bottom: 1rem;
+        }
+
+        #clue-card {
+            background: #1a1a1b;
+            border: 2px solid #3a3a3c;
+            border-radius: 4px;
+            padding: 1rem 1.2rem;
+            text-align: center;
+            height: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.5rem;
+        }
+
+        #clue-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #565758;
+        }
+
+        #clue-text {
+            font-size: 0.88rem;
+            line-height: 1.55;
+            color: #d7dadc;
+        }
+
+        #clue-status {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #538d4e;
+            min-height: 1.2em;
+        }
+
+        #clue-card.feedback-correct {
+            border-color: #538d4e;
+        }
+
+        #clue-card.feedback-misplaced {
+            border-color: #b59f3b;
+        }
+
+        #clue-card.feedback-wrong {
+            border-color: #3a3a3c;
+        }
+
+        /* Country grid (keyboard-style) */
+        #country-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            width: 100%;
+            max-width: 540px;
+            padding: 0 0.5rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .country-btn {
+            padding: 0.7rem 0.3rem;
+            background: #818384;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            font-family: inherit;
+        }
+
+        .country-btn:hover:not(:disabled) {
+            background: #a5a6a8;
+        }
+
+        .country-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .country-btn:disabled {
+            background: #3a3a3c;
+            color: #565758;
+            cursor: default;
+        }
+
+        .country-btn .flag {
+            font-size: 1rem;
+        }
+
+
+        /* Results overlay */
+        #results {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(18, 18, 19, 0.92);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        #results.show {
+            display: flex;
+        }
+
+        #results-box {
+            background: #1a1a1b;
+            border: 1px solid #3a3a3c;
+            border-radius: 8px;
+            padding: 2rem 2.5rem;
+            text-align: center;
+            max-width: 420px;
+            width: 100%;
+        }
+
+        #results-box h2 {
+            font-size: 1.1rem;
+            color: #d7dadc;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.3rem;
+        }
+
+        #results-box .big-score {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0.3rem 0;
+        }
+
+        #results-box .result-msg {
+            color: #818384;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        #results-emoji {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 1.2rem;
+            font-family: monospace;
+        }
+
+        #btn-share, #btn-retry {
+            padding: 0.7rem 1.8rem;
+            background: #538d4e;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+            margin: 0 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        #btn-share:hover, #btn-retry:hover {
+            background: #5ea05a;
+        }
+
+        #btn-retry {
+            background: #818384;
+        }
+
+        #btn-retry:hover {
+            background: #a5a6a8;
+        }
+
+        #copied-msg {
+            color: #538d4e;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #copied-msg.show {
+            opacity: 1;
+        }
+
+        /* Mobile */
+        @media (max-width: 500px) {
+            #country-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .country-btn {
+                font-size: 0.72rem;
+                padding: 0.6rem 0.2rem;
+            }
+
+            #row-grid {
+                grid-template-columns: repeat(5, 38px);
+                grid-template-rows: repeat(6, 38px);
+                gap: 4px;
+            }
+
+            .tile {
+                width: 38px;
+                height: 38px;
+                font-size: 0.95rem;
+            }
+
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Pillar Twordle</h1>
+    <p>Match each description to the right country. 6 attempts to get all 5.</p>
+</header>
+
+<div id="attempt-bar">
+    <span>Attempt <span class="val" id="attempt-num">1</span> / <span class="val">6</span></span>
+    <span>Solved <span class="val" id="solved-count">0</span> / <span class="val">5</span></span>
+</div>
+
+<div id="row-grid"></div>
+
+<div id="clue-area">
+    <div id="clue-card">
+        <div id="clue-label"></div>
+        <div id="clue-text"></div>
+        <div id="clue-status"></div>
+    </div>
+</div>
+
+<div id="country-grid"></div>
+
+
+<div id="results">
+    <div id="results-box">
+        <h2>Statistics</h2>
+        <div class="big-score" id="final-score"></div>
+        <p class="result-msg" id="final-msg"></p>
+        <div id="results-emoji"></div>
+        <div>
+            <button id="btn-share">Share</button>
+            <button id="btn-retry">Retry</button>
+        </div>
+        <div id="copied-msg">Copied to clipboard!</div>
+    </div>
+</div>
+
+<script>
+// ── All descriptions (10 total, 5 active) ─────────────────────────
+const ALL_DATA = [
+    // ── Active (5) ──
+    {
+        country: "Hungary",
+        code: "HU",
+        flag: "\u{1F1ED}\u{1F1FA}",
+        desc: "Repeatedly vetoed the EU Minimum Tax Directive in 2022 to protect its 9% rate \u2014 the EU\u2019s lowest \u2014 and only relented after frozen recovery funds were released."
+    },
+    {
+        country: "United States",
+        code: "US",
+        flag: "\u{1F1FA}\u{1F1F8}",
+        desc: "Withdrew from Pillar Two commitments in 2025 via executive order and proposed a retaliatory \u2018Section 899\u2019 penalty tax on countries applying the UTPR to its domestic companies."
+    },
+    {
+        country: "Switzerland",
+        code: "CH",
+        flag: "\u{1F1E8}\u{1F1ED}",
+        desc: "Approved Pillar Two through a national referendum with 78.5% in favour \u2014 a rare case of direct democracy endorsing global minimum taxation."
+    },
+    {
+        country: "UAE",
+        code: "AE",
+        flag: "\u{1F1E6}\u{1F1EA}",
+        desc: "Went from a zero-tax jurisdiction to Pillar Two-compliant within two years, introducing corporate income tax for the first time in 2023."
+    },
+    {
+        country: "Nigeria",
+        code: "NG",
+        flag: "\u{1F1F3}\u{1F1EC}",
+        desc: "The largest economy on its continent withheld assent to the Inclusive Framework, citing its exceptionally low tax-to-GDP ratio, and championed a rival UN tax convention as a developing-country alternative."
+    },
+
+    // ── Commented out (5) — uncomment to add more rounds ──
+    // {
+    //     country: "Ireland",
+    //     code: "IE",
+    //     flag: "\u{1F1EE}\u{1F1EA}",
+    //     desc: "Built its economy on a 12.5% rate; initially resisted but now collects a 2.5% Qualified Domestic Top-Up Tax to bridge the gap to 15%."
+    // },
+    // {
+    //     country: "France",
+    //     code: "FR",
+    //     flag: "\u{1F1EB}\u{1F1F7}",
+    //     desc: "One of the earliest champions, calling the 15% rate merely \u2018a starting point\u2019 and leading a five-nation EU coalition to implement it \u2018by any possible legal means.\u2019"
+    // },
+    // {
+    //     country: "Singapore",
+    //     code: "SG",
+    //     flag: "\u{1F1F8}\u{1F1EC}",
+    //     desc: "Implemented GloBE rules while launching a Refundable Investment Credit \u2014 a compliant cash-grant mechanism designed to maintain investment attractiveness at the 15% floor."
+    // },
+    // {
+    //     country: "Bermuda",
+    //     code: "BM",
+    //     flag: "\u{1F1E7}\u{1F1F2}",
+    //     desc: "Enacted corporate income tax for the first time in its history, setting it at exactly 15% to capture top-up revenue domestically rather than ceding it to other jurisdictions."
+    // },
+    // {
+    //     country: "India",
+    //     code: "IN",
+    //     flag: "\u{1F1EE}\u{1F1F3}",
+    //     desc: "Endorsed the two-pillar solution but delayed legislation, playing a dual-track strategy supporting both the OECD framework and the UN process favoured by emerging economies."
+    // },
+];
+
+// ── Fixed country grid (same every time, deterministic order) ──────
+const FIXED_GRID = [
+    { country: "Hungary",      code: "HU", flag: "\u{1F1ED}\u{1F1FA}" },
+    { country: "France",       code: "FR", flag: "\u{1F1EB}\u{1F1F7}" },
+    { country: "United States",code: "US", flag: "\u{1F1FA}\u{1F1F8}" },
+    { country: "Ireland",      code: "IE", flag: "\u{1F1EE}\u{1F1EA}" },
+    { country: "Switzerland",  code: "CH", flag: "\u{1F1E8}\u{1F1ED}" },
+    { country: "India",        code: "IN", flag: "\u{1F1EE}\u{1F1F3}" },
+    { country: "UAE",          code: "AE", flag: "\u{1F1E6}\u{1F1EA}" },
+    { country: "Singapore",    code: "SG", flag: "\u{1F1F8}\u{1F1EC}" },
+    { country: "Nigeria",      code: "NG", flag: "\u{1F1F3}\u{1F1EC}" },
+    { country: "Luxembourg",   code: "LU", flag: "\u{1F1F1}\u{1F1FA}" },
+    { country: "Germany",      code: "DE", flag: "\u{1F1E9}\u{1F1EA}" },
+    { country: "Bermuda",      code: "BM", flag: "\u{1F1E7}\u{1F1F2}" },
+    { country: "Poland",       code: "PL", flag: "\u{1F1F5}\u{1F1F1}" },
+    { country: "Bahrain",      code: "BH", flag: "\u{1F1E7}\u{1F1ED}" },
+    { country: "Kenya",        code: "KE", flag: "\u{1F1F0}\u{1F1EA}" },
+    { country: "Liechtenstein", code: "LI", flag: "\u{1F1F1}\u{1F1EE}" },
+];
+
+// ── Game state ─────────────────────────────────────────────────────
+const TOTAL = ALL_DATA.length;
+const MAX_ATTEMPTS = 6;
+
+let attempt = 0;
+let solved = [];
+let currentGuesses = [];
+let activeSlot = -1;
+let history = [];
+let guessHistory = [];  // stores country names per row for tile codes
+let gameOver = false;
+let locked = false;
+
+function getCode(country) {
+    const entry = FIXED_GRID.find(g => g.country === country);
+    return entry ? entry.code : "??";
+}
+
+function init() {
+    attempt = 0;
+    solved = ALL_DATA.map(() => false);
+    currentGuesses = ALL_DATA.map(() => null);
+    activeSlot = -1;
+    history = [];
+    guessHistory = [];
+    gameOver = false;
+    locked = false;
+
+    document.getElementById("results").classList.remove("show");
+
+    buildRowGrid();
+    buildCountryGrid();
+    updateUI();
+    autoSelectFirstUnsolved();
+}
+
+function buildRowGrid() {
+    const grid = document.getElementById("row-grid");
+    grid.innerHTML = "";
+    for (let r = 0; r < MAX_ATTEMPTS; r++) {
+        for (let c = 0; c < TOTAL; c++) {
+            const tile = document.createElement("div");
+            tile.className = "tile";
+            tile.id = `tile-${r}-${c}`;
+            const col = c;
+            tile.addEventListener("click", () => {
+                if (locked || gameOver) return;
+                // Only allow clicking tiles in the current attempt row
+                if (r !== attempt) return;
+                if (solved[col]) return;
+                activeSlot = col;
+                updateUI();
+            });
+            grid.appendChild(tile);
+        }
+    }
+}
+
+function updateClue() {
+    const label = document.getElementById("clue-label");
+    const text = document.getElementById("clue-text");
+    const status = document.getElementById("clue-status");
+
+    if (activeSlot >= 0 && activeSlot < TOTAL) {
+        label.textContent = `Clue ${activeSlot + 1} of ${TOTAL}`;
+        text.textContent = ALL_DATA[activeSlot].desc;
+        if (solved[activeSlot]) {
+            const entry = FIXED_GRID.find(g => g.country === ALL_DATA[activeSlot].country);
+            status.textContent = `${entry.flag} ${ALL_DATA[activeSlot].country}`;
+        } else if (currentGuesses[activeSlot]) {
+            const entry = FIXED_GRID.find(g => g.country === currentGuesses[activeSlot]);
+            status.textContent = `${entry.flag} ${currentGuesses[activeSlot]}`;
+            status.style.color = "#d7dadc";
+        } else {
+            status.textContent = "";
+            status.style.color = "";
+        }
+    } else if (gameOver) {
+        label.textContent = "";
+        text.textContent = "Game over";
+        status.textContent = "";
+    } else {
+        label.textContent = "";
+        text.textContent = "All clues answered \u2014 submitting...";
+        status.textContent = "";
+    }
+}
+
+function buildCountryGrid() {
+    const grid = document.getElementById("country-grid");
+    grid.innerHTML = "";
+
+    FIXED_GRID.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "country-btn";
+        btn.dataset.country = opt.country;
+        btn.innerHTML = `<span class="flag">${opt.flag}</span>${opt.country}`;
+        btn.addEventListener("click", () => pickCountry(opt.country, opt.flag));
+        grid.appendChild(btn);
+    });
+}
+
+function selectSlot(i) {
+    if (locked) return;
+    activeSlot = i;
+    updateUI();
+}
+
+function autoSelectFirstUnsolved() {
+    for (let i = 0; i < TOTAL; i++) {
+        if (!solved[i] && !currentGuesses[i]) {
+            activeSlot = i;
+            updateUI();
+            return;
+        }
+    }
+    activeSlot = -1;
+    updateUI();
+}
+
+function pickCountry(country, flag) {
+    if (gameOver || locked || activeSlot < 0 || solved[activeSlot]) return;
+
+    for (let i = 0; i < TOTAL; i++) {
+        if (!solved[i] && currentGuesses[i] === country && i !== activeSlot) {
+            currentGuesses[i] = null;
+        }
+    }
+
+    currentGuesses[activeSlot] = country;
+
+    let next = -1;
+    for (let i = 0; i < TOTAL; i++) {
+        if (!solved[i] && !currentGuesses[i]) {
+            next = i;
+            break;
+        }
+    }
+    activeSlot = next;
+    updateUI();
+}
+
+function clearSlot(i) {
+    if (locked) return;
+    currentGuesses[i] = null;
+    activeSlot = i;
+    updateUI();
+}
+
+function submitRow() {
+    if (gameOver) return;
+
+    for (let i = 0; i < TOTAL; i++) {
+        if (!solved[i] && !currentGuesses[i]) return;
+    }
+
+    const rowResult = [];
+    const correctCountries = new Set(ALL_DATA.map(d => d.country));
+
+    for (let i = 0; i < TOTAL; i++) {
+        if (solved[i]) {
+            rowResult.push("locked");
+        } else if (currentGuesses[i] === ALL_DATA[i].country) {
+            rowResult.push("correct");
+            solved[i] = true;
+        } else if (correctCountries.has(currentGuesses[i])) {
+            // Right country, wrong position
+            rowResult.push("misplaced");
+        } else {
+            rowResult.push("wrong");
+        }
+    }
+
+    // Store guesses for this row (use correct answer for already-locked slots)
+    const rowGuesses = ALL_DATA.map((d, i) => solved[i] || rowResult[i] === "correct" ? d.country : currentGuesses[i]);
+    guessHistory.push(rowGuesses);
+    history.push(rowResult);
+
+    for (let c = 0; c < TOTAL; c++) {
+        const tile = document.getElementById(`tile-${attempt}-${c}`);
+        tile.classList.add(rowResult[c] === "locked" ? "locked" : rowResult[c]);
+        tile.textContent = getCode(rowGuesses[c]);
+    }
+
+
+    attempt++;
+    const allSolved = solved.every(s => s);
+
+    if (allSolved || attempt >= MAX_ATTEMPTS) {
+        gameOver = true;
+        setTimeout(() => {
+            updateUI();
+            showResults(allSolved);
+        }, 1200);
+    } else {
+        setTimeout(() => {
+            for (let i = 0; i < TOTAL; i++) {
+                if (!solved[i]) {
+                    currentGuesses[i] = null;
+                }
+            }
+            activeSlot = -1;
+            locked = false;
+            updateUI();
+            autoSelectFirstUnsolved();
+        }, 1200);
+    }
+
+    updateUI();
+}
+
+function updateUI() {
+    document.getElementById("attempt-num").textContent = Math.min(attempt + 1, MAX_ATTEMPTS);
+    document.getElementById("solved-count").textContent = solved.filter(s => s).length;
+
+    // Update tile grid
+    for (let r = 0; r < MAX_ATTEMPTS; r++) {
+        for (let c = 0; c < TOTAL; c++) {
+            const tile = document.getElementById(`tile-${r}-${c}`);
+            if (r === attempt && !gameOver) {
+                tile.classList.add("current");
+                tile.classList.toggle("active-tile", c === activeSlot);
+                // Show code as countries are picked
+                if (solved[c]) {
+                    tile.textContent = getCode(ALL_DATA[c].country);
+                } else if (currentGuesses[c]) {
+                    tile.textContent = getCode(currentGuesses[c]);
+                } else {
+                    tile.textContent = "";
+                }
+            } else {
+                tile.classList.remove("current", "active-tile");
+            }
+        }
+    }
+
+    // Update clue card
+    updateClue();
+
+    // Country buttons
+    const usedInRow = new Set();
+    const solvedCountries = new Set();
+    for (let i = 0; i < TOTAL; i++) {
+        if (solved[i]) solvedCountries.add(ALL_DATA[i].country);
+        else if (currentGuesses[i]) usedInRow.add(currentGuesses[i]);
+    }
+
+    document.querySelectorAll(".country-btn").forEach(btn => {
+        const c = btn.dataset.country;
+        btn.disabled = gameOver || solvedCountries.has(c) || usedInRow.has(c);
+    });
+
+    // Auto-submit when all unsolved slots are filled
+    const allUnsolvedFilled = !gameOver && !locked && ALL_DATA.every((_, i) => solved[i] || currentGuesses[i]);
+    if (allUnsolvedFilled) {
+        locked = true;
+        setTimeout(() => submitRow(), 350);
+    }
+}
+
+function showResults(won) {
+    const solvedCount = solved.filter(s => s).length;
+
+    if (won) {
+        document.getElementById("final-score").textContent = `${attempt} / ${MAX_ATTEMPTS}`;
+    } else {
+        document.getElementById("final-score").textContent = `${solvedCount} / ${TOTAL}`;
+    }
+
+    let msg = "";
+    if (won && attempt === 1) msg = "Incredible! All correct on the first try!";
+    else if (won && attempt <= 3) msg = "Excellent! You really know Pillar Two.";
+    else if (won) msg = "Well done \u2014 you got there in the end!";
+    else if (solvedCount >= 3) msg = "Close! Most of them right.";
+    else msg = "Time to brush up on international tax reform!";
+
+    document.getElementById("final-msg").textContent = msg;
+
+    const emojiLines = history.map(row =>
+        row.map(r => r === "correct" || r === "locked" ? "\ud83d\udfe9" : r === "misplaced" ? "\ud83d\udfe8" : "\u2b1b").join("")
+    );
+    document.getElementById("results-emoji").innerHTML = emojiLines.join("<br>");
+
+    document.getElementById("results").classList.add("show");
+}
+
+document.getElementById("btn-share").addEventListener("click", () => {
+    const solvedCount = solved.filter(s => s).length;
+    const won = solvedCount === TOTAL;
+    const score = won ? `${attempt}/${MAX_ATTEMPTS}` : `${solvedCount}/${TOTAL}`;
+
+    const emojiLines = history.map(row =>
+        row.map(r => r === "correct" || r === "locked" ? "\ud83d\udfe9" : r === "misplaced" ? "\ud83d\udfe8" : "\u2b1b").join("")
+    );
+    const text = `Pillar Twordle ${score}\n\n${emojiLines.join("\n")}`;
+
+    navigator.clipboard.writeText(text).then(() => {
+        const msg = document.getElementById("copied-msg");
+        msg.classList.add("show");
+        setTimeout(() => msg.classList.remove("show"), 2000);
+    });
+});
+
+document.getElementById("btn-retry").addEventListener("click", init);
+
+init();
+</script>
+
+</body>
+</html>
