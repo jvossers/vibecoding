@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mixed Quiz - AQA GCSE Chemistry Reactivity of Metals</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <h1><a href="index.html">AQA GCSE Chemistry <span class="subtitle">Reactivity of Metals</span></a></h1>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="c5-1-reactivity-series.html">C5.1 Reactivity Series</a></li>
+      <li><a href="c5-2-displacement-reactions.html">C5.2 Displacement</a></li>
+      <li><a href="c5-3-extracting-metals.html">C5.3 Extraction</a></li>
+      <li><a href="c4-2-equations-calculations.html">C4.2 Equations</a></li>
+      <li><a href="quiz.html">Quiz</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <div class="hero">
+    <h2>Exam-Style Quiz</h2>
+    <p>Mixed questions from all topics &bull; Test your understanding</p>
+    <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">MC Score: <span id="quiz-score">0/0</span></p>
+  </div>
+
+  <!-- Q1 -->
+  <div class="question-block mc">
+    <div class="question-header">
+      <span class="question-number">Q1 &ndash; Reactivity Series</span>
+      <span class="question-marks">1 mark</span>
+    </div>
+    <p class="question-text">Which of these metals is the most reactive?</p>
+    <ul class="mc-options">
+      <li><label><input type="radio" name="quiz1" data-correct="false"> Copper</label></li>
+      <li><label><input type="radio" name="quiz1" data-correct="false"> Iron</label></li>
+      <li><label><input type="radio" name="quiz1" data-correct="false"> Zinc</label></li>
+      <li><label><input type="radio" name="quiz1" data-correct="true"> Calcium</label></li>
+    </ul>
+    <button class="btn btn-primary btn-small check-answer-btn" onclick="checkMC(this)">Check Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Correct!</div>
+      <p>In the reactivity series: K, Na, Li, <strong>Ca</strong>, Mg, Al, Zn, Fe, Cu. Calcium is the most reactive of the four options.</p>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question-block mc">
+    <div class="question-header">
+      <span class="question-number">Q2 &ndash; Reactions with Acid</span>
+      <span class="question-marks">1 mark</span>
+    </div>
+    <p class="question-text">Which gas is produced when a metal reacts with a dilute acid?</p>
+    <ul class="mc-options">
+      <li><label><input type="radio" name="quiz2" data-correct="false"> Oxygen</label></li>
+      <li><label><input type="radio" name="quiz2" data-correct="false"> Carbon dioxide</label></li>
+      <li><label><input type="radio" name="quiz2" data-correct="true"> Hydrogen</label></li>
+      <li><label><input type="radio" name="quiz2" data-correct="false"> Nitrogen</label></li>
+    </ul>
+    <button class="btn btn-primary btn-small check-answer-btn" onclick="checkMC(this)">Check Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Correct!</div>
+      <p>Metal + acid &rarr; salt + hydrogen. The hydrogen gas can be tested with a burning splint &ndash; it makes a squeaky pop.</p>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question-block">
+    <div class="question-header">
+      <span class="question-number">Q3 &ndash; Word Equations</span>
+      <span class="question-marks">2 marks</span>
+    </div>
+    <p class="question-text">Write word equations for:</p>
+    <ol style="margin-left: 1.2rem;" type="a">
+      <li>Magnesium reacting with sulfuric acid [1 mark]</li>
+      <li>Sodium reacting with water [1 mark]</li>
+    </ol>
+    <button class="btn btn-secondary btn-small show-answer-btn" onclick="showAnswer(this)">Show Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Model Answer</div>
+      <p><strong>(a)</strong> magnesium + sulfuric acid &rarr; magnesium sulfate + hydrogen</p>
+      <p><strong>(b)</strong> sodium + water &rarr; sodium hydroxide + hydrogen</p>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="question-block mc">
+    <div class="question-header">
+      <span class="question-number">Q4 &ndash; Displacement</span>
+      <span class="question-marks">1 mark</span>
+    </div>
+    <p class="question-text">Iron is placed in copper sulfate solution. What is observed?</p>
+    <ul class="mc-options">
+      <li><label><input type="radio" name="quiz4" data-correct="false"> No reaction occurs</label></li>
+      <li><label><input type="radio" name="quiz4" data-correct="false"> The solution turns green and bubbles appear</label></li>
+      <li><label><input type="radio" name="quiz4" data-correct="true"> The blue solution turns pale green and a brown coating forms on the iron</label></li>
+      <li><label><input type="radio" name="quiz4" data-correct="false"> The solution turns red</label></li>
+    </ul>
+    <button class="btn btn-primary btn-small check-answer-btn" onclick="checkMC(this)">Check Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Correct!</div>
+      <p>Iron displaces copper because iron is more reactive. The blue Cu<sup>2+</sup> ions leave solution (replaced by pale green Fe<sup>2+</sup> ions) and copper metal coats the iron as a brown/orange layer.</p>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="question-block mc">
+    <div class="question-header">
+      <span class="question-number">Q5 &ndash; Oxidation/Reduction</span>
+      <span class="question-marks">1 mark</span>
+    </div>
+    <p class="question-text">In terms of oxygen, what is oxidation?</p>
+    <ul class="mc-options">
+      <li><label><input type="radio" name="quiz5" data-correct="true"> The gain of oxygen</label></li>
+      <li><label><input type="radio" name="quiz5" data-correct="false"> The loss of oxygen</label></li>
+      <li><label><input type="radio" name="quiz5" data-correct="false"> The gain of electrons</label></li>
+      <li><label><input type="radio" name="quiz5" data-correct="false"> The gain of hydrogen</label></li>
+    </ul>
+    <button class="btn btn-primary btn-small check-answer-btn" onclick="checkMC(this)">Check Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Correct!</div>
+      <p>Oxidation is the gain of oxygen (or loss of electrons at Higher tier). Reduction is the loss of oxygen (or gain of electrons).</p>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="question-block">
+    <div class="question-header">
+      <span class="question-number">Q6 &ndash; Extraction</span>
+      <span class="question-marks">3 marks</span>
+    </div>
+    <p class="question-text">Explain why iron can be extracted by heating with carbon, but aluminium cannot. Describe the method used to extract aluminium instead.</p>
+    <button class="btn btn-secondary btn-small show-answer-btn" onclick="showAnswer(this)">Show Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Model Answer</div>
+      <p>Iron is less reactive than carbon [1 mark], so carbon can reduce iron oxide by removing the oxygen. Aluminium is more reactive than carbon [1 mark], so carbon cannot reduce aluminium oxide. Instead, aluminium is extracted by electrolysis of molten aluminium oxide [1 mark].</p>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="question-block mc">
+    <div class="question-header">
+      <span class="question-number">Q7 &ndash; Conservation of Mass</span>
+      <span class="question-marks">1 mark</span>
+    </div>
+    <p class="question-text">When zinc reacts with acid in an open beaker, the mass decreases. This is because:</p>
+    <ul class="mc-options">
+      <li><label><input type="radio" name="quiz7" data-correct="false"> Some zinc is destroyed</label></li>
+      <li><label><input type="radio" name="quiz7" data-correct="true"> Hydrogen gas escapes into the air</label></li>
+      <li><label><input type="radio" name="quiz7" data-correct="false"> The acid evaporates</label></li>
+      <li><label><input type="radio" name="quiz7" data-correct="false"> Mass is not conserved in this reaction</label></li>
+    </ul>
+    <button class="btn btn-primary btn-small check-answer-btn" onclick="checkMC(this)">Check Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Correct!</div>
+      <p>Mass is always conserved, but in an open container, the hydrogen gas produced escapes into the air. This makes it seem like mass has been lost, but the total mass of all products (including escaped gas) equals the mass of the reactants.</p>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="question-block">
+    <div class="question-header">
+      <span class="question-number">Q8 &ndash; Balanced Equations</span>
+      <span class="question-marks">3 marks</span>
+    </div>
+    <p class="question-text">Balance the following equations and add state symbols:</p>
+    <ol style="margin-left: 1.2rem;" type="a">
+      <li>Fe + CuSO<sub>4</sub> &rarr; FeSO<sub>4</sub> + Cu</li>
+      <li>Na + H<sub>2</sub>O &rarr; NaOH + H<sub>2</sub></li>
+      <li>Fe + O<sub>2</sub> &rarr; Fe<sub>2</sub>O<sub>3</sub></li>
+    </ol>
+    <button class="btn btn-secondary btn-small show-answer-btn" onclick="showAnswer(this)">Show Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Model Answer</div>
+      <p><strong>(a)</strong> Already balanced:</p>
+      <div class="equation">Fe(s) + CuSO<sub>4</sub>(aq) &rarr; FeSO<sub>4</sub>(aq) + Cu(s)</div>
+      <p><strong>(b)</strong></p>
+      <div class="equation">2Na(s) + 2H<sub>2</sub>O(l) &rarr; 2NaOH(aq) + H<sub>2</sub>(g)</div>
+      <p><strong>(c)</strong></p>
+      <div class="equation">4Fe(s) + 3O<sub>2</sub>(g) &rarr; 2Fe<sub>2</sub>O<sub>3</sub>(s)</div>
+    </div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="question-block mc">
+    <div class="question-header">
+      <span class="question-number">Q9 &ndash; Displacement Prediction</span>
+      <span class="question-marks">1 mark</span>
+    </div>
+    <p class="question-text">Which of these combinations will NOT produce a displacement reaction?</p>
+    <ul class="mc-options">
+      <li><label><input type="radio" name="quiz9" data-correct="false"> Magnesium + iron sulfate</label></li>
+      <li><label><input type="radio" name="quiz9" data-correct="false"> Zinc + copper sulfate</label></li>
+      <li><label><input type="radio" name="quiz9" data-correct="true"> Copper + zinc sulfate</label></li>
+      <li><label><input type="radio" name="quiz9" data-correct="false"> Iron + copper sulfate</label></li>
+    </ul>
+    <button class="btn btn-primary btn-small check-answer-btn" onclick="checkMC(this)">Check Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Correct!</div>
+      <p>Copper is less reactive than zinc, so copper cannot displace zinc from zinc sulfate solution. A less reactive metal cannot displace a more reactive metal.</p>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="question-block">
+    <div class="question-header">
+      <span class="question-number">Q10 &ndash; Observations</span>
+      <span class="question-marks">3 marks</span>
+    </div>
+    <p class="question-text">A student adds a small piece of potassium to a trough of water. Describe three observations they would make.</p>
+    <button class="btn btn-secondary btn-small show-answer-btn" onclick="showAnswer(this)">Show Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Model Answer</div>
+      <p>Any three from:</p>
+      <ul>
+        <li>The potassium fizzes vigorously / rapid bubbling [1 mark]</li>
+        <li>It melts into a silvery ball [1 mark]</li>
+        <li>It moves/darts around the surface of the water [1 mark]</li>
+        <li>A lilac/purple flame is seen [1 mark]</li>
+        <li>The potassium dissolves/gets smaller [1 mark]</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q11 (Higher) -->
+  <div class="question-block mc">
+    <div class="question-header">
+      <span class="question-number">Q11 <span class="higher-badge">Higher</span> &ndash; Electron Transfer</span>
+      <span class="question-marks">1 mark</span>
+    </div>
+    <p class="question-text">In the reaction Zn + Cu<sup>2+</sup> &rarr; Zn<sup>2+</sup> + Cu, what happens to the zinc?</p>
+    <ul class="mc-options">
+      <li><label><input type="radio" name="quiz11" data-correct="false"> It is reduced because it gains electrons</label></li>
+      <li><label><input type="radio" name="quiz11" data-correct="true"> It is oxidised because it loses electrons</label></li>
+      <li><label><input type="radio" name="quiz11" data-correct="false"> It is reduced because it loses oxygen</label></li>
+      <li><label><input type="radio" name="quiz11" data-correct="false"> It is oxidised because it gains electrons</label></li>
+    </ul>
+    <button class="btn btn-primary btn-small check-answer-btn" onclick="checkMC(this)">Check Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Correct!</div>
+      <p>Zinc goes from Zn (0 charge) to Zn<sup>2+</sup> (2+ charge). It has lost 2 electrons. Loss of electrons = oxidation. Remember OIL RIG: Oxidation Is Loss.</p>
+    </div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="question-block">
+    <div class="question-header">
+      <span class="question-number">Q12 &ndash; Extraction</span>
+      <span class="question-marks">2 marks</span>
+    </div>
+    <p class="question-text">Lead oxide can be reduced by carbon.</p>
+    <ol style="margin-left: 1.2rem;" type="a">
+      <li>Write the word equation for this reaction. [1 mark]</li>
+      <li>Identify what is oxidised and what is reduced. [1 mark]</li>
+    </ol>
+    <button class="btn btn-secondary btn-small show-answer-btn" onclick="showAnswer(this)">Show Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Model Answer</div>
+      <p><strong>(a)</strong> lead oxide + carbon &rarr; lead + carbon dioxide [1 mark]</p>
+      <p><strong>(b)</strong> Lead oxide is reduced (loses oxygen). Carbon is oxidised (gains oxygen). [1 mark]</p>
+    </div>
+  </div>
+
+  <!-- Q13 (Higher) -->
+  <div class="question-block">
+    <div class="question-header">
+      <span class="question-number">Q13 <span class="higher-badge">Higher</span> &ndash; Mole Ratios</span>
+      <span class="question-marks">2 marks</span>
+    </div>
+    <p class="question-text">For the reaction: 2Al + 3CuSO<sub>4</sub> &rarr; Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub> + 3Cu</p>
+    <ol style="margin-left: 1.2rem;" type="a">
+      <li>State the mole ratio of aluminium to copper sulfate. [1 mark]</li>
+      <li>How many moles of copper are produced when 4 moles of aluminium react? [1 mark]</li>
+    </ol>
+    <button class="btn btn-secondary btn-small show-answer-btn" onclick="showAnswer(this)">Show Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Model Answer</div>
+      <p><strong>(a)</strong> 2 : 3 (aluminium : copper sulfate) [1 mark]</p>
+      <p><strong>(b)</strong> From the equation, 2 mol Al produces 3 mol Cu. So 4 mol Al produces 6 mol Cu. [1 mark]</p>
+    </div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="question-block mc">
+    <div class="question-header">
+      <span class="question-number">Q14 &ndash; Uses of Metals</span>
+      <span class="question-marks">1 mark</span>
+    </div>
+    <p class="question-text">Why is copper suitable for making water pipes?</p>
+    <ul class="mc-options">
+      <li><label><input type="radio" name="quiz14" data-correct="false"> It is the most reactive metal</label></li>
+      <li><label><input type="radio" name="quiz14" data-correct="false"> It is magnetic</label></li>
+      <li><label><input type="radio" name="quiz14" data-correct="true"> It is unreactive with water and can be bent into shape</label></li>
+      <li><label><input type="radio" name="quiz14" data-correct="false"> It reacts with water to form a protective layer</label></li>
+    </ul>
+    <button class="btn btn-primary btn-small check-answer-btn" onclick="checkMC(this)">Check Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Correct!</div>
+      <p>Copper is below hydrogen in the reactivity series, so it does not react with water. This means it won't corrode. It is also malleable (can be bent into shape), making it ideal for pipes.</p>
+    </div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="question-block">
+    <div class="question-header">
+      <span class="question-number">Q15 &ndash; Required Practical</span>
+      <span class="question-marks">4 marks</span>
+    </div>
+    <p class="question-text">A student investigates the reactivity of four metals (magnesium, zinc, iron, copper) by adding them to dilute hydrochloric acid and recording observations.</p>
+    <ol style="margin-left: 1.2rem;" type="a">
+      <li>Name two variables that should be controlled. [2 marks]</li>
+      <li>Predict the order of reactivity from most to least reactive. [1 mark]</li>
+      <li>Explain why copper does not react. [1 mark]</li>
+    </ol>
+    <button class="btn btn-secondary btn-small show-answer-btn" onclick="showAnswer(this)">Show Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Model Answer</div>
+      <p><strong>(a)</strong> Any two from: volume of acid, concentration of acid, size/mass of metal pieces, temperature [2 marks]</p>
+      <p><strong>(b)</strong> Magnesium &gt; Zinc &gt; Iron &gt; Copper [1 mark]</p>
+      <p><strong>(c)</strong> Copper is less reactive than hydrogen (it is below hydrogen in the reactivity series), so it cannot displace hydrogen from the acid [1 mark].</p>
+    </div>
+  </div>
+
+  <!-- Q16 (Higher) -->
+  <div class="question-block">
+    <div class="question-header">
+      <span class="question-number">Q16 <span class="higher-badge">Higher</span> &ndash; Half Equations</span>
+      <span class="question-marks">3 marks</span>
+    </div>
+    <p class="question-text">Magnesium reacts with silver nitrate solution.</p>
+    <ol style="margin-left: 1.2rem;" type="a">
+      <li>Write the ionic equation for this reaction. [1 mark]</li>
+      <li>Write the half equation for the oxidation reaction. [1 mark]</li>
+      <li>Write the half equation for the reduction reaction. [1 mark]</li>
+    </ol>
+    <button class="btn btn-secondary btn-small show-answer-btn" onclick="showAnswer(this)">Show Answer</button>
+    <div class="answer-reveal">
+      <div class="answer-header">Model Answer</div>
+      <p><strong>(a)</strong> Ionic equation:</p>
+      <div class="equation">Mg(s) + 2Ag<sup>+</sup>(aq) &rarr; Mg<sup>2+</sup>(aq) + 2Ag(s)</div>
+      <p><strong>(b)</strong> Oxidation:</p>
+      <div class="equation">Mg &rarr; Mg<sup>2+</sup> + 2e<sup>&minus;</sup></div>
+      <p><strong>(c)</strong> Reduction:</p>
+      <div class="equation">Ag<sup>+</sup> + e<sup>&minus;</sup> &rarr; Ag</div>
+      <p>(Note: 2 silver ions each gain 1 electron, so the electrons balance with the 2 electrons lost by magnesium.)</p>
+    </div>
+  </div>
+
+  <!-- Results summary -->
+  <div class="content-block" style="text-align: center; margin-top: 2rem;">
+    <h3>How did you do?</h3>
+    <p>Multiple choice score: <strong id="quiz-score-final">0/0</strong></p>
+    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">
+      Go back and revise any topics you found tricky, then try again!
+    </p>
+    <a href="index.html" class="btn btn-primary" style="margin-top: 1rem;">Back to Topics</a>
+  </div>
+
+  <!-- Navigation -->
+  <div class="page-nav">
+    <a href="c4-2-equations-calculations.html">&larr; C4.2 Equations</a>
+    <a href="index.html">Home &rarr;</a>
+  </div>
+</main>
+
+<footer>
+  <p>AQA GCSE Chemistry Revision &bull; Mixed Exam-Style Quiz</p>
+</footer>
+
+<script src="script.js"></script>
+<script>
+  // Duplicate score to final display
+  const origUpdate = updateQuizScore;
+  updateQuizScore = function() {
+    origUpdate();
+    const score = document.getElementById('quiz-score');
+    const finalScore = document.getElementById('quiz-score-final');
+    if (score && finalScore) {
+      finalScore.textContent = score.textContent;
+    }
+  };
+</script>
+</body>
+</html>
