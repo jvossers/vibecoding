@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 AQA GCSE Chemistry revision site covering Reactivity of Metals topics (C4.2, C5.1–C5.3). Static HTML/CSS/JS with no build system, no frameworks, no dependencies. Hosted on GitHub Pages at labs.vossers.com.
 
+**Target audience:** GCSE students taking Chemistry as part of **triple science** (separate sciences). Content should reflect the full AQA Chemistry specification, including higher-tier material not covered in combined science. Use language and explanations appropriate for 14–16 year olds studying at this level.
+
 ## Architecture
 
 - **Single shared stylesheet** (`style.css`) and **single shared script** (`script.js`) across all pages

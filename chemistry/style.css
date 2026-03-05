@@ -333,6 +333,21 @@ main {
   margin-left: 0.3rem;
 }
 
+/* === Triple Science Only Badge === */
+.badge-triple {
+  display: inline-block;
+  background: #8e44ad;
+  color: white;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  vertical-align: super;
+  margin-left: 0.3rem;
+}
+
 /* === Tip / Warning Boxes === */
 .tip-box {
   background: #eafaf1;
