@@ -22,25 +22,33 @@ function currentNoteCount() {
 
 function storageKey() {
     const suffix = currentClefSelection().slice().sort().join('+');
-    return `${STORAGE_KEY_PREFIX}_${suffix}_n${currentNoteCount()}`;
+    const notes = currentEnabledNotes().slice().sort().join('');
+    return `${STORAGE_KEY_PREFIX}_${suffix}_n${currentNoteCount()}_${notes}`;
+}
+
+function scrollToMiddleC() {
+    const piano = document.querySelector('.piano');
+    const middleC = document.querySelector('.key[data-note="C4"]');
+    if (piano && middleC) {
+        piano.scrollLeft = middleC.offsetLeft - piano.clientWidth / 2 + middleC.offsetWidth / 2;
+    }
 }
 
 // --- Web Audio piano synth ---
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-// Frequencies for one octave (C4-B4 + sharps)
-const NOTE_FREQ = {
-    'C': 261.63, 'C#': 277.18,
-    'D': 293.66, 'D#': 311.13,
-    'E': 329.63,
-    'F': 349.23, 'F#': 369.99,
-    'G': 392.00, 'G#': 415.30,
-    'A': 440.00, 'A#': 466.16,
-    'B': 493.88
-};
+const SEMITONE_OFFSETS = { 'C': -9, 'C#': -8, 'D': -7, 'D#': -6, 'E': -5, 'F': -4, 'F#': -3, 'G': -2, 'G#': -1, 'A': 0, 'A#': 1, 'B': 2 };
+
+function noteFrequency(noteStr) {
+    const match = noteStr.match(/^([A-G]#?)(\d)$/);
+    if (!match) return null;
+    const [, letter, octStr] = match;
+    const semitone = SEMITONE_OFFSETS[letter] + (parseInt(octStr) - 4) * 12;
+    return 440 * Math.pow(2, semitone / 12);
+}
 
 function playNote(noteName) {
-    const freq = NOTE_FREQ[noteName];
+    const freq = noteFrequency(noteName);
     if (!freq) return;
     const t = audioCtx.currentTime;
 
@@ -146,6 +154,14 @@ const bassNotes = {
     'D3': 4, 'C3': 5, 'B2': 6, 'A2': 7, 'G2': 8
 };
 
+// Notes available on the 4-octave piano (C2–B5)
+const PIANO_NOTES = new Set([
+    'C2', 'D2', 'E2', 'F2', 'G2', 'A2', 'B2',
+    'C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3',
+    'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
+    'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5'
+]);
+
 function noteLetter(note) {
     return note.replace(/[0-9]/g, '');
 }
@@ -158,7 +174,7 @@ function currentEnabledNotes() {
 
 function randomNotes(clef, count) {
     const allPool = Object.keys(clef === 'treble' ? trebleNotes : bassNotes);
-    const pool = allPool.filter(n => enabledNoteLetters.includes(noteLetter(n)));
+    const pool = allPool.filter(n => PIANO_NOTES.has(n) && enabledNoteLetters.includes(noteLetter(n)));
     // Pick count random notes (no duplicate letters)
     const shuffled = pool.slice();
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -349,7 +365,7 @@ function confirmedHtml() {
 }
 
 function handleGuess(guess) {
-    const expected = noteLetter(currentNotes[guessIndex]);
+    const expected = currentNotes[guessIndex];
 
     if (guess === expected) {
         confirmedNotes.push(guess);
@@ -361,6 +377,7 @@ function handleGuess(guess) {
             const left = currentNotes.length - guessIndex;
             feedbackEl.innerHTML = `${confirmedHtml()}
                <div class="answer">${left} note${left > 1 ? 's' : ''} left</div>`;
+            scrollToMiddleC();
             return;
         }
 
@@ -377,6 +394,7 @@ function handleGuess(guess) {
 
         feedbackEl.innerHTML = confirmedHtml();
         guessed = true;
+        scrollToMiddleC();
         showNextBtn(false);
     } else {
         // Wrong guess - whole turn fails
@@ -384,10 +402,11 @@ function handleGuess(guess) {
         if (correctCount > 0) correctCount--;
         updateProgress();
         guessed = true;
-        const expectedStr = currentNotes.map(n => noteLetter(n)).join(', ');
+        const expectedStr = currentNotes.join(', ');
         feedbackEl.innerHTML = `${confirmedHtml()}
            <span class="result incorrect">${guess} &#10007;</span>
            <div class="answer">The notes were ${expectedStr}</div>`;
+        scrollToMiddleC();
         showNextBtn(true);
     }
 }
@@ -504,6 +523,7 @@ document.querySelectorAll('.note-toggle-btns button').forEach(btn => {
         if (btn.classList.contains('selected') && selectedCount <= 1) return;
         btn.classList.toggle('selected');
         saveSettings();
+        displayHighscore();
     });
 });
 
@@ -529,6 +549,7 @@ function nextRound() {
     guessed = false;
     clearFeedback();
     render();
+    scrollToMiddleC();
 }
 
 function render() {
@@ -573,4 +594,5 @@ document.getElementById('playAgain').addEventListener('click', showStartScreen);
 // Start
 displayHighscore();
 showStartScreen();
-window.addEventListener('resize', render);
+scrollToMiddleC();
+window.addEventListener('resize', () => { render(); scrollToMiddleC(); });
