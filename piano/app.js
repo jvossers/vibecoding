@@ -3,6 +3,7 @@ const STORAGE_KEY_PREFIX = 'sightReadingHighscore';
 
 let enabledClefs = ['treble', 'bass'];
 let noteCount = 1;
+let enabledNoteLetters = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
 function currentClefSelection() {
     const sel = document.querySelector('.clef-btns button.selected');
@@ -149,8 +150,15 @@ function noteLetter(note) {
     return note.replace(/[0-9]/g, '');
 }
 
+function currentEnabledNotes() {
+    const btns = document.querySelectorAll('.note-toggle-btns button.selected');
+    const letters = Array.from(btns).map(b => b.dataset.noteToggle);
+    return letters.length > 0 ? letters : ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+}
+
 function randomNotes(clef, count) {
-    const pool = Object.keys(clef === 'treble' ? trebleNotes : bassNotes);
+    const allPool = Object.keys(clef === 'treble' ? trebleNotes : bassNotes);
+    const pool = allPool.filter(n => enabledNoteLetters.includes(noteLetter(n)));
     // Pick count random notes (no duplicate letters)
     const shuffled = pool.slice();
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -453,6 +461,11 @@ function loadSettings() {
                     b.classList.toggle('selected', parseInt(b.dataset.count) === saved.noteCount);
                 });
             }
+            if (saved.enabledNotes && Array.isArray(saved.enabledNotes)) {
+                document.querySelectorAll('.note-toggle-btns button').forEach(b => {
+                    b.classList.toggle('selected', saved.enabledNotes.includes(b.dataset.noteToggle));
+                });
+            }
         }
     } catch {}
 }
@@ -461,7 +474,8 @@ function saveSettings() {
     const clefSel = document.querySelector('.clef-btns button.selected');
     localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify({
         clef: clefSel ? clefSel.dataset.clef : 'both',
-        noteCount: currentNoteCount()
+        noteCount: currentNoteCount(),
+        enabledNotes: currentEnabledNotes()
     }));
 }
 
@@ -482,9 +496,21 @@ function initSegmentedButtons(selector) {
 initSegmentedButtons('.clef-btns');
 initSegmentedButtons('.note-count-btns');
 
+// Note toggle buttons — each independently toggleable
+document.querySelectorAll('.note-toggle-btns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const selectedCount = document.querySelectorAll('.note-toggle-btns button.selected').length;
+        // Don't allow deselecting the last note
+        if (btn.classList.contains('selected') && selectedCount <= 1) return;
+        btn.classList.toggle('selected');
+        saveSettings();
+    });
+});
+
 function startGame() {
     enabledClefs = currentClefSelection();
     noteCount = currentNoteCount();
+    enabledNoteLetters = currentEnabledNotes();
     startPanel.classList.remove('visible');
     hudEl.style.display = '';
     canvas.parentElement.style.display = '';

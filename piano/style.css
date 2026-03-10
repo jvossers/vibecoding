@@ -218,6 +218,44 @@ canvas#staff {
     border-left: none;
 }
 
+.note-toggle-btns {
+    display: flex;
+    gap: 0;
+}
+
+.note-toggle-btns button {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid #555;
+    background: #333;
+    color: #555;
+    cursor: pointer;
+}
+
+.note-toggle-btns button:first-child {
+    border-radius: 8px 0 0 8px;
+}
+
+.note-toggle-btns button:last-child {
+    border-radius: 0 8px 8px 0;
+}
+
+.note-toggle-btns button + button {
+    border-left: none;
+}
+
+.note-toggle-btns button.selected {
+    background: #2d7a56;
+    color: #52b788;
+    border-color: #52b788;
+}
+
+.note-toggle-btns button.selected + button {
+    border-left: none;
+}
+
 .start-btn {
     padding: 14px 48px;
     font-size: 1.1rem;
