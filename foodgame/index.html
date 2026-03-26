@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#E8F5E2">
+<title>Feed Me Right!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:#E8F5E2;
+  --green:#4CAF50;
+  --red:#E53935;
+  --orange:#FF9800;
+  --dark:#2A2422;
+  --skin:#FFCCAA;
+  --skin-shadow:#E8B090;
+  --shirt:#4A90D9;
+  --shirt-shadow:#3A70B0;
+  --pants:#5D4037;
+}
+
+html{
+  -webkit-text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  font-family:'Nunito',sans-serif;
+  background:var(--bg);
+  color:var(--dark);
+  min-height:100dvh;
+  overflow:hidden;
+  position:relative;
+  touch-action:manipulation;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:none;
+  user-select:none;
+  -webkit-user-select:none;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* ── SCREENS ── */
+.screen{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:opacity .4s,transform .4s;
+  z-index:10;
+}
+.screen.hidden{
+  opacity:0;
+  pointer-events:none;
+  transform:scale(.95);
+}
+
+/* ── START SCREEN ── */
+#startScreen{
+  background:linear-gradient(160deg,#E8F5E2 0%,#C8E6C9 50%,#A5D6A7 100%);
+}
+.start-title{
+  font-family:'Bagel Fat One',cursive;
+  font-size:clamp(2.4rem,8vw,4rem);
+  color:var(--dark);
+  text-align:center;
+  line-height:1.1;
+  margin-bottom:.3rem;
+}
+.start-subtitle{
+  font-size:clamp(.9rem,3vw,1.1rem);
+  font-weight:700;
+  color:var(--green);
+  margin-bottom:2rem;
+  text-align:center;
+}
+.start-guy{
+  position:relative;
+  width:160px;height:200px;
+  margin-bottom:1.5rem;
+}
+.start-btn{
+  font-family:'Nunito',sans-serif;
+  font-weight:900;
+  font-size:1.2rem;
+  background:var(--green);
+  color:#fff;
+  border:none;
+  border-radius:999px;
+  padding:1rem 3rem;
+  min-height:52px;
+  cursor:pointer;
+  box-shadow:0 4px 0 #388E3C,0 6px 16px rgba(76,175,80,.3);
+  transition:transform .12s,box-shadow .12s;
+}
+.start-btn:active{
+  transform:scale(.96) translateY(2px);
+  box-shadow:0 2px 0 #388E3C,0 3px 8px rgba(76,175,80,.25);
+}
+.how-to{
+  margin-top:1.5rem;
+  font-size:.82rem;
+  font-weight:700;
+  color:rgba(42,36,34,.5);
+  text-align:center;
+  max-width:280px;
+  line-height:1.5;
+}
+
+/* ── HUD ── */
+.hud{
+  position:fixed;top:0;left:0;right:0;
+  padding:.6rem 1rem;
+  padding-top:calc(.6rem + env(safe-area-inset-top));
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  z-index:5;
+  background:rgba(232,245,226,.85);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+.hud-score{
+  font-family:'Bagel Fat One',cursive;
+  font-size:1.4rem;
+  color:var(--dark);
+}
+.hud-level{
+  font-weight:800;
+  font-size:.8rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--green);
+}
+
+/* ── SIZE METER ── */
+.size-meter{
+  position:fixed;
+  right:.8rem;
+  top:50%;
+  transform:translateY(-50%);
+  width:18px;
+  height:40%;
+  max-height:240px;
+  background:rgba(0,0,0,.08);
+  border-radius:9px;
+  z-index:5;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+}
+.size-fill{
+  width:100%;
+  border-radius:9px;
+  background:linear-gradient(0deg,var(--green),var(--orange),var(--red));
+  transition:height .4s cubic-bezier(.34,1.56,.64,1);
+}
+.size-label{
+  position:fixed;
+  right:.4rem;
+  top:calc(50% - min(20%,120px) - 18px);
+  transform:translateY(-50%);
+  font-size:.55rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:rgba(42,36,34,.35);
+  z-index:5;
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+}
+
+/* ── CHARACTER ── */
+.character-wrap{
+  position:fixed;
+  bottom:5%;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:2;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.character{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+/* head */
+.char-head{
+  width:48px;height:52px;
+  background:var(--skin);
+  border-radius:50% 50% 45% 45%;
+  position:relative;
+  z-index:3;
+  box-shadow:inset -4px -4px 0 var(--skin-shadow);
+  margin-bottom:-8px;
+  transition:width .3s,height .3s;
+}
+.char-eyes{
+  position:absolute;
+  top:18px;left:50%;
+  transform:translateX(-50%);
+  display:flex;gap:10px;
+}
+.char-eye{
+  width:6px;height:7px;
+  background:var(--dark);
+  border-radius:50%;
+}
+.char-mouth{
+  position:absolute;
+  bottom:10px;left:50%;
+  transform:translateX(-50%);
+  width:12px;height:6px;
+  border-bottom:3px solid var(--dark);
+  border-radius:0 0 50% 50%;
+}
+
+/* body - the big one */
+.char-body{
+  width:120px;height:110px;
+  background:var(--shirt);
+  border-radius:50%;
+  position:relative;
+  z-index:2;
+  box-shadow:inset -8px -8px 0 var(--shirt-shadow);
+  transition:width .4s cubic-bezier(.34,1.56,.64,1),height .4s cubic-bezier(.34,1.56,.64,1);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.char-belly-btn{
+  width:8px;height:8px;
+  background:var(--shirt-shadow);
+  border-radius:50%;
+  margin-top:10px;
+}
+
+/* arms */
+.char-arms{
+  position:absolute;
+  top:12px;left:50%;
+  transform:translateX(-50%);
+  width:calc(100% + 30px);
+  display:flex;
+  justify-content:space-between;
+  z-index:1;
+}
+.char-arm{
+  width:22px;height:40px;
+  background:var(--skin);
+  border-radius:11px;
+  box-shadow:inset -3px -3px 0 var(--skin-shadow);
+  transition:height .3s;
+}
+
+/* legs */
+.char-legs{
+  display:flex;
+  gap:14px;
+  margin-top:-10px;
+  z-index:1;
+}
+.char-leg{
+  width:24px;height:36px;
+  background:var(--pants);
+  border-radius:8px 8px 10px 10px;
+  box-shadow:inset -3px -3px 0 rgba(0,0,0,.15);
+}
+
+/* ── FOOD ITEMS ── */
+.game-area{
+  position:fixed;inset:0;
+  z-index:3;
+  pointer-events:none;
+}
+.food-item{
+  position:absolute;
+  font-size:2.8rem;
+  pointer-events:auto;
+  cursor:pointer;
+  animation:foodPop .3s cubic-bezier(.34,1.56,.64,1) both;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,.15));
+  transition:transform .1s;
+  z-index:3;
+}
+.food-item:active{
+  transform:scale(.85);
+}
+@keyframes foodPop{
+  from{transform:scale(0) rotate(-20deg);opacity:0}
+  to{transform:scale(1) rotate(0);opacity:1}
+}
+@keyframes foodShrink{
+  to{transform:scale(0) rotate(20deg);opacity:0}
+}
+
+/* ── FEEDBACK EFFECTS ── */
+.feedback{
+  position:absolute;
+  font-weight:900;
+  font-size:1.4rem;
+  pointer-events:none;
+  z-index:10;
+  animation:feedbackFloat .8s ease-out forwards;
+}
+.feedback.good{color:var(--green)}
+.feedback.bad{color:var(--red)}
+@keyframes feedbackFloat{
+  0%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-60px) scale(1.3)}
+}
+
+/* ── SCREEN FLASH ── */
+.flash{
+  position:fixed;inset:0;
+  z-index:8;
+  pointer-events:none;
+  opacity:0;
+}
+.flash.red{
+  background:var(--red);
+  animation:flashAnim .3s ease-out;
+}
+.flash.green{
+  background:var(--green);
+  animation:flashAnim .3s ease-out;
+}
+@keyframes flashAnim{
+  0%{opacity:.25}
+  100%{opacity:0}
+}
+
+/* ── EXPLOSION / GAME OVER ── */
+.explosion{
+  position:fixed;inset:0;
+  z-index:20;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:rgba(42,36,34,.85);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .5s;
+}
+.explosion.active{
+  opacity:1;
+  pointer-events:auto;
+}
+.explosion-emoji{
+  font-size:6rem;
+  animation:explodePop .6s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes explodePop{
+  from{transform:scale(0) rotate(-30deg)}
+  to{transform:scale(1) rotate(10deg)}
+}
+.explosion-title{
+  font-family:'Bagel Fat One',cursive;
+  font-size:clamp(2rem,7vw,3rem);
+  color:#fff;
+  margin-top:1rem;
+  text-align:center;
+}
+.explosion-score{
+  font-size:1.2rem;
+  font-weight:800;
+  color:rgba(255,255,255,.7);
+  margin-top:.5rem;
+}
+.explosion-btn{
+  font-family:'Nunito',sans-serif;
+  font-weight:900;
+  font-size:1.1rem;
+  background:var(--red);
+  color:#fff;
+  border:none;
+  border-radius:999px;
+  padding:.9rem 2.5rem;
+  min-height:52px;
+  cursor:pointer;
+  margin-top:2rem;
+  box-shadow:0 4px 0 #B71C1C,0 6px 16px rgba(229,57,53,.3);
+}
+.explosion-btn:active{
+  transform:scale(.96) translateY(2px);
+}
+.explosion-particles{
+  position:absolute;inset:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.explosion-particle{
+  position:absolute;
+  font-size:2rem;
+  animation:particleFly 1s ease-out forwards;
+}
+@keyframes particleFly{
+  0%{opacity:1;transform:translate(0,0) scale(1)}
+  100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0) rotate(var(--rot))}
+}
+
+/* ── shake effect ── */
+@keyframes shake{
+  0%,100%{transform:translateX(-50%)}
+  20%{transform:translateX(-50%) translateX(-8px) rotate(-2deg)}
+  40%{transform:translateX(-50%) translateX(8px) rotate(2deg)}
+  60%{transform:translateX(-50%) translateX(-5px) rotate(-1deg)}
+  80%{transform:translateX(-50%) translateX(5px) rotate(1deg)}
+}
+.character-wrap.shake{
+  animation:shake .4s ease-in-out;
+}
+
+/* ── jiggle for idle ── */
+@keyframes jiggle{
+  0%,100%{transform:translateX(-50%) rotate(0)}
+  25%{transform:translateX(-50%) rotate(-.5deg)}
+  75%{transform:translateX(-50%) rotate(.5deg)}
+}
+.character-wrap.idle{
+  animation:jiggle 2s ease-in-out infinite;
+}
+
+/* ── sweat drops ── */
+.sweat{
+  position:absolute;
+  width:6px;height:8px;
+  background:rgba(100,181,246,.7);
+  border-radius:50% 50% 50% 50% / 30% 30% 70% 70%;
+  z-index:4;
+  animation:sweatDrop 1s ease-in infinite;
+  opacity:0;
+}
+.sweat.left{top:6px;left:-2px;animation-delay:.3s}
+.sweat.right{top:8px;right:-2px}
+@keyframes sweatDrop{
+  0%{opacity:0;transform:translateY(0)}
+  30%{opacity:.8}
+  100%{opacity:0;transform:translateY(20px)}
+}
+
+/* ── mobile ── */
+@media(max-width:400px){
+  .food-item{font-size:2.4rem}
+  .hud{padding:.4rem .7rem;padding-top:calc(.4rem + env(safe-area-inset-top))}
+  .hud-score{font-size:1.2rem}
+  .size-meter{width:14px;right:.5rem}
+}
+@media(max-height:580px){
+  .character-wrap{bottom:2%}
+  .char-head{width:36px;height:40px}
+  .char-body{width:90px;height:80px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ START SCREEN ═══ -->
+<div class="screen" id="startScreen">
+  <div class="start-guy" id="startGuy"></div>
+  <div class="start-title">Feed Me<br>Right!</div>
+  <div class="start-subtitle">A healthy eating game</div>
+  <button class="start-btn" onclick="startGame()">Play!</button>
+  <div class="how-to">
+    Tap healthy foods to score points.<br>
+    Avoid the junk food or he'll pop!
+  </div>
+</div>
+
+<!-- ═══ GAME SCREEN ═══ -->
+<div class="screen hidden" id="gameScreen">
+  <!-- HUD -->
+  <div class="hud">
+    <div class="hud-score">Score: <span id="scoreDisplay">0</span></div>
+    <div class="hud-level" id="levelDisplay">Level 1</div>
+  </div>
+
+  <!-- Size meter -->
+  <div class="size-label">SIZE</div>
+  <div class="size-meter">
+    <div class="size-fill" id="sizeFill" style="height:30%"></div>
+  </div>
+
+  <!-- Character -->
+  <div class="character-wrap idle" id="charWrap">
+    <div class="character" id="character">
+      <div class="char-head" id="charHead">
+        <div class="char-eyes">
+          <div class="char-eye"></div>
+          <div class="char-eye"></div>
+        </div>
+        <div class="char-mouth" id="charMouth"></div>
+        <div class="sweat left" id="sweatL"></div>
+        <div class="sweat right" id="sweatR"></div>
+      </div>
+      <div class="char-body" id="charBody">
+        <div class="char-belly-btn"></div>
+        <div class="char-arms">
+          <div class="char-arm"></div>
+          <div class="char-arm"></div>
+        </div>
+      </div>
+      <div class="char-legs">
+        <div class="char-leg"></div>
+        <div class="char-leg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Food spawn area -->
+  <div class="game-area" id="gameArea"></div>
+
+  <!-- Screen flash -->
+  <div class="flash" id="flash"></div>
+</div>
+
+<!-- ═══ GAME OVER SCREEN ═══ -->
+<div class="explosion" id="gameOverScreen">
+  <div class="explosion-particles" id="particles"></div>
+  <div class="explosion-emoji">💥</div>
+  <div class="explosion-title">He Popped!</div>
+  <div class="explosion-score" id="finalScore">Score: 0</div>
+  <button class="explosion-btn" onclick="restartGame()">Try Again</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// GAME STATE
+// ═══════════════════════════════════════
+const G = {
+  score: 0,
+  size: 30,          // 0-100, starts at 30 (already big)
+  level: 1,
+  running: false,
+  spawnTimer: null,
+  levelTimer: null,
+  foodItems: [],
+  baseSpawnInterval: 1200,
+  baseFoodLifetime: 2800,
+  maxActive: 5,
+};
+
+// ═══════════════════════════════════════
+// FOOD DATA
+// ═══════════════════════════════════════
+const HEALTHY = [
+  { emoji: '🥦', name: 'Broccoli' },
+  { emoji: '🥕', name: 'Carrot' },
+  { emoji: '🍎', name: 'Apple' },
+  { emoji: '🥗', name: 'Salad' },
+  { emoji: '🍌', name: 'Banana' },
+  { emoji: '🫐', name: 'Blueberries' },
+  { emoji: '🥒', name: 'Cucumber' },
+  { emoji: '🍇', name: 'Grapes' },
+  { emoji: '🍊', name: 'Orange' },
+  { emoji: '🥬', name: 'Lettuce' },
+  { emoji: '🍋', name: 'Lemon' },
+  { emoji: '🍐', name: 'Pear' },
+  { emoji: '🫑', name: 'Pepper' },
+  { emoji: '🍓', name: 'Strawberry' },
+];
+
+const UNHEALTHY = [
+  { emoji: '🍔', name: 'Burger' },
+  { emoji: '🍕', name: 'Pizza' },
+  { emoji: '🍩', name: 'Donut' },
+  { emoji: '🍟', name: 'Fries' },
+  { emoji: '🧁', name: 'Cupcake' },
+  { emoji: '🌭', name: 'Hot Dog' },
+  { emoji: '🍰', name: 'Cake' },
+  { emoji: '🍪', name: 'Cookie' },
+  { emoji: '🥤', name: 'Soda' },
+  { emoji: '🍫', name: 'Chocolate' },
+  { emoji: '🍬', name: 'Candy' },
+  { emoji: '🧇', name: 'Waffle' },
+];
+
+// ═══════════════════════════════════════
+// DOM
+// ═══════════════════════════════════════
+const $ = id => document.getElementById(id);
+const startScreen = $('startScreen');
+const gameScreen = $('gameScreen');
+const gameOverScreen = $('gameOverScreen');
+const gameArea = $('gameArea');
+const charWrap = $('charWrap');
+const charBody = $('charBody');
+const charHead = $('charHead');
+const charMouth = $('charMouth');
+const scoreDisplay = $('scoreDisplay');
+const levelDisplay = $('levelDisplay');
+const sizeFill = $('sizeFill');
+const flash = $('flash');
+const sweatL = $('sweatL');
+const sweatR = $('sweatR');
+
+// ═══════════════════════════════════════
+// CHARACTER SIZING
+// ═══════════════════════════════════════
+function updateCharacter() {
+  // Size goes from 30 (starting big) to 100 (explosion)
+  // Body: 120px at 30 -> 280px at 100
+  const t = G.size / 100;
+  const bodyW = 100 + t * 200;
+  const bodyH = 90 + t * 180;
+  charBody.style.width = bodyW + 'px';
+  charBody.style.height = bodyH + 'px';
+
+  // Head stays proportionally tiny as body grows (comedy)
+  const headW = 48 - t * 12;
+  const headH = 52 - t * 12;
+  charHead.style.width = Math.max(headW, 30) + 'px';
+  charHead.style.height = Math.max(headH, 34) + 'px';
+
+  // Size meter
+  sizeFill.style.height = G.size + '%';
+
+  // Color shifts to red when dangerously big
+  if (G.size > 70) {
+    charBody.style.background = `hsl(${Math.max(0, 210 - (G.size - 70) * 7)}, 60%, 55%)`;
+    charBody.style.boxShadow = `inset -8px -8px 0 hsl(${Math.max(0, 210 - (G.size - 70) * 7)}, 50%, 45%)`;
+  } else {
+    charBody.style.background = '';
+    charBody.style.boxShadow = '';
+  }
+
+  // Sweat visibility
+  const showSweat = G.size > 55;
+  sweatL.style.display = showSweat ? 'block' : 'none';
+  sweatR.style.display = showSweat ? 'block' : 'none';
+
+  // Mouth changes
+  if (G.size > 80) {
+    charMouth.style.borderBottom = '3px solid var(--red)';
+    charMouth.style.width = '16px';
+    charMouth.style.borderRadius = '0';
+  } else if (G.size > 55) {
+    charMouth.style.borderBottom = '3px solid var(--dark)';
+    charMouth.style.width = '14px';
+    charMouth.style.borderRadius = '50% 50% 0 0';
+    charMouth.style.transform = 'translateX(-50%) scaleY(-1)';
+  } else {
+    charMouth.style.borderBottom = '3px solid var(--dark)';
+    charMouth.style.width = '12px';
+    charMouth.style.borderRadius = '0 0 50% 50%';
+    charMouth.style.transform = 'translateX(-50%)';
+  }
+
+  // Score & level
+  scoreDisplay.textContent = G.score;
+  levelDisplay.textContent = 'Level ' + G.level;
+}
+
+// ═══════════════════════════════════════
+// SPAWN FOOD
+// ═══════════════════════════════════════
+function spawnFood() {
+  if (!G.running) return;
+  if (G.foodItems.length >= G.maxActive) return;
+
+  // 45% healthy, 55% unhealthy (temptation!)
+  const isHealthy = Math.random() < 0.45;
+  const pool = isHealthy ? HEALTHY : UNHEALTHY;
+  const food = pool[Math.floor(Math.random() * pool.length)];
+
+  const el = document.createElement('div');
+  el.className = 'food-item';
+  el.textContent = food.emoji;
+  el.dataset.healthy = isHealthy ? '1' : '0';
+
+  // Position: avoid bottom 30% (character area) and top 12% (HUD)
+  const areaW = window.innerWidth;
+  const areaH = window.innerHeight;
+  const margin = 50;
+  const x = margin + Math.random() * (areaW - margin * 2 - 40);
+  const y = areaH * 0.12 + Math.random() * (areaH * 0.52);
+
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+
+  // Tap handler
+  el.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleTap(el, isHealthy, x, y);
+  }, { passive: false });
+
+  gameArea.appendChild(el);
+
+  // Lifetime: disappears after a while
+  const lifetime = G.baseFoodLifetime - G.level * 120;
+  const timer = setTimeout(() => {
+    if (el.parentNode) {
+      // Missed a healthy food = slight size increase
+      if (isHealthy) {
+        G.size = Math.min(100, G.size + 2);
+        showFeedback(x, y, 'Missed!', 'bad');
+        updateCharacter();
+      }
+      removeFood(el);
+    }
+  }, Math.max(lifetime, 1000));
+
+  G.foodItems.push({ el, timer });
+}
+
+function removeFood(el) {
+  el.style.animation = 'foodShrink .2s ease-in forwards';
+  el.style.pointerEvents = 'none';
+  setTimeout(() => {
+    if (el.parentNode) el.remove();
+  }, 200);
+  G.foodItems = G.foodItems.filter(f => f.el !== el);
+}
+
+// ═══════════════════════════════════════
+// TAP HANDLING
+// ═══════════════════════════════════════
+function handleTap(el, isHealthy, x, y) {
+  // Clear its timeout
+  const item = G.foodItems.find(f => f.el === el);
+  if (item) clearTimeout(item.timer);
+
+  removeFood(el);
+
+  if (isHealthy) {
+    // Good choice!
+    G.score += 10 * G.level;
+    G.size = Math.max(5, G.size - 3);
+    showFeedback(x, y, '+' + (10 * G.level), 'good');
+    screenFlash('green');
+  } else {
+    // Bad choice — he grows!
+    G.size = Math.min(100, G.size + 8 + G.level);
+    showFeedback(x, y, 'JUNK!', 'bad');
+    screenFlash('red');
+    triggerShake();
+  }
+
+  updateCharacter();
+
+  // Check game over
+  if (G.size >= 100) {
+    gameOver();
+  }
+}
+
+// ═══════════════════════════════════════
+// EFFECTS
+// ═══════════════════════════════════════
+function showFeedback(x, y, text, type) {
+  const el = document.createElement('div');
+  el.className = 'feedback ' + type;
+  el.textContent = text;
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+  gameArea.appendChild(el);
+  setTimeout(() => el.remove(), 800);
+}
+
+function screenFlash(color) {
+  flash.className = 'flash ' + color;
+  // Force reflow for re-trigger
+  void flash.offsetWidth;
+  flash.className = 'flash ' + color;
+  setTimeout(() => flash.className = 'flash', 300);
+}
+
+function triggerShake() {
+  charWrap.classList.remove('idle');
+  charWrap.classList.remove('shake');
+  void charWrap.offsetWidth;
+  charWrap.classList.add('shake');
+  setTimeout(() => {
+    charWrap.classList.remove('shake');
+    if (G.running) charWrap.classList.add('idle');
+  }, 400);
+}
+
+// ═══════════════════════════════════════
+// GAME FLOW
+// ═══════════════════════════════════════
+function startGame() {
+  G.score = 0;
+  G.size = 30;
+  G.level = 1;
+  G.running = true;
+  G.foodItems = [];
+  G.maxActive = 5;
+
+  gameArea.innerHTML = '';
+  updateCharacter();
+
+  startScreen.classList.add('hidden');
+  gameScreen.classList.remove('hidden');
+  gameOverScreen.classList.remove('active');
+
+  charWrap.classList.add('idle');
+
+  // Spawn loop
+  scheduleSpawn();
+
+  // Level up every 15 seconds
+  G.levelTimer = setInterval(() => {
+    G.level = Math.min(G.level + 1, 12);
+    G.maxActive = Math.min(5 + G.level, 10);
+    updateCharacter();
+  }, 15000);
+}
+
+function scheduleSpawn() {
+  if (!G.running) return;
+  const interval = Math.max(G.baseSpawnInterval - G.level * 80, 400);
+  G.spawnTimer = setTimeout(() => {
+    spawnFood();
+    scheduleSpawn();
+  }, interval + Math.random() * 300);
+}
+
+function gameOver() {
+  G.running = false;
+  clearTimeout(G.spawnTimer);
+  clearInterval(G.levelTimer);
+
+  // Clear remaining food
+  G.foodItems.forEach(f => {
+    clearTimeout(f.timer);
+    if (f.el.parentNode) f.el.remove();
+  });
+  G.foodItems = [];
+
+  charWrap.classList.remove('idle');
+
+  // Explosion particles
+  const particles = $('particles');
+  particles.innerHTML = '';
+  const emojis = ['💥','⭐','🍔','🍕','🍩','💫','✨','🔥'];
+  for (let i = 0; i < 16; i++) {
+    const p = document.createElement('div');
+    p.className = 'explosion-particle';
+    p.textContent = emojis[i % emojis.length];
+    p.style.left = '50%';
+    p.style.top = '50%';
+    const angle = (i / 16) * Math.PI * 2;
+    const dist = 100 + Math.random() * 150;
+    p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+    p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+    p.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
+    p.style.animationDelay = (Math.random() * .2) + 's';
+    particles.appendChild(p);
+  }
+
+  $('finalScore').textContent = 'Score: ' + G.score;
+
+  // Brief delay then show game over
+  setTimeout(() => {
+    gameScreen.classList.add('hidden');
+    gameOverScreen.classList.add('active');
+  }, 300);
+}
+
+function restartGame() {
+  gameOverScreen.classList.remove('active');
+  setTimeout(() => startGame(), 300);
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+updateCharacter();
+
+// Prevent context menu on long-press (mobile)
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+// Prevent pull-to-refresh
+document.addEventListener('touchmove', e => {
+  if (e.touches.length === 1) e.preventDefault();
+}, { passive: false });
+</script>
+</body>
+</html>
