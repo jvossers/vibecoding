@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Flappy Cockatiels</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --sky-top: #2dc4e0;
+      --sky-mid: #6ee4f5;
+      --sky-bottom: #a8f0dc;
+      --ground: #d2b48c;
+      --ground-dark: #8b7355;
+      --pipe-green: #5cb85c;
+      --pipe-green-dark: #3d8b3d;
+      --pipe-highlight: #7ed87e;
+      --bird-yellow: #f5c842;
+      --bird-orange: #e8872a;
+      --bird-red: #d94040;
+      --title-stroke: #5a3a1a;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Fredoka', sans-serif;
+      background: #1a1a2e;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      cursor: pointer;
+    }
+
+    /* ── UI overlay ── */
+    #ui {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    #ui > * { pointer-events: auto; }
+
+    /* ── Score display ── */
+    #score-display {
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 4.5rem;
+      color: white;
+      text-shadow:
+        4px 4px 0 var(--title-stroke),
+        -2px -2px 0 var(--title-stroke),
+        2px -2px 0 var(--title-stroke),
+        -2px 2px 0 var(--title-stroke);
+      z-index: 20;
+      display: none;
+      user-select: none;
+    }
+
+    /* ── Splash screen ── */
+    .splash {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    .title {
+      font-family: 'Bungee Shade', cursive;
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
+      color: var(--bird-yellow);
+      text-shadow:
+        3px 3px 0 var(--bird-orange),
+        6px 6px 0 var(--title-stroke),
+        0 0 30px rgba(245, 200, 66, 0.4);
+      letter-spacing: 2px;
+      text-align: center;
+      line-height: 1.1;
+      animation: title-bounce 3s ease-in-out infinite;
+      user-select: none;
+    }
+
+    @keyframes title-bounce {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50%      { transform: translateY(-10px) rotate(1deg); }
+    }
+
+    /* ── Splash cockatiel ── */
+    .bird-container {
+      position: relative;
+      width: 120px;
+      height: 110px;
+      animation: bird-float 1.8s ease-in-out infinite;
+      filter: drop-shadow(3px 4px 0 rgba(0,0,0,0.15));
+      transform: scale(1.6);
+    }
+
+    @keyframes bird-float {
+      0%, 100% { transform: scale(1.6) translateY(0) rotate(0deg); }
+      30%      { transform: scale(1.6) translateY(-18px) rotate(-8deg); }
+      70%      { transform: scale(1.6) translateY(6px) rotate(4deg); }
+    }
+
+    .bird-crest { position: absolute; top: -2px; left: 28px; z-index: 4; }
+    .bird-crest-feather {
+      position: absolute; width: 6px; border-radius: 3px 3px 1px 1px;
+      border: 2px solid var(--title-stroke); transform-origin: bottom center;
+    }
+    .bird-crest-feather:nth-child(1) { height: 26px; background: var(--bird-yellow); top: -20px; left: 4px; transform: rotate(-10deg); }
+    .bird-crest-feather:nth-child(2) { height: 30px; background: var(--bird-yellow); top: -26px; left: 10px; transform: rotate(5deg); }
+    .bird-crest-feather:nth-child(3) { height: 24px; background: #f5c842; top: -18px; left: 16px; transform: rotate(18deg); }
+    .bird-crest-feather:nth-child(4) { height: 18px; background: #e8b830; top: -12px; left: 0px; transform: rotate(-20deg); }
+
+    .bird-head {
+      position: absolute; width: 40px; height: 36px; background: var(--bird-yellow);
+      border-radius: 50%; border: 3px solid var(--title-stroke); top: 10px; left: 24px; z-index: 3;
+    }
+    .bird-cheek {
+      position: absolute; width: 14px; height: 12px; background: #ff7733;
+      border-radius: 50%; top: 14px; right: 4px; z-index: 4; border: 1.5px solid var(--title-stroke);
+    }
+    .bird-eye {
+      position: absolute; width: 12px; height: 12px; background: white;
+      border-radius: 50%; border: 2px solid var(--title-stroke); top: 8px; right: 8px; z-index: 5;
+    }
+    .bird-eye::after {
+      content: ''; position: absolute; width: 6px; height: 6px;
+      background: var(--title-stroke); border-radius: 50%; top: 1px; right: 1px;
+    }
+    .bird-beak { position: absolute; left: 58px; top: 25px; z-index: 6; }
+    .bird-beak-top {
+      width: 14px; height: 10px; background: #888;
+      border-radius: 2px 10px 2px 2px; border: 2px solid var(--title-stroke); border-bottom: none;
+    }
+    .bird-beak-bottom {
+      width: 10px; height: 6px; background: #777;
+      border-radius: 0 0 6px 2px; border: 2px solid var(--title-stroke); border-top: 1px solid var(--title-stroke);
+    }
+    .bird-body {
+      position: absolute; width: 52px; height: 40px; background: #8a8a8a;
+      border-radius: 50%; border: 3px solid var(--title-stroke); top: 26px; left: 8px; z-index: 2;
+    }
+    .bird-body::before {
+      content: ''; position: absolute; width: 30px; height: 22px; background: #b0b0b0;
+      border-radius: 50%; top: 10px; left: 8px;
+    }
+    .bird-wing {
+      position: absolute; width: 30px; height: 20px; background: #6a6a6a;
+      border-radius: 50% 50% 50% 20%; border: 2px solid var(--title-stroke);
+      top: 30px; left: 0px; z-index: 2; transform-origin: right center;
+      animation: flap 0.3s ease-in-out infinite alternate;
+    }
+    .bird-wing::after {
+      content: ''; position: absolute; width: 18px; height: 4px; background: white;
+      border-radius: 2px; top: 8px; left: 3px; opacity: 0.7;
+    }
+    .bird-tail { position: absolute; top: 42px; left: -8px; z-index: 1; }
+    .bird-tail-feather {
+      position: absolute; border-radius: 2px; border: 2px solid var(--title-stroke);
+      transform-origin: top right;
+    }
+    .bird-tail-feather:nth-child(1) { width: 6px; height: 22px; background: #6a6a6a; transform: rotate(15deg); top: 0; left: 6px; }
+    .bird-tail-feather:nth-child(2) { width: 5px; height: 26px; background: #5a5a5a; transform: rotate(25deg); top: -2px; left: 0px; }
+
+    @keyframes flap { from { transform: rotate(25deg); } to { transform: rotate(-25deg); } }
+
+    /* ── Birds pair on splash ── */
+    .birds-row {
+      position: relative;
+      width: 300px;
+      height: 130px;
+    }
+
+    .birds-row .bird-container {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    /* Mate: smaller, behind and to the left, delayed animation */
+    .bird-container.mate {
+      transform: scale(1.2);
+      animation: bird-float-mate 1.8s ease-in-out infinite;
+      animation-delay: 0.35s;
+      right: auto;
+      left: 0;
+      top: 10px;
+      z-index: -1;
+    }
+
+    @keyframes bird-float-mate {
+      0%, 100% { transform: scale(1.2) translateY(0) rotate(0deg); }
+      30%      { transform: scale(1.2) translateY(-18px) rotate(-8deg); }
+      70%      { transform: scale(1.2) translateY(6px) rotate(4deg); }
+    }
+
+    .mate .bird-body { background: #c4b896; }
+    .mate .bird-body::before { background: #ddd5bc; }
+    .mate .bird-head { background: #ffe566; }
+    .mate .bird-cheek { background: #ff9955; }
+    .mate .bird-wing { background: #a89878; }
+    .mate .bird-beak-top { background: #999; }
+    .mate .bird-beak-bottom { background: #888; }
+    .mate .bird-crest-feather:nth-child(1) { background: #ffd633; }
+    .mate .bird-crest-feather:nth-child(2) { background: #ffe566; }
+    .mate .bird-crest-feather:nth-child(3) { background: #ffe566; }
+    .mate .bird-crest-feather:nth-child(4) { background: #ffd633; }
+    .mate .bird-tail-feather:nth-child(1) { background: #a08a6a; }
+    .mate .bird-tail-feather:nth-child(2) { background: #b09878; }
+
+    /* ── Play button ── */
+    .play-btn {
+      padding: 18px 56px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(180deg, #ff7b54 0%, #e84545 100%);
+      border: 4px solid var(--title-stroke);
+      border-radius: 16px;
+      cursor: pointer;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+      box-shadow: 0 6px 0 #a52a2a, 0 8px 15px rgba(0,0,0,0.2);
+      transition: transform 0.1s, box-shadow 0.1s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .play-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #a52a2a, 0 10px 20px rgba(0,0,0,0.25); }
+    .play-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #a52a2a, 0 3px 8px rgba(0,0,0,0.2); }
+
+    .tap-hint {
+      font-size: 1.1rem; font-weight: 600; color: rgba(255,255,255,0.85);
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.2); animation: pulse-hint 2s ease-in-out infinite;
+      letter-spacing: 1px;
+    }
+    @keyframes pulse-hint { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+    /* ── Game over overlay ── */
+    #game-over {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+
+    #game-over h2 {
+      font-family: 'Bungee Shade', cursive;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      color: var(--bird-red);
+      text-shadow:
+        3px 3px 0 var(--title-stroke),
+        0 0 20px rgba(217, 64, 64, 0.4);
+      text-align: center;
+    }
+
+    .score-panel {
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(8px);
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 16px;
+      padding: 24px 50px;
+      text-align: center;
+      color: white;
+    }
+
+    .score-panel .final-score {
+      font-size: 4rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+    }
+
+    .score-panel .best-score {
+      font-size: 1.1rem;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    #retry-btn {
+      padding: 16px 50px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(180deg, #5cb85c 0%, #3d8b3d 100%);
+      border: 4px solid var(--title-stroke);
+      border-radius: 16px;
+      cursor: pointer;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+      box-shadow: 0 6px 0 #2d6b2d, 0 8px 15px rgba(0,0,0,0.2);
+      transition: transform 0.1s, box-shadow 0.1s;
+      user-select: none;
+    }
+    #retry-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #2d6b2d, 0 10px 20px rgba(0,0,0,0.25); }
+    #retry-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #2d6b2d, 0 3px 8px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body>
+
+  <canvas id="game"></canvas>
+
+  <div id="ui">
+    <div id="score-display">0</div>
+
+    <div class="splash" id="splash">
+      <h1 class="title">Flappy<br>Cockatiels</h1>
+      <div class="birds-row">
+        <!-- Lead bird (grey) -->
+        <div class="bird-container">
+          <div class="bird-crest">
+            <div class="bird-crest-feather"></div>
+            <div class="bird-crest-feather"></div>
+            <div class="bird-crest-feather"></div>
+            <div class="bird-crest-feather"></div>
+          </div>
+          <div class="bird-head">
+            <div class="bird-cheek"></div>
+            <div class="bird-eye"></div>
+          </div>
+          <div class="bird-beak">
+            <div class="bird-beak-top"></div>
+            <div class="bird-beak-bottom"></div>
+          </div>
+          <div class="bird-body"></div>
+          <div class="bird-wing"></div>
+          <div class="bird-tail">
+            <div class="bird-tail-feather"></div>
+            <div class="bird-tail-feather"></div>
+          </div>
+        </div>
+        <!-- Mate bird (lutino) -->
+        <div class="bird-container mate">
+          <div class="bird-crest">
+            <div class="bird-crest-feather"></div>
+            <div class="bird-crest-feather"></div>
+            <div class="bird-crest-feather"></div>
+            <div class="bird-crest-feather"></div>
+          </div>
+          <div class="bird-head">
+            <div class="bird-cheek"></div>
+            <div class="bird-eye"></div>
+          </div>
+          <div class="bird-beak">
+            <div class="bird-beak-top"></div>
+            <div class="bird-beak-bottom"></div>
+          </div>
+          <div class="bird-body"></div>
+          <div class="bird-wing"></div>
+          <div class="bird-tail">
+            <div class="bird-tail-feather"></div>
+            <div class="bird-tail-feather"></div>
+          </div>
+        </div>
+      </div>
+      <button class="play-btn" id="play-btn">PLAY</button>
+      <p class="tap-hint">CLICK OR SPACE TO FLAP</p>
+    </div>
+
+    <div id="game-over">
+      <h2>Game Over</h2>
+      <div class="score-panel">
+        <div class="final-score" id="final-score">0</div>
+        <div class="best-score" id="best-score">Best: 0</div>
+      </div>
+      <button id="retry-btn">RETRY</button>
+    </div>
+  </div>
+
+<script>
+// ── Canvas setup — full window ──
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+let W, H, scale;
+
+function resize() {
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = W;
+  canvas.height = H;
+  scale = H / 900;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ── Game state ──
+const STATE = { SPLASH: 0, PLAYING: 1, DEAD: 2 };
+let state = STATE.SPLASH;
+let score = 0;
+let bestScore = parseInt(localStorage.getItem('flappyCockatielsBest') || '0');
+
+// ── Scaled helpers — all game values scale with window height ──
+function S(v) { return v * scale; }
+
+// ── Physics (base values at 900px height) ──
+// Fixed values that don't change with difficulty
+const BASE = {
+  gravity: 0.45,
+  flapForce: -8,
+  pipeWidth: 70,
+  pipeCapH: 28,
+  pipeCapExtra: 10,
+  groundH: 80,
+  birdW: 48,
+  birdH: 38,
+};
+
+// Difficulty ramps with score — returns current difficulty settings
+function getDifficulty() {
+  // Progress from 0.0 (start) to 1.0 (max difficulty around score 40)
+  const t = Math.min(score / 40, 1);
+  return {
+    pipeSpeed:    3.5,                   // constant speed
+    pipeGap:      lerp(250, 135, t),     // vertical gap between top & bottom pipe
+    pipeInterval: lerp(2400, 1200, t),   // horizontal distance (time between spawns)
+  };
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+// Bird x positions
+function birdX() { return W * 0.22; }
+function mateX() { return W * 0.13; }
+
+// ── Lead bird ──
+const bird = {
+  y: 0,
+  vy: 0,
+  rotation: 0,
+  flapFrame: 0,
+};
+
+// ── Mate bird — follows the lead with a delay ──
+const MATE_DELAY = 12; // frames of delay
+let pathHistory = [];  // stores { y, rotation, flapFrame } per frame
+const mate = {
+  y: 0,
+  rotation: 0,
+  flapFrame: 0,
+  scale: 0.85, // slightly smaller
+};
+
+// Color palettes
+const LEAD_COLORS = {
+  body: '#8a8a8a',
+  belly: '#b0b0b0',
+  head: '#f5c842',
+  cheek: '#ff7733',
+  wing: '#6a6a6a',
+  wingBar: 'rgba(255,255,255,0.5)',
+  tail1: '#5a5a5a',
+  tail2: '#6a6a6a',
+  crest: ['#e8b830', '#f5c842', '#f5c842', '#e8b830'],
+  beakTop: '#888',
+  beakBot: '#777',
+};
+
+// Mate: lighter, warmer tones — a lutino-ish cockatiel
+const MATE_COLORS = {
+  body: '#c4b896',
+  belly: '#ddd5bc',
+  head: '#ffe566',
+  cheek: '#ff9955',
+  wing: '#a89878',
+  wingBar: 'rgba(255,255,255,0.6)',
+  tail1: '#a08a6a',
+  tail2: '#b09878',
+  crest: ['#ffd633', '#ffe566', '#ffe566', '#ffd633'],
+  beakTop: '#999',
+  beakBot: '#888',
+};
+
+// ── Pipes ──
+let pipes = [];
+let pipeTimer = 0;
+
+// ── Clouds — spread across full width ──
+let clouds = [];
+function initClouds() {
+  clouds = [];
+  const count = Math.max(5, Math.floor(W / 250));
+  for (let i = 0; i < count; i++) {
+    clouds.push({
+      x: Math.random() * W,
+      y: 30 + Math.random() * (H * 0.35),
+      w: 60 + Math.random() * 80,
+      speed: 0.15 + Math.random() * 0.35,
+    });
+  }
+}
+initClouds();
+
+// ── Ground scroll ──
+let groundX = 0;
+
+// ── DOM refs ──
+const splashEl = document.getElementById('splash');
+const scoreEl = document.getElementById('score-display');
+const gameOverEl = document.getElementById('game-over');
+const finalScoreEl = document.getElementById('final-score');
+const bestScoreEl = document.getElementById('best-score');
+
+// ── Start game ──
+function startGame() {
+  state = STATE.PLAYING;
+  score = 0;
+  bird.y = H / 2;
+  bird.vy = 0;
+  bird.rotation = 0;
+  bird.flapFrame = 0;
+  mate.y = H / 2;
+  mate.rotation = 0;
+  mate.flapFrame = 0;
+  pathHistory = [];
+  // Pre-fill history so mate starts at same position
+  for (let i = 0; i < MATE_DELAY; i++) {
+    pathHistory.push({ y: H / 2, rotation: 0, flapFrame: 0 });
+  }
+  pipes = [];
+  pipeTimer = getDifficulty().pipeInterval / 2; // first pipes come sooner
+  splashEl.style.display = 'none';
+  gameOverEl.style.display = 'none';
+  scoreEl.style.display = 'block';
+  scoreEl.textContent = '0';
+}
+
+function die() {
+  state = STATE.DEAD;
+  scoreEl.style.display = 'none';
+  if (score > bestScore) {
+    bestScore = score;
+    localStorage.setItem('flappyCockatielsBest', bestScore);
+  }
+  finalScoreEl.textContent = score;
+  bestScoreEl.textContent = 'Best: ' + bestScore;
+  gameOverEl.style.display = 'flex';
+}
+
+function flap() {
+  if (state === STATE.PLAYING) {
+    bird.vy = S(BASE.flapForce);
+    bird.flapFrame = 6;
+  }
+}
+
+// ── Input ──
+document.getElementById('play-btn').addEventListener('click', startGame);
+document.getElementById('retry-btn').addEventListener('click', startGame);
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' || e.code === 'ArrowUp') {
+    e.preventDefault();
+    if (state === STATE.SPLASH) startGame();
+    else if (state === STATE.PLAYING) flap();
+    else if (state === STATE.DEAD) startGame();
+  }
+});
+
+canvas.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  if (state === STATE.PLAYING) flap();
+});
+
+// ── Pipe spawning ──
+function spawnPipe() {
+  const diff = getDifficulty();
+  const gap = S(diff.pipeGap);
+  const groundH = S(BASE.groundH);
+  const capH = S(BASE.pipeCapH);
+  const minTop = capH + 40 * scale;
+  const maxTop = H - groundH - gap - capH - 40 * scale;
+  const topH = minTop + Math.random() * (maxTop - minTop);
+  pipes.push({
+    x: W + 10,
+    topH: topH,
+    gap: gap,
+    scored: false,
+  });
+}
+
+// ── Update ──
+let lastTime = 0;
+
+function update(dt) {
+  // Clamp dt to avoid physics explosion on tab-switch
+  if (dt > 100) dt = 16;
+
+  const groundH = S(BASE.groundH);
+  const diff = getDifficulty();
+  const pipeSpeed = S(diff.pipeSpeed);
+  const pipeW = S(BASE.pipeWidth);
+  const bw = S(BASE.birdW);
+  const bh = S(BASE.birdH);
+  const bx = birdX();
+
+  // Always scroll clouds and ground
+  groundX -= (state === STATE.SPLASH ? 0.5 : pipeSpeed);
+  if (groundX <= -W) groundX += W;
+  for (const c of clouds) {
+    c.x -= c.speed * (state === STATE.SPLASH ? 0.4 : 1);
+    if (c.x + c.w < 0) c.x = W + Math.random() * 100;
+  }
+
+  if (state !== STATE.PLAYING) return;
+
+  // Bird physics
+  bird.vy += S(BASE.gravity);
+  bird.y += bird.vy;
+  bird.flapFrame = Math.max(0, bird.flapFrame - 1);
+
+  // Rotation
+  bird.rotation = Math.max(-25, Math.min((bird.vy / scale) * 3, 70));
+
+  // Record path for mate
+  pathHistory.push({ y: bird.y, rotation: bird.rotation, flapFrame: bird.flapFrame });
+
+  // Update mate from delayed path
+  if (pathHistory.length > MATE_DELAY) {
+    const delayed = pathHistory[pathHistory.length - 1 - MATE_DELAY];
+    mate.y = delayed.y;
+    mate.rotation = delayed.rotation;
+    mate.flapFrame = delayed.flapFrame;
+  }
+
+  // Trim history to avoid unbounded growth
+  if (pathHistory.length > MATE_DELAY + 60) {
+    pathHistory.splice(0, pathHistory.length - MATE_DELAY - 30);
+  }
+
+  // Pipe timer
+  pipeTimer += dt;
+  if (pipeTimer >= diff.pipeInterval) {
+    pipeTimer -= diff.pipeInterval;
+    spawnPipe();
+  }
+
+  // Move pipes
+  for (let i = pipes.length - 1; i >= 0; i--) {
+    const p = pipes[i];
+    p.x -= pipeSpeed;
+
+    if (!p.scored && p.x + pipeW < bx) {
+      p.scored = true;
+      score++;
+      scoreEl.textContent = score;
+    }
+
+    if (p.x + pipeW < -20) {
+      pipes.splice(i, 1);
+    }
+  }
+
+  // Collision — ground/ceiling (lead bird)
+  if (bird.y + bh / 2 >= H - groundH) {
+    bird.y = H - groundH - bh / 2;
+    die();
+    return;
+  }
+  if (bird.y - bh / 2 <= 0) {
+    bird.y = bh / 2;
+    bird.vy = 0;
+  }
+
+  // Collision — pipes for lead bird
+  const inset = 5 * scale;
+  const hx = bx - bw / 2 + inset;
+  const hy = bird.y - bh / 2 + inset;
+  const hw = bw - inset * 2;
+  const hh = bh - inset * 2;
+
+  for (const p of pipes) {
+    if (rectOverlap(hx, hy, hw, hh, p.x, 0, pipeW, p.topH)) { die(); return; }
+    const botY = p.topH + p.gap;
+    if (rectOverlap(hx, hy, hw, hh, p.x, botY, pipeW, H - botY - groundH)) { die(); return; }
+  }
+
+  // Collision — pipes for mate bird
+  const mx = mateX();
+  const ms = mate.scale;
+  const mbw = bw * ms;
+  const mbh = bh * ms;
+  const mi = inset * ms;
+  const mhx = mx - mbw / 2 + mi;
+  const mhy = mate.y - mbh / 2 + mi;
+  const mhw = mbw - mi * 2;
+  const mhh = mbh - mi * 2;
+
+  for (const p of pipes) {
+    if (rectOverlap(mhx, mhy, mhw, mhh, p.x, 0, pipeW, p.topH)) { die(); return; }
+    const botY = p.topH + p.gap;
+    if (rectOverlap(mhx, mhy, mhw, mhh, p.x, botY, pipeW, H - botY - groundH)) { die(); return; }
+  }
+
+  // Mate ground collision
+  if (mate.y + mbh / 2 >= H - groundH) {
+    die();
+    return;
+  }
+}
+
+function rectOverlap(x1, y1, w1, h1, x2, y2, w2, h2) {
+  return x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2;
+}
+
+// ── Drawing ──
+function draw() {
+  const groundH = S(BASE.groundH);
+
+  // Sky gradient
+  const skyGrad = ctx.createLinearGradient(0, 0, 0, H - groundH);
+  skyGrad.addColorStop(0, '#2dc4e0');
+  skyGrad.addColorStop(0.6, '#6ee4f5');
+  skyGrad.addColorStop(1, '#a8f0dc');
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, W, H - groundH);
+
+  // Clouds
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  for (const c of clouds) {
+    drawCloud(c.x, c.y, c.w);
+  }
+
+  // Pipes
+  for (const p of pipes) {
+    drawPipe(p);
+  }
+
+  // Ground
+  drawGround();
+
+  // Birds (mate drawn behind lead)
+  if (state !== STATE.SPLASH) {
+    drawCockatiel(mateX(), mate.y, mate.rotation, mate.flapFrame, MATE_COLORS, mate.scale);
+    drawCockatiel(birdX(), bird.y, bird.rotation, bird.flapFrame, LEAD_COLORS, 1);
+  }
+}
+
+function drawCloud(x, y, w) {
+  const h = w * 0.4;
+  ctx.beginPath();
+  ctx.ellipse(x + w * 0.3, y, w * 0.25, h * 0.6, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + w * 0.55, y - h * 0.15, w * 0.2, h * 0.5, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + w * 0.5, y + h * 0.1, w * 0.3, h * 0.4, 0, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawPipe(p) {
+  const pipeW = S(BASE.pipeWidth);
+  const capH = S(BASE.pipeCapH);
+  const capExtra = S(BASE.pipeCapExtra);
+  const capW = pipeW + capExtra * 2;
+  const capX = p.x - capExtra;
+  const gap = p.gap;
+  const groundH = S(BASE.groundH);
+
+  // Pipe gradient
+  const pGrad = ctx.createLinearGradient(p.x, 0, p.x + pipeW, 0);
+  pGrad.addColorStop(0, '#3d8b3d');
+  pGrad.addColorStop(0.3, '#5cb85c');
+  pGrad.addColorStop(0.6, '#7ed87e');
+  pGrad.addColorStop(0.8, '#5cb85c');
+  pGrad.addColorStop(1, '#3d8b3d');
+
+  const cGrad = ctx.createLinearGradient(capX, 0, capX + capW, 0);
+  cGrad.addColorStop(0, '#3d8b3d');
+  cGrad.addColorStop(0.25, '#5cb85c');
+  cGrad.addColorStop(0.55, '#7ed87e');
+  cGrad.addColorStop(0.75, '#5cb85c');
+  cGrad.addColorStop(1, '#3d8b3d');
+
+  ctx.strokeStyle = '#2d6b2d';
+  ctx.lineWidth = 2;
+
+  // Top pipe
+  ctx.fillStyle = pGrad;
+  ctx.fillRect(p.x, 0, pipeW, p.topH - capH);
+  ctx.strokeRect(p.x, 0, pipeW, p.topH - capH);
+  ctx.fillStyle = cGrad;
+  ctx.fillRect(capX, p.topH - capH, capW, capH);
+  ctx.strokeRect(capX, p.topH - capH, capW, capH);
+
+  // Bottom pipe
+  const botY = p.topH + gap;
+  const botH = H - botY - groundH;
+  ctx.fillStyle = pGrad;
+  ctx.fillRect(p.x, botY + capH, pipeW, botH - capH);
+  ctx.strokeRect(p.x, botY + capH, pipeW, botH - capH);
+  ctx.fillStyle = cGrad;
+  ctx.fillRect(capX, botY, capW, capH);
+  ctx.strokeRect(capX, botY, capW, capH);
+}
+
+function drawGround() {
+  const groundH = S(BASE.groundH);
+
+  // Green strip
+  ctx.fillStyle = '#3d8b3d';
+  ctx.fillRect(0, H - groundH, W, 8);
+
+  // Dirt
+  const dirtGrad = ctx.createLinearGradient(0, H - groundH + 8, 0, H);
+  dirtGrad.addColorStop(0, '#d2b48c');
+  dirtGrad.addColorStop(1, '#8b7355');
+  ctx.fillStyle = dirtGrad;
+  ctx.fillRect(0, H - groundH + 8, W, groundH - 8);
+
+  // Stripes
+  ctx.fillStyle = 'rgba(0,0,0,0.04)';
+  const stripeW = 50;
+  const offset = ((groundX % stripeW) + stripeW) % stripeW;
+  for (let x = -stripeW + offset; x < W + stripeW; x += stripeW * 2) {
+    ctx.fillRect(x, H - groundH + 8, stripeW, groundH - 8);
+  }
+}
+
+function drawCockatiel(x, y, rotation, flapFrame, colors, birdScale) {
+  const s = scale * birdScale;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotation * Math.PI / 180);
+
+  // Drop shadow
+  ctx.shadowColor = 'rgba(0,0,0,0.15)';
+  ctx.shadowOffsetX = 3 * s;
+  ctx.shadowOffsetY = 4 * s;
+  ctx.shadowBlur = 0;
+
+  const stroke = '#5a3a1a';
+  const lw = 3 * s;
+
+  // ── Tail feathers (detached sticks, bottom-left) ──
+  ctx.save();
+  ctx.translate(-22 * s, 12 * s);
+  ctx.save();
+  ctx.rotate(0.45);
+  ctx.fillStyle = colors.tail1;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = 2 * s;
+  ctx.beginPath();
+  ctx.roundRect(-2.5 * s, 0, 5 * s, 22 * s, 2 * s);
+  ctx.fill(); ctx.stroke();
+  ctx.restore();
+  ctx.save();
+  ctx.rotate(0.75);
+  ctx.fillStyle = colors.tail2;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = 2 * s;
+  ctx.beginPath();
+  ctx.roundRect(-2.5 * s, 0, 5 * s, 26 * s, 2 * s);
+  ctx.fill(); ctx.stroke();
+  ctx.restore();
+  ctx.restore();
+
+  // ── Wing ──
+  ctx.save();
+  const wingAngle = flapFrame > 0 ? -0.5 : 0.35;
+  ctx.translate(-10 * s, 2 * s);
+  ctx.rotate(wingAngle);
+  ctx.fillStyle = colors.wing;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = lw;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 15 * s, 10 * s, -0.3, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+  ctx.shadowColor = 'transparent';
+  ctx.fillStyle = colors.wingBar;
+  ctx.beginPath();
+  ctx.ellipse(-1 * s, 2 * s, 9 * s, 2 * s, -0.3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // ── Body ──
+  ctx.shadowColor = 'rgba(0,0,0,0.15)';
+  ctx.shadowOffsetX = 3 * s;
+  ctx.shadowOffsetY = 4 * s;
+  ctx.fillStyle = colors.body;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = lw;
+  ctx.beginPath();
+  ctx.arc(0, 4 * s, 20 * s, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+
+  // Belly
+  ctx.shadowColor = 'transparent';
+  ctx.fillStyle = colors.belly;
+  ctx.beginPath();
+  ctx.ellipse(-2 * s, 9 * s, 11 * s, 8 * s, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // ── Head ──
+  ctx.shadowColor = 'rgba(0,0,0,0.15)';
+  ctx.shadowOffsetX = 3 * s;
+  ctx.shadowOffsetY = 4 * s;
+  ctx.fillStyle = colors.head;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = lw;
+  ctx.beginPath();
+  ctx.arc(12 * s, -10 * s, 15 * s, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+
+  ctx.shadowColor = 'transparent';
+
+  // ── Cheek ──
+  ctx.fillStyle = colors.cheek;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = 1.5 * s;
+  ctx.beginPath();
+  ctx.ellipse(19 * s, -3 * s, 6 * s, 5 * s, 0, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+
+  // ── Eye ──
+  ctx.fillStyle = 'white';
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = 2 * s;
+  ctx.beginPath();
+  ctx.arc(18 * s, -12 * s, 5 * s, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = stroke;
+  ctx.beginPath();
+  ctx.arc(19.5 * s, -12 * s, 2.5 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'white';
+  ctx.beginPath();
+  ctx.arc(20.5 * s, -13.5 * s, 1 * s, 0, Math.PI * 2);
+  ctx.fill();
+
+  // ── Beak ──
+  ctx.fillStyle = colors.beakTop;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = 2 * s;
+  ctx.beginPath();
+  ctx.moveTo(25 * s, -9 * s);
+  ctx.quadraticCurveTo(32 * s, -10 * s, 30 * s, -6 * s);
+  ctx.lineTo(25 * s, -5 * s);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = colors.beakBot;
+  ctx.beginPath();
+  ctx.moveTo(25 * s, -5 * s);
+  ctx.quadraticCurveTo(30 * s, -4 * s, 28 * s, -2 * s);
+  ctx.lineTo(25 * s, -3 * s);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+
+  // ── Crest feathers ──
+  ctx.lineWidth = 2 * s;
+  const crestDefs = [
+    { angle: -1.3, h: 20 },
+    { angle: -1.0, h: 26 },
+    { angle: -0.7, h: 23 },
+    { angle: -0.4, h: 17 },
+  ];
+  for (let i = 0; i < crestDefs.length; i++) {
+    const f = crestDefs[i];
+    ctx.save();
+    ctx.translate(8 * s, -23 * s);
+    ctx.rotate(f.angle);
+    ctx.fillStyle = colors.crest[i];
+    ctx.strokeStyle = stroke;
+    ctx.beginPath();
+    ctx.roundRect(-2.5 * s, -f.h * s, 5 * s, f.h * s, [2.5 * s, 2.5 * s, 0, 0]);
+    ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+
+  ctx.restore();
+}
+
+// ── Game loop ──
+function gameLoop(time) {
+  const dt = lastTime ? time - lastTime : 16;
+  lastTime = time;
+
+  update(dt);
+  draw();
+
+  requestAnimationFrame(gameLoop);
+}
+
+window.addEventListener('resize', () => {
+  resize();
+  initClouds();
+});
+
+requestAnimationFrame(gameLoop);
+</script>
+
+</body>
+</html>
