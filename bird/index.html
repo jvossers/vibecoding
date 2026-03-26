@@ -618,8 +618,6 @@ function spawnPipe() {
 let lastTime = 0;
 
 function update(dt) {
-  // Clamp dt to a single frame — prevents speed bursts from touch-induced rAF hiccups
-  if (dt > 25) dt = 16;
 
   const groundH = S(BASE.groundH);
   const diff = getDifficulty();
@@ -1002,14 +1000,25 @@ function drawCockatiel(x, y, rotation, flapFrame, colors, birdScale) {
   ctx.restore();
 }
 
-// ── Game loop ──
+// ── Game loop — fixed timestep for consistent physics ──
+const TICK = 1000 / 60; // 16.67ms per physics step
+let accumulator = 0;
+
 function gameLoop(time) {
-  const dt = lastTime ? time - lastTime : 16;
+  let dt = lastTime ? time - lastTime : TICK;
   lastTime = time;
 
-  update(dt);
-  draw();
+  // Cap accumulated time to prevent spiral of death (e.g., tab switch)
+  if (dt > 200) dt = TICK;
+  accumulator += dt;
 
+  // Run physics in fixed steps — always the same regardless of frame timing
+  while (accumulator >= TICK) {
+    update(TICK);
+    accumulator -= TICK;
+  }
+
+  draw();
   requestAnimationFrame(gameLoop);
 }
 
