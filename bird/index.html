@@ -30,6 +30,11 @@
       overflow: hidden;
       font-family: 'Fredoka', sans-serif;
       background: #1a1a2e;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      touch-action: manipulation;
     }
 
     body {
@@ -44,6 +49,7 @@
       width: 100vw;
       height: 100vh;
       cursor: pointer;
+      touch-action: manipulation;
     }
 
     /* ── UI overlay ── */
@@ -612,8 +618,8 @@ function spawnPipe() {
 let lastTime = 0;
 
 function update(dt) {
-  // Clamp dt to avoid physics explosion on tab-switch
-  if (dt > 100) dt = 16;
+  // Clamp dt to a single frame — prevents speed bursts from touch-induced rAF hiccups
+  if (dt > 25) dt = 16;
 
   const groundH = S(BASE.groundH);
   const diff = getDifficulty();
