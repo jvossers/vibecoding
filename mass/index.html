@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding the Mass</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --burgundy: #6b1d2a;
+            --burgundy-deep: #3e0f18;
+            --burgundy-soft: #8a3040;
+            --gold: #c9a84c;
+            --gold-light: #e4d5a0;
+            --gold-glow: #d4b85c;
+            --cream: #f5f0e8;
+            --parchment: #ede4d3;
+            --warm-white: #e8ddca;
+            --text-dark: #1a1210;
+            --text-muted: #4a3c3c;
+            --text-light: #6b5a5a;
+            --fixed-color: #c9a84c;
+            --fixed-bg: rgba(201, 168, 76, 0.06);
+            --fixed-border: rgba(201, 168, 76, 0.25);
+            --variable-color: #7a6aa0;
+            --variable-bg: rgba(122, 106, 160, 0.06);
+            --variable-border: rgba(122, 106, 160, 0.25);
+            --timeline-line: #d9d0c3;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: var(--warm-white);
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Subtle parchment texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 30% 20%, rgba(201, 168, 76, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(107, 29, 42, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(228, 213, 160, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Grain texture */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .rose-window {
+            width: 160px;
+            height: 160px;
+            margin-bottom: 2.5rem;
+            animation: fadeScale 2s ease-out forwards;
+            opacity: 0;
+        }
+
+        .rose-window svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 30px rgba(201, 168, 76, 0.15));
+        }
+
+        .rose-petal {
+            fill: none;
+            stroke: var(--gold);
+            stroke-width: 0.8;
+            opacity: 0.7;
+        }
+
+        .rose-circle { fill: none; stroke: var(--gold); }
+        .rose-circle-outer { stroke-width: 1.2; opacity: 0.5; }
+        .rose-circle-inner { stroke-width: 0.6; opacity: 0.5; }
+        .rose-center { fill: var(--gold); opacity: 0.6; }
+        .cross-line { stroke: var(--gold); stroke-width: 0.8; opacity: 0.4; }
+
+        .hero-title {
+            font-family: 'Cinzel', Georgia, serif;
+            font-weight: 600;
+            font-size: clamp(2.2rem, 5vw, 3.4rem);
+            color: var(--burgundy);
+            letter-spacing: 0.08em;
+            text-align: center;
+            line-height: 1.3;
+            opacity: 0;
+            animation: fadeUp 1.2s ease-out 0.3s forwards;
+        }
+
+        .ornament {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 0.6s forwards;
+        }
+
+        .ornament-line {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .ornament-diamond {
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            transform: rotate(45deg);
+        }
+
+        .hero-subtitle {
+            font-weight: 400;
+            font-style: italic;
+            font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.7;
+            max-width: 520px;
+            opacity: 0;
+            animation: fadeUp 1.2s ease-out 0.8s forwards;
+        }
+
+        .scroll-hint {
+            margin-top: 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 1.2s forwards;
+        }
+
+        .scroll-hint span {
+            font-family: 'Cinzel', Georgia, serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        .scroll-arrow {
+            width: 20px;
+            height: 20px;
+            border-right: 1.5px solid var(--gold);
+            border-bottom: 1.5px solid var(--gold);
+            transform: rotate(45deg);
+            animation: bobDown 2s ease-in-out infinite;
+        }
+
+        @keyframes bobDown {
+            0%, 100% { transform: rotate(45deg) translateY(-3px); opacity: 0.5; }
+            50% { transform: rotate(45deg) translateY(3px); opacity: 1; }
+        }
+
+        /* ===== LEGEND ===== */
+        .legend {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(232, 221, 202, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            font-size: 0.85rem;
+            transition: box-shadow 0.3s;
+        }
+
+        .legend.scrolled {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.fixed {
+            background: var(--fixed-color);
+            box-shadow: 0 0 6px rgba(201, 168, 76, 0.3);
+        }
+
+        .legend-dot.variable {
+            background: var(--variable-color);
+            box-shadow: 0 0 6px rgba(122, 106, 160, 0.3);
+        }
+
+        .legend-label {
+            font-family: 'Cinzel', Georgia, serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        /* ===== TIMELINE ===== */
+        .timeline-container {
+            position: relative;
+            z-index: 2;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 3rem 2rem 6rem;
+        }
+
+        /* The vertical line */
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            left: 28px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom,
+                transparent,
+                var(--timeline-line) 3rem,
+                var(--timeline-line) calc(100% - 3rem),
+                transparent
+            );
+        }
+
+        /* ===== SECTION HEADERS ===== */
+        .section-header {
+            position: relative;
+            margin: 3rem 0 2rem;
+            padding-left: 60px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .section-header.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-header:first-child {
+            margin-top: 0;
+        }
+
+        .section-marker {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            border: 2px solid var(--burgundy);
+            background: var(--warm-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+        }
+
+        .section-marker-inner {
+            width: 8px;
+            height: 8px;
+            background: var(--burgundy);
+            transform: rotate(45deg);
+        }
+
+        .section-number {
+            font-family: 'Cinzel', Georgia, serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+
+        .section-title {
+            font-family: 'Cinzel', Georgia, serif;
+            font-weight: 600;
+            font-size: clamp(1.3rem, 3vw, 1.7rem);
+            color: var(--burgundy);
+            letter-spacing: 0.05em;
+            line-height: 1.3;
+        }
+
+        .section-desc {
+            font-style: italic;
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+            line-height: 1.5;
+        }
+
+        /* ===== TIMELINE ITEMS ===== */
+        .timeline-item {
+            position: relative;
+            padding-left: 60px;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Node on the timeline */
+        .timeline-node {
+            position: absolute;
+            left: 21px;
+            top: 1.2rem;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid;
+            background: var(--warm-white);
+            z-index: 3;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .timeline-item:hover .timeline-node {
+            transform: scale(1.25);
+        }
+
+        .timeline-item.fixed .timeline-node {
+            border-color: var(--fixed-color);
+            box-shadow: 0 0 0 3px var(--fixed-bg);
+        }
+
+        .timeline-item.fixed:hover .timeline-node {
+            box-shadow: 0 0 12px rgba(201, 168, 76, 0.35);
+        }
+
+        .timeline-item.variable .timeline-node {
+            border-color: var(--variable-color);
+            box-shadow: 0 0 0 3px var(--variable-bg);
+        }
+
+        .timeline-item.variable:hover .timeline-node {
+            box-shadow: 0 0 12px rgba(122, 106, 160, 0.35);
+        }
+
+        /* Card */
+        .timeline-card {
+            padding: 1.25rem 1.5rem;
+            border-radius: 4px;
+            border: 1px solid;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .timeline-item:hover .timeline-card {
+            transform: translateX(4px);
+        }
+
+        .timeline-item.expanded .timeline-card {
+            transform: translateX(4px);
+        }
+
+        .timeline-item.fixed .timeline-card {
+            background: var(--fixed-bg);
+            border-color: var(--fixed-border);
+        }
+
+        .timeline-item.fixed:hover .timeline-card,
+        .timeline-item.fixed.expanded .timeline-card {
+            box-shadow: 0 4px 20px rgba(201, 168, 76, 0.1);
+        }
+
+        .timeline-item.variable .timeline-card {
+            background: var(--variable-bg);
+            border-color: var(--variable-border);
+        }
+
+        .timeline-item.variable:hover .timeline-card,
+        .timeline-item.variable.expanded .timeline-card {
+            box-shadow: 0 4px 20px rgba(122, 106, 160, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .step-name {
+            font-family: 'Cinzel', Georgia, serif;
+            font-weight: 600;
+            font-size: 1.05rem;
+            letter-spacing: 0.03em;
+        }
+
+        .timeline-item.fixed .step-name { color: #8a7230; }
+        .timeline-item.variable .step-name { color: #5c4f7a; }
+
+        .step-latin {
+            font-style: italic;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .step-type {
+            font-family: 'Cinzel', Georgia, serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.15rem 0.5rem;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .timeline-item.fixed .step-type {
+            color: var(--fixed-color);
+            background: rgba(201, 168, 76, 0.1);
+        }
+
+        .timeline-item.variable .step-type {
+            color: var(--variable-color);
+            background: rgba(122, 106, 160, 0.1);
+        }
+
+        /* Expand chevron */
+        .expand-chevron {
+            margin-left: auto;
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .expand-chevron svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0.35;
+            transition: opacity 0.3s;
+        }
+
+        .timeline-item:hover .expand-chevron svg {
+            opacity: 0.6;
+        }
+
+        .timeline-item.expanded .expand-chevron {
+            transform: rotate(180deg);
+        }
+
+        .timeline-item.expanded .expand-chevron svg {
+            opacity: 0.7;
+        }
+
+        .timeline-item.fixed .expand-chevron svg { stroke: #8a7230; }
+        .timeline-item.variable .expand-chevron svg { stroke: #5c4f7a; }
+
+        .step-description {
+            font-size: 1.05rem;
+            line-height: 1.65;
+            color: var(--text-muted);
+        }
+
+        .step-note {
+            margin-top: 0.6rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 0.95rem;
+            font-style: italic;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        /* ===== EXPANDABLE DETAIL PANEL ===== */
+        .step-detail {
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.45s ease, opacity 0.35s ease, margin-top 0.35s ease;
+            margin-top: 0;
+        }
+
+        .timeline-item.expanded .step-detail {
+            max-height: 600px;
+            opacity: 1;
+            margin-top: 0.8rem;
+        }
+
+        .step-detail-inner {
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .detail-section {
+            margin-bottom: 0.75rem;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            font-family: 'Cinzel', Georgia, serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-light);
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .detail-text em {
+            color: var(--text-dark);
+            font-style: italic;
+        }
+
+        .detail-quote {
+            font-style: italic;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: var(--text-dark);
+            padding-left: 1rem;
+            border-left: 2px solid var(--gold-light);
+            margin: 0.4rem 0;
+        }
+
+        .detail-tip {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            background: rgba(0, 0, 0, 0.03);
+            padding: 0.6rem 0.8rem;
+            border-radius: 3px;
+            margin-top: 0.3rem;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 4rem 2rem;
+            border-top: 1px solid rgba(201, 168, 76, 0.15);
+        }
+
+        .footer-ornament-inline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-ornament-inline .ornament-line { width: 40px; }
+
+        .footer p {
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-style: normal;
+        }
+
+        /* Bottom decorative border */
+        .bottom-border {
+            position: relative;
+            z-index: 2;
+            height: 4px;
+            background: linear-gradient(90deg,
+                transparent,
+                var(--gold-light) 20%,
+                var(--gold) 50%,
+                var(--gold-light) 80%,
+                transparent
+            );
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeScale {
+            from { opacity: 0; transform: scale(0.85); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .rose-window {
+                width: 120px;
+                height: 120px;
+                margin-bottom: 2rem;
+            }
+
+            .ornament-line { width: 40px; }
+
+            .timeline-container { padding: 2rem 1rem 4rem; }
+            .timeline-container::before { left: 20px; }
+
+            .section-header { padding-left: 48px; }
+            .section-marker { left: 6px; width: 28px; height: 28px; }
+
+            .timeline-item { padding-left: 48px; margin-bottom: 1.25rem; }
+            .timeline-node { left: 13px; width: 14px; height: 14px; }
+
+            .timeline-card { padding: 1rem 1.15rem; }
+
+            .card-header {
+                flex-wrap: wrap;
+                gap: 0.35rem;
+            }
+
+            .step-type {
+                margin-left: 0;
+                order: -1;
+                width: fit-content;
+            }
+
+            .legend { gap: 1rem; padding: 0.7rem 1rem; }
+        }
+
+        @media (max-width: 380px) {
+            .legend { flex-direction: column; gap: 0.3rem; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HERO ===== -->
+    <header class="hero">
+        <div class="rose-window">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle class="rose-circle rose-circle-outer" cx="50" cy="50" r="48" />
+                <ellipse class="rose-petal" cx="50" cy="30" rx="8" ry="18" transform="rotate(0 50 50)" />
+                <ellipse class="rose-petal" cx="50" cy="30" rx="8" ry="18" transform="rotate(45 50 50)" />
+                <ellipse class="rose-petal" cx="50" cy="30" rx="8" ry="18" transform="rotate(90 50 50)" />
+                <ellipse class="rose-petal" cx="50" cy="30" rx="8" ry="18" transform="rotate(135 50 50)" />
+                <ellipse class="rose-petal" cx="50" cy="30" rx="8" ry="18" transform="rotate(180 50 50)" />
+                <ellipse class="rose-petal" cx="50" cy="30" rx="8" ry="18" transform="rotate(225 50 50)" />
+                <ellipse class="rose-petal" cx="50" cy="30" rx="8" ry="18" transform="rotate(270 50 50)" />
+                <ellipse class="rose-petal" cx="50" cy="30" rx="8" ry="18" transform="rotate(315 50 50)" />
+                <circle class="rose-circle rose-circle-inner" cx="50" cy="50" r="20" />
+                <line class="cross-line" x1="50" y1="10" x2="50" y2="90" />
+                <line class="cross-line" x1="10" y1="50" x2="90" y2="50" />
+                <circle class="rose-center" cx="50" cy="50" r="3" />
+            </svg>
+        </div>
+
+        <h1 class="hero-title">Understanding<br>the Mass</h1>
+
+        <div class="ornament">
+            <span class="ornament-line"></span>
+            <span class="ornament-diamond"></span>
+            <span class="ornament-line"></span>
+        </div>
+
+        <p class="hero-subtitle">
+            A welcoming guide to the structure, prayers, and meaning
+            of the Roman Catholic Mass &mdash; for newcomers and the curious alike.
+        </p>
+
+        <div class="scroll-hint">
+            <span>Scroll to begin</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </header>
+
+    <!-- ===== LEGEND (sticky) ===== -->
+    <nav class="legend" id="legend">
+        <div class="legend-item">
+            <span class="legend-dot fixed"></span>
+            <span class="legend-label">Same every week</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot variable"></span>
+            <span class="legend-label">Changes each week</span>
+        </div>
+    </nav>
+
+    <!-- ===== TIMELINE ===== -->
+    <div class="timeline-container">
+
+        <!-- ==================== INTRODUCTORY RITES ==================== -->
+        <div class="section-header">
+            <div class="section-marker"><div class="section-marker-inner"></div></div>
+            <div class="section-number">Part I</div>
+            <h2 class="section-title">Introductory Rites</h2>
+            <p class="section-desc">The assembly gathers and prepares to hear God's word and celebrate the Eucharist.</p>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Entrance &amp; Processional Hymn</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The priest and ministers process to the altar while the congregation sings an entrance hymn. The hymn is chosen to match the liturgical season or feast day.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What you'll see</div>
+                            <div class="detail-text">The priest, deacon, altar servers, and sometimes other ministers walk in procession towards the altar. The priest will reverence the altar with a bow or kiss. If incense is used, the altar may be incensed at this point.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">Stand and sing along if you can. Hymnals or worship aids are usually available in the pews. Don't worry if you don't know the hymn &mdash; simply standing is enough.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Why it matters</div>
+                            <div class="detail-text">The procession symbolises the pilgrim Church journeying towards God. The entrance hymn unites the assembly in one voice, setting the tone for the celebration.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Sign of the Cross &amp; Greeting</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The priest and people make the Sign of the Cross together. The priest then greets the assembly &mdash; typically "The Lord be with you" &mdash; and the people respond "And with your spirit."</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">The words</div>
+                            <div class="detail-quote">"In the name of the Father, and of the Son, and of the Holy Spirit. Amen."</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">With your right hand, touch your forehead, then your chest, then your left shoulder, then your right shoulder. This traces the shape of a cross over your body.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Why it matters</div>
+                            <div class="detail-text">The Sign of the Cross invokes the Holy Trinity and marks everything that follows as sacred. The greeting establishes that this is not a performance but a dialogue &mdash; Christ is present among the gathered assembly.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Penitential Act</span>
+                    <span class="step-latin">Confiteor</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The congregation acknowledges their sins and asks for God's mercy. Most commonly, this is the Confiteor: "I confess to almighty God, and to you, my brothers and sisters..."</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">The words</div>
+                            <div class="detail-quote">"I confess to almighty God and to you, my brothers and sisters, that I have greatly sinned, in my thoughts and in my words, in what I have done and in what I have failed to do, through my fault, through my fault, through my most grievous fault..."</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">While saying "through my fault, through my fault, through my most grievous fault," it is customary to gently strike your chest three times with a closed fist. This ancient gesture is called the <em>mea culpa</em>.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Why it matters</div>
+                            <div class="detail-text">Before approaching God in the Eucharist, the community humbly acknowledges their need for mercy. This is not the Sacrament of Confession, but a communal expression of repentance that prepares the heart for worship.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Kyrie</span>
+                    <span class="step-latin">Lord, Have Mercy</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">A brief, ancient prayer asking for Christ's mercy, sometimes sung. "Lord, have mercy. Christ, have mercy. Lord, have mercy."</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">The words</div>
+                            <div class="detail-quote">"Lord, have mercy. / Lord, have mercy.<br>Christ, have mercy. / Christ, have mercy.<br>Lord, have mercy. / Lord, have mercy."</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">The Kyrie is one of the few prayers sometimes still said or sung in Greek: <em>"Kyrie, eleison. Christe, eleison. Kyrie, eleison."</em> It dates back to the earliest centuries of Christianity and connects today's Mass to the ancient Church.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Gloria</span>
+                    <span class="step-latin">Glory to God in the Highest</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">A joyful hymn of praise: "Glory to God in the highest, and on earth peace to people of good will..." Sung or recited by the entire congregation.</p>
+                <p class="step-note">Omitted during Advent and Lent, making its return at Easter and Christmas especially joyful.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">The words</div>
+                            <div class="detail-quote">"Glory to God in the highest, and on earth peace to people of good will. We praise you, we bless you, we adore you, we glorify you, we give you thanks for your great glory, Lord God, heavenly King, O God, almighty Father..."</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">The opening words echo the song of the angels at Christ's birth (Luke 2:14). The Gloria is an ancient hymn &mdash; its omission during the penitential seasons of Advent and Lent creates a sense of longing, so that when it returns at Easter or Christmas, the joy feels renewed.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Collect</span>
+                    <span class="step-latin">Opening Prayer</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The priest "collects" the prayers of the people into one formal prayer that sets the theme for the day's Mass. The congregation responds "Amen."</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">The priest will say "Let us pray" and there may be a brief pause for silent prayer. At the end of the Collect, simply respond "Amen."</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Why it matters</div>
+                            <div class="detail-text">The word "collect" means to gather together. This prayer gathers the individual intentions of everyone present into one voice, addressed to God the Father through Christ. Each day has its own unique Collect, found in the Roman Missal.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== LITURGY OF THE WORD ==================== -->
+        <div class="section-header">
+            <div class="section-marker"><div class="section-marker-inner"></div></div>
+            <div class="section-number">Part II</div>
+            <h2 class="section-title">Liturgy of the Word</h2>
+            <p class="section-desc">God speaks to the assembly through the Scriptures, which are proclaimed and reflected upon.</p>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">First Reading</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">Usually from the Old Testament (or Acts during Easter). A lay reader proclaims the passage from the ambo (lectern). The reading ends with "The word of the Lord" and the people respond "Thanks be to God."</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">Sit and listen. The readings follow a multi-year cycle (Year A, B, C for Sundays) so that over time the faithful hear a wide selection of Scripture. You can follow along in a missalette if one is available.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Why it matters</div>
+                            <div class="detail-text">The First Reading is usually chosen to connect thematically with the Gospel of the day. The Old Testament passage often foreshadows or illuminates what Christ will say or do in the Gospel.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Responsorial Psalm</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">A psalm is sung or recited in response to the First Reading. The cantor or reader leads with verses and the congregation repeats a refrain.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">Listen for the refrain &mdash; it will be sung or spoken once at the start, then you repeat it after each set of verses. The refrain is usually printed in the worship aid or displayed on a screen.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">The Psalms are the prayer book of the Bible &mdash; 150 ancient songs of praise, lament, thanksgiving, and hope. The psalm chosen each week echoes the themes of the day's readings, giving the assembly a chance to respond to God's word with God's own words.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Second Reading</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">Taken from the New Testament letters (Epistles) or Revelation. Like the First Reading, it ends with "The word of the Lord."</p>
+                <p class="step-note">On weekdays, there is typically only one reading before the Gospel.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">The Second Reading follows its own cycle, working through entire New Testament letters over several weeks. It may not always connect directly to the other readings. These letters were originally written by apostles like Paul, Peter, James, and John to early Christian communities &mdash; you're hearing the same words those first communities heard.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Gospel Acclamation</span>
+                    <span class="step-latin">Alleluia</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The congregation stands and sings "Alleluia" along with a verse that introduces the Gospel theme. Everyone rises as a sign of reverence for Christ's own words.</p>
+                <p class="step-note">During Lent, "Alleluia" is replaced with a different acclamation such as "Praise to you, Lord Jesus Christ."</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">Stand when the Alleluia begins. This is the congregation's way of welcoming Christ, who speaks to us through the Gospel. The verse between the Alleluias offers a preview of the Gospel's theme.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">"Alleluia" comes from the Hebrew <em>Hallelujah</em>, meaning "Praise the Lord." Its omission during the 40 days of Lent is one of the oldest traditions in the Church, creating a fasting of joy that makes the Easter Alleluia all the more powerful.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Gospel Reading</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The high point of the Liturgy of the Word. A deacon or priest proclaims a passage from one of the four Gospels. The people respond "Praise to you, Lord Jesus Christ." You may notice people making a small cross on their forehead, lips, and heart.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">Remain standing. Before the Gospel is read, make a small cross with your thumb on your forehead, lips, and heart. This gesture means: "May the word of God be in my mind, on my lips, and in my heart." At the end, respond "Praise to you, Lord Jesus Christ."</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Why it matters</div>
+                            <div class="detail-text">The Gospel holds a place of honour because it contains the words and deeds of Jesus himself. Notice the special reverence: only an ordained minister may proclaim it, the assembly stands, and the book may be carried in procession with candles and incense. The Church assigns one Gospel per year cycle &mdash; Matthew (A), Mark (B), or Luke (C), with John woven throughout.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Homily</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The priest or deacon gives a reflection on the readings, connecting Scripture to the lives of the faithful. Everyone sits to listen. The homily is unique to each celebration.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">The homily is not a lecture or a speech &mdash; it is part of the liturgy itself. The homilist's role is to break open the Scriptures just proclaimed and help the faithful see how God's word speaks to their lives today. Homilies typically last 8&ndash;15 minutes. A brief silence may follow for personal reflection.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Profession of Faith</span>
+                    <span class="step-latin">Creed</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The congregation stands and together professes the core beliefs of the Catholic faith, usually the Nicene Creed: "I believe in one God, the Father almighty, maker of heaven and earth..."</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">The words</div>
+                            <div class="detail-quote">"I believe in one God, the Father almighty, maker of heaven and earth, of all things visible and invisible. I believe in one Lord Jesus Christ, the Only Begotten Son of God, born of the Father before all ages..."</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">Stand and recite along if you're comfortable. At the words "and by the Holy Spirit was incarnate of the Virgin Mary, and became man," everyone bows. On the solemnities of the Annunciation and Christmas, the faithful kneel at these words instead.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">The Nicene Creed was formulated at the Councils of Nicaea (325 AD) and Constantinople (381 AD). It has been prayed by Christians for over 1,600 years. On some occasions, the shorter Apostles' Creed may be used instead.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Universal Prayer</span>
+                    <span class="step-latin">Prayer of the Faithful</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The assembly prays aloud for the needs of the Church, the world, the local community, and those who are sick or have died. After each intention, the people respond &mdash; typically "Lord, hear our prayer."</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">Remain standing. A reader announces each prayer intention, and you respond with the given refrain. You can also add your own silent intentions during this time.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">The intentions typically follow a pattern: for the Church, for world leaders and public affairs, for those in need, and for the local community. This is the assembly exercising their baptismal priesthood &mdash; interceding for the world.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== LITURGY OF THE EUCHARIST ==================== -->
+        <div class="section-header">
+            <div class="section-marker"><div class="section-marker-inner"></div></div>
+            <div class="section-number">Part III</div>
+            <h2 class="section-title">Liturgy of the Eucharist</h2>
+            <p class="section-desc">The central act of the Mass &mdash; bread and wine are offered, consecrated, and shared as the Body and Blood of Christ.</p>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Offertory</span>
+                    <span class="step-latin">Presentation of the Gifts</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">Members of the congregation bring bread and wine to the altar. A collection is also taken. The priest prepares the gifts and prays over them. An offertory hymn is usually sung.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What you'll see</div>
+                            <div class="detail-text">Representatives from the congregation carry the bread (usually unleavened wafers) and wine to the priest at the altar. A collection basket will also be passed through the pews. The priest washes his hands &mdash; an ancient ritual gesture of purification.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">You may be asked to help bring up the gifts &mdash; this is a great honour. During the collection, give what you're comfortable with, or simply pass the basket on. There is no pressure or expectation for visitors.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Prayer over the Offerings</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The priest prays a prayer specific to the day, asking God to accept the gifts. The congregation responds "Amen." This transitions into the great Eucharistic Prayer.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">Just before this prayer, the priest may say "Pray, brethren, that my sacrifice and yours may be acceptable to God, the almighty Father." The people respond: "May the Lord accept the sacrifice at your hands for the praise and glory of his name, for our good and the good of all his holy Church."</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Preface</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">A prayer of thanksgiving that varies with the liturgical season or feast. It begins with a dialogue &mdash; "Lift up your hearts" / "We lift them up to the Lord" &mdash; and leads directly into the Sanctus.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">The dialogue</div>
+                            <div class="detail-quote">"The Lord be with you." / "And with your spirit."<br>"Lift up your hearts." / "We lift them up to the Lord."<br>"Let us give thanks to the Lord our God." / "It is right and just."</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">The word "Preface" here doesn't mean introduction &mdash; it comes from the Latin <em>praefatio</em>, meaning a proclamation spoken before God. There are over 80 different Prefaces in the Roman Missal, each giving thanks for a different aspect of God's saving work.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Sanctus</span>
+                    <span class="step-latin">Holy, Holy, Holy</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The entire congregation sings or recites: "Holy, Holy, Holy Lord God of hosts. Heaven and earth are full of your glory. Hosanna in the highest. Blessed is he who comes in the name of the Lord."</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Why it matters</div>
+                            <div class="detail-text">This hymn joins the earthly assembly with the angels in heaven. The first part echoes the song of the Seraphim in Isaiah 6:3. The second part quotes the crowd's greeting to Jesus as he entered Jerusalem on Palm Sunday (Matthew 21:9). In this moment, heaven and earth sing as one.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Eucharistic Prayer &amp; Consecration</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The most sacred part of the Mass. The priest prays over the bread and wine, recalling Jesus's words at the Last Supper: "This is my Body... This is the chalice of my Blood." Catholics believe the bread and wine become the Body and Blood of Christ. The congregation kneels.</p>
+                <p class="step-note">There are several approved Eucharistic Prayers, but the words of consecration are always the same.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What you'll see</div>
+                            <div class="detail-text">The priest extends his hands over the bread and wine and calls upon the Holy Spirit (<em>epiclesis</em>). He then recounts the Last Supper, speaking Christ's own words. After each consecration, the priest elevates the host and then the chalice for all to see. An altar server may ring bells at this moment.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">Kneel if you are able (this is the most reverent posture for this part of the Mass). Some people bow their heads during the elevation; others gaze upon the consecrated elements. This is a moment for quiet adoration.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Why it matters</div>
+                            <div class="detail-text">Catholics believe that at the Consecration, a miracle occurs: the substance of the bread and wine is transformed into the Body and Blood of Christ, while retaining the appearance of bread and wine. This is called <em>transubstantiation</em>. The Mass is understood not as a re-sacrifice, but as making present the one sacrifice of Christ on the Cross.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Memorial Acclamation</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">After the consecration, the priest says "The mystery of faith," and the people respond with one of several acclamations, such as: "We proclaim your Death, O Lord, and profess your Resurrection, until you come again."</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">The options</div>
+                            <div class="detail-text">There are three Memorial Acclamations to choose from:<br>1. "We proclaim your Death, O Lord, and profess your Resurrection, until you come again."<br>2. "When we eat this Bread and drink this Cup, we proclaim your Death, O Lord, until you come again."<br>3. "Save us, Saviour of the world, for by your Cross and Resurrection you have set us free."</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Great Amen</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The Eucharistic Prayer concludes with a doxology: "Through him, and with him, and in him..." The congregation responds with a resounding "Amen" &mdash; affirming everything that has been prayed.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">This "Amen" is called the "Great Amen" because it is the most important in the entire Mass. With it, the congregation ratifies everything the priest has prayed on their behalf during the Eucharistic Prayer. St Jerome wrote that in the early Church in Rome, this Amen resounded "like a clap of heavenly thunder."</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">The Lord's Prayer</span>
+                    <span class="step-latin">Pater Noster / Our Father</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">Everyone stands and prays together the prayer that Jesus himself taught: "Our Father, who art in heaven, hallowed be thy name..." The priest adds an additional prayer (the embolism) and the people respond with a doxology.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">The words</div>
+                            <div class="detail-quote">"Our Father, who art in heaven, hallowed be thy name; thy kingdom come, thy will be done on earth as it is in heaven. Give us this day our daily bread, and forgive us our trespasses, as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil."</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">Stand and pray along. In some parishes, the congregation holds hands or extends their hands outward in the <em>orans</em> posture (palms up). Follow what those around you do, or simply fold your hands.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Sign of Peace</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The priest says "The peace of the Lord be with you always." The congregation exchanges a sign of peace with those nearby &mdash; usually a handshake, nod, or smile.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">Turn to those around you and offer a handshake, saying "Peace be with you." A warm smile or nod is equally appropriate, especially if you prefer not to shake hands. Keep it brief and reverent &mdash; this isn't a social break, but a liturgical gesture of reconciliation.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Agnus Dei</span>
+                    <span class="step-latin">Lamb of God</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">While the priest breaks the consecrated bread, the people sing or say: "Lamb of God, you take away the sins of the world, have mercy on us... grant us peace."</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What you'll see</div>
+                            <div class="detail-text">The priest breaks the large host and drops a small piece into the chalice &mdash; this ancient rite, called the <em>commingling</em>, symbolises the unity of the Body and Blood of Christ. The breaking of bread echoes Jesus's action at the Last Supper and at Emmaus.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">The words</div>
+                            <div class="detail-quote">"Lamb of God, you take away the sins of the world, have mercy on us.<br>Lamb of God, you take away the sins of the world, have mercy on us.<br>Lamb of God, you take away the sins of the world, grant us peace."</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Communion</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The faithful come forward to receive the Body (and sometimes Blood) of Christ. The minister says "The Body of Christ" and the communicant responds "Amen." A communion hymn is usually sung.</p>
+                <p class="step-note">If you are not Catholic or not yet ready to receive, you may remain in your seat or approach with arms crossed over your chest for a blessing.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">If receiving, join the line and approach the minister. You may receive the host on your tongue or in your hands (place your non-dominant hand on top, receive, then use the other hand to place it in your mouth). If receiving from the chalice, take a small sip. If not receiving, you may stay seated or approach with arms crossed for a blessing.</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Before Communion</div>
+                            <div class="detail-quote">"Lord, I am not worthy that you should enter under my roof, but only say the word and my soul shall be healed."</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">Catholics are asked to fast from food and drink (except water and medicine) for one hour before receiving Communion. To receive, one should be in a state of grace &mdash; free from serious (mortal) sin. If unsure, it is perfectly fine to remain in your seat; no one will judge you.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Prayer after Communion</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">After a period of quiet reflection, the priest stands and offers a closing prayer specific to the day's celebration. The people respond "Amen."</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">The silence after Communion is one of the most precious moments in the Mass. Use it for personal prayer, thanksgiving, or simply resting in God's presence. When the priest stands and says "Let us pray," stand with the assembly.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== CONCLUDING RITES ==================== -->
+        <div class="section-header">
+            <div class="section-marker"><div class="section-marker-inner"></div></div>
+            <div class="section-number">Part IV</div>
+            <h2 class="section-title">Concluding Rites</h2>
+            <p class="section-desc">The assembly is blessed and sent forth to live out the Gospel in the world.</p>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Announcements</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">Brief parish announcements may be made &mdash; upcoming events, volunteer needs, or community news.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">Announcements are optional and kept brief. They might include second collections, upcoming parish events, prayer requests, or community milestones. This is the most informal moment of the Mass.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Final Blessing</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The priest blesses the congregation: "May almighty God bless you, the Father, and the Son, and the Holy Spirit." The people respond "Amen" and make the Sign of the Cross.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">What to do</div>
+                            <div class="detail-tip">Stand and make the Sign of the Cross as the priest blesses you. On special occasions, the priest may give a solemn blessing with multiple parts, each followed by "Amen."</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item fixed">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Dismissal</span>
+                    <span class="step-latin">Ite, Missa Est</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The deacon or priest sends the people forth, often with "Go forth, the Mass is ended" or "Go and announce the Gospel of the Lord." The people respond "Thanks be to God." The word "Mass" itself comes from this dismissal &mdash; <em>missa</em>.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">The options</div>
+                            <div class="detail-text">There are four forms of dismissal:<br>1. "Go forth, the Mass is ended."<br>2. "Go and announce the Gospel of the Lord."<br>3. "Go in peace, glorifying the Lord by your life."<br>4. "Go in peace."</div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Why it matters</div>
+                            <div class="detail-text">The dismissal is not just an ending &mdash; it is a commissioning. The Latin <em>Ite, missa est</em> ("Go, it is the sending") gave the Mass its name. You are being sent out to live what you have celebrated: to be the Body of Christ in the world.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item variable">
+            <div class="timeline-node"></div>
+            <div class="timeline-card">
+                <div class="card-header">
+                    <span class="step-name">Recessional Hymn</span>
+                    <span class="step-type">Variable</span>
+                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                </div>
+                <p class="step-description">The priest and ministers process out while the congregation sings a closing hymn. Though not strictly part of the liturgy, it is a joyful custom in most parishes.</p>
+                <div class="step-detail">
+                    <div class="step-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Good to know</div>
+                            <div class="detail-text">You're free to leave after the dismissal, but most people stay to sing the final hymn. It's also a lovely time to greet those around you. Many parishes have a social gathering (coffee and refreshments) after Mass &mdash; newcomers are always welcome.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="footer-ornament-inline">
+            <span class="ornament-line"></span>
+            <span class="ornament-diamond"></span>
+            <span class="ornament-line"></span>
+        </div>
+        <p>"The Eucharist is the source and summit of the Christian life."</p>
+        <p class="footer-note">&mdash; Lumen Gentium, 11</p>
+    </footer>
+
+    <div class="bottom-border"></div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // Intersection Observer for scroll-triggered animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.15,
+            rootMargin: '0px 0px -40px 0px'
+        });
+
+        document.querySelectorAll('.timeline-item, .section-header').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Sticky legend shadow on scroll
+        const legend = document.getElementById('legend');
+        const heroEl = document.querySelector('.hero');
+
+        const legendObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                legend.classList.toggle('scrolled', !entry.isIntersecting);
+            });
+        }, { threshold: 0 });
+
+        legendObserver.observe(heroEl);
+
+        // Expandable cards
+        document.querySelectorAll('.timeline-card').forEach((card) => {
+            card.addEventListener('click', () => {
+                const item = card.closest('.timeline-item');
+                const detail = card.querySelector('.step-detail');
+                if (!detail) return;
+
+                const isExpanded = item.classList.contains('expanded');
+
+                // Close all other expanded items
+                document.querySelectorAll('.timeline-item.expanded').forEach((other) => {
+                    if (other !== item) {
+                        other.classList.remove('expanded');
+                    }
+                });
+
+                // Toggle this item
+                item.classList.toggle('expanded', !isExpanded);
+            });
+        });
+    </script>
+</body>
+</html>
