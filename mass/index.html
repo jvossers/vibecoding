@@ -42,7 +42,6 @@
             overflow-x: hidden;
         }
 
-        /* Subtle parchment texture overlay */
         body::before {
             content: '';
             position: fixed;
@@ -55,7 +54,6 @@
             z-index: 0;
         }
 
-        /* Grain texture */
         body::after {
             content: '';
             position: fixed;
@@ -67,7 +65,7 @@
             z-index: 1;
         }
 
-        /* ===== HERO SECTION ===== */
+        /* ===== HERO ===== */
         .hero {
             position: relative;
             z-index: 2;
@@ -93,13 +91,7 @@
             filter: drop-shadow(0 0 30px rgba(201, 168, 76, 0.15));
         }
 
-        .rose-petal {
-            fill: none;
-            stroke: var(--gold);
-            stroke-width: 0.8;
-            opacity: 0.7;
-        }
-
+        .rose-petal { fill: none; stroke: var(--gold); stroke-width: 0.8; opacity: 0.7; }
         .rose-circle { fill: none; stroke: var(--gold); }
         .rose-circle-outer { stroke-width: 1.2; opacity: 0.5; }
         .rose-circle-inner { stroke-width: 0.6; opacity: 0.5; }
@@ -184,6 +176,48 @@
             50% { transform: rotate(45deg) translateY(3px); opacity: 1; }
         }
 
+        /* ===== LANGUAGE PICKER ===== */
+        .lang-picker {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 200;
+            display: flex;
+            gap: 0;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(201, 168, 76, 0.3);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .lang-btn {
+            font-family: 'Cinzel', Georgia, serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.45rem 0.7rem;
+            border: none;
+            cursor: pointer;
+            background: rgba(232, 221, 202, 0.95);
+            color: var(--text-muted);
+            transition: background 0.2s, color 0.2s;
+            backdrop-filter: blur(12px);
+        }
+
+        .lang-btn:not(:last-child) {
+            border-right: 1px solid rgba(201, 168, 76, 0.2);
+        }
+
+        .lang-btn:hover {
+            background: rgba(201, 168, 76, 0.15);
+            color: var(--text-dark);
+        }
+
+        .lang-btn.active {
+            background: var(--burgundy);
+            color: var(--gold-light);
+        }
+
         /* ===== LEGEND ===== */
         .legend {
             position: sticky;
@@ -200,9 +234,7 @@
             transition: box-shadow 0.3s;
         }
 
-        .legend.scrolled {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-        }
+        .legend.scrolled { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06); }
 
         .legend-item {
             display: flex;
@@ -243,22 +275,6 @@
             padding: 3rem 2rem 6rem;
         }
 
-        /* The vertical line */
-        .timeline-container::before {
-            content: '';
-            position: absolute;
-            left: 28px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom,
-                transparent,
-                var(--timeline-line) 3rem,
-                var(--timeline-line) calc(100% - 3rem),
-                transparent
-            );
-        }
-
         /* ===== SECTION HEADERS ===== */
         .section-header {
             position: relative;
@@ -269,20 +285,13 @@
             transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
 
-        .section-header.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .section-header:first-child {
-            margin-top: 0;
-        }
+        .section-header.visible { opacity: 1; transform: translateY(0); }
+        .section-header:first-child { margin-top: 0; }
 
         .section-marker {
             position: absolute;
             left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
+            top: 1.55rem;
             width: 30px;
             height: 30px;
             border: 2px solid var(--burgundy);
@@ -336,48 +345,56 @@
             transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
 
-        .timeline-item.visible {
-            opacity: 1;
-            transform: translateY(0);
+        /* Line segment connecting items within a section */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 28px;
+            top: 0;
+            bottom: -1.5rem;
+            width: 2px;
+            background: var(--timeline-line);
+            z-index: 0;
         }
 
-        /* Node on the timeline */
+        /* First item in a section: start line from the node, not the top */
+        .timeline-item.section-first::before {
+            top: 1.3rem;
+        }
+
+        /* Last item in a section: end line at the node, not the bottom */
+        .timeline-item.section-last::before {
+            bottom: auto;
+            height: calc(1.3rem + 6px);
+        }
+
+        .timeline-item.visible { opacity: 1; transform: translateY(0); }
+
         .timeline-node {
             position: absolute;
-            left: 21px;
-            top: 1.2rem;
-            width: 16px;
-            height: 16px;
+            left: 23px;
+            top: 1.3rem;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            border: 2px solid;
-            background: var(--warm-white);
-            z-index: 3;
+            border: 3px solid;
+            background: transparent;
+            z-index: 5;
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        .timeline-item:hover .timeline-node {
-            transform: scale(1.25);
-        }
+        .timeline-item:hover .timeline-node { transform: scale(1.3); }
 
         .timeline-item.fixed .timeline-node {
             border-color: var(--fixed-color);
-            box-shadow: 0 0 0 3px var(--fixed-bg);
         }
-
-        .timeline-item.fixed:hover .timeline-node {
-            box-shadow: 0 0 12px rgba(201, 168, 76, 0.35);
-        }
+        .timeline-item.fixed:hover .timeline-node { box-shadow: 0 0 10px rgba(201, 168, 76, 0.5); }
 
         .timeline-item.variable .timeline-node {
             border-color: var(--variable-color);
-            box-shadow: 0 0 0 3px var(--variable-bg);
         }
+        .timeline-item.variable:hover .timeline-node { box-shadow: 0 0 10px rgba(122, 106, 160, 0.5); }
 
-        .timeline-item.variable:hover .timeline-node {
-            box-shadow: 0 0 12px rgba(122, 106, 160, 0.35);
-        }
-
-        /* Card */
         .timeline-card {
             padding: 1.25rem 1.5rem;
             border-radius: 4px;
@@ -387,33 +404,16 @@
             user-select: none;
         }
 
-        .timeline-item:hover .timeline-card {
-            transform: translateX(4px);
-        }
+        .timeline-item:hover .timeline-card { transform: translateX(4px); }
+        .timeline-item.expanded .timeline-card { transform: translateX(4px); }
 
-        .timeline-item.expanded .timeline-card {
-            transform: translateX(4px);
-        }
-
-        .timeline-item.fixed .timeline-card {
-            background: var(--fixed-bg);
-            border-color: var(--fixed-border);
-        }
-
+        .timeline-item.fixed .timeline-card { background: var(--fixed-bg); border-color: var(--fixed-border); }
         .timeline-item.fixed:hover .timeline-card,
-        .timeline-item.fixed.expanded .timeline-card {
-            box-shadow: 0 4px 20px rgba(201, 168, 76, 0.1);
-        }
+        .timeline-item.fixed.expanded .timeline-card { box-shadow: 0 4px 20px rgba(201, 168, 76, 0.1); }
 
-        .timeline-item.variable .timeline-card {
-            background: var(--variable-bg);
-            border-color: var(--variable-border);
-        }
-
+        .timeline-item.variable .timeline-card { background: var(--variable-bg); border-color: var(--variable-border); }
         .timeline-item.variable:hover .timeline-card,
-        .timeline-item.variable.expanded .timeline-card {
-            box-shadow: 0 4px 20px rgba(122, 106, 160, 0.1);
-        }
+        .timeline-item.variable.expanded .timeline-card { box-shadow: 0 4px 20px rgba(122, 106, 160, 0.1); }
 
         .card-header {
             display: flex;
@@ -438,6 +438,13 @@
             color: var(--text-light);
         }
 
+        .step-duration {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+
         .step-type {
             font-family: 'Cinzel', Georgia, serif;
             font-size: 0.6rem;
@@ -448,17 +455,9 @@
             flex-shrink: 0;
         }
 
-        .timeline-item.fixed .step-type {
-            color: var(--fixed-color);
-            background: rgba(201, 168, 76, 0.1);
-        }
+        .timeline-item.fixed .step-type { color: var(--fixed-color); background: rgba(201, 168, 76, 0.1); }
+        .timeline-item.variable .step-type { color: var(--variable-color); background: rgba(122, 106, 160, 0.1); }
 
-        .timeline-item.variable .step-type {
-            color: var(--variable-color);
-            background: rgba(122, 106, 160, 0.1);
-        }
-
-        /* Expand chevron */
         .expand-chevron {
             margin-left: auto;
             flex-shrink: 0;
@@ -470,25 +469,10 @@
             transition: transform 0.3s ease;
         }
 
-        .expand-chevron svg {
-            width: 14px;
-            height: 14px;
-            opacity: 0.35;
-            transition: opacity 0.3s;
-        }
-
-        .timeline-item:hover .expand-chevron svg {
-            opacity: 0.6;
-        }
-
-        .timeline-item.expanded .expand-chevron {
-            transform: rotate(180deg);
-        }
-
-        .timeline-item.expanded .expand-chevron svg {
-            opacity: 0.7;
-        }
-
+        .expand-chevron svg { width: 14px; height: 14px; opacity: 0.35; transition: opacity 0.3s; }
+        .timeline-item:hover .expand-chevron svg { opacity: 0.6; }
+        .timeline-item.expanded .expand-chevron { transform: rotate(180deg); }
+        .timeline-item.expanded .expand-chevron svg { opacity: 0.7; }
         .timeline-item.fixed .expand-chevron svg { stroke: #8a7230; }
         .timeline-item.variable .expand-chevron svg { stroke: #5c4f7a; }
 
@@ -508,7 +492,7 @@
             line-height: 1.5;
         }
 
-        /* ===== EXPANDABLE DETAIL PANEL ===== */
+        /* ===== EXPANDABLE DETAIL ===== */
         .step-detail {
             overflow: hidden;
             max-height: 0;
@@ -528,13 +512,8 @@
             border-top: 1px solid rgba(0, 0, 0, 0.06);
         }
 
-        .detail-section {
-            margin-bottom: 0.75rem;
-        }
-
-        .detail-section:last-child {
-            margin-bottom: 0;
-        }
+        .detail-section { margin-bottom: 0.75rem; }
+        .detail-section:last-child { margin-bottom: 0; }
 
         .detail-label {
             font-family: 'Cinzel', Georgia, serif;
@@ -551,10 +530,7 @@
             color: var(--text-muted);
         }
 
-        .detail-text em {
-            color: var(--text-dark);
-            font-style: italic;
-        }
+        .detail-text em { color: var(--text-dark); font-style: italic; }
 
         .detail-quote {
             font-style: italic;
@@ -611,18 +587,11 @@
             font-style: normal;
         }
 
-        /* Bottom decorative border */
         .bottom-border {
             position: relative;
             z-index: 2;
             height: 4px;
-            background: linear-gradient(90deg,
-                transparent,
-                var(--gold-light) 20%,
-                var(--gold) 50%,
-                var(--gold-light) 80%,
-                transparent
-            );
+            background: linear-gradient(90deg, transparent, var(--gold-light) 20%, var(--gold) 50%, var(--gold-light) 80%, transparent);
         }
 
         /* ===== ANIMATIONS ===== */
@@ -638,37 +607,20 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 600px) {
-            .rose-window {
-                width: 120px;
-                height: 120px;
-                margin-bottom: 2rem;
-            }
-
+            .rose-window { width: 120px; height: 120px; margin-bottom: 2rem; }
             .ornament-line { width: 40px; }
-
             .timeline-container { padding: 2rem 1rem 4rem; }
-            .timeline-container::before { left: 20px; }
-
             .section-header { padding-left: 48px; }
-            .section-marker { left: 6px; width: 28px; height: 28px; }
-
+            .section-marker { left: 7px; width: 28px; height: 28px; }
+            .timeline-item::before { left: 20px; }
             .timeline-item { padding-left: 48px; margin-bottom: 1.25rem; }
-            .timeline-node { left: 13px; width: 14px; height: 14px; }
-
+            .timeline-node { left: 16px; width: 10px; height: 10px; }
             .timeline-card { padding: 1rem 1.15rem; }
-
-            .card-header {
-                flex-wrap: wrap;
-                gap: 0.35rem;
-            }
-
-            .step-type {
-                margin-left: 0;
-                order: -1;
-                width: fit-content;
-            }
-
+            .card-header { flex-wrap: wrap; gap: 0.35rem; }
+            .step-type { margin-left: 0; order: -1; width: fit-content; }
             .legend { gap: 1rem; padding: 0.7rem 1rem; }
+            .lang-picker { top: 0.5rem; right: 0.5rem; }
+            .lang-btn { padding: 0.35rem 0.5rem; font-size: 0.6rem; }
         }
 
         @media (max-width: 380px) {
@@ -677,6 +629,13 @@
     </style>
 </head>
 <body>
+
+    <!-- ===== LANGUAGE PICKER ===== -->
+    <div class="lang-picker">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="pl">PL</button>
+        <button class="lang-btn" data-lang="nl">NL</button>
+    </div>
 
     <!-- ===== HERO ===== -->
     <header class="hero">
@@ -698,7 +657,7 @@
             </svg>
         </div>
 
-        <h1 class="hero-title">Understanding<br>the Mass</h1>
+        <h1 class="hero-title" data-i18n="heroTitle">Understanding<br>the Mass</h1>
 
         <div class="ornament">
             <span class="ornament-line"></span>
@@ -706,767 +665,28 @@
             <span class="ornament-line"></span>
         </div>
 
-        <p class="hero-subtitle">
-            A welcoming guide to the structure, prayers, and meaning
-            of the Roman Catholic Mass &mdash; for newcomers and the curious alike.
-        </p>
+        <p class="hero-subtitle" data-i18n="heroSubtitle">A welcoming guide to the structure, prayers, and meaning of the Roman Catholic Mass &mdash; for newcomers and the curious alike.</p>
 
         <div class="scroll-hint">
-            <span>Scroll to begin</span>
+            <span data-i18n="scrollHint">Scroll to begin</span>
             <div class="scroll-arrow"></div>
         </div>
     </header>
 
-    <!-- ===== LEGEND (sticky) ===== -->
+    <!-- ===== LEGEND ===== -->
     <nav class="legend" id="legend">
         <div class="legend-item">
             <span class="legend-dot fixed"></span>
-            <span class="legend-label">Same every week</span>
+            <span class="legend-label" data-i18n="legendFixed">Same every week</span>
         </div>
         <div class="legend-item">
             <span class="legend-dot variable"></span>
-            <span class="legend-label">Changes each week</span>
+            <span class="legend-label" data-i18n="legendVariable">Changes each week</span>
         </div>
     </nav>
 
     <!-- ===== TIMELINE ===== -->
-    <div class="timeline-container">
-
-        <!-- ==================== INTRODUCTORY RITES ==================== -->
-        <div class="section-header">
-            <div class="section-marker"><div class="section-marker-inner"></div></div>
-            <div class="section-number">Part I</div>
-            <h2 class="section-title">Introductory Rites</h2>
-            <p class="section-desc">The assembly gathers and prepares to hear God's word and celebrate the Eucharist.</p>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Entrance &amp; Processional Hymn</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The priest and ministers process to the altar while the congregation sings an entrance hymn. The hymn is chosen to match the liturgical season or feast day.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What you'll see</div>
-                            <div class="detail-text">The priest, deacon, altar servers, and sometimes other ministers walk in procession towards the altar. The priest will reverence the altar with a bow or kiss. If incense is used, the altar may be incensed at this point.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">Stand and sing along if you can. Hymnals or worship aids are usually available in the pews. Don't worry if you don't know the hymn &mdash; simply standing is enough.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Why it matters</div>
-                            <div class="detail-text">The procession symbolises the pilgrim Church journeying towards God. The entrance hymn unites the assembly in one voice, setting the tone for the celebration.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Sign of the Cross &amp; Greeting</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The priest and people make the Sign of the Cross together. The priest then greets the assembly &mdash; typically "The Lord be with you" &mdash; and the people respond "And with your spirit."</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">The words</div>
-                            <div class="detail-quote">"In the name of the Father, and of the Son, and of the Holy Spirit. Amen."</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">With your right hand, touch your forehead, then your chest, then your left shoulder, then your right shoulder. This traces the shape of a cross over your body.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Why it matters</div>
-                            <div class="detail-text">The Sign of the Cross invokes the Holy Trinity and marks everything that follows as sacred. The greeting establishes that this is not a performance but a dialogue &mdash; Christ is present among the gathered assembly.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Penitential Act</span>
-                    <span class="step-latin">Confiteor</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The congregation acknowledges their sins and asks for God's mercy. Most commonly, this is the Confiteor: "I confess to almighty God, and to you, my brothers and sisters..."</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">The words</div>
-                            <div class="detail-quote">"I confess to almighty God and to you, my brothers and sisters, that I have greatly sinned, in my thoughts and in my words, in what I have done and in what I have failed to do, through my fault, through my fault, through my most grievous fault..."</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">While saying "through my fault, through my fault, through my most grievous fault," it is customary to gently strike your chest three times with a closed fist. This ancient gesture is called the <em>mea culpa</em>.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Why it matters</div>
-                            <div class="detail-text">Before approaching God in the Eucharist, the community humbly acknowledges their need for mercy. This is not the Sacrament of Confession, but a communal expression of repentance that prepares the heart for worship.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Kyrie</span>
-                    <span class="step-latin">Lord, Have Mercy</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">A brief, ancient prayer asking for Christ's mercy, sometimes sung. "Lord, have mercy. Christ, have mercy. Lord, have mercy."</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">The words</div>
-                            <div class="detail-quote">"Lord, have mercy. / Lord, have mercy.<br>Christ, have mercy. / Christ, have mercy.<br>Lord, have mercy. / Lord, have mercy."</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">The Kyrie is one of the few prayers sometimes still said or sung in Greek: <em>"Kyrie, eleison. Christe, eleison. Kyrie, eleison."</em> It dates back to the earliest centuries of Christianity and connects today's Mass to the ancient Church.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Gloria</span>
-                    <span class="step-latin">Glory to God in the Highest</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">A joyful hymn of praise: "Glory to God in the highest, and on earth peace to people of good will..." Sung or recited by the entire congregation.</p>
-                <p class="step-note">Omitted during Advent and Lent, making its return at Easter and Christmas especially joyful.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">The words</div>
-                            <div class="detail-quote">"Glory to God in the highest, and on earth peace to people of good will. We praise you, we bless you, we adore you, we glorify you, we give you thanks for your great glory, Lord God, heavenly King, O God, almighty Father..."</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">The opening words echo the song of the angels at Christ's birth (Luke 2:14). The Gloria is an ancient hymn &mdash; its omission during the penitential seasons of Advent and Lent creates a sense of longing, so that when it returns at Easter or Christmas, the joy feels renewed.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Collect</span>
-                    <span class="step-latin">Opening Prayer</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The priest "collects" the prayers of the people into one formal prayer that sets the theme for the day's Mass. The congregation responds "Amen."</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">The priest will say "Let us pray" and there may be a brief pause for silent prayer. At the end of the Collect, simply respond "Amen."</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Why it matters</div>
-                            <div class="detail-text">The word "collect" means to gather together. This prayer gathers the individual intentions of everyone present into one voice, addressed to God the Father through Christ. Each day has its own unique Collect, found in the Roman Missal.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== LITURGY OF THE WORD ==================== -->
-        <div class="section-header">
-            <div class="section-marker"><div class="section-marker-inner"></div></div>
-            <div class="section-number">Part II</div>
-            <h2 class="section-title">Liturgy of the Word</h2>
-            <p class="section-desc">God speaks to the assembly through the Scriptures, which are proclaimed and reflected upon.</p>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">First Reading</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">Usually from the Old Testament (or Acts during Easter). A lay reader proclaims the passage from the ambo (lectern). The reading ends with "The word of the Lord" and the people respond "Thanks be to God."</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">Sit and listen. The readings follow a multi-year cycle (Year A, B, C for Sundays) so that over time the faithful hear a wide selection of Scripture. You can follow along in a missalette if one is available.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Why it matters</div>
-                            <div class="detail-text">The First Reading is usually chosen to connect thematically with the Gospel of the day. The Old Testament passage often foreshadows or illuminates what Christ will say or do in the Gospel.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Responsorial Psalm</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">A psalm is sung or recited in response to the First Reading. The cantor or reader leads with verses and the congregation repeats a refrain.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">Listen for the refrain &mdash; it will be sung or spoken once at the start, then you repeat it after each set of verses. The refrain is usually printed in the worship aid or displayed on a screen.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">The Psalms are the prayer book of the Bible &mdash; 150 ancient songs of praise, lament, thanksgiving, and hope. The psalm chosen each week echoes the themes of the day's readings, giving the assembly a chance to respond to God's word with God's own words.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Second Reading</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">Taken from the New Testament letters (Epistles) or Revelation. Like the First Reading, it ends with "The word of the Lord."</p>
-                <p class="step-note">On weekdays, there is typically only one reading before the Gospel.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">The Second Reading follows its own cycle, working through entire New Testament letters over several weeks. It may not always connect directly to the other readings. These letters were originally written by apostles like Paul, Peter, James, and John to early Christian communities &mdash; you're hearing the same words those first communities heard.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Gospel Acclamation</span>
-                    <span class="step-latin">Alleluia</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The congregation stands and sings "Alleluia" along with a verse that introduces the Gospel theme. Everyone rises as a sign of reverence for Christ's own words.</p>
-                <p class="step-note">During Lent, "Alleluia" is replaced with a different acclamation such as "Praise to you, Lord Jesus Christ."</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">Stand when the Alleluia begins. This is the congregation's way of welcoming Christ, who speaks to us through the Gospel. The verse between the Alleluias offers a preview of the Gospel's theme.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">"Alleluia" comes from the Hebrew <em>Hallelujah</em>, meaning "Praise the Lord." Its omission during the 40 days of Lent is one of the oldest traditions in the Church, creating a fasting of joy that makes the Easter Alleluia all the more powerful.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Gospel Reading</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The high point of the Liturgy of the Word. A deacon or priest proclaims a passage from one of the four Gospels. The people respond "Praise to you, Lord Jesus Christ." You may notice people making a small cross on their forehead, lips, and heart.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">Remain standing. Before the Gospel is read, make a small cross with your thumb on your forehead, lips, and heart. This gesture means: "May the word of God be in my mind, on my lips, and in my heart." At the end, respond "Praise to you, Lord Jesus Christ."</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Why it matters</div>
-                            <div class="detail-text">The Gospel holds a place of honour because it contains the words and deeds of Jesus himself. Notice the special reverence: only an ordained minister may proclaim it, the assembly stands, and the book may be carried in procession with candles and incense. The Church assigns one Gospel per year cycle &mdash; Matthew (A), Mark (B), or Luke (C), with John woven throughout.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Homily</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The priest or deacon gives a reflection on the readings, connecting Scripture to the lives of the faithful. Everyone sits to listen. The homily is unique to each celebration.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">The homily is not a lecture or a speech &mdash; it is part of the liturgy itself. The homilist's role is to break open the Scriptures just proclaimed and help the faithful see how God's word speaks to their lives today. Homilies typically last 8&ndash;15 minutes. A brief silence may follow for personal reflection.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Profession of Faith</span>
-                    <span class="step-latin">Creed</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The congregation stands and together professes the core beliefs of the Catholic faith, usually the Nicene Creed: "I believe in one God, the Father almighty, maker of heaven and earth..."</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">The words</div>
-                            <div class="detail-quote">"I believe in one God, the Father almighty, maker of heaven and earth, of all things visible and invisible. I believe in one Lord Jesus Christ, the Only Begotten Son of God, born of the Father before all ages..."</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">Stand and recite along if you're comfortable. At the words "and by the Holy Spirit was incarnate of the Virgin Mary, and became man," everyone bows. On the solemnities of the Annunciation and Christmas, the faithful kneel at these words instead.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">The Nicene Creed was formulated at the Councils of Nicaea (325 AD) and Constantinople (381 AD). It has been prayed by Christians for over 1,600 years. On some occasions, the shorter Apostles' Creed may be used instead.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Universal Prayer</span>
-                    <span class="step-latin">Prayer of the Faithful</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The assembly prays aloud for the needs of the Church, the world, the local community, and those who are sick or have died. After each intention, the people respond &mdash; typically "Lord, hear our prayer."</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">Remain standing. A reader announces each prayer intention, and you respond with the given refrain. You can also add your own silent intentions during this time.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">The intentions typically follow a pattern: for the Church, for world leaders and public affairs, for those in need, and for the local community. This is the assembly exercising their baptismal priesthood &mdash; interceding for the world.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== LITURGY OF THE EUCHARIST ==================== -->
-        <div class="section-header">
-            <div class="section-marker"><div class="section-marker-inner"></div></div>
-            <div class="section-number">Part III</div>
-            <h2 class="section-title">Liturgy of the Eucharist</h2>
-            <p class="section-desc">The central act of the Mass &mdash; bread and wine are offered, consecrated, and shared as the Body and Blood of Christ.</p>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Offertory</span>
-                    <span class="step-latin">Presentation of the Gifts</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">Members of the congregation bring bread and wine to the altar. A collection is also taken. The priest prepares the gifts and prays over them. An offertory hymn is usually sung.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What you'll see</div>
-                            <div class="detail-text">Representatives from the congregation carry the bread (usually unleavened wafers) and wine to the priest at the altar. A collection basket will also be passed through the pews. The priest washes his hands &mdash; an ancient ritual gesture of purification.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">You may be asked to help bring up the gifts &mdash; this is a great honour. During the collection, give what you're comfortable with, or simply pass the basket on. There is no pressure or expectation for visitors.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Prayer over the Offerings</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The priest prays a prayer specific to the day, asking God to accept the gifts. The congregation responds "Amen." This transitions into the great Eucharistic Prayer.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">Just before this prayer, the priest may say "Pray, brethren, that my sacrifice and yours may be acceptable to God, the almighty Father." The people respond: "May the Lord accept the sacrifice at your hands for the praise and glory of his name, for our good and the good of all his holy Church."</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Preface</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">A prayer of thanksgiving that varies with the liturgical season or feast. It begins with a dialogue &mdash; "Lift up your hearts" / "We lift them up to the Lord" &mdash; and leads directly into the Sanctus.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">The dialogue</div>
-                            <div class="detail-quote">"The Lord be with you." / "And with your spirit."<br>"Lift up your hearts." / "We lift them up to the Lord."<br>"Let us give thanks to the Lord our God." / "It is right and just."</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">The word "Preface" here doesn't mean introduction &mdash; it comes from the Latin <em>praefatio</em>, meaning a proclamation spoken before God. There are over 80 different Prefaces in the Roman Missal, each giving thanks for a different aspect of God's saving work.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Sanctus</span>
-                    <span class="step-latin">Holy, Holy, Holy</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The entire congregation sings or recites: "Holy, Holy, Holy Lord God of hosts. Heaven and earth are full of your glory. Hosanna in the highest. Blessed is he who comes in the name of the Lord."</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">Why it matters</div>
-                            <div class="detail-text">This hymn joins the earthly assembly with the angels in heaven. The first part echoes the song of the Seraphim in Isaiah 6:3. The second part quotes the crowd's greeting to Jesus as he entered Jerusalem on Palm Sunday (Matthew 21:9). In this moment, heaven and earth sing as one.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Eucharistic Prayer &amp; Consecration</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The most sacred part of the Mass. The priest prays over the bread and wine, recalling Jesus's words at the Last Supper: "This is my Body... This is the chalice of my Blood." Catholics believe the bread and wine become the Body and Blood of Christ. The congregation kneels.</p>
-                <p class="step-note">There are several approved Eucharistic Prayers, but the words of consecration are always the same.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What you'll see</div>
-                            <div class="detail-text">The priest extends his hands over the bread and wine and calls upon the Holy Spirit (<em>epiclesis</em>). He then recounts the Last Supper, speaking Christ's own words. After each consecration, the priest elevates the host and then the chalice for all to see. An altar server may ring bells at this moment.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">Kneel if you are able (this is the most reverent posture for this part of the Mass). Some people bow their heads during the elevation; others gaze upon the consecrated elements. This is a moment for quiet adoration.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Why it matters</div>
-                            <div class="detail-text">Catholics believe that at the Consecration, a miracle occurs: the substance of the bread and wine is transformed into the Body and Blood of Christ, while retaining the appearance of bread and wine. This is called <em>transubstantiation</em>. The Mass is understood not as a re-sacrifice, but as making present the one sacrifice of Christ on the Cross.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Memorial Acclamation</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">After the consecration, the priest says "The mystery of faith," and the people respond with one of several acclamations, such as: "We proclaim your Death, O Lord, and profess your Resurrection, until you come again."</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">The options</div>
-                            <div class="detail-text">There are three Memorial Acclamations to choose from:<br>1. "We proclaim your Death, O Lord, and profess your Resurrection, until you come again."<br>2. "When we eat this Bread and drink this Cup, we proclaim your Death, O Lord, until you come again."<br>3. "Save us, Saviour of the world, for by your Cross and Resurrection you have set us free."</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Great Amen</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The Eucharistic Prayer concludes with a doxology: "Through him, and with him, and in him..." The congregation responds with a resounding "Amen" &mdash; affirming everything that has been prayed.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">This "Amen" is called the "Great Amen" because it is the most important in the entire Mass. With it, the congregation ratifies everything the priest has prayed on their behalf during the Eucharistic Prayer. St Jerome wrote that in the early Church in Rome, this Amen resounded "like a clap of heavenly thunder."</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">The Lord's Prayer</span>
-                    <span class="step-latin">Pater Noster / Our Father</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">Everyone stands and prays together the prayer that Jesus himself taught: "Our Father, who art in heaven, hallowed be thy name..." The priest adds an additional prayer (the embolism) and the people respond with a doxology.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">The words</div>
-                            <div class="detail-quote">"Our Father, who art in heaven, hallowed be thy name; thy kingdom come, thy will be done on earth as it is in heaven. Give us this day our daily bread, and forgive us our trespasses, as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil."</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">Stand and pray along. In some parishes, the congregation holds hands or extends their hands outward in the <em>orans</em> posture (palms up). Follow what those around you do, or simply fold your hands.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Sign of Peace</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The priest says "The peace of the Lord be with you always." The congregation exchanges a sign of peace with those nearby &mdash; usually a handshake, nod, or smile.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">Turn to those around you and offer a handshake, saying "Peace be with you." A warm smile or nod is equally appropriate, especially if you prefer not to shake hands. Keep it brief and reverent &mdash; this isn't a social break, but a liturgical gesture of reconciliation.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Agnus Dei</span>
-                    <span class="step-latin">Lamb of God</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">While the priest breaks the consecrated bread, the people sing or say: "Lamb of God, you take away the sins of the world, have mercy on us... grant us peace."</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What you'll see</div>
-                            <div class="detail-text">The priest breaks the large host and drops a small piece into the chalice &mdash; this ancient rite, called the <em>commingling</em>, symbolises the unity of the Body and Blood of Christ. The breaking of bread echoes Jesus's action at the Last Supper and at Emmaus.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">The words</div>
-                            <div class="detail-quote">"Lamb of God, you take away the sins of the world, have mercy on us.<br>Lamb of God, you take away the sins of the world, have mercy on us.<br>Lamb of God, you take away the sins of the world, grant us peace."</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Communion</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The faithful come forward to receive the Body (and sometimes Blood) of Christ. The minister says "The Body of Christ" and the communicant responds "Amen." A communion hymn is usually sung.</p>
-                <p class="step-note">If you are not Catholic or not yet ready to receive, you may remain in your seat or approach with arms crossed over your chest for a blessing.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">If receiving, join the line and approach the minister. You may receive the host on your tongue or in your hands (place your non-dominant hand on top, receive, then use the other hand to place it in your mouth). If receiving from the chalice, take a small sip. If not receiving, you may stay seated or approach with arms crossed for a blessing.</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Before Communion</div>
-                            <div class="detail-quote">"Lord, I am not worthy that you should enter under my roof, but only say the word and my soul shall be healed."</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">Catholics are asked to fast from food and drink (except water and medicine) for one hour before receiving Communion. To receive, one should be in a state of grace &mdash; free from serious (mortal) sin. If unsure, it is perfectly fine to remain in your seat; no one will judge you.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Prayer after Communion</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">After a period of quiet reflection, the priest stands and offers a closing prayer specific to the day's celebration. The people respond "Amen."</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">The silence after Communion is one of the most precious moments in the Mass. Use it for personal prayer, thanksgiving, or simply resting in God's presence. When the priest stands and says "Let us pray," stand with the assembly.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== CONCLUDING RITES ==================== -->
-        <div class="section-header">
-            <div class="section-marker"><div class="section-marker-inner"></div></div>
-            <div class="section-number">Part IV</div>
-            <h2 class="section-title">Concluding Rites</h2>
-            <p class="section-desc">The assembly is blessed and sent forth to live out the Gospel in the world.</p>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Announcements</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">Brief parish announcements may be made &mdash; upcoming events, volunteer needs, or community news.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">Announcements are optional and kept brief. They might include second collections, upcoming parish events, prayer requests, or community milestones. This is the most informal moment of the Mass.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Final Blessing</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The priest blesses the congregation: "May almighty God bless you, the Father, and the Son, and the Holy Spirit." The people respond "Amen" and make the Sign of the Cross.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">What to do</div>
-                            <div class="detail-tip">Stand and make the Sign of the Cross as the priest blesses you. On special occasions, the priest may give a solemn blessing with multiple parts, each followed by "Amen."</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item fixed">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Dismissal</span>
-                    <span class="step-latin">Ite, Missa Est</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The deacon or priest sends the people forth, often with "Go forth, the Mass is ended" or "Go and announce the Gospel of the Lord." The people respond "Thanks be to God." The word "Mass" itself comes from this dismissal &mdash; <em>missa</em>.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">The options</div>
-                            <div class="detail-text">There are four forms of dismissal:<br>1. "Go forth, the Mass is ended."<br>2. "Go and announce the Gospel of the Lord."<br>3. "Go in peace, glorifying the Lord by your life."<br>4. "Go in peace."</div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="detail-label">Why it matters</div>
-                            <div class="detail-text">The dismissal is not just an ending &mdash; it is a commissioning. The Latin <em>Ite, missa est</em> ("Go, it is the sending") gave the Mass its name. You are being sent out to live what you have celebrated: to be the Body of Christ in the world.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline-item variable">
-            <div class="timeline-node"></div>
-            <div class="timeline-card">
-                <div class="card-header">
-                    <span class="step-name">Recessional Hymn</span>
-                    <span class="step-type">Variable</span>
-                    <span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-                </div>
-                <p class="step-description">The priest and ministers process out while the congregation sings a closing hymn. Though not strictly part of the liturgy, it is a joyful custom in most parishes.</p>
-                <div class="step-detail">
-                    <div class="step-detail-inner">
-                        <div class="detail-section">
-                            <div class="detail-label">Good to know</div>
-                            <div class="detail-text">You're free to leave after the dismissal, but most people stay to sing the final hymn. It's also a lovely time to greet those around you. Many parishes have a social gathering (coffee and refreshments) after Mass &mdash; newcomers are always welcome.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
+    <div class="timeline-container" id="timeline"></div>
 
     <!-- ===== FOOTER ===== -->
     <footer class="footer">
@@ -1475,43 +695,972 @@
             <span class="ornament-diamond"></span>
             <span class="ornament-line"></span>
         </div>
-        <p>"The Eucharist is the source and summit of the Christian life."</p>
-        <p class="footer-note">&mdash; Lumen Gentium, 11</p>
+        <p data-i18n="footerQuote">&ldquo;The Eucharist is the source and summit of the Christian life.&rdquo;</p>
+        <p class="footer-note" data-i18n="footerSource">&mdash; Lumen Gentium, 11</p>
     </footer>
 
     <div class="bottom-border"></div>
 
-    <!-- ===== SCRIPTS ===== -->
     <script>
-        // Intersection Observer for scroll-triggered animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+    // ===== CHEVRON SVG (reused in every card) =====
+    const CHEVRON = '<span class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>';
+
+    // ===== TIMELINE DATA =====
+    // Each section and step stores all translatable strings per language.
+    const DATA = {
+        sections: [
+            {
+                part: { en: 'Part I', pl: 'Część I', nl: 'Deel I' },
+                title: { en: 'Introductory Rites', pl: 'Obrzędy wstępne', nl: 'Openingsriten' },
+                desc: {
+                    en: 'The assembly gathers and prepares to hear God\'s word and celebrate the Eucharist.',
+                    pl: 'Zgromadzenie zbiera się i przygotowuje do słuchania słowa Bożego i celebrowania Eucharystii.',
+                    nl: 'De gemeenschap komt samen en bereidt zich voor om Gods woord te horen en de Eucharistie te vieren.'
+                },
+                steps: [
+                    {
+                        type: 'variable',
+                        duration: '2\u20134',
+                        name: { en: 'Entrance & Processional Hymn', pl: 'Pieśń na wejście i procesja', nl: 'Intrede & Processielied' },
+                        latin: null,
+                        desc: {
+                            en: 'The priest and ministers process to the altar while the congregation sings an entrance hymn. The hymn is chosen to match the liturgical season or feast day.',
+                            pl: 'Kapłan i asysta procesyjnie podchodzą do ołtarza, podczas gdy wierni śpiewają pieśń na wejście. Pieśń jest dobrana do okresu liturgicznego lub święta.',
+                            nl: 'De priester en bedienaars trekken in processie naar het altaar terwijl de gemeente een intredelied zingt. Het lied wordt gekozen passend bij het liturgisch seizoen of feest.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'What you\'ll see', type: 'text', content: 'The priest, deacon, altar servers, and sometimes other ministers walk in procession towards the altar. The priest will reverence the altar with a bow or kiss. If incense is used, the altar may be incensed at this point.' },
+                                { label: 'What to do', type: 'tip', content: 'Stand and sing along if you can. Hymnals or worship aids are usually available in the pews. Don\'t worry if you don\'t know the hymn \u2014 simply standing is enough.' },
+                                { label: 'Why it matters', type: 'text', content: 'The procession symbolises the pilgrim Church journeying towards God. The entrance hymn unites the assembly in one voice, setting the tone for the celebration.' }
+                            ],
+                            pl: [
+                                { label: 'Co zobaczysz', type: 'text', content: 'Kapłan, diakon, ministranci i czasem inni posługujący idą w procesji ku ołtarzowi. Kapłan oddaje cześć ołtarzowi ukłonem lub pocałunkiem. Jeśli używa się kadzidła, ołtarz może zostać okadzony.' },
+                                { label: 'Co robić', type: 'tip', content: 'Wstań i śpiewaj, jeśli możesz. Śpiewniki lub kartki z pieśniami zazwyczaj są dostępne w ławkach. Nie martw się, jeśli nie znasz pieśni \u2014 samo stanie wystarczy.' },
+                                { label: 'Dlaczego to ważne', type: 'text', content: 'Procesja symbolizuje Kościół pielgrzymujący ku Bogu. Pieśń na wejście jednoczy zgromadzenie w jednym głosie i nadaje ton celebracji.' }
+                            ],
+                            nl: [
+                                { label: 'Wat je ziet', type: 'text', content: 'De priester, diaken, misdienaars en soms andere bedienaars lopen in processie naar het altaar. De priester eert het altaar met een buiging of kus. Bij gebruik van wierook kan het altaar bewierookt worden.' },
+                                { label: 'Wat te doen', type: 'tip', content: 'Ga staan en zing mee als je kunt. Zangboeken of liturgiebladen zijn meestal beschikbaar in de kerkbanken. Maak je geen zorgen als je het lied niet kent \u2014 gewoon staan is voldoende.' },
+                                { label: 'Waarom het belangrijk is', type: 'text', content: 'De processie symboliseert de pelgrimerende Kerk op weg naar God. Het intredelied verenigt de gemeenschap in \u00e9\u00e9n stem en zet de toon voor de viering.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '1',
+                        name: { en: 'Sign of the Cross & Greeting', pl: 'Znak Krzyża i pozdrowienie', nl: 'Kruisteken & Begroeting' },
+                        latin: null,
+                        desc: {
+                            en: 'The priest and people make the Sign of the Cross together. The priest then greets the assembly \u2014 typically "The Lord be with you" \u2014 and the people respond "And with your spirit."',
+                            pl: 'Kapłan i wierni wspólnie czynią znak krzyża. Kapłan pozdrawia zgromadzenie \u2014 zazwyczaj słowami „Pan z wami" \u2014 a wierni odpowiadają „I z duchem twoim."',
+                            nl: 'De priester en het volk maken samen het kruisteken. De priester begroet de gemeenschap \u2014 doorgaans met "De Heer zij met u" \u2014 en het volk antwoordt "En met uw geest."'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'The words', type: 'quote', content: '"In the name of the Father, and of the Son, and of the Holy Spirit. Amen."' },
+                                { label: 'What to do', type: 'tip', content: 'With your right hand, touch your forehead, then your chest, then your left shoulder, then your right shoulder. This traces the shape of a cross over your body.' },
+                                { label: 'Why it matters', type: 'text', content: 'The Sign of the Cross invokes the Holy Trinity and marks everything that follows as sacred. The greeting establishes that this is not a performance but a dialogue \u2014 Christ is present among the gathered assembly.' }
+                            ],
+                            pl: [
+                                { label: 'Słowa', type: 'quote', content: '„W imię Ojca i Syna, i Ducha Świętego. Amen."' },
+                                { label: 'Co robić', type: 'tip', content: 'Prawą ręką dotknij czoła, potem klatki piersiowej, następnie lewego ramienia i prawego ramienia. W ten sposób kreślisz na swoim ciele kształt krzyża.' },
+                                { label: 'Dlaczego to ważne', type: 'text', content: 'Znak krzyża przywołuje Trójcę Świętą i oznacza, że to, co nastąpi, jest święte. Pozdrowienie ustanawia, że nie jest to przedstawienie, lecz dialog \u2014 Chrystus jest obecny wśród zgromadzonych.' }
+                            ],
+                            nl: [
+                                { label: 'De woorden', type: 'quote', content: '"In de naam van de Vader en de Zoon en de Heilige Geest. Amen."' },
+                                { label: 'Wat te doen', type: 'tip', content: 'Raak met je rechterhand je voorhoofd aan, dan je borst, dan je linkerschouder en dan je rechterschouder. Zo teken je de vorm van een kruis over je lichaam.' },
+                                { label: 'Waarom het belangrijk is', type: 'text', content: 'Het kruisteken roept de Heilige Drie-eenheid aan en markeert alles wat volgt als heilig. De begroeting maakt duidelijk dat dit geen voorstelling is maar een dialoog \u2014 Christus is aanwezig te midden van de verzamelde gemeenschap.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '1\u20132',
+                        name: { en: 'Penitential Act', pl: 'Akt pokuty', nl: 'Schuldbelijdenis' },
+                        latin: { en: 'Confiteor', pl: 'Confiteor', nl: 'Confiteor' },
+                        desc: {
+                            en: 'The congregation acknowledges their sins and asks for God\'s mercy. Most commonly, this is the Confiteor: "I confess to almighty God, and to you, my brothers and sisters..."',
+                            pl: 'Wierni uznają swoje grzechy i proszą o Boże miłosierdzie. Najczęściej jest to Spowiedź powszechna: „Spowiadam się Bogu wszechmogącemu i wam, bracia i siostry..."',
+                            nl: 'De gemeente erkent haar zonden en vraagt om Gods barmhartigheid. Meestal is dit de Confiteor: "Ik belijd voor de almachtige God en voor u allen..."'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'The words', type: 'quote', content: '"I confess to almighty God and to you, my brothers and sisters, that I have greatly sinned, in my thoughts and in my words, in what I have done and in what I have failed to do, through my fault, through my fault, through my most grievous fault..."' },
+                                { label: 'What to do', type: 'tip', content: 'While saying "through my fault, through my fault, through my most grievous fault," it is customary to gently strike your chest three times with a closed fist. This ancient gesture is called the <em>mea culpa</em>.' },
+                                { label: 'Why it matters', type: 'text', content: 'Before approaching God in the Eucharist, the community humbly acknowledges their need for mercy. This is not the Sacrament of Confession, but a communal expression of repentance that prepares the heart for worship.' }
+                            ],
+                            pl: [
+                                { label: 'Słowa', type: 'quote', content: '„Spowiadam się Bogu wszechmogącemu i wam, bracia i siostry, że bardzo zgrzeszyłem myślą, mową, uczynkiem i zaniedbaniem: moja wina, moja wina, moja bardzo wielka wina..."' },
+                                { label: 'Co robić', type: 'tip', content: 'Podczas słów „moja wina, moja wina, moja bardzo wielka wina" zwyczajowo uderza się trzykrotnie pięścią w pierś. Ten starożytny gest nazywa się <em>mea culpa</em>.' },
+                                { label: 'Dlaczego to ważne', type: 'text', content: 'Zanim wspólnota przystąpi do Eucharystii, pokornie uznaje swoją potrzebę miłosierdzia. To nie jest sakrament spowiedzi, lecz wspólnotowy wyraz skruchy przygotowujący serce na oddawanie czci Bogu.' }
+                            ],
+                            nl: [
+                                { label: 'De woorden', type: 'quote', content: '"Ik belijd voor de almachtige God, en voor u allen, dat ik gezondigd heb in woord en gedachte, in doen en laten, door mijn schuld, door mijn schuld, door mijn grote schuld..."' },
+                                { label: 'Wat te doen', type: 'tip', content: 'Bij de woorden "door mijn schuld, door mijn schuld, door mijn grote schuld" is het gebruikelijk om driemaal zachtjes met de vuist op de borst te kloppen. Dit oude gebaar heet <em>mea culpa</em>.' },
+                                { label: 'Waarom het belangrijk is', type: 'text', content: 'Voordat de gemeenschap God nadert in de Eucharistie, erkent zij nederig haar behoefte aan barmhartigheid. Dit is niet het Sacrament van de Biecht, maar een gemeenschappelijke uiting van berouw die het hart voorbereidt op aanbidding.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '1\u20132',
+                        name: { en: 'Kyrie', pl: 'Kyrie', nl: 'Kyrie' },
+                        latin: { en: 'Lord, Have Mercy', pl: 'Panie, zmiłuj się', nl: 'Heer, ontferm U' },
+                        desc: {
+                            en: 'A brief, ancient prayer asking for Christ\'s mercy, sometimes sung. "Lord, have mercy. Christ, have mercy. Lord, have mercy."',
+                            pl: 'Krótka, starożytna modlitwa z prośbą o miłosierdzie Chrystusa, czasem śpiewana. „Panie, zmiłuj się. Chryste, zmiłuj się. Panie, zmiłuj się."',
+                            nl: 'Een kort, oud gebed dat vraagt om Christus\' barmhartigheid, soms gezongen. "Heer, ontferm U. Christus, ontferm U. Heer, ontferm U."'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'The words', type: 'quote', content: '"Lord, have mercy. / Lord, have mercy.<br>Christ, have mercy. / Christ, have mercy.<br>Lord, have mercy. / Lord, have mercy."' },
+                                { label: 'Good to know', type: 'text', content: 'The Kyrie is one of the few prayers sometimes still said or sung in Greek: <em>"Kyrie, eleison. Christe, eleison. Kyrie, eleison."</em> It dates back to the earliest centuries of Christianity and connects today\'s Mass to the ancient Church.' }
+                            ],
+                            pl: [
+                                { label: 'Słowa', type: 'quote', content: '„Panie, zmiłuj się. / Panie, zmiłuj się.<br>Chryste, zmiłuj się. / Chryste, zmiłuj się.<br>Panie, zmiłuj się. / Panie, zmiłuj się."' },
+                                { label: 'Warto wiedzieć', type: 'text', content: 'Kyrie jest jedną z nielicznych modlitw, które czasem wciąż odmawia się lub śpiewa po grecku: <em>„Kyrie, eleison. Christe, eleison. Kyrie, eleison."</em> Sięga najwcześniejszych wieków chrześcijaństwa i łączy dzisiejszą Mszę ze starożytnym Kościołem.' }
+                            ],
+                            nl: [
+                                { label: 'De woorden', type: 'quote', content: '"Heer, ontferm U. / Heer, ontferm U.<br>Christus, ontferm U. / Christus, ontferm U.<br>Heer, ontferm U. / Heer, ontferm U."' },
+                                { label: 'Goed om te weten', type: 'text', content: 'De Kyrie is een van de weinige gebeden die soms nog in het Grieks worden gezegd of gezongen: <em>"Kyrie, eleison. Christe, eleison. Kyrie, eleison."</em> Het stamt uit de vroegste eeuwen van het christendom en verbindt de huidige Mis met de oude Kerk.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '2\u20133',
+                        name: { en: 'Gloria', pl: 'Gloria', nl: 'Gloria' },
+                        latin: { en: 'Glory to God in the Highest', pl: 'Chwała na wysokości Bogu', nl: 'Eer aan God in den hoge' },
+                        desc: {
+                            en: 'A joyful hymn of praise: "Glory to God in the highest, and on earth peace to people of good will..." Sung or recited by the entire congregation.',
+                            pl: 'Radosny hymn uwielbienia: „Chwała na wysokości Bogu, a na ziemi pokój ludziom dobrej woli..." Śpiewany lub odmawiany przez całe zgromadzenie.',
+                            nl: 'Een vreugdevol lofgezang: "Eer aan God in den hoge, en vrede op aarde aan de mensen die Hij liefheeft..." Gezongen of gebeden door de hele gemeente.'
+                        },
+                        note: {
+                            en: 'Omitted during Advent and Lent, making its return at Easter and Christmas especially joyful.',
+                            pl: 'Opuszczana w Adwencie i Wielkim Poście, co sprawia, że jej powrót na Wielkanoc i Boże Narodzenie jest szczególnie radosny.',
+                            nl: 'Wordt weggelaten tijdens de Advent en de Veertigdagentijd, waardoor de terugkeer met Pasen en Kerstmis extra vreugdevol is.'
+                        },
+                        detail: {
+                            en: [
+                                { label: 'The words', type: 'quote', content: '"Glory to God in the highest, and on earth peace to people of good will. We praise you, we bless you, we adore you, we glorify you, we give you thanks for your great glory, Lord God, heavenly King, O God, almighty Father..."' },
+                                { label: 'Good to know', type: 'text', content: 'The opening words echo the song of the angels at Christ\'s birth (Luke 2:14). The Gloria is an ancient hymn \u2014 its omission during the penitential seasons of Advent and Lent creates a sense of longing, so that when it returns at Easter or Christmas, the joy feels renewed.' }
+                            ],
+                            pl: [
+                                { label: 'Słowa', type: 'quote', content: '„Chwała na wysokości Bogu, a na ziemi pokój ludziom dobrej woli. Chwalimy Cię. Błogosławimy Cię. Wielbimy Cię. Wysławiamy Cię. Dzięki Ci składamy, bo wielka jest chwała Twoja, Panie Boże, Królu nieba, Boże, Ojcze wszechmogący..."' },
+                                { label: 'Warto wiedzieć', type: 'text', content: 'Początkowe słowa powtarzają pieśń aniołów przy narodzeniu Chrystusa (Łk 2,14). Gloria jest starożytnym hymnem \u2014 jego opuszczenie w pokutnych okresach Adwentu i Wielkiego Postu tworzy poczucie tęsknoty, tak że gdy wraca na Wielkanoc lub Boże Narodzenie, radość odczuwana jest na nowo.' }
+                            ],
+                            nl: [
+                                { label: 'De woorden', type: 'quote', content: '"Eer aan God in den hoge, en vrede op aarde aan de mensen die Hij liefheeft. Wij loven U. Wij prijzen en aanbidden U. Wij verheerlijken U en zeggen U dank voor uw grote heerlijkheid. Heer God, hemelse Koning, God, almachtige Vader..."' },
+                                { label: 'Goed om te weten', type: 'text', content: 'De openingswoorden weerspiegelen het lied van de engelen bij Christus\' geboorte (Lucas 2:14). De Gloria is een oud gezang \u2014 het weglaten ervan tijdens de boetetijden van de Advent en Veertigdagentijd schept een gevoel van verlangen, zodat bij de terugkeer met Pasen of Kerstmis de vreugde vernieuwd wordt.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'variable',
+                        duration: '1',
+                        name: { en: 'Collect', pl: 'Kolekta', nl: 'Collectagebed' },
+                        latin: { en: 'Opening Prayer', pl: 'Modlitwa dnia', nl: 'Openingsgebed' },
+                        desc: {
+                            en: 'The priest "collects" the prayers of the people into one formal prayer that sets the theme for the day\'s Mass. The congregation responds "Amen."',
+                            pl: 'Kapłan „zbiera" (kolekta) modlitwy ludu w jedną uroczystą modlitwę, która wyznacza temat Mszy danego dnia. Wierni odpowiadają „Amen."',
+                            nl: 'De priester "verzamelt" de gebeden van het volk in \u00e9\u00e9n formeel gebed dat het thema van de dagmis bepaalt. De gemeente antwoordt "Amen."'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'What to do', type: 'tip', content: 'The priest will say "Let us pray" and there may be a brief pause for silent prayer. At the end of the Collect, simply respond "Amen."' },
+                                { label: 'Why it matters', type: 'text', content: 'The word "collect" means to gather together. This prayer gathers the individual intentions of everyone present into one voice, addressed to God the Father through Christ. Each day has its own unique Collect, found in the Roman Missal.' }
+                            ],
+                            pl: [
+                                { label: 'Co robić', type: 'tip', content: 'Kapłan powie „Módlmy się" i może nastąpić krótka chwila ciszy na modlitwę. Na końcu kolekty po prostu odpowiedz „Amen."' },
+                                { label: 'Dlaczego to ważne', type: 'text', content: 'Słowo „kolekta" oznacza zbieranie. Ta modlitwa gromadzi indywidualne intencje wszystkich obecnych w jeden głos, skierowany do Boga Ojca przez Chrystusa. Każdy dzień ma swoją własną kolektę, znajdującą się w Mszale Rzymskim.' }
+                            ],
+                            nl: [
+                                { label: 'Wat te doen', type: 'tip', content: 'De priester zegt "Laat ons bidden" en er kan een korte stilte voor gebed volgen. Aan het einde van het Collectagebed antwoord je eenvoudig "Amen."' },
+                                { label: 'Waarom het belangrijk is', type: 'text', content: 'Het woord "collecta" betekent verzamelen. Dit gebed bundelt de individuele intenties van alle aanwezigen in \u00e9\u00e9n stem, gericht tot God de Vader door Christus. Elke dag heeft een eigen Collectagebed, te vinden in het Romeins Missaal.' }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                part: { en: 'Part II', pl: 'Część II', nl: 'Deel II' },
+                title: { en: 'Liturgy of the Word', pl: 'Liturgia słowa', nl: 'Liturgie van het Woord' },
+                desc: {
+                    en: 'God speaks to the assembly through the Scriptures, which are proclaimed and reflected upon.',
+                    pl: 'Bóg przemawia do zgromadzenia przez Pismo Święte, które jest głoszone i rozważane.',
+                    nl: 'God spreekt tot de gemeenschap door de Schriften, die worden voorgelezen en overwogen.'
+                },
+                steps: [
+                    {
+                        type: 'variable',
+                        duration: '2\u20133',
+                        name: { en: 'First Reading', pl: 'Pierwsze czytanie', nl: 'Eerste Lezing' },
+                        latin: null,
+                        desc: {
+                            en: 'Usually from the Old Testament (or Acts during Easter). A lay reader proclaims the passage from the ambo (lectern). The reading ends with "The word of the Lord" and the people respond "Thanks be to God."',
+                            pl: 'Zazwyczaj ze Starego Testamentu (lub z Dziejów Apostolskich w okresie wielkanocnym). Lektor głosi fragment z ambony. Czytanie kończy się słowami „Oto słowo Boże", a wierni odpowiadają „Bogu niech będą dzięki."',
+                            nl: 'Meestal uit het Oude Testament (of Handelingen tijdens de Paastijd). Een leek leest de passage voor vanaf de ambo (lezenaar). De lezing eindigt met "Zo spreekt de Heer" en het volk antwoordt "Wij danken God."'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'What to do', type: 'tip', content: 'Sit and listen. The readings follow a multi-year cycle (Year A, B, C for Sundays) so that over time the faithful hear a wide selection of Scripture. You can follow along in a missalette if one is available.' },
+                                { label: 'Why it matters', type: 'text', content: 'The First Reading is usually chosen to connect thematically with the Gospel of the day. The Old Testament passage often foreshadows or illuminates what Christ will say or do in the Gospel.' }
+                            ],
+                            pl: [
+                                { label: 'Co robić', type: 'tip', content: 'Usiądź i słuchaj. Czytania układają się w wieloletni cykl (rok A, B, C na niedziele), tak aby z czasem wierni usłyszeli szeroki wybór Pisma Świętego. Możesz śledzić tekst w mszaliku, jeśli jest dostępny.' },
+                                { label: 'Dlaczego to ważne', type: 'text', content: 'Pierwsze czytanie jest zazwyczaj dobrane tak, aby łączyło się tematycznie z Ewangelią dnia. Fragment Starego Testamentu często zapowiada lub oświetla to, co Chrystus powie lub uczyni w Ewangelii.' }
+                            ],
+                            nl: [
+                                { label: 'Wat te doen', type: 'tip', content: 'Ga zitten en luister. De lezingen volgen een meerjarige cyclus (jaar A, B, C voor zondagen) zodat de gelovigen in de loop der tijd een brede selectie van de Schrift horen. Je kunt meelezen in een missaaltje als dat beschikbaar is.' },
+                                { label: 'Waarom het belangrijk is', type: 'text', content: 'De Eerste Lezing wordt meestal gekozen om thematisch aan te sluiten bij het Evangelie van de dag. Het Oudtestamentische fragment is vaak een voorafschaduwing van wat Christus zal zeggen of doen in het Evangelie.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'variable',
+                        duration: '2\u20133',
+                        name: { en: 'Responsorial Psalm', pl: 'Psalm responsoryjny', nl: 'Antwoordpsalm' },
+                        latin: null,
+                        desc: {
+                            en: 'A psalm is sung or recited in response to the First Reading. The cantor or reader leads with verses and the congregation repeats a refrain.',
+                            pl: 'Psalm śpiewany lub odmawiany w odpowiedzi na pierwsze czytanie. Kantor lub lektor prowadzi wersety, a wierni powtarzają refren.',
+                            nl: 'Een psalm wordt gezongen of gebeden als antwoord op de Eerste Lezing. De cantor of lector leidt met verzen en de gemeente herhaalt een refrein.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'What to do', type: 'tip', content: 'Listen for the refrain \u2014 it will be sung or spoken once at the start, then you repeat it after each set of verses. The refrain is usually printed in the worship aid or displayed on a screen.' },
+                                { label: 'Good to know', type: 'text', content: 'The Psalms are the prayer book of the Bible \u2014 150 ancient songs of praise, lament, thanksgiving, and hope. The psalm chosen each week echoes the themes of the day\'s readings, giving the assembly a chance to respond to God\'s word with God\'s own words.' }
+                            ],
+                            pl: [
+                                { label: 'Co robić', type: 'tip', content: 'Wsłuchaj się w refren \u2014 zostanie zaśpiewany lub wypowiedziany na początku, a potem powtarzasz go po każdym zestawie wersetów. Refren jest zazwyczaj wydrukowany w kartce liturgicznej lub wyświetlany na ekranie.' },
+                                { label: 'Warto wiedzieć', type: 'text', content: 'Psalmy to modlitewnik Biblii \u2014 150 starożytnych pieśni uwielbienia, lamentu, dziękczynienia i nadziei. Psalm wybrany na dany tydzień nawiązuje do tematów czytań dnia, dając zgromadzeniu szansę odpowiedzi na słowo Boże własnymi słowami Boga.' }
+                            ],
+                            nl: [
+                                { label: 'Wat te doen', type: 'tip', content: 'Luister naar het refrein \u2014 het wordt aan het begin gezongen of gesproken, en je herhaalt het na elke set verzen. Het refrein staat meestal in het liturgieblad of op een scherm.' },
+                                { label: 'Goed om te weten', type: 'text', content: 'De Psalmen zijn het gebedenboek van de Bijbel \u2014 150 oude liederen van lof, klaagzang, dankzegging en hoop. De psalm die elke week gekozen wordt weerspiegelt de thema\'s van de lezingen en geeft de gemeenschap de kans om op Gods woord te antwoorden met Gods eigen woorden.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'variable',
+                        duration: '2\u20133',
+                        name: { en: 'Second Reading', pl: 'Drugie czytanie', nl: 'Tweede Lezing' },
+                        latin: null,
+                        desc: {
+                            en: 'Taken from the New Testament letters (Epistles) or Revelation. Like the First Reading, it ends with "The word of the Lord."',
+                            pl: 'Zaczerpnięte z listów Nowego Testamentu (Epistół) lub Apokalipsy. Podobnie jak pierwsze czytanie, kończy się słowami „Oto słowo Boże."',
+                            nl: 'Genomen uit de Nieuwtestamentische brieven (Epistels) of Openbaring. Net als de Eerste Lezing eindigt het met "Zo spreekt de Heer."'
+                        },
+                        note: {
+                            en: 'On weekdays, there is typically only one reading before the Gospel.',
+                            pl: 'W dni powszednie zazwyczaj jest tylko jedno czytanie przed Ewangelią.',
+                            nl: 'Op weekdagen is er meestal slechts \u00e9\u00e9n lezing v\u00f3\u00f3r het Evangelie.'
+                        },
+                        detail: {
+                            en: [
+                                { label: 'Good to know', type: 'text', content: 'The Second Reading follows its own cycle, working through entire New Testament letters over several weeks. It may not always connect directly to the other readings. These letters were originally written by apostles like Paul, Peter, James, and John to early Christian communities \u2014 you\'re hearing the same words those first communities heard.' }
+                            ],
+                            pl: [
+                                { label: 'Warto wiedzieć', type: 'text', content: 'Drugie czytanie ma własny cykl, przechodzący przez całe listy Nowego Testamentu na przestrzeni kilku tygodni. Nie zawsze łączy się bezpośrednio z innymi czytaniami. Listy te zostały pierwotnie napisane przez apostołów, takich jak Paweł, Piotr, Jakub i Jan, do wczesnych wspólnot chrześcijańskich \u2014 słyszysz te same słowa, które słyszały tamte pierwsze wspólnoty.' }
+                            ],
+                            nl: [
+                                { label: 'Goed om te weten', type: 'text', content: 'De Tweede Lezing volgt een eigen cyclus die over meerdere weken complete Nieuwtestamentische brieven doorneemt. Het sluit niet altijd direct aan bij de andere lezingen. Deze brieven werden oorspronkelijk geschreven door apostelen als Paulus, Petrus, Jakobus en Johannes aan vroege christelijke gemeenschappen \u2014 je hoort dezelfde woorden die die eerste gemeenschappen hoorden.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'variable',
+                        duration: '1',
+                        name: { en: 'Gospel Acclamation', pl: 'Aklamacja przed Ewangelią', nl: 'Evangelie-acclamatie' },
+                        latin: { en: 'Alleluia', pl: 'Alleluja', nl: 'Alleluia' },
+                        desc: {
+                            en: 'The congregation stands and sings "Alleluia" along with a verse that introduces the Gospel theme. Everyone rises as a sign of reverence for Christ\'s own words.',
+                            pl: 'Wierni wstają i śpiewają „Alleluja" wraz z wersetem wprowadzającym temat Ewangelii. Wszyscy powstają na znak czci dla słów samego Chrystusa.',
+                            nl: 'De gemeente staat op en zingt "Alleluia" samen met een vers dat het thema van het Evangelie introduceert. Iedereen staat op als teken van eerbied voor Christus\' eigen woorden.'
+                        },
+                        note: {
+                            en: 'During Lent, "Alleluia" is replaced with a different acclamation such as "Praise to you, Lord Jesus Christ."',
+                            pl: 'W Wielkim Poście „Alleluja" zastępuje inna aklamacja, np. „Chwała Tobie, Królu wieków."',
+                            nl: 'Tijdens de Veertigdagentijd wordt "Alleluia" vervangen door een andere acclamatie zoals "Lof en eer zij U, Heer Jezus."'
+                        },
+                        detail: {
+                            en: [
+                                { label: 'What to do', type: 'tip', content: 'Stand when the Alleluia begins. This is the congregation\'s way of welcoming Christ, who speaks to us through the Gospel. The verse between the Alleluias offers a preview of the Gospel\'s theme.' },
+                                { label: 'Good to know', type: 'text', content: '"Alleluia" comes from the Hebrew <em>Hallelujah</em>, meaning "Praise the Lord." Its omission during the 40 days of Lent is one of the oldest traditions in the Church, creating a fasting of joy that makes the Easter Alleluia all the more powerful.' }
+                            ],
+                            pl: [
+                                { label: 'Co robić', type: 'tip', content: 'Wstań, gdy zaczyna się Alleluja. To sposób, w jaki zgromadzenie wita Chrystusa, który przemawia do nas przez Ewangelię. Werset między Alleluja zapowiada temat Ewangelii.' },
+                                { label: 'Warto wiedzieć', type: 'text', content: '„Alleluja" pochodzi od hebrajskiego <em>Hallelujah</em>, co oznacza „Chwalcie Pana." Jego opuszczenie podczas 40 dni Wielkiego Postu jest jedną z najstarszych tradycji Kościoła, tworząc post od radości, który sprawia, że wielkanocne Alleluja jest tym potężniejsze.' }
+                            ],
+                            nl: [
+                                { label: 'Wat te doen', type: 'tip', content: 'Ga staan wanneer het Alleluia begint. Dit is de manier waarop de gemeente Christus verwelkomt, die tot ons spreekt door het Evangelie. Het vers tussen de Alleluia\'s biedt een voorproefje van het thema van het Evangelie.' },
+                                { label: 'Goed om te weten', type: 'text', content: '"Alleluia" komt van het Hebreeuwse <em>Hallelujah</em>, wat "Prijs de Heer" betekent. Het weglaten ervan tijdens de 40 dagen van de Veertigdagentijd is een van de oudste tradities van de Kerk en schept een vasten van vreugde die het Paasalleluia des te krachtiger maakt.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'variable',
+                        duration: '2\u20134',
+                        name: { en: 'Gospel Reading', pl: 'Ewangelia', nl: 'Evangelielezing' },
+                        latin: null,
+                        desc: {
+                            en: 'The high point of the Liturgy of the Word. A deacon or priest proclaims a passage from one of the four Gospels. The people respond "Praise to you, Lord Jesus Christ." You may notice people making a small cross on their forehead, lips, and heart.',
+                            pl: 'Szczytowy moment liturgii słowa. Diakon lub kapłan głosi fragment jednej z czterech Ewangelii. Wierni odpowiadają „Chwała Tobie, Panie." Możesz zauważyć, że ludzie kreślą mały krzyż na czole, ustach i sercu.',
+                            nl: 'Het hoogtepunt van de Liturgie van het Woord. Een diaken of priester leest een passage voor uit een van de vier Evangeli\u00ebn. Het volk antwoordt "Wij danken God." Je kunt zien dat mensen een klein kruisje maken op hun voorhoofd, lippen en hart.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'What to do', type: 'tip', content: 'Remain standing. Before the Gospel is read, make a small cross with your thumb on your forehead, lips, and heart. This gesture means: "May the word of God be in my mind, on my lips, and in my heart." At the end, respond "Praise to you, Lord Jesus Christ."' },
+                                { label: 'Why it matters', type: 'text', content: 'The Gospel holds a place of honour because it contains the words and deeds of Jesus himself. Notice the special reverence: only an ordained minister may proclaim it, the assembly stands, and the book may be carried in procession with candles and incense. The Church assigns one Gospel per year cycle \u2014 Matthew (A), Mark (B), or Luke (C), with John woven throughout.' }
+                            ],
+                            pl: [
+                                { label: 'Co robić', type: 'tip', content: 'Stój. Przed odczytaniem Ewangelii uczyń kciukiem mały krzyż na czole, ustach i sercu. Ten gest oznacza: „Niech słowo Boże będzie w moim umyśle, na moich ustach i w moim sercu." Na końcu odpowiedz „Chwała Tobie, Chryste."' },
+                                { label: 'Dlaczego to ważne', type: 'text', content: 'Ewangelia zajmuje miejsce szczególne, ponieważ zawiera słowa i czyny samego Jezusa. Zwróć uwagę na szczególną cześć: tylko wyświęcony szafarz może ją głosić, zgromadzenie stoi, a księga może być niesiona w procesji ze świecami i kadzidłem. Kościół przypisuje jedną Ewangelię na rok cyklu \u2014 Mateusz (A), Marek (B), Łukasz (C), z Janem obecnym w różnych momentach.' }
+                            ],
+                            nl: [
+                                { label: 'Wat te doen', type: 'tip', content: 'Blijf staan. V\u00f3\u00f3r het Evangelie wordt gelezen, maak een klein kruisje met je duim op je voorhoofd, lippen en hart. Dit gebaar betekent: "Moge het woord van God in mijn verstand, op mijn lippen en in mijn hart zijn." Aan het eind antwoord je "Wij danken God."' },
+                                { label: 'Waarom het belangrijk is', type: 'text', content: 'Het Evangelie heeft een ereplaats omdat het de woorden en daden van Jezus zelf bevat. Let op de bijzondere eerbied: alleen een gewijde bedienaar mag het verkondigen, de gemeente staat, en het boek kan in processie met kaarsen en wierook worden gedragen. De Kerk wijst \u00e9\u00e9n Evangelie per jaarcyclus toe \u2014 Matte\u00fcs (A), Marcus (B) of Lucas (C), met Johannes verweven doorheen.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'variable',
+                        duration: '8\u201315',
+                        name: { en: 'Homily', pl: 'Homilia', nl: 'Homilie' },
+                        latin: null,
+                        desc: {
+                            en: 'The priest or deacon gives a reflection on the readings, connecting Scripture to the lives of the faithful. Everyone sits to listen. The homily is unique to each celebration.',
+                            pl: 'Kapłan lub diakon wygłasza rozważanie nad czytaniami, łącząc Pismo Święte z życiem wiernych. Wszyscy siadają, aby słuchać. Homilia jest niepowtarzalna dla każdej celebracji.',
+                            nl: 'De priester of diaken geeft een overweging over de lezingen en verbindt de Schrift met het leven van de gelovigen. Iedereen gaat zitten om te luisteren. De homilie is uniek voor elke viering.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'Good to know', type: 'text', content: 'The homily is not a lecture or a speech \u2014 it is part of the liturgy itself. The homilist\'s role is to break open the Scriptures just proclaimed and help the faithful see how God\'s word speaks to their lives today. Homilies typically last 8\u201315 minutes. A brief silence may follow for personal reflection.' }
+                            ],
+                            pl: [
+                                { label: 'Warto wiedzieć', type: 'text', content: 'Homilia nie jest wykładem ani przemówieniem \u2014 jest częścią samej liturgii. Rolą homilisty jest otwarcie właśnie ogłoszonego Pisma Świętego i pomoc wiernym w dostrzeżeniu, jak słowo Boże przemawia do ich życia dzisiaj. Homilie trwają zazwyczaj 8\u201315 minut. Może po niej nastąpić krótka chwila ciszy na osobistą refleksję.' }
+                            ],
+                            nl: [
+                                { label: 'Goed om te weten', type: 'text', content: 'De homilie is geen lezing of toespraak \u2014 het is onderdeel van de liturgie zelf. De rol van de predikant is om de zojuist verkondigde Schriften te openen en de gelovigen te helpen zien hoe Gods woord tot hun leven vandaag spreekt. Homilie\u00ebn duren doorgaans 8\u201315 minuten. Er kan een korte stilte volgen voor persoonlijke bezinning.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '2\u20133',
+                        name: { en: 'Profession of Faith', pl: 'Wyznanie wiary', nl: 'Geloofsbelijdenis' },
+                        latin: { en: 'Creed', pl: 'Credo', nl: 'Credo' },
+                        desc: {
+                            en: 'The congregation stands and together professes the core beliefs of the Catholic faith, usually the Nicene Creed: "I believe in one God, the Father almighty, maker of heaven and earth..."',
+                            pl: 'Wierni wstają i wspólnie wyznają podstawowe prawdy wiary katolickiej, zazwyczaj Wyznanie nicejsko-konstantynopolitańskie: „Wierzę w jednego Boga, Ojca wszechmogącego, Stworzyciela nieba i ziemi..."',
+                            nl: 'De gemeente staat op en belijdt samen de kernpunten van het katholieke geloof, meestal de Geloofsbelijdenis van Nicea: "Ik geloof in \u00e9\u00e9n God, de almachtige Vader, Schepper van hemel en aarde..."'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'The words', type: 'quote', content: '"I believe in one God, the Father almighty, maker of heaven and earth, of all things visible and invisible. I believe in one Lord Jesus Christ, the Only Begotten Son of God, born of the Father before all ages..."' },
+                                { label: 'What to do', type: 'tip', content: 'Stand and recite along if you\'re comfortable. At the words "and by the Holy Spirit was incarnate of the Virgin Mary, and became man," everyone bows. On the solemnities of the Annunciation and Christmas, the faithful kneel at these words instead.' },
+                                { label: 'Good to know', type: 'text', content: 'The Nicene Creed was formulated at the Councils of Nicaea (325 AD) and Constantinople (381 AD). It has been prayed by Christians for over 1,600 years. On some occasions, the shorter Apostles\' Creed may be used instead.' }
+                            ],
+                            pl: [
+                                { label: 'Słowa', type: 'quote', content: '„Wierzę w jednego Boga, Ojca wszechmogącego, Stworzyciela nieba i ziemi, wszystkich rzeczy widzialnych i niewidzialnych. I w jednego Pana Jezusa Chrystusa, Syna Bożego Jednorodzonego, który z Ojca jest zrodzony przed wszystkimi wiekami..."' },
+                                { label: 'Co robić', type: 'tip', content: 'Stój i odmawiaj, jeśli czujesz się komfortowo. Przy słowach „i za sprawą Ducha Świętego przyjął ciało z Maryi Dziewicy i stał się człowiekiem" wszyscy się kłaniają. W uroczystości Zwiastowania i Bożego Narodzenia wierni przy tych słowach klękają.' },
+                                { label: 'Warto wiedzieć', type: 'text', content: 'Wyznanie nicejskie zostało sformułowane na soborach w Nicei (325 r.) i Konstantynopolu (381 r.). Jest odmawiane przez chrześcijan od ponad 1600 lat. Przy niektórych okazjach może być użyte krótsze Wyznanie apostolskie.' }
+                            ],
+                            nl: [
+                                { label: 'De woorden', type: 'quote', content: '"Ik geloof in \u00e9\u00e9n God, de almachtige Vader, Schepper van hemel en aarde, van al wat zichtbaar en onzichtbaar is. En in \u00e9\u00e9n Heer, Jezus Christus, eniggeboren Zoon van God, v\u00f3\u00f3r alle tijden geboren uit de Vader..."' },
+                                { label: 'Wat te doen', type: 'tip', content: 'Ga staan en bid mee als je je er prettig bij voelt. Bij de woorden "en Hij heeft het vlees aangenomen door de Heilige Geest uit de Maagd Maria" buigt iedereen. Op de hoogfeesten van Maria-Boodschap en Kerstmis knielt men bij deze woorden.' },
+                                { label: 'Goed om te weten', type: 'text', content: 'De Geloofsbelijdenis van Nicea werd geformuleerd op de Concilies van Nicea (325 n.Chr.) en Constantinopel (381 n.Chr.). Zij wordt al meer dan 1.600 jaar door christenen gebeden. Bij sommige gelegenheden kan de kortere Apostolische Geloofsbelijdenis worden gebruikt.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'variable',
+                        duration: '3\u20135',
+                        name: { en: 'Universal Prayer', pl: 'Modlitwa powszechna', nl: 'Voorbede' },
+                        latin: { en: 'Prayer of the Faithful', pl: 'Modlitwa wiernych', nl: 'Gebed van de gelovigen' },
+                        desc: {
+                            en: 'The assembly prays aloud for the needs of the Church, the world, the local community, and those who are sick or have died. After each intention, the people respond \u2014 typically "Lord, hear our prayer."',
+                            pl: 'Zgromadzenie modli się głośno w intencjach Kościoła, świata, wspólnoty lokalnej oraz chorych i zmarłych. Po każdej intencji wierni odpowiadają \u2014 zazwyczaj „Wysłuchaj nas, Panie."',
+                            nl: 'De gemeenschap bidt hardop voor de noden van de Kerk, de wereld, de plaatselijke gemeenschap en voor zieken en overledenen. Na elke intentie antwoordt het volk \u2014 doorgaans "Heer, ontferm U."'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'What to do', type: 'tip', content: 'Remain standing. A reader announces each prayer intention, and you respond with the given refrain. You can also add your own silent intentions during this time.' },
+                                { label: 'Good to know', type: 'text', content: 'The intentions typically follow a pattern: for the Church, for world leaders and public affairs, for those in need, and for the local community. This is the assembly exercising their baptismal priesthood \u2014 interceding for the world.' }
+                            ],
+                            pl: [
+                                { label: 'Co robić', type: 'tip', content: 'Stój. Lektor ogłasza każdą intencję modlitewną, a ty odpowiadasz podanym refrenem. Możesz też dodać swoje własne ciche intencje w tym czasie.' },
+                                { label: 'Warto wiedzieć', type: 'text', content: 'Intencje zazwyczaj mają określony porządek: za Kościół, za rządzących i sprawy publiczne, za potrzebujących i za wspólnotę lokalną. Jest to moment, w którym zgromadzenie realizuje swoje kapłaństwo chrzcielne \u2014 wstawiając się za świat.' }
+                            ],
+                            nl: [
+                                { label: 'Wat te doen', type: 'tip', content: 'Blijf staan. Een lezer kondigt elke gebedsintentie aan en je antwoordt met het gegeven refrein. Je kunt ook je eigen stille intenties toevoegen.' },
+                                { label: 'Goed om te weten', type: 'text', content: 'De intenties volgen doorgaans een patroon: voor de Kerk, voor wereldleiders en publieke zaken, voor mensen in nood, en voor de plaatselijke gemeenschap. Dit is het moment waarop de gemeenschap haar dooppriesterschap uitoefent \u2014 voorspraak doen voor de wereld.' }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                part: { en: 'Part III', pl: 'Część III', nl: 'Deel III' },
+                title: { en: 'Liturgy of the Eucharist', pl: 'Liturgia Eucharystii', nl: 'Liturgie van de Eucharistie' },
+                desc: {
+                    en: 'The central act of the Mass \u2014 bread and wine are offered, consecrated, and shared as the Body and Blood of Christ.',
+                    pl: 'Centralny akt Mszy \u2014 chleb i wino są ofiarowane, konsekrowane i dzielone jako Ciało i Krew Chrystusa.',
+                    nl: 'De kern van de Mis \u2014 brood en wijn worden aangeboden, geconsacreerd en gedeeld als het Lichaam en Bloed van Christus.'
+                },
+                steps: [
+                    {
+                        type: 'variable',
+                        duration: '3\u20135',
+                        name: { en: 'Offertory', pl: 'Przygotowanie darów', nl: 'Offerande' },
+                        latin: { en: 'Presentation of the Gifts', pl: 'Przedstawienie darów', nl: 'Bereiding van de gaven' },
+                        desc: {
+                            en: 'Members of the congregation bring bread and wine to the altar. A collection is also taken. The priest prepares the gifts and prays over them. An offertory hymn is usually sung.',
+                            pl: 'Członkowie zgromadzenia przynoszą chleb i wino do ołtarza. Przeprowadzana jest też zbiórka. Kapłan przygotowuje dary i modli się nad nimi. Zazwyczaj śpiewana jest pieśń na ofiarowanie.',
+                            nl: 'Leden van de gemeente brengen brood en wijn naar het altaar. Er wordt ook gecollecteerd. De priester bereidt de gaven en bidt erover. Meestal wordt een offerandelied gezongen.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'What you\'ll see', type: 'text', content: 'Representatives from the congregation carry the bread (usually unleavened wafers) and wine to the priest at the altar. A collection basket will also be passed through the pews. The priest washes his hands \u2014 an ancient ritual gesture of purification.' },
+                                { label: 'What to do', type: 'tip', content: 'You may be asked to help bring up the gifts \u2014 this is a great honour. During the collection, give what you\'re comfortable with, or simply pass the basket on. There is no pressure or expectation for visitors.' }
+                            ],
+                            pl: [
+                                { label: 'Co zobaczysz', type: 'text', content: 'Przedstawiciele zgromadzenia niosą chleb (zazwyczaj przaśne hostie) i wino do kapłana przy ołtarzu. Przez ławki przekazywany jest koszyk na ofiary. Kapłan obmywa ręce \u2014 starożytny rytualny gest oczyszczenia.' },
+                                { label: 'Co robić', type: 'tip', content: 'Możesz zostać poproszony o przyniesienie darów \u2014 to wielki zaszczyt. Podczas zbiórki daj, ile uważasz za stosowne, lub po prostu podaj koszyk dalej. Nie ma żadnej presji ani oczekiwań wobec gości.' }
+                            ],
+                            nl: [
+                                { label: 'Wat je ziet', type: 'text', content: 'Vertegenwoordigers van de gemeente dragen het brood (meestal ongedesemd) en de wijn naar de priester bij het altaar. Er wordt ook een collectemandje doorgegeven. De priester wast zijn handen \u2014 een oud ritueel gebaar van zuivering.' },
+                                { label: 'Wat te doen', type: 'tip', content: 'Je kunt gevraagd worden om de gaven naar voren te brengen \u2014 dit is een grote eer. Tijdens de collecte geef je wat je wilt, of je geeft het mandje gewoon door. Er is geen druk of verwachting voor bezoekers.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'variable',
+                        duration: '1',
+                        name: { en: 'Prayer over the Offerings', pl: 'Modlitwa nad darami', nl: 'Gebed over de gaven' },
+                        latin: null,
+                        desc: {
+                            en: 'The priest prays a prayer specific to the day, asking God to accept the gifts. The congregation responds "Amen." This transitions into the great Eucharistic Prayer.',
+                            pl: 'Kapłan odmawia modlitwę właściwą dla danego dnia, prosząc Boga o przyjęcie darów. Wierni odpowiadają „Amen." To przejście do wielkiej Modlitwy eucharystycznej.',
+                            nl: 'De priester bidt een gebed dat eigen is aan de dag en vraagt God de gaven te aanvaarden. De gemeente antwoordt "Amen." Dit leidt over naar het grote Eucharistisch Gebed.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'Good to know', type: 'text', content: 'Just before this prayer, the priest may say "Pray, brethren, that my sacrifice and yours may be acceptable to God, the almighty Father." The people respond: "May the Lord accept the sacrifice at your hands for the praise and glory of his name, for our good and the good of all his holy Church."' }
+                            ],
+                            pl: [
+                                { label: 'Warto wiedzieć', type: 'text', content: 'Tuż przed tą modlitwą kapłan może powiedzieć „Módlcie się, aby moją i waszą ofiarę przyjął Bóg, Ojciec wszechmogący." Wierni odpowiadają: „Niech Pan przyjmie ofiarę z rąk twoich na cześć i chwałę swojego imienia, a także na pożytek nasz i całego Kościoła świętego."' }
+                            ],
+                            nl: [
+                                { label: 'Goed om te weten', type: 'text', content: 'Vlak voor dit gebed kan de priester zeggen "Bidt, broeders en zusters, dat mijn en uw offer aanvaard kan worden door God, de almachtige Vader." Het volk antwoordt: "Moge de Heer het offer uit uw handen aannemen, tot lof en eer van zijn Naam, tot welzijn van ons en van heel zijn heilige Kerk."' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'variable',
+                        duration: '1\u20132',
+                        name: { en: 'Preface', pl: 'Prefacja', nl: 'Prefatie' },
+                        latin: null,
+                        desc: {
+                            en: 'A prayer of thanksgiving that varies with the liturgical season or feast. It begins with a dialogue \u2014 "Lift up your hearts" / "We lift them up to the Lord" \u2014 and leads directly into the Sanctus.',
+                            pl: 'Modlitwa dziękczynna, która zmienia się w zależności od okresu liturgicznego lub święta. Zaczyna się dialogiem \u2014 „W górę serca" / „Wznosimy je do Pana" \u2014 i prowadzi bezpośrednio do Sanctus.',
+                            nl: 'Een dankgebed dat varieert met het liturgisch seizoen of feest. Het begint met een dialoog \u2014 "Verheft uw hart" / "Wij zijn met ons hart bij de Heer" \u2014 en leidt rechtstreeks naar het Sanctus.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'The dialogue', type: 'quote', content: '"The Lord be with you." / "And with your spirit."<br>"Lift up your hearts." / "We lift them up to the Lord."<br>"Let us give thanks to the Lord our God." / "It is right and just."' },
+                                { label: 'Good to know', type: 'text', content: 'The word "Preface" here doesn\'t mean introduction \u2014 it comes from the Latin <em>praefatio</em>, meaning a proclamation spoken before God. There are over 80 different Prefaces in the Roman Missal, each giving thanks for a different aspect of God\'s saving work.' }
+                            ],
+                            pl: [
+                                { label: 'Dialog', type: 'quote', content: '„Pan z wami." / „I z duchem twoim."<br>„W górę serca." / „Wznosimy je do Pana."<br>„Dzięki składajmy Panu Bogu naszemu." / „Godne to i sprawiedliwe."' },
+                                { label: 'Warto wiedzieć', type: 'text', content: 'Słowo „prefacja" nie oznacza tu wstępu \u2014 pochodzi od łacińskiego <em>praefatio</em>, czyli uroczystego głoszenia przed Bogiem. W Mszale Rzymskim jest ponad 80 różnych prefacji, z których każda dziękuje za inny aspekt zbawczego dzieła Boga.' }
+                            ],
+                            nl: [
+                                { label: 'De dialoog', type: 'quote', content: '"De Heer zij met u." / "En met uw geest."<br>"Verheft uw hart." / "Wij zijn met ons hart bij de Heer."<br>"Brengen wij dank aan de Heer, onze God." / "Hij is onze dankbaarheid waardig."' },
+                                { label: 'Goed om te weten', type: 'text', content: 'Het woord "Prefatie" betekent hier geen inleiding \u2014 het komt van het Latijnse <em>praefatio</em>, een plechtige verkondiging voor God. Er zijn meer dan 80 verschillende Prefaties in het Romeins Missaal, elk dankzeggend voor een ander aspect van Gods heilswerk.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '1\u20132',
+                        name: { en: 'Sanctus', pl: 'Sanctus', nl: 'Sanctus' },
+                        latin: { en: 'Holy, Holy, Holy', pl: 'Święty, Święty, Święty', nl: 'Heilig, Heilig, Heilig' },
+                        desc: {
+                            en: 'The entire congregation sings or recites: "Holy, Holy, Holy Lord God of hosts. Heaven and earth are full of your glory. Hosanna in the highest. Blessed is he who comes in the name of the Lord."',
+                            pl: 'Całe zgromadzenie śpiewa lub recytuje: „Święty, Święty, Święty, Pan Bóg Zastępów. Pełne są niebiosa i ziemia chwały Twojej. Hosanna na wysokości. Błogosławiony, który idzie w imię Pańskie."',
+                            nl: 'De hele gemeente zingt of bidt: "Heilig, Heilig, Heilig, de Heer, de God der hemelse machten. Vol zijn hemel en aarde van uw heerlijkheid. Hosanna in den hoge. Gezegend Hij die komt in de naam des Heren."'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'Why it matters', type: 'text', content: 'This hymn joins the earthly assembly with the angels in heaven. The first part echoes the song of the Seraphim in Isaiah 6:3. The second part quotes the crowd\'s greeting to Jesus as he entered Jerusalem on Palm Sunday (Matthew 21:9). In this moment, heaven and earth sing as one.' }
+                            ],
+                            pl: [
+                                { label: 'Dlaczego to ważne', type: 'text', content: 'Ten hymn łączy ziemskie zgromadzenie z aniołami w niebie. Pierwsza część nawiązuje do pieśni Serafinów z Księgi Izajasza 6,3. Druga część cytuje pozdrowienie tłumu dla Jezusa wjeżdżającego do Jerozolimy w Niedzielę Palmową (Mt 21,9). W tym momencie niebo i ziemia śpiewają jako jedno.' }
+                            ],
+                            nl: [
+                                { label: 'Waarom het belangrijk is', type: 'text', content: 'Deze hymne verenigt de aardse gemeenschap met de engelen in de hemel. Het eerste deel weerspiegelt het lied van de Serafijnen in Jesaja 6:3. Het tweede deel citeert de begroeting van de menigte toen Jezus Jeruzalem binnentrok op Palmzondag (Matte\u00fcs 21:9). Op dit moment zingen hemel en aarde als \u00e9\u00e9n.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '5\u20138',
+                        name: { en: 'Eucharistic Prayer & Consecration', pl: 'Modlitwa eucharystyczna i konsekracja', nl: 'Eucharistisch Gebed & Consecratie' },
+                        latin: null,
+                        desc: {
+                            en: 'The most sacred part of the Mass. The priest prays over the bread and wine, recalling Jesus\'s words at the Last Supper: "This is my Body... This is the chalice of my Blood." Catholics believe the bread and wine become the Body and Blood of Christ. The congregation kneels.',
+                            pl: 'Najświętsza część Mszy. Kapłan modli się nad chlebem i winem, przywołując słowa Jezusa z Ostatniej Wieczerzy: „To jest Ciało moje... To jest kielich Krwi mojej." Katolicy wierzą, że chleb i wino stają się Ciałem i Krwią Chrystusa. Wierni klękają.',
+                            nl: 'Het meest heilige deel van de Mis. De priester bidt over het brood en de wijn en herhaalt Jezus\' woorden bij het Laatste Avondmaal: "Dit is mijn Lichaam... Dit is de kelk van mijn Bloed." Katholieken geloven dat brood en wijn het Lichaam en Bloed van Christus worden. De gemeente knielt.'
+                        },
+                        note: {
+                            en: 'There are several approved Eucharistic Prayers, but the words of consecration are always the same.',
+                            pl: 'Istnieje kilka zatwierdzonych Modlitw eucharystycznych, ale słowa konsekracji są zawsze takie same.',
+                            nl: 'Er zijn meerdere goedgekeurde Eucharistische Gebeden, maar de consecratiewoorden zijn altijd dezelfde.'
+                        },
+                        detail: {
+                            en: [
+                                { label: 'What you\'ll see', type: 'text', content: 'The priest extends his hands over the bread and wine and calls upon the Holy Spirit (<em>epiclesis</em>). He then recounts the Last Supper, speaking Christ\'s own words. After each consecration, the priest elevates the host and then the chalice for all to see. An altar server may ring bells at this moment.' },
+                                { label: 'What to do', type: 'tip', content: 'Kneel if you are able (this is the most reverent posture for this part of the Mass). Some people bow their heads during the elevation; others gaze upon the consecrated elements. This is a moment for quiet adoration.' },
+                                { label: 'Why it matters', type: 'text', content: 'Catholics believe that at the Consecration, a miracle occurs: the substance of the bread and wine is transformed into the Body and Blood of Christ, while retaining the appearance of bread and wine. This is called <em>transubstantiation</em>. The Mass is understood not as a re-sacrifice, but as making present the one sacrifice of Christ on the Cross.' }
+                            ],
+                            pl: [
+                                { label: 'Co zobaczysz', type: 'text', content: 'Kapłan wyciąga ręce nad chlebem i winem i wzywa Ducha Świętego (<em>epikleza</em>). Następnie przywołuje Ostatnią Wieczerzę, wypowiadając własne słowa Chrystusa. Po każdej konsekracji kapłan podnosi hostię, a potem kielich, aby wszyscy mogli je zobaczyć. Ministrant może w tym momencie zadzwonić dzwonkami.' },
+                                { label: 'Co robić', type: 'tip', content: 'Uklęknij, jeśli możesz (to najbardziej uroczysta postawa w tej części Mszy). Niektórzy pochylają głowę podczas podniesienia; inni patrzą na konsekrowane postacie. To chwila cichej adoracji.' },
+                                { label: 'Dlaczego to ważne', type: 'text', content: 'Katolicy wierzą, że podczas konsekracji dokonuje się cud: substancja chleba i wina przemienia się w Ciało i Krew Chrystusa, zachowując postać chleba i wina. Nazywa się to <em>transsubstancjacją</em>. Msza nie jest rozumiana jako powtórzenie ofiary, lecz jako uobecnienie jedynej ofiary Chrystusa na Krzyżu.' }
+                            ],
+                            nl: [
+                                { label: 'Wat je ziet', type: 'text', content: 'De priester strekt zijn handen uit over het brood en de wijn en roept de Heilige Geest aan (<em>epiclese</em>). Vervolgens vertelt hij het Laatste Avondmaal na en spreekt Christus\' eigen woorden. Na elke consecratie heft de priester de hostie en vervolgens de kelk op zodat allen kunnen zien. Een misdienaar kan op dit moment bellen luiden.' },
+                                { label: 'Wat te doen', type: 'tip', content: 'Kniel als je kunt (dit is de meest eerbiedige houding voor dit deel van de Mis). Sommigen buigen het hoofd tijdens de opheffing; anderen kijken naar de geconsacreerde gedaanten. Dit is een moment van stille aanbidding.' },
+                                { label: 'Waarom het belangrijk is', type: 'text', content: 'Katholieken geloven dat bij de Consecratie een wonder plaatsvindt: de substantie van brood en wijn wordt omgevormd tot het Lichaam en Bloed van Christus, terwijl de gedaante van brood en wijn behouden blijft. Dit heet <em>transsubstantiatie</em>. De Mis wordt niet begrepen als een herhaling van het offer, maar als het tegenwoordig stellen van het ene offer van Christus aan het Kruis.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '1',
+                        name: { en: 'Memorial Acclamation', pl: 'Aklamacja anamnetyczna', nl: 'Acclamatie na de Consecratie' },
+                        latin: null,
+                        desc: {
+                            en: 'After the consecration, the priest says "The mystery of faith," and the people respond with one of several acclamations, such as: "We proclaim your Death, O Lord, and profess your Resurrection, until you come again."',
+                            pl: 'Po konsekracji kapłan mówi „Oto wielka tajemnica wiary", a wierni odpowiadają jedną z kilku aklamacji, np. „Głosimy śmierć Twoją, Panie Jezu, wyznajemy Twoje zmartwychwstanie i oczekujemy Twego przyjścia w chwale."',
+                            nl: 'Na de consecratie zegt de priester "Verkondigen wij het mysterie van het geloof" en het volk antwoordt met een van de acclamaties, zoals: "Heer Jezus, wij verkondigen uw dood en wij belijden uw verrijzenis, totdat Gij wederkomt."'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'The options', type: 'text', content: 'There are three Memorial Acclamations to choose from:<br>1. "We proclaim your Death, O Lord, and profess your Resurrection, until you come again."<br>2. "When we eat this Bread and drink this Cup, we proclaim your Death, O Lord, until you come again."<br>3. "Save us, Saviour of the world, for by your Cross and Resurrection you have set us free."' }
+                            ],
+                            pl: [
+                                { label: 'Opcje', type: 'text', content: 'Do wyboru są trzy aklamacje:<br>1. „Głosimy śmierć Twoją, Panie Jezu, wyznajemy Twoje zmartwychwstanie i oczekujemy Twego przyjścia w chwale."<br>2. „Ile razy ten chleb spożywamy i pijemy z tego kielicha, głosimy śmierć Twoją, Panie, oczekując Twego przyjścia w chwale."<br>3. „Panie, Ty nas wybawiłeś przez krzyż i zmartwychwstanie swoje. Ty jesteś Zbawicielem świata."' }
+                            ],
+                            nl: [
+                                { label: 'De opties', type: 'text', content: 'Er zijn drie acclamaties om uit te kiezen:<br>1. "Heer Jezus, wij verkondigen uw dood en wij belijden uw verrijzenis, totdat Gij wederkomt."<br>2. "Telkens als wij dit Brood eten en uit deze Beker drinken, verkondigen wij uw dood, Heer, totdat Gij wederkomt."<br>3. "Red ons, Redder van de wereld, want door uw Kruis en Verrijzenis hebt Gij ons bevrijd."' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '1',
+                        name: { en: 'Great Amen', pl: 'Wielkie Amen', nl: 'Groot Amen' },
+                        latin: null,
+                        desc: {
+                            en: 'The Eucharistic Prayer concludes with a doxology: "Through him, and with him, and in him..." The congregation responds with a resounding "Amen" \u2014 affirming everything that has been prayed.',
+                            pl: 'Modlitwa eucharystyczna kończy się doksologią: „Przez Chrystusa, z Chrystusem i w Chrystusie..." Wierni odpowiadają donośnym „Amen" \u2014 potwierdzając wszystko, co zostało wymodlone.',
+                            nl: 'Het Eucharistisch Gebed eindigt met een doxologie: "Door Hem en met Hem en in Hem..." De gemeente antwoordt met een krachtig "Amen" \u2014 waarmee alles wat gebeden is bevestigd wordt.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'Good to know', type: 'text', content: 'This "Amen" is called the "Great Amen" because it is the most important in the entire Mass. With it, the congregation ratifies everything the priest has prayed on their behalf during the Eucharistic Prayer. St Jerome wrote that in the early Church in Rome, this Amen resounded "like a clap of heavenly thunder."' }
+                            ],
+                            pl: [
+                                { label: 'Warto wiedzieć', type: 'text', content: 'To „Amen" nazywane jest „Wielkim Amen", ponieważ jest najważniejsze w całej Mszy. Przez nie zgromadzenie potwierdza wszystko, co kapłan wymodlił w ich imieniu podczas Modlitwy eucharystycznej. Św. Hieronim pisał, że we wczesnym Kościele w Rzymie to Amen rozbrzmiewało „jak grzmot z nieba."' }
+                            ],
+                            nl: [
+                                { label: 'Goed om te weten', type: 'text', content: 'Dit "Amen" wordt het "Groot Amen" genoemd omdat het het belangrijkste is van de hele Mis. Hiermee bekrachtigt de gemeente alles wat de priester namens hen heeft gebeden tijdens het Eucharistisch Gebed. De heilige Hiëronymus schreef dat in de vroege Kerk in Rome dit Amen klonk "als een hemelse donderslag."' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '1\u20132',
+                        name: { en: 'The Lord\'s Prayer', pl: 'Modlitwa Pańska', nl: 'Het Onze Vader' },
+                        latin: { en: 'Pater Noster / Our Father', pl: 'Pater Noster / Ojcze nasz', nl: 'Pater Noster / Onze Vader' },
+                        desc: {
+                            en: 'Everyone stands and prays together the prayer that Jesus himself taught: "Our Father, who art in heaven, hallowed be thy name..." The priest adds an additional prayer (the embolism) and the people respond with a doxology.',
+                            pl: 'Wszyscy wstają i wspólnie odmawiają modlitwę, której nauczył sam Jezus: „Ojcze nasz, któryś jest w niebie, święć się imię Twoje..." Kapłan dodaje dodatkową modlitwę (embolizm), a wierni odpowiadają doksologią.',
+                            nl: 'Iedereen staat op en bidt samen het gebed dat Jezus zelf leerde: "Onze Vader, die in de hemel zijt, uw naam worde geheiligd..." De priester voegt een aanvullend gebed toe (het embolisme) en het volk antwoordt met een doxologie.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'The words', type: 'quote', content: '"Our Father, who art in heaven, hallowed be thy name; thy kingdom come, thy will be done on earth as it is in heaven. Give us this day our daily bread, and forgive us our trespasses, as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil."' },
+                                { label: 'What to do', type: 'tip', content: 'Stand and pray along. In some parishes, the congregation holds hands or extends their hands outward in the <em>orans</em> posture (palms up). Follow what those around you do, or simply fold your hands.' }
+                            ],
+                            pl: [
+                                { label: 'Słowa', type: 'quote', content: '„Ojcze nasz, któryś jest w niebie, święć się imię Twoje; przyjdź królestwo Twoje; bądź wola Twoja jako w niebie, tak i na ziemi. Chleba naszego powszedniego daj nam dzisiaj; i odpuść nam nasze winy, jako i my odpuszczamy naszym winowajcom; i nie wódź nas na pokuszenie, ale nas zbaw ode złego."' },
+                                { label: 'Co robić', type: 'tip', content: 'Wstań i módl się wraz z innymi. W niektórych parafiach wierni trzymają się za ręce lub wyciągają ręce w postawie <em>orans</em> (dłonie ku górze). Rób to, co inni wokół ciebie, lub po prostu złóż ręce.' }
+                            ],
+                            nl: [
+                                { label: 'De woorden', type: 'quote', content: '"Onze Vader, die in de hemel zijt, uw naam worde geheiligd, uw rijk kome, uw wil geschiede op aarde zoals in de hemel. Geef ons heden ons dagelijks brood en vergeef ons onze schulden, zoals ook wij vergeven aan onze schuldenaren, en breng ons niet in beproeving maar verlos ons van het kwade."' },
+                                { label: 'Wat te doen', type: 'tip', content: 'Ga staan en bid mee. In sommige parochies houden de gelovigen elkaars hand vast of strekken zij hun handen uit in de <em>orans</em>-houding (handpalmen omhoog). Doe wat de mensen om je heen doen, of vouw gewoon je handen.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '1\u20132',
+                        name: { en: 'Sign of Peace', pl: 'Znak pokoju', nl: 'Vredeswens' },
+                        latin: null,
+                        desc: {
+                            en: 'The priest says "The peace of the Lord be with you always." The congregation exchanges a sign of peace with those nearby \u2014 usually a handshake, nod, or smile.',
+                            pl: 'Kapłan mówi „Pokój Pański niech zawsze będzie z wami." Wierni wymieniają się znakiem pokoju z osobami w pobliżu \u2014 zazwyczaj uściskiem dłoni, skinieniem lub uśmiechem.',
+                            nl: 'De priester zegt "De vrede des Heren zij altijd met u." De gemeente wisselt een vredesteken uit met de mensen in de buurt \u2014 meestal een handdruk, knik of glimlach.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'What to do', type: 'tip', content: 'Turn to those around you and offer a handshake, saying "Peace be with you." A warm smile or nod is equally appropriate, especially if you prefer not to shake hands. Keep it brief and reverent \u2014 this isn\'t a social break, but a liturgical gesture of reconciliation.' }
+                            ],
+                            pl: [
+                                { label: 'Co robić', type: 'tip', content: 'Zwróć się do osób wokół siebie i podaj rękę, mówiąc „Pokój z tobą." Ciepły uśmiech lub skinienie jest równie stosowne, szczególnie jeśli wolisz nie podawać ręki. Niech to będzie krótkie i pełne szacunku \u2014 to nie jest przerwa towarzyska, lecz liturgiczny gest pojednania.' }
+                            ],
+                            nl: [
+                                { label: 'Wat te doen', type: 'tip', content: 'Keer je naar de mensen om je heen en geef een hand met de woorden "Vrede zij met u." Een warme glimlach of knik is eveneens gepast, vooral als je liever geen hand geeft. Houd het kort en eerbiedig \u2014 dit is geen sociale pauze, maar een liturgisch gebaar van verzoening.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '1\u20132',
+                        name: { en: 'Agnus Dei', pl: 'Agnus Dei', nl: 'Agnus Dei' },
+                        latin: { en: 'Lamb of God', pl: 'Baranku Boży', nl: 'Lam Gods' },
+                        desc: {
+                            en: 'While the priest breaks the consecrated bread, the people sing or say: "Lamb of God, you take away the sins of the world, have mercy on us... grant us peace."',
+                            pl: 'Podczas gdy kapłan łamie konsekrowany chleb, wierni śpiewają lub mówią: „Baranku Boży, który gładzisz grzechy świata, zmiłuj się nad nami... obdarz nas pokojem."',
+                            nl: 'Terwijl de priester het geconsacreerde brood breekt, zingt of bidt het volk: "Lam Gods, dat wegneemt de zonden der wereld, ontferm U over ons... geef ons de vrede."'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'What you\'ll see', type: 'text', content: 'The priest breaks the large host and drops a small piece into the chalice \u2014 this ancient rite, called the <em>commingling</em>, symbolises the unity of the Body and Blood of Christ. The breaking of bread echoes Jesus\'s action at the Last Supper and at Emmaus.' },
+                                { label: 'The words', type: 'quote', content: '"Lamb of God, you take away the sins of the world, have mercy on us.<br>Lamb of God, you take away the sins of the world, have mercy on us.<br>Lamb of God, you take away the sins of the world, grant us peace."' }
+                            ],
+                            pl: [
+                                { label: 'Co zobaczysz', type: 'text', content: 'Kapłan łamie dużą hostię i wpuszcza mały kawałek do kielicha \u2014 ten starożytny obrzęd, zwany <em>zmieszaniem postaci</em>, symbolizuje jedność Ciała i Krwi Chrystusa. Łamanie chleba nawiązuje do czynu Jezusa podczas Ostatniej Wieczerzy i w Emaus.' },
+                                { label: 'Słowa', type: 'quote', content: '„Baranku Boży, który gładzisz grzechy świata, zmiłuj się nad nami.<br>Baranku Boży, który gładzisz grzechy świata, zmiłuj się nad nami.<br>Baranku Boży, który gładzisz grzechy świata, obdarz nas pokojem."' }
+                            ],
+                            nl: [
+                                { label: 'Wat je ziet', type: 'text', content: 'De priester breekt de grote hostie en laat een klein stukje in de kelk vallen \u2014 deze oude rite, de <em>vermenging</em> genoemd, symboliseert de eenheid van het Lichaam en Bloed van Christus. Het breken van het brood weerspiegelt Jezus\' handeling bij het Laatste Avondmaal en te Emma\u00fcs.' },
+                                { label: 'De woorden', type: 'quote', content: '"Lam Gods, dat wegneemt de zonden der wereld, ontferm U over ons.<br>Lam Gods, dat wegneemt de zonden der wereld, ontferm U over ons.<br>Lam Gods, dat wegneemt de zonden der wereld, geef ons de vrede."' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '5\u201310',
+                        name: { en: 'Communion', pl: 'Komunia Święta', nl: 'Communie' },
+                        latin: null,
+                        desc: {
+                            en: 'The faithful come forward to receive the Body (and sometimes Blood) of Christ. The minister says "The Body of Christ" and the communicant responds "Amen." A communion hymn is usually sung.',
+                            pl: 'Wierni podchodzą, aby przyjąć Ciało (a czasem Krew) Chrystusa. Szafarz mówi „Ciało Chrystusa", a przyjmujący odpowiada „Amen." Zazwyczaj śpiewana jest pieśń na Komunię.',
+                            nl: 'De gelovigen komen naar voren om het Lichaam (en soms het Bloed) van Christus te ontvangen. De bedienaar zegt "Het Lichaam van Christus" en de communicant antwoordt "Amen." Meestal wordt een communielied gezongen.'
+                        },
+                        note: {
+                            en: 'If you are not Catholic or not yet ready to receive, you may remain in your seat or approach with arms crossed over your chest for a blessing.',
+                            pl: 'Jeśli nie jesteś katolikiem lub nie jesteś jeszcze gotowy do przyjęcia Komunii, możesz pozostać w ławce lub podejść z rękami skrzyżowanymi na piersi, aby otrzymać błogosławieństwo.',
+                            nl: 'Als je niet katholiek bent of nog niet klaar bent om te communiceren, kun je op je plaats blijven zitten of naar voren komen met de armen gekruist over je borst voor een zegen.'
+                        },
+                        detail: {
+                            en: [
+                                { label: 'What to do', type: 'tip', content: 'If receiving, join the line and approach the minister. You may receive the host on your tongue or in your hands (place your non-dominant hand on top, receive, then use the other hand to place it in your mouth). If receiving from the chalice, take a small sip. If not receiving, you may stay seated or approach with arms crossed for a blessing.' },
+                                { label: 'Before Communion', type: 'quote', content: '"Lord, I am not worthy that you should enter under my roof, but only say the word and my soul shall be healed."' },
+                                { label: 'Good to know', type: 'text', content: 'Catholics are asked to fast from food and drink (except water and medicine) for one hour before receiving Communion. To receive, one should be in a state of grace \u2014 free from serious (mortal) sin. If unsure, it is perfectly fine to remain in your seat; no one will judge you.' }
+                            ],
+                            pl: [
+                                { label: 'Co robić', type: 'tip', content: 'Jeśli przyjmujesz Komunię, stań w kolejce i podejdź do szafarza. Możesz przyjąć hostię na język lub na dłoń (połóż rękę niedominującą na wierzchu, przyjmij hostię, a drugą ręką włóż ją do ust). Jeśli pijesz z kielicha, zrób mały łyk. Jeśli nie przyjmujesz Komunii, możesz siedzieć w ławce lub podejść z rękami skrzyżowanymi na piersi po błogosławieństwo.' },
+                                { label: 'Przed Komunią', type: 'quote', content: '„Panie, nie jestem godzien, abyś przyszedł do mnie, ale powiedz tylko słowo, a będzie uzdrowiona dusza moja."' },
+                                { label: 'Warto wiedzieć', type: 'text', content: 'Katolicy proszeni są o post od jedzenia i picia (oprócz wody i lekarstw) przez godzinę przed przyjęciem Komunii. Aby przyjąć Komunię, należy być w stanie łaski \u2014 wolnym od grzechu ciężkiego (śmiertelnego). Jeśli nie jesteś pewien, jest całkowicie w porządku, że pozostaniesz na swoim miejscu; nikt cię nie osądzi.' }
+                            ],
+                            nl: [
+                                { label: 'Wat te doen', type: 'tip', content: 'Als je communiceert, sluit je aan in de rij en loop je naar de bedienaar. Je kunt de hostie op je tong of in je handen ontvangen (leg je niet-dominante hand bovenop, ontvang, en breng met de andere hand de hostie naar je mond). Als je uit de kelk ontvangt, neem een klein slokje. Als je niet communiceert, kun je blijven zitten of naar voren komen met gekruiste armen voor een zegen.' },
+                                { label: 'V\u00f3\u00f3r de Communie', type: 'quote', content: '"Heer, ik ben niet waardig dat Gij tot mij komt, maar spreek en ik zal gezond worden."' },
+                                { label: 'Goed om te weten', type: 'text', content: 'Katholieken wordt gevraagd een uur voor het ontvangen van de Communie te vasten van eten en drinken (behalve water en medicijnen). Om te communiceren moet men in staat van genade zijn \u2014 vrij van ernstige (doodzonde). Als je het niet zeker weet, is het volkomen in orde om op je plaats te blijven; niemand zal je veroordelen.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'variable',
+                        duration: '1\u20132',
+                        name: { en: 'Prayer after Communion', pl: 'Modlitwa po Komunii', nl: 'Gebed na de Communie' },
+                        latin: null,
+                        desc: {
+                            en: 'After a period of quiet reflection, the priest stands and offers a closing prayer specific to the day\'s celebration. The people respond "Amen."',
+                            pl: 'Po chwili cichej refleksji kapłan wstaje i odmawia modlitwę końcową właściwą dla celebracji danego dnia. Wierni odpowiadają „Amen."',
+                            nl: 'Na een moment van stille bezinning staat de priester op en bidt een slotgebed dat eigen is aan de viering van de dag. Het volk antwoordt "Amen."'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'What to do', type: 'tip', content: 'The silence after Communion is one of the most precious moments in the Mass. Use it for personal prayer, thanksgiving, or simply resting in God\'s presence. When the priest stands and says "Let us pray," stand with the assembly.' }
+                            ],
+                            pl: [
+                                { label: 'Co robić', type: 'tip', content: 'Cisza po Komunii jest jednym z najcenniejszych momentów Mszy. Wykorzystaj ją na osobistą modlitwę, dziękczynienie lub po prostu odpoczynek w obecności Boga. Gdy kapłan wstanie i powie „Módlmy się", wstań razem ze zgromadzeniem.' }
+                            ],
+                            nl: [
+                                { label: 'Wat te doen', type: 'tip', content: 'De stilte na de Communie is een van de kostbaarste momenten van de Mis. Gebruik het voor persoonlijk gebed, dankzegging, of gewoon rusten in Gods aanwezigheid. Wanneer de priester opstaat en zegt "Laat ons bidden," sta op met de gemeente.' }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                part: { en: 'Part IV', pl: 'Część IV', nl: 'Deel IV' },
+                title: { en: 'Concluding Rites', pl: 'Obrzędy zakończenia', nl: 'Slotriten' },
+                desc: {
+                    en: 'The assembly is blessed and sent forth to live out the Gospel in the world.',
+                    pl: 'Zgromadzenie otrzymuje błogosławieństwo i zostaje posłane, aby żyć Ewangelią w świecie.',
+                    nl: 'De gemeenschap wordt gezegend en uitgezonden om het Evangelie in de wereld te beleven.'
+                },
+                steps: [
+                    {
+                        type: 'variable',
+                        duration: '1\u20133',
+                        name: { en: 'Announcements', pl: 'Ogłoszenia', nl: 'Mededelingen' },
+                        latin: null,
+                        desc: {
+                            en: 'Brief parish announcements may be made \u2014 upcoming events, volunteer needs, or community news.',
+                            pl: 'Mogą zostać wygłoszone krótkie ogłoszenia parafialne \u2014 nadchodzące wydarzenia, potrzeby wolontariuszy lub wiadomości wspólnotowe.',
+                            nl: 'Korte parochiemededelingen kunnen worden gedaan \u2014 komende evenementen, vrijwilligersbehoeften of gemeenschapsnieuws.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'Good to know', type: 'text', content: 'Announcements are optional and kept brief. They might include second collections, upcoming parish events, prayer requests, or community milestones. This is the most informal moment of the Mass.' }
+                            ],
+                            pl: [
+                                { label: 'Warto wiedzieć', type: 'text', content: 'Ogłoszenia są opcjonalne i utrzymane w zwięzłej formie. Mogą obejmować dodatkowe zbiórki, nadchodzące wydarzenia parafialne, prośby o modlitwę lub ważne wydarzenia wspólnoty. To najbardziej nieformalna chwila Mszy.' }
+                            ],
+                            nl: [
+                                { label: 'Goed om te weten', type: 'text', content: 'Mededelingen zijn optioneel en worden kort gehouden. Ze kunnen tweede collectes, komende parochie-evenementen, gebedsverzoeken of gemeenschapsmijlpalen bevatten. Dit is het meest informele moment van de Mis.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '1',
+                        name: { en: 'Final Blessing', pl: 'Błogosławieństwo końcowe', nl: 'Slotzegen' },
+                        latin: null,
+                        desc: {
+                            en: 'The priest blesses the congregation: "May almighty God bless you, the Father, and the Son, and the Holy Spirit." The people respond "Amen" and make the Sign of the Cross.',
+                            pl: 'Kapłan błogosławi zgromadzenie: „Niech was błogosławi Bóg wszechmogący, Ojciec i Syn, i Duch Święty." Wierni odpowiadają „Amen" i czynią znak krzyża.',
+                            nl: 'De priester zegent de gemeente: "Moge de almachtige God u zegenen, de Vader en de Zoon en de Heilige Geest." Het volk antwoordt "Amen" en maakt het kruisteken.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'What to do', type: 'tip', content: 'Stand and make the Sign of the Cross as the priest blesses you. On special occasions, the priest may give a solemn blessing with multiple parts, each followed by "Amen."' }
+                            ],
+                            pl: [
+                                { label: 'Co robić', type: 'tip', content: 'Stój i uczyń znak krzyża, gdy kapłan cię błogosławi. Przy specjalnych okazjach kapłan może udzielić uroczystego błogosławieństwa składającego się z kilku części, po każdej z nich odpowiadamy „Amen."' }
+                            ],
+                            nl: [
+                                { label: 'Wat te doen', type: 'tip', content: 'Ga staan en maak het kruisteken wanneer de priester je zegent. Bij bijzondere gelegenheden kan de priester een plechtige zegen geven met meerdere delen, elk gevolgd door "Amen."' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'fixed',
+                        duration: '1',
+                        name: { en: 'Dismissal', pl: 'Rozesłanie', nl: 'Wegzending' },
+                        latin: { en: 'Ite, Missa Est', pl: 'Ite, Missa Est', nl: 'Ite, Missa Est' },
+                        desc: {
+                            en: 'The deacon or priest sends the people forth, often with "Go forth, the Mass is ended" or "Go and announce the Gospel of the Lord." The people respond "Thanks be to God." The word "Mass" itself comes from this dismissal \u2014 <em>missa</em>.',
+                            pl: 'Diakon lub kapłan posyła wiernych, często słowami „Idźcie w pokoju Chrystusa" lub „Idźcie, głoście Ewangelię Pańską." Wierni odpowiadają „Bogu niech będą dzięki." Samo słowo „Msza" pochodzi od tego rozesłania \u2014 <em>missa</em>.',
+                            nl: 'De diaken of priester zendt het volk uit, vaak met "Gaat nu allen heen in vrede" of "Gaat en verkondigt het Evangelie van de Heer." Het volk antwoordt "Wij danken God." Het woord "Mis" zelf komt van deze wegzending \u2014 <em>missa</em>.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'The options', type: 'text', content: 'There are four forms of dismissal:<br>1. "Go forth, the Mass is ended."<br>2. "Go and announce the Gospel of the Lord."<br>3. "Go in peace, glorifying the Lord by your life."<br>4. "Go in peace."' },
+                                { label: 'Why it matters', type: 'text', content: 'The dismissal is not just an ending \u2014 it is a commissioning. The Latin <em>Ite, missa est</em> ("Go, it is the sending") gave the Mass its name. You are being sent out to live what you have celebrated: to be the Body of Christ in the world.' }
+                            ],
+                            pl: [
+                                { label: 'Opcje', type: 'text', content: 'Istnieją cztery formy rozesłania:<br>1. „Idźcie w pokoju Chrystusa."<br>2. „Idźcie, głoście Ewangelię Pańską."<br>3. „Idźcie w pokoju Chrystusa, chwaląc Boga swoim życiem."<br>4. „Idźcie w pokoju."' },
+                                { label: 'Dlaczego to ważne', type: 'text', content: 'Rozesłanie to nie tylko zakończenie \u2014 to posłanie. Łaciński zwrot <em>Ite, missa est</em> („Idźcie, jest posłanie") dał Mszy jej nazwę. Jesteś posyłany, aby żyć tym, co celebrowałeś: być Ciałem Chrystusa w świecie.' }
+                            ],
+                            nl: [
+                                { label: 'De opties', type: 'text', content: 'Er zijn vier vormen van wegzending:<br>1. "Gaat nu allen heen in vrede."<br>2. "Gaat en verkondigt het Evangelie van de Heer."<br>3. "Gaat heen in vrede, verheerlijkt de Heer door uw leven."<br>4. "Gaat heen in vrede."' },
+                                { label: 'Waarom het belangrijk is', type: 'text', content: 'De wegzending is niet zomaar een afsluiting \u2014 het is een zending. Het Latijnse <em>Ite, missa est</em> ("Gaat, het is de zending") gaf de Mis haar naam. Je wordt uitgezonden om te leven wat je hebt gevierd: het Lichaam van Christus te zijn in de wereld.' }
+                            ]
+                        }
+                    },
+                    {
+                        type: 'variable',
+                        duration: '2\u20133',
+                        name: { en: 'Recessional Hymn', pl: 'Pieśń na zakończenie', nl: 'Slotzang' },
+                        latin: null,
+                        desc: {
+                            en: 'The priest and ministers process out while the congregation sings a closing hymn. Though not strictly part of the liturgy, it is a joyful custom in most parishes.',
+                            pl: 'Kapłan i posługujący wychodzą w procesji, podczas gdy wierni śpiewają pieśń końcową. Choć nie jest ściśle częścią liturgii, jest to radosny zwyczaj w większości parafii.',
+                            nl: 'De priester en bedienaars trekken uit terwijl de gemeente een slotlied zingt. Hoewel het strikt genomen geen onderdeel van de liturgie is, is het een vreugdevol gebruik in de meeste parochies.'
+                        },
+                        note: null,
+                        detail: {
+                            en: [
+                                { label: 'Good to know', type: 'text', content: 'You\'re free to leave after the dismissal, but most people stay to sing the final hymn. It\'s also a lovely time to greet those around you. Many parishes have a social gathering (coffee and refreshments) after Mass \u2014 newcomers are always welcome.' }
+                            ],
+                            pl: [
+                                { label: 'Warto wiedzieć', type: 'text', content: 'Możesz wyjść po rozesłaniu, ale większość osób zostaje, aby zaśpiewać ostatnią pieśń. To też miły moment, by pozdrowić osoby wokół siebie. Wiele parafii organizuje spotkanie towarzyskie (kawa i poczęstunek) po Mszy \u2014 nowi są zawsze mile widziani.' }
+                            ],
+                            nl: [
+                                { label: 'Goed om te weten', type: 'text', content: 'Je bent vrij om na de wegzending te vertrekken, maar de meeste mensen blijven om het slotlied te zingen. Het is ook een fijn moment om de mensen om je heen te begroeten. Veel parochies hebben een sociaal samenzijn (koffie en versnaperingen) na de Mis \u2014 nieuwkomers zijn altijd welkom.' }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    };
+
+    // ===== UI TRANSLATIONS =====
+    const UI = {
+        heroTitle: { en: 'Understanding<br>the Mass', pl: 'Zrozumieć<br>Mszę Świętą', nl: 'De Mis<br>begrijpen' },
+        heroSubtitle: {
+            en: 'A welcoming guide to the structure, prayers, and meaning of the Roman Catholic Mass \u2014 for newcomers and the curious alike.',
+            pl: 'Przyjazny przewodnik po strukturze, modlitwach i znaczeniu Mszy Świętej w Kościele rzymskokatolickim \u2014 dla nowo przybyłych i ciekawych.',
+            nl: 'Een toegankelijke gids over de structuur, gebeden en betekenis van de Rooms-Katholieke Mis \u2014 voor nieuwkomers en nieuwsgierigen.'
+        },
+        scrollHint: { en: 'Scroll to begin', pl: 'Przewiń, aby rozpocząć', nl: 'Scroll om te beginnen' },
+        legendFixed: { en: 'Same every week', pl: 'Takie samo co tydzień', nl: 'Elke week hetzelfde' },
+        legendVariable: { en: 'Changes each week', pl: 'Zmienia się co tydzień', nl: 'Verandert elke week' },
+        typeVariable: { en: 'Variable', pl: 'Zmienne', nl: 'Variabel' },
+        footerQuote: {
+            en: '\u201cThe Eucharist is the source and summit of the Christian life.\u201d',
+            pl: '\u201eEucharystia jest źródłem i szczytem życia chrześcijańskiego.\u201d',
+            nl: '\u201eDe Eucharistie is de bron en het hoogtepunt van het christelijk leven.\u201d'
+        },
+        footerSource: { en: '\u2014 Lumen Gentium, 11', pl: '\u2014 Lumen Gentium, 11', nl: '\u2014 Lumen Gentium, 11' },
+        min: { en: 'min', pl: 'min', nl: 'min' }
+    };
+
+    // ===== CURRENT LANGUAGE =====
+    let currentLang = localStorage.getItem('mass-lang') || 'en';
+
+    // ===== RENDER TIMELINE =====
+    function renderTimeline(lang) {
+        const container = document.getElementById('timeline');
+        let html = '';
+
+        DATA.sections.forEach((section) => {
+            html += `
+                <div class="section-header">
+                    <div class="section-marker"><div class="section-marker-inner"></div></div>
+                    <div class="section-number">${section.part[lang]}</div>
+                    <h2 class="section-title">${section.title[lang]}</h2>
+                    <p class="section-desc">${section.desc[lang]}</p>
+                </div>`;
+
+            const lastIdx = section.steps.length - 1;
+            section.steps.forEach((step, i) => {
+                const posClass = i === 0 && lastIdx === 0 ? 'section-first section-last' : i === 0 ? 'section-first' : i === lastIdx ? 'section-last' : '';
+                const typeLabel = step.type === 'variable' ? `<span class="step-type">${UI.typeVariable[lang]}</span>` : '';
+                const latinLabel = step.latin ? `<span class="step-latin">${step.latin[lang]}</span>` : '';
+                const durationLabel = step.duration ? `<span class="step-duration">${step.duration} ${UI.min[lang]}</span>` : '';
+                const noteHtml = step.note ? `<p class="step-note">${step.note[lang]}</p>` : '';
+
+                let detailHtml = '';
+                if (step.detail && step.detail[lang]) {
+                    const sections = step.detail[lang].map((d) => {
+                        let contentEl;
+                        if (d.type === 'quote') contentEl = `<div class="detail-quote">${d.content}</div>`;
+                        else if (d.type === 'tip') contentEl = `<div class="detail-tip">${d.content}</div>`;
+                        else contentEl = `<div class="detail-text">${d.content}</div>`;
+                        return `<div class="detail-section"><div class="detail-label">${d.label}</div>${contentEl}</div>`;
+                    }).join('');
+
+                    detailHtml = `<div class="step-detail"><div class="step-detail-inner">${sections}</div></div>`;
                 }
+
+                html += `
+                    <div class="timeline-item ${step.type} ${posClass}">
+                        <div class="timeline-node"></div>
+                        <div class="timeline-card">
+                            <div class="card-header">
+                                <span class="step-name">${step.name[lang]}</span>
+                                ${latinLabel}
+                                ${typeLabel}
+                                ${durationLabel}
+                                ${CHEVRON}
+                            </div>
+                            <p class="step-description">${step.desc[lang]}</p>
+                            ${noteHtml}
+                            ${detailHtml}
+                        </div>
+                    </div>`;
             });
-        }, {
-            threshold: 0.15,
-            rootMargin: '0px 0px -40px 0px'
         });
 
-        document.querySelectorAll('.timeline-item, .section-header').forEach((el) => {
-            observer.observe(el);
+        container.innerHTML = html;
+        initTimelineObservers();
+        initCardClicks();
+    }
+
+    // ===== UPDATE UI STRINGS =====
+    function updateUI(lang) {
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
+            const key = el.getAttribute('data-i18n');
+            if (UI[key] && UI[key][lang]) {
+                el.innerHTML = UI[key][lang];
+            }
+        });
+        document.documentElement.lang = lang === 'pl' ? 'pl' : lang === 'nl' ? 'nl' : 'en';
+        document.title = lang === 'pl' ? 'Zrozumieć Mszę Świętą' : lang === 'nl' ? 'De Mis begrijpen' : 'Understanding the Mass';
+    }
+
+    // ===== SET LANGUAGE =====
+    function setLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('mass-lang', lang);
+
+        document.querySelectorAll('.lang-btn').forEach((btn) => {
+            btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
         });
 
-        // Sticky legend shadow on scroll
-        const legend = document.getElementById('legend');
-        const heroEl = document.querySelector('.hero');
+        updateUI(lang);
+        renderTimeline(lang);
+    }
 
-        const legendObserver = new IntersectionObserver((entries) => {
+    // ===== OBSERVERS =====
+    function initTimelineObservers() {
+        const obs = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
-                legend.classList.toggle('scrolled', !entry.isIntersecting);
+                if (entry.isIntersecting) entry.target.classList.add('visible');
             });
-        }, { threshold: 0 });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
-        legendObserver.observe(heroEl);
+        document.querySelectorAll('.timeline-item, .section-header').forEach((el) => obs.observe(el));
+    }
 
-        // Expandable cards
+    function initCardClicks() {
         document.querySelectorAll('.timeline-card').forEach((card) => {
             card.addEventListener('click', () => {
                 const item = card.closest('.timeline-item');
@@ -1519,18 +1668,29 @@
                 if (!detail) return;
 
                 const isExpanded = item.classList.contains('expanded');
-
-                // Close all other expanded items
                 document.querySelectorAll('.timeline-item.expanded').forEach((other) => {
-                    if (other !== item) {
-                        other.classList.remove('expanded');
-                    }
+                    if (other !== item) other.classList.remove('expanded');
                 });
-
-                // Toggle this item
                 item.classList.toggle('expanded', !isExpanded);
             });
         });
+    }
+
+    // ===== INIT =====
+    document.querySelectorAll('.lang-btn').forEach((btn) => {
+        btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
+    });
+
+    // Legend shadow
+    const legend = document.getElementById('legend');
+    const heroEl = document.querySelector('.hero');
+    const legendObs = new IntersectionObserver((entries) => {
+        entries.forEach((e) => legend.classList.toggle('scrolled', !e.isIntersecting));
+    }, { threshold: 0 });
+    legendObs.observe(heroEl);
+
+    // Initial render
+    setLanguage(currentLang);
     </script>
 </body>
 </html>
