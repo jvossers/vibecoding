@@ -276,17 +276,32 @@
         }
 
         /* ===== SECTION HEADERS ===== */
+        .section-group { margin: 0; padding: 0; }
+
         .section-header {
-            position: relative;
-            margin: 3rem 0 2rem;
-            padding-left: 60px;
+            position: sticky;
+            top: var(--legend-height, 40px);
+            z-index: 10;
+            margin: 0;
+            padding: 1.5rem 0 1.5rem 60px;
+            background: var(--warm-white);
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
 
         .section-header.visible { opacity: 1; transform: translateY(0); }
-        .section-header:first-child { margin-top: 0; }
+        .section-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: calc(-50vw + 50%);
+            width: 100vw;
+            background: var(--warm-white);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            z-index: -1;
+        }
 
         .section-marker {
             position: absolute;
@@ -358,6 +373,9 @@
         }
 
         /* First item in a section: start line from the node, not the top */
+        .timeline-item.section-first {
+            margin-top: 1.5rem;
+        }
         .timeline-item.section-first::before {
             top: 1.3rem;
         }
@@ -610,7 +628,7 @@
             .rose-window { width: 120px; height: 120px; margin-bottom: 2rem; }
             .ornament-line { width: 40px; }
             .timeline-container { padding: 2rem 1rem 4rem; }
-            .section-header { padding-left: 48px; }
+            .section-header { padding-left: 48px; padding-right: 0.5rem; padding-top: 1rem; padding-bottom: 1rem; }
             .section-marker { left: 7px; width: 28px; height: 28px; }
             .timeline-item::before { left: 20px; }
             .timeline-item { padding-left: 48px; margin-bottom: 1.25rem; }
@@ -1571,7 +1589,7 @@
         let html = '';
 
         DATA.sections.forEach((section) => {
-            html += `
+            html += `<div class="section-group">
                 <div class="section-header">
                     <div class="section-marker"><div class="section-marker-inner"></div></div>
                     <div class="section-number">${section.part[lang]}</div>
@@ -1617,11 +1635,13 @@
                         </div>
                     </div>`;
             });
+            html += `</div>`; /* close section-group */
         });
 
         container.innerHTML = html;
         initTimelineObservers();
         initCardClicks();
+        initStickyObservers();
     }
 
     // ===== UPDATE UI STRINGS =====
@@ -1684,6 +1704,33 @@
         entries.forEach((e) => legend.classList.toggle('scrolled', !e.isIntersecting));
     }, { threshold: 0 });
     legendObs.observe(heroEl);
+
+    // Set sticky header offset based on legend height
+    function updateLegendHeight() {
+        document.documentElement.style.setProperty('--legend-height', legend.offsetHeight + 'px');
+    }
+    updateLegendHeight();
+    window.addEventListener('resize', updateLegendHeight);
+
+    // Detect stuck section headers
+    function initStickyObservers() {
+        const headers = document.querySelectorAll('.section-header');
+        const legendH = legend.offsetHeight;
+        // A sentinel 1px above the sticky top — when it leaves the viewport, the header is stuck
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach((e) => {
+                e.target.nextElementSibling.classList.toggle('stuck', !e.isIntersecting);
+            });
+        }, { rootMargin: `-${legendH}px 0px 0px 0px`, threshold: 0 });
+
+        headers.forEach((h) => {
+            const sentinel = document.createElement('div');
+            sentinel.className = 'sticky-sentinel';
+            sentinel.style.cssText = 'height:1px;width:1px;pointer-events:none;';
+            h.parentNode.insertBefore(sentinel, h);
+            obs.observe(sentinel);
+        });
+    }
 
     // Initial render
     setLanguage(currentLang);
