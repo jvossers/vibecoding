@@ -1667,11 +1667,7 @@
                 const detail = card.querySelector('.step-detail');
                 if (!detail) return;
 
-                const isExpanded = item.classList.contains('expanded');
-                document.querySelectorAll('.timeline-item.expanded').forEach((other) => {
-                    if (other !== item) other.classList.remove('expanded');
-                });
-                item.classList.toggle('expanded', !isExpanded);
+                item.classList.toggle('expanded');
             });
         });
     }
