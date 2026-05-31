@@ -197,7 +197,18 @@
     background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
     transition: background .15s, border-color .15s, color .15s;
   }
-  .action:hover { background: rgba(255,90,120,.14); border-color: #ff5a78; color: #ff8da3; }
+  .actions { display: flex; gap: 12px; }
+  .action:hover { background: rgba(46,230,198,.13); border-color: #2ee6c6; color: #8ff5e4; }
+  .action.danger:hover { background: rgba(255,90,120,.14); border-color: #ff5a78; color: #ff8da3; }
+  .toast {
+    position: fixed; left: 50%; top: 22px; z-index: 60;
+    transform: translateX(-50%) translateY(-14px);
+    background: rgba(46,230,198,.96); color: #04120f;
+    font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 1px;
+    padding: 11px 18px; border-radius: 11px; box-shadow: 0 10px 34px rgba(0,0,0,.45);
+    opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .hint { text-align: center; font-size: 10.5px; letter-spacing: 1px; color: var(--dim2); margin: 1px 0 0; }
   .hint b { color: var(--dim); font-weight: 600; }
 </style>
@@ -230,10 +241,15 @@
         <div class="ctrl-top"><label>Volume</label><span class="val" id="volVal">80</span></div>
         <input type="range" id="vol" min="0" max="100" value="80">
       </div>
-      <button class="action" id="clear">CLEAR PATTERN</button>
+      <div class="actions">
+        <button class="action" id="share">SHARE LINK</button>
+        <button class="action danger" id="clear">CLEAR</button>
+      </div>
       <p class="hint">tap a pad &middot; <b>shift-tap</b> for accent &middot; <b>space</b> to play</p>
     </div>
   </section>
+
+  <div class="toast" id="toast"></div>
 
 <script>
 "use strict";
@@ -506,6 +522,7 @@ function onCellDown(e) {
     if (ctx.state === "suspended") ctx.resume();
     CHANNELS[c].synth(ctx.currentTime, next === 2 ? 1.0 : 0.62);
   }
+  updateURL();
 }
 
 /* cursor / playhead */
@@ -564,6 +581,7 @@ bpmInput.addEventListener("input", () => {
   bpm = +bpmInput.value;
   bpmVal.textContent = bpm;
   bpmValBig.textContent = bpm;
+  updateURL();
 });
 
 const swingInput = document.getElementById("swing");
@@ -571,6 +589,7 @@ const swingVal = document.getElementById("swingVal");
 swingInput.addEventListener("input", () => {
   swing = (+swingInput.value) / 100;
   swingVal.textContent = swingInput.value + "%";
+  updateURL();
 });
 
 const volInput = document.getElementById("vol");
@@ -583,6 +602,7 @@ volInput.addEventListener("input", () => {
 document.getElementById("clear").addEventListener("click", () => {
   pattern = Array.from({length:NUM_STEPS}, () => new Array(CHANNELS.length).fill(0));
   refreshCells();
+  updateURL();
 });
 
 document.addEventListener("keydown", (e) => {
@@ -606,7 +626,116 @@ handle.addEventListener("click", () => toggleSheet());
 scrim.addEventListener("click", () => toggleSheet(false));
 
 /* ============================================================
-   Demo pattern so it's not empty on first load
+   Share links — encode the whole creation into the URL, no backend.
+
+   The grid is 128 cells (16 steps x 8 channels), each 0|1|2, packed as a
+   base-3 bigint (~203 bits). Tempo, swing and a version tag are folded into
+   the same integer, which is emitted as base64url (~37 chars for a full
+   pattern; shorter for sparse ones since leading zero bytes drop out).
+   ============================================================ */
+const SHARE_VERSION = 1;
+const BPM_MIN = 60, BPM_MAX = 200;
+const BPMN  = BigInt(BPM_MAX - BPM_MIN + 1);   // tempo range
+const SWINGN = 61n;                            // swing 0..60
+const GRID_MOD = 3n ** BigInt(NUM_STEPS * CHANNELS.length);
+
+function bigToBytes(v) {
+  if (v <= 0n) return new Uint8Array([0]);
+  let hex = v.toString(16);
+  if (hex.length % 2) hex = "0" + hex;
+  const out = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
+  return out;
+}
+function bytesToBig(bytes) {
+  let v = 0n;
+  for (const b of bytes) v = (v << 8n) | BigInt(b);
+  return v;
+}
+function bytesToB64url(bytes) {
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function b64urlToBytes(str) {
+  str = str.replace(/-/g, "+").replace(/_/g, "/");
+  while (str.length % 4) str += "=";
+  const bin = atob(str);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+function encodeState() {
+  let g = 0n;
+  for (let s = NUM_STEPS - 1; s >= 0; s--)
+    for (let c = CHANNELS.length - 1; c >= 0; c--)
+      g = g * 3n + BigInt(pattern[s][c] || 0);
+
+  const bpmOff = Math.min(Math.max(Math.round(bpm), BPM_MIN), BPM_MAX) - BPM_MIN;
+  const swingInt = Math.min(Math.max(Math.round(swing * 100), 0), 60);
+
+  let v = BigInt(SHARE_VERSION);
+  v = v * BPMN + BigInt(bpmOff);
+  v = v * SWINGN + BigInt(swingInt);
+  v = v * GRID_MOD + g;
+  return bytesToB64url(bigToBytes(v));
+}
+
+function decodeState(token) {
+  let v = bytesToBig(b64urlToBytes(token));
+  let g = v % GRID_MOD;            v /= GRID_MOD;
+  const swingInt = Number(v % SWINGN); v /= SWINGN;
+  const bpmOff   = Number(v % BPMN);   v /= BPMN;
+  // remaining v is the version tag (currently unused beyond validation)
+
+  const pat = Array.from({length: NUM_STEPS}, () => new Array(CHANNELS.length).fill(0));
+  for (let s = 0; s < NUM_STEPS; s++)
+    for (let c = 0; c < CHANNELS.length; c++) { pat[s][c] = Number(g % 3n); g /= 3n; }
+
+  return { pattern: pat, bpm: BPM_MIN + bpmOff, swing: swingInt / 100, swingInt };
+}
+
+function applyState(st) {
+  pattern = st.pattern;
+  bpm = Math.min(Math.max(st.bpm, BPM_MIN), BPM_MAX);
+  bpmInput.value = bpm; bpmVal.textContent = bpm; bpmValBig.textContent = bpm;
+  swing = st.swing;
+  swingInput.value = st.swingInt; swingVal.textContent = st.swingInt + "%";
+  refreshCells();
+}
+
+function shareURL() { return location.origin + location.pathname + "?p=" + encodeState(); }
+
+let urlTimer;
+function updateURL() {
+  clearTimeout(urlTimer);
+  urlTimer = setTimeout(() => {
+    try { history.replaceState(null, "", "?p=" + encodeState()); } catch (e) { /* file:// etc. */ }
+  }, 250);
+}
+
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove("show"), 1900);
+}
+
+document.getElementById("share").addEventListener("click", async () => {
+  const url = shareURL();
+  try { history.replaceState(null, "", "?p=" + encodeState()); } catch (e) {}
+  try {
+    await navigator.clipboard.writeText(url);
+    toast("Link copied — share your beat!");
+  } catch (e) {
+    toast("Link is in the address bar");
+  }
+});
+
+/* ============================================================
+   Boot: load a shared pattern from the URL, else a demo beat
    ============================================================ */
 function loadDemo() {
   const idx = id => CHANNELS.findIndex(c => c.id === id);
@@ -619,8 +748,18 @@ function loadDemo() {
   refreshCells();
 }
 
+function boot() {
+  let token = null;
+  try { token = new URLSearchParams(location.search).get("p"); } catch (e) {}
+  if (token) {
+    try { applyState(decodeState(token)); return; }
+    catch (e) { console.warn("Ignoring invalid share link:", e); }
+  }
+  loadDemo();
+}
+
 buildGrid();
-loadDemo();
+boot();
 </script>
 </body>
 </html>
