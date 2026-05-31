@@ -526,8 +526,12 @@ function setCursor(step) {
 
 function drawCursor() {
   if (!isPlaying) return;
-  const now = ctx.currentTime;
-  while (stepQueue.length && stepQueue[0].time <= now) {
+  // A note scheduled at time T isn't heard until T + output latency, so
+  // advance the visual cursor only once the audio for that step is actually
+  // reaching the speakers. Otherwise the cursor runs ahead of the sound.
+  const latency = ctx.outputLatency || ctx.baseLatency || 0;
+  const heardTime = ctx.currentTime - latency;
+  while (stepQueue.length && stepQueue[0].time <= heardTime) {
     setCursor(stepQueue.shift().step);
   }
   requestAnimationFrame(drawCursor);
