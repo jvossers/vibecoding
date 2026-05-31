@@ -15,6 +15,7 @@
     --dim2:   #383e5e;
     --cursor: #ffe27a;
     --handle: 60px;
+    --head:   30px;
   }
   * { box-sizing: border-box; }
   html, body {
@@ -45,24 +46,32 @@
       radial-gradient(ellipse at center, transparent 48%, rgba(0,0,0,.55) 100%);
   }
 
-  /* ---- tracker stage (fills the whole screen) ---- */
+  /* ---- tracker stage: fixed row-number rail + swipeable channel pages ---- */
   #tracker {
     position: fixed; inset: 0; bottom: var(--handle);
-    display: flex; flex-direction: column;
-    padding: 10px 10px 6px;
+    display: flex; padding: 10px 10px 6px;
   }
-  .head-row, .step-row { display: flex; align-items: stretch; }
-  .head-row {
-    flex: 0 0 auto; margin-bottom: 6px;
-    opacity: 0; animation: dropIn .45s ease forwards;
-  }
-  .corner, .rownum {
-    flex: 0 0 30px; display: flex; align-items: center; justify-content: center;
+  .rail { flex: 0 0 30px; display: flex; flex-direction: column; }
+  .corner { flex: 0 0 var(--head); margin-bottom: 6px; }
+  .rownum {
+    flex: 1 1 0; min-height: 0;
+    display: flex; align-items: center; justify-content: center;
     font-family: "VT323", monospace; font-size: 18px; color: var(--dim2);
   }
   .rownum.beatnum { color: var(--dim); }
   .rownum.cursor-num { color: var(--cursor); text-shadow: 0 0 9px var(--cursor); }
 
+  .pane { flex: 1 1 auto; min-width: 0; position: relative; overflow: hidden; touch-action: none; }
+  .track {
+    display: flex; height: 100%;
+    transition: transform .42s cubic-bezier(.16,1,.3,1); will-change: transform;
+  }
+  .page { display: flex; flex-direction: column; min-width: 0; }
+
+  .phead {
+    flex: 0 0 var(--head); display: flex; align-items: stretch; margin-bottom: 6px;
+    opacity: 0; animation: dropIn .45s ease forwards;
+  }
   .head-cell {
     flex: 1 1 0; min-width: 0; margin: 0 2px;
     text-align: center; padding: 3px 0 5px;
@@ -72,18 +81,31 @@
     text-shadow: 0 0 11px var(--c);
   }
 
-  .step-row {
-    flex: 1 1 0; min-height: 0; border-radius: 4px;
+  .prow {
+    flex: 1 1 0; min-height: 0; display: flex; align-items: stretch; border-radius: 4px;
     opacity: 0; transform: translateY(-8px);
     animation: dropIn .42s cubic-bezier(.2,.85,.25,1) forwards;
   }
   @keyframes dropIn { to { opacity: 1; transform: none; } }
-  .step-row.beat { background: rgba(120,140,255,.035); }
-  .step-row.bar  { background: rgba(120,140,255,.065); }
-  .step-row.cursor {
+  .prow.beat { background: rgba(120,140,255,.035); }
+  .prow.bar  { background: rgba(120,140,255,.065); }
+  .prow.cursor {
     background: rgba(255,226,122,.07);
     box-shadow: inset 0 2px 0 rgba(255,226,122,.55), inset 0 -2px 0 rgba(255,226,122,.25);
   }
+
+  /* ---- page indicator ---- */
+  .pager-dots {
+    position: fixed; left: 50%; transform: translateX(-50%);
+    bottom: calc(var(--handle) + 9px); z-index: 25;
+    display: flex; gap: 8px; pointer-events: none;
+  }
+  .dot {
+    width: 9px; height: 9px; padding: 0; border: none; border-radius: 50%;
+    background: rgba(255,255,255,.22); cursor: pointer; pointer-events: auto;
+    transition: width .25s, background .25s, box-shadow .25s;
+  }
+  .dot.active { width: 22px; border-radius: 5px; background: var(--cursor); box-shadow: 0 0 10px var(--cursor); }
 
   .cell {
     flex: 1 1 0; min-width: 0; margin: 2px; position: relative;
@@ -217,6 +239,9 @@
   <!-- the instrument: full-screen tracker grid -->
   <div id="tracker"></div>
 
+  <!-- channel page indicator -->
+  <div class="pager-dots" id="dots"></div>
+
   <!-- dim layer behind the sheet -->
   <div class="scrim" id="scrim"></div>
 
@@ -258,6 +283,7 @@
    Channels — each has a short label, a colour, and a synth fn.
    ============================================================ */
 const CHANNELS = [
+  // --- page 1: the core drum kit ---
   { id:"kick",  name:"KICK", color:"#ff3b6b", synth: kick     },
   { id:"snare", name:"SNR",  color:"#ff9e3d", synth: snare    },
   { id:"hhc",   name:"HHC",  color:"#2ee6c6", synth: hatClosed },
@@ -266,8 +292,19 @@ const CHANNELS = [
   { id:"tom",   name:"TOM",  color:"#6d7dff", synth: tom      },
   { id:"rim",   name:"RIM",  color:"#54f08a", synth: rim      },
   { id:"cow",   name:"COW",  color:"#ffd23d", synth: cowbell  },
+  // --- page 2: melodic & extra percussion ---
+  { id:"bass",  name:"BASS", color:"#ff4da6", synth: bass     },
+  { id:"pluck", name:"PLUK", color:"#b6ff5c", synth: pluck    },
+  { id:"stab",  name:"STAB", color:"#ff8a5c", synth: stab     },
+  { id:"bell",  name:"BELL", color:"#4dd6ff", synth: bell     },
+  { id:"conga", name:"CGA",  color:"#d98cff", synth: conga    },
+  { id:"shaker",name:"SHKR", color:"#8de0c0", synth: shaker   },
+  { id:"ride",  name:"RIDE", color:"#ffe04d", synth: ride     },
+  { id:"zap",   name:"ZAP",  color:"#6c8cff", synth: zap      },
 ];
 const NUM_STEPS = 16;
+const PAGE_SIZE = 8;                                   // channels shown at once
+const NUM_PAGES = Math.ceil(CHANNELS.length / PAGE_SIZE);
 
 /* pattern[step][channel] = 0 | 1 (hit) | 2 (accent) */
 let pattern = Array.from({length:NUM_STEPS}, () => new Array(CHANNELS.length).fill(0));
@@ -376,6 +413,92 @@ function cowbell(t, gain) {
   });
 }
 
+/* --- page 2 voices: melodic + extra percussion --- */
+
+function bass(t, gain) {                 // acid-ish sub bass
+  const o = ctx.createOscillator(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+  o.type = "sawtooth"; o.frequency.value = 55;          // A1
+  f.type = "lowpass"; f.Q.value = 7;
+  f.frequency.setValueAtTime(950, t);
+  f.frequency.exponentialRampToValueAtTime(120, t + 0.22);
+  env(g, t, 0.75 * gain, 0.32);
+  o.connect(f).connect(g).connect(master); o.start(t); o.stop(t + 0.34);
+}
+
+function pluck(t, gain) {                 // short melodic pluck
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = "triangle";
+  o.frequency.setValueAtTime(440, t);                   // A4
+  o.frequency.exponentialRampToValueAtTime(415, t + 0.12);
+  env(g, t, 0.5 * gain, 0.18);
+  o.connect(g).connect(master); o.start(t); o.stop(t + 0.2);
+}
+
+function stab(t, gain) {                  // detuned minor chord stab
+  const f = ctx.createBiquadFilter(), g = ctx.createGain();
+  f.type = "lowpass"; f.Q.value = 1;
+  f.frequency.setValueAtTime(2600, t);
+  f.frequency.exponentialRampToValueAtTime(700, t + 0.18);
+  env(g, t, 0.3 * gain, 0.22);
+  f.connect(g).connect(master);
+  [220, 261.63, 329.63].forEach(fr => {                 // A minor (A C E)
+    const o = ctx.createOscillator();
+    o.type = "sawtooth"; o.frequency.value = fr; o.detune.value = Math.random() * 8 - 4;
+    o.connect(f); o.start(t); o.stop(t + 0.24);
+  });
+}
+
+function bell(t, gain) {                  // FM bell with inharmonic ratio
+  const carrier = ctx.createOscillator(), mod = ctx.createOscillator();
+  const mg = ctx.createGain(), g = ctx.createGain();
+  carrier.type = "sine"; carrier.frequency.value = 660;
+  mod.type = "sine"; mod.frequency.value = 660 * 1.41;
+  mg.gain.setValueAtTime(620, t); mg.gain.exponentialRampToValueAtTime(1, t + 0.3);
+  mod.connect(mg).connect(carrier.frequency);
+  env(g, t, 0.4 * gain, 0.5);
+  carrier.connect(g).connect(master);
+  carrier.start(t); mod.start(t); carrier.stop(t + 0.55); mod.stop(t + 0.55);
+}
+
+function conga(t, gain) {                 // pitched hand-drum
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = "sine";
+  o.frequency.setValueAtTime(300, t);
+  o.frequency.exponentialRampToValueAtTime(180, t + 0.12);
+  env(g, t, 0.7 * gain, 0.2);
+  o.connect(g).connect(master); o.start(t); o.stop(t + 0.22);
+}
+
+function shaker(t, gain) {                // quick noise shake
+  const n = noiseSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+  f.type = "highpass"; f.frequency.value = 6000;
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(0.4 * gain, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+  n.connect(f).connect(g).connect(master); n.start(t); n.stop(t + 0.11);
+}
+
+function ride(t, gain) {                  // metallic ride cymbal
+  const hp = ctx.createBiquadFilter(), g = ctx.createGain();
+  hp.type = "highpass"; hp.frequency.value = 5000;
+  env(g, t, 0.28 * gain, 0.4);
+  hp.connect(g).connect(master);
+  [1, 1.34, 1.79, 2.4, 2.67].forEach(r => {
+    const o = ctx.createOscillator();
+    o.type = "square"; o.frequency.value = 320 * r;
+    o.connect(hp); o.start(t); o.stop(t + 0.42);
+  });
+}
+
+function zap(t, gain) {                   // sci-fi laser zap
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = "square";
+  o.frequency.setValueAtTime(1800, t);
+  o.frequency.exponentialRampToValueAtTime(120, t + 0.18);
+  env(g, t, 0.35 * gain, 0.2);
+  o.connect(g).connect(master); o.start(t); o.stop(t + 0.22);
+}
+
 /* ============================================================
    Sequencer — Web Audio lookahead scheduler
    ============================================================ */
@@ -438,63 +561,98 @@ function stop() {
    UI / rendering
    ============================================================ */
 const tracker = document.getElementById("tracker");
+const dotsEl = document.getElementById("dots");
 const playBtn = document.getElementById("play");
 const beatDot = document.getElementById("beatDot");
 const cellEls = [];   // cellEls[step][channel]
-let rowEls = [];      // step row containers
-let rowNumEls = [];
+let rowNumEls = [];   // rail hex numbers, per step
+let prowEls = [];      // prowEls[step] = [pageRow0, pageRow1] for cursor highlight
+let trackEl = null, paneEl = null;
+let page = 0;          // current channel page
 
 function hex(n) { return n.toString(16).toUpperCase().padStart(2, "0"); }
 
 function buildGrid() {
   tracker.innerHTML = "";
-  cellEls.length = 0; rowEls = []; rowNumEls = [];
+  cellEls.length = 0; rowNumEls = []; prowEls = [];
+  for (let s = 0; s < NUM_STEPS; s++) { cellEls.push(new Array(CHANNELS.length)); prowEls.push([]); }
 
-  // header
-  const head = document.createElement("div");
-  head.className = "head-row";
+  // left rail: row numbers stay fixed while channels swipe
+  const rail = document.createElement("div");
+  rail.className = "rail";
   const corner = document.createElement("div");
   corner.className = "corner";
-  head.appendChild(corner);
-  CHANNELS.forEach(ch => {
-    const h = document.createElement("div");
-    h.className = "head-cell";
-    h.textContent = ch.name;
-    h.style.setProperty("--c", ch.color);
-    head.appendChild(h);
-  });
-  tracker.appendChild(head);
-
-  // step rows
+  rail.appendChild(corner);
   for (let s = 0; s < NUM_STEPS; s++) {
-    const row = document.createElement("div");
-    row.className = "step-row";
-    if (s % 4 === 0) row.classList.add("beat");
-    if (s % 8 === 0) row.classList.add("bar");
-    row.style.animationDelay = (s * 22) + "ms";
-
     const num = document.createElement("div");
     num.className = "rownum" + (s % 4 === 0 ? " beatnum" : "");
     num.textContent = hex(s);
-    row.appendChild(num);
+    rail.appendChild(num);
     rowNumEls.push(num);
-
-    const rowCells = [];
-    CHANNELS.forEach((ch, c) => {
-      const cell = document.createElement("div");
-      cell.className = "cell";
-      cell.dataset.step = s;
-      cell.dataset.chan = c;
-      cell.style.setProperty("--c", ch.color);
-      cell.addEventListener("pointerdown", onCellDown);
-      row.appendChild(cell);
-      rowCells.push(cell);
-    });
-    cellEls.push(rowCells);
-    rowEls.push(row);
-    tracker.appendChild(row);
   }
+  tracker.appendChild(rail);
+
+  // swipeable pane → track of channel pages
+  const pane = document.createElement("div");
+  pane.className = "pane";
+  const track = document.createElement("div");
+  track.className = "track";
+  track.style.width = (NUM_PAGES * 100) + "%";
+
+  for (let p = 0; p < NUM_PAGES; p++) {
+    const pg = document.createElement("div");
+    pg.className = "page";
+    pg.style.flex = "0 0 " + (100 / NUM_PAGES) + "%";
+
+    const phead = document.createElement("div");
+    phead.className = "phead";
+    for (let i = 0; i < PAGE_SIZE; i++) {
+      const c = p * PAGE_SIZE + i;
+      if (c >= CHANNELS.length) break;
+      const h = document.createElement("div");
+      h.className = "head-cell";
+      h.textContent = CHANNELS[c].name;
+      h.style.setProperty("--c", CHANNELS[c].color);
+      phead.appendChild(h);
+    }
+    pg.appendChild(phead);
+
+    for (let s = 0; s < NUM_STEPS; s++) {
+      const prow = document.createElement("div");
+      prow.className = "prow" + (s % 4 === 0 ? " beat" : "") + (s % 8 === 0 ? " bar" : "");
+      prow.style.animationDelay = (s * 22) + "ms";
+      for (let i = 0; i < PAGE_SIZE; i++) {
+        const c = p * PAGE_SIZE + i;
+        if (c >= CHANNELS.length) break;
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.dataset.step = s;
+        cell.dataset.chan = c;
+        cell.style.setProperty("--c", CHANNELS[c].color);
+        prow.appendChild(cell);
+        cellEls[s][c] = cell;
+      }
+      pg.appendChild(prow);
+      prowEls[s][p] = prow;
+    }
+    track.appendChild(pg);
+  }
+  pane.appendChild(track);
+  tracker.appendChild(pane);
+  trackEl = track; paneEl = pane;
+
+  // page indicator dots
+  dotsEl.innerHTML = "";
+  for (let p = 0; p < NUM_PAGES; p++) {
+    const d = document.createElement("button");
+    d.className = "dot";
+    d.addEventListener("click", () => setPage(p));
+    dotsEl.appendChild(d);
+  }
+
   refreshCells();
+  attachPager();
+  setPage(0);
 }
 
 function refreshCells() {
@@ -508,13 +666,12 @@ function refreshCells() {
   }
 }
 
-function onCellDown(e) {
-  const s = +e.currentTarget.dataset.step;
-  const c = +e.currentTarget.dataset.chan;
+function toggleCell(cell, shift) {
+  const s = +cell.dataset.step;
+  const c = +cell.dataset.chan;
   const cur = pattern[s][c];
-  const next = e.shiftKey ? (cur === 2 ? 0 : 2) : (cur ? 0 : 1);
+  const next = shift ? (cur === 2 ? 0 : 2) : (cur ? 0 : 1);
   pattern[s][c] = next;
-  const cell = cellEls[s][c];
   cell.classList.toggle("on", next > 0);
   cell.classList.toggle("accent", next === 2);
   if (next > 0) {
@@ -525,23 +682,76 @@ function onCellDown(e) {
   updateURL();
 }
 
+/* ---- channel paging: drag to swipe, tap to toggle ---- */
+function setPage(p) {
+  page = Math.max(0, Math.min(NUM_PAGES - 1, p));
+  trackEl.style.transition = "";
+  trackEl.style.transform = "translateX(" + (-page * (100 / NUM_PAGES)) + "%)";
+  [...dotsEl.children].forEach((d, i) => d.classList.toggle("active", i === page));
+}
+
+function attachPager() {
+  const THRESH = 10;
+  let downX = 0, downY = 0, downCell = null, downShift = false, active = false, drag = false;
+
+  paneEl.addEventListener("pointerdown", (e) => {
+    active = true; drag = false;
+    downX = e.clientX; downY = e.clientY;
+    downCell = e.target.closest(".cell");
+    downShift = e.shiftKey;
+    trackEl.style.transition = "none";
+    try { paneEl.setPointerCapture(e.pointerId); } catch (_) {}
+  });
+
+  paneEl.addEventListener("pointermove", (e) => {
+    if (!active) return;
+    const dx = e.clientX - downX, dy = e.clientY - downY;
+    if (!drag && Math.abs(dx) > THRESH && Math.abs(dx) > Math.abs(dy)) drag = true;
+    if (drag) {
+      e.preventDefault();
+      const w = paneEl.clientWidth || 1;
+      const span = 100 / NUM_PAGES;
+      let pct = -page * span + (dx / w) * span;
+      pct = Math.max(-(NUM_PAGES - 1) * span, Math.min(0, pct));  // clamp to ends
+      trackEl.style.transform = "translateX(" + pct + "%)";
+    }
+  });
+
+  function end(e) {
+    if (!active) return;
+    active = false;
+    trackEl.style.transition = "";
+    if (drag) {
+      const dx = e.clientX - downX, w = paneEl.clientWidth || 1;
+      let np = page;
+      if (Math.abs(dx) > w * 0.22) np = dx < 0 ? page + 1 : page - 1;
+      setPage(np);
+    } else if (downCell) {
+      toggleCell(downCell, downShift);
+    }
+    drag = false;
+  }
+  paneEl.addEventListener("pointerup", end);
+  paneEl.addEventListener("pointercancel", () => { active = false; drag = false; setPage(page); });
+}
+
 /* cursor / playhead */
 let displayedStep = -1;
 function setCursor(step) {
   if (displayedStep === step) return;
   if (displayedStep >= 0) {
-    rowEls[displayedStep].classList.remove("cursor");
     rowNumEls[displayedStep].classList.remove("cursor-num");
+    prowEls[displayedStep].forEach(r => r && r.classList.remove("cursor"));
   }
   if (step >= 0) {
-    rowEls[step].classList.add("cursor");
     rowNumEls[step].classList.add("cursor-num");
+    prowEls[step].forEach(r => r && r.classList.add("cursor"));
     // pulse the beat indicator on each downbeat
     if (step % 4 === 0) {
       beatDot.classList.add("lit");
       setTimeout(() => beatDot.classList.remove("lit"), 110);
     }
-    // flash the active cells in this row
+    // flash the active cells in this row (on whichever page is visible)
     for (let c = 0; c < CHANNELS.length; c++) {
       if (pattern[step][c] > 0) {
         const cell = cellEls[step][c];
@@ -606,11 +816,11 @@ document.getElementById("clear").addEventListener("click", () => {
 });
 
 document.addEventListener("keydown", (e) => {
-  if (e.code === "Space" && e.target.tagName !== "INPUT") {
-    e.preventDefault();
-    isPlaying ? stop() : play();
-  }
-  if (e.code === "Escape") toggleSheet(false);
+  if (e.target.tagName === "INPUT") return;
+  if (e.code === "Space") { e.preventDefault(); isPlaying ? stop() : play(); }
+  else if (e.code === "ArrowRight") setPage(page + 1);
+  else if (e.code === "ArrowLeft")  setPage(page - 1);
+  else if (e.code === "Escape")     toggleSheet(false);
 });
 
 /* ---- control-center sheet ---- */
@@ -633,7 +843,7 @@ scrim.addEventListener("click", () => toggleSheet(false));
    the same integer, which is emitted as base64url (~37 chars for a full
    pattern; shorter for sparse ones since leading zero bytes drop out).
    ============================================================ */
-const SHARE_VERSION = 1;
+const SHARE_VERSION = 2;        // bumped for the 16-channel layout
 const BPM_MIN = 60, BPM_MAX = 200;
 const BPMN  = BigInt(BPM_MAX - BPM_MIN + 1);   // tempo range
 const SWINGN = 61n;                            // swing 0..60
@@ -687,7 +897,7 @@ function decodeState(token) {
   let g = v % GRID_MOD;            v /= GRID_MOD;
   const swingInt = Number(v % SWINGN); v /= SWINGN;
   const bpmOff   = Number(v % BPMN);   v /= BPMN;
-  // remaining v is the version tag (currently unused beyond validation)
+  if (Number(v) !== SHARE_VERSION) throw new Error("unsupported share version");
 
   const pat = Array.from({length: NUM_STEPS}, () => new Array(CHANNELS.length).fill(0));
   for (let s = 0; s < NUM_STEPS; s++)
@@ -745,6 +955,10 @@ function loadDemo() {
   set("hhc",   [0,2,4,6,8,10,12,14]);
   set("hho",   [7, 15]);
   set("clap",  [4, 12]);
+  // page 2 — a taste of the melodic voices
+  set("bass",  [0, 3, 8, 11], 2);
+  set("ride",  [2, 6, 10, 14]);
+  set("bell",  [12]);
   refreshCells();
 }
 
