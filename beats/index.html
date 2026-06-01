@@ -435,11 +435,11 @@ function cowbell(t, gain) {
 
 function bass(t, gain) {                 // acid-ish sub bass
   const o = ctx.createOscillator(), f = ctx.createBiquadFilter(), g = ctx.createGain();
-  o.type = "sawtooth"; o.frequency.value = 55;          // A1
-  f.type = "lowpass"; f.Q.value = 7;
-  f.frequency.setValueAtTime(950, t);
-  f.frequency.exponentialRampToValueAtTime(120, t + 0.22);
-  env(g, t, 0.75 * gain, 0.32);
+  o.type = "sawtooth"; o.frequency.value = 82.41;       // E2 — peaks sooner than A1, still sub
+  f.type = "lowpass"; f.Q.value = 2;                    // less resonant ring => tighter attack
+  f.frequency.setValueAtTime(1100, t);
+  f.frequency.exponentialRampToValueAtTime(150, t + 0.22);
+  env(g, t, 0.8 * gain, 0.32);
   o.connect(f).connect(g).connect(master); o.start(t); o.stop(t + 0.34);
 }
 
@@ -490,10 +490,8 @@ function conga(t, gain) {                 // pitched hand-drum
 function shaker(t, gain) {                // quick noise shake
   const n = noiseSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
   f.type = "highpass"; f.frequency.value = 6000;
-  g.gain.setValueAtTime(0.0001, t);
-  g.gain.linearRampToValueAtTime(0.4 * gain, t + 0.01);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
-  n.connect(f).connect(g).connect(master); n.start(t); n.stop(t + 0.11);
+  env(g, t, 0.45 * gain, 0.075);         // 2ms attack, matches the other voices
+  n.connect(f).connect(g).connect(master); n.start(t); n.stop(t + 0.09);
 }
 
 function ride(t, gain) {                  // metallic ride cymbal
