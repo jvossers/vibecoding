@@ -198,6 +198,20 @@
   .ctrl label { font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--dim); }
   .val { font-family: "VT323", monospace; font-size: 23px; color: #38f0cf; }
 
+  .presets { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 6px; scrollbar-width: none; }
+  .presets::-webkit-scrollbar { height: 0; }
+  .chip {
+    flex: 0 0 auto; font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: .5px;
+    padding: 9px 14px; border-radius: 20px; cursor: pointer; white-space: nowrap;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); color: var(--text);
+    transition: background .15s, border-color .15s, color .15s;
+  }
+  .chip:hover { background: rgba(46,230,198,.12); border-color: #2ee6c6; color: #8ff5e4; }
+  .chip.active {
+    background: var(--cursor); border-color: var(--cursor); color: #1a1500;
+    box-shadow: 0 0 14px rgba(255,226,122,.5);
+  }
+
   input[type=range] {
     -webkit-appearance: none; appearance: none; width: 100%; height: 6px;
     border-radius: 3px; background: rgba(255,255,255,.09); outline: none; cursor: pointer;
@@ -254,6 +268,10 @@
       <span class="chev"></span>
     </div>
     <div class="controls">
+      <div class="presets-wrap">
+        <div class="ctrl-top"><label>Demo Songs</label></div>
+        <div class="presets" id="presets"></div>
+      </div>
       <div class="ctrl">
         <div class="ctrl-top"><label>Tempo</label><span class="val" id="bpmValBig">120</span></div>
         <input type="range" id="bpm" min="60" max="200" value="120">
@@ -679,6 +697,7 @@ function toggleCell(cell, shift) {
     if (ctx.state === "suspended") ctx.resume();
     CHANNELS[c].synth(ctx.currentTime, next === 2 ? 1.0 : 0.62);
   }
+  markPreset(-1);   // it's now a custom edit, not a stock song
   updateURL();
 }
 
@@ -812,6 +831,7 @@ volInput.addEventListener("input", () => {
 document.getElementById("clear").addEventListener("click", () => {
   pattern = Array.from({length:NUM_STEPS}, () => new Array(CHANNELS.length).fill(0));
   refreshCells();
+  markPreset(-1);
   updateURL();
 });
 
@@ -945,23 +965,102 @@ document.getElementById("share").addEventListener("click", async () => {
 });
 
 /* ============================================================
-   Boot: load a shared pattern from the URL, else a demo beat
+   Demo songs — curated starting points the user can pick from
+   Each track is [channelId, hitSteps, accentSteps?]
    ============================================================ */
-function loadDemo() {
+const PRESETS = [
+  { name:"Boom Bap", bpm:90, swing:22, p:[
+    ["kick",  [6], [0,10]],
+    ["snare", [], [4,12]],
+    ["hhc",   [0,2,4,6,8,10,12,14]],
+    ["hho",   [14]],
+    ["rim",   [7,15]],
+    ["bass",  [11], [0,10]],
+  ]},
+  { name:"House", bpm:124, swing:0, p:[
+    ["kick",   [], [0,4,8,12]],
+    ["clap",   [], [4,12]],
+    ["hhc",    [0,2,4,6,8,10,12,14]],
+    ["hho",    [2,6,10,14]],
+    ["shaker", [1,3,5,7,9,11,13,15]],
+    ["bass",   [3,7,11,15]],
+  ]},
+  { name:"Techno", bpm:130, swing:0, p:[
+    ["kick", [], [0,4,8,12]],
+    ["hhc",  [2,6,10,14]],
+    ["clap", [4,12]],
+    ["rim",  [3,7,11,15]],
+    ["bass", [2,4,6,8,10,12,14], [0]],
+    ["zap",  [14]],
+  ]},
+  { name:"Trap", bpm:140, swing:0, p:[
+    ["kick", [7], [0,10]],
+    ["clap", [], [8]],
+    ["hhc",  [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]],
+    ["bass", [7,10], [0]],
+  ]},
+  { name:"Drum & Bass", bpm:174, swing:0, p:[
+    ["kick", [10], [0]],
+    ["snare",[], [4,12]],
+    ["hhc",  [0,2,4,6,8,10,12,14]],
+    ["ride", [1,3,5,7,9,11,13,15]],
+    ["bass", [], [0,10]],
+  ]},
+  { name:"Latin", bpm:108, swing:0, p:[
+    ["rim",    [], [0,3,6,10,12]],     // son clave (3-2)
+    ["cow",    [0,4,8,12]],
+    ["conga",  [2,6,7,10,14]],
+    ["kick",   [], [0,8]],
+    ["shaker", [0,2,4,6,8,10,12,14]],
+    ["bass",   [3,11], [0,8]],
+  ]},
+  { name:"Synthwave", bpm:115, swing:0, p:[
+    ["kick",  [], [0,8]],
+    ["clap",  [4,12]],
+    ["hhc",   [2,6,10,14]],
+    ["bell",  [0,4,8,12]],
+    ["pluck", [2,6,10,14]],
+    ["bass",  [3,11], [0,8]],
+  ]},
+  { name:"Blank", bpm:120, swing:0, p:[] },
+];
+
+function applyPreset(pre) {
+  pattern = Array.from({length:NUM_STEPS}, () => new Array(CHANNELS.length).fill(0));
   const idx = id => CHANNELS.findIndex(c => c.id === id);
-  const set = (chan, steps, v=1) => steps.forEach(s => pattern[s][idx(chan)] = v);
-  set("kick",  [0, 6, 8, 14], 2);
-  set("snare", [4, 12], 2);
-  set("hhc",   [0,2,4,6,8,10,12,14]);
-  set("hho",   [7, 15]);
-  set("clap",  [4, 12]);
-  // page 2 — a taste of the melodic voices
-  set("bass",  [0, 3, 8, 11], 2);
-  set("ride",  [2, 6, 10, 14]);
-  set("bell",  [12]);
+  pre.p.forEach(([id, hits, acc]) => {
+    const c = idx(id); if (c < 0) return;
+    (hits || []).forEach(s => { if (s >= 0 && s < NUM_STEPS) pattern[s][c] = 1; });
+    (acc  || []).forEach(s => { if (s >= 0 && s < NUM_STEPS) pattern[s][c] = 2; });
+  });
+  bpm = pre.bpm; bpmInput.value = bpm; bpmVal.textContent = bpm; bpmValBig.textContent = bpm;
+  const sw = pre.swing || 0;
+  swing = sw / 100; swingInput.value = sw; swingVal.textContent = sw + "%";
   refreshCells();
 }
 
+const presetsEl = document.getElementById("presets");
+function markPreset(i) {
+  [...presetsEl.children].forEach((c, j) => c.classList.toggle("active", j === i));
+}
+function pickPreset(i) {
+  applyPreset(PRESETS[i]);
+  markPreset(i);
+  updateURL();
+  toggleSheet(false);          // reveal the grid
+  if (!isPlaying) play();      // and play it (the click is our audio gesture)
+}
+PRESETS.forEach((pre, i) => {
+  const b = document.createElement("button");
+  b.className = "chip";
+  b.textContent = pre.name;
+  b.addEventListener("click", () => pickPreset(i));
+  presetsEl.appendChild(b);
+});
+
+/* ============================================================
+   Boot: load a shared pattern from the URL, else the first song
+   ============================================================ */
 function boot() {
   let token = null;
   try { token = new URLSearchParams(location.search).get("p"); } catch (e) {}
@@ -969,7 +1068,8 @@ function boot() {
     try { applyState(decodeState(token)); return; }
     catch (e) { console.warn("Ignoring invalid share link:", e); }
   }
-  loadDemo();
+  applyPreset(PRESETS[0]);
+  markPreset(0);
 }
 
 buildGrid();
