@@ -395,12 +395,16 @@ function clap(t, gain) {
   const f = ctx.createBiquadFilter();
   f.type = "bandpass"; f.frequency.value = 1200; f.Q.value = 1.2;
   f.connect(master);
-  [0, 0.012, 0.024, 0.05].forEach((off, i) => {
+  // three tight transient bursts, front-loaded so the ear locks onto t
+  [[0, 1.0], [0.007, 0.65], [0.014, 0.45]].forEach(([off, amp]) => {
     const n = noiseSource(), g = ctx.createGain();
-    const d = i === 3 ? 0.18 : 0.03;
-    env(g, t + off, (i === 3 ? 0.5 : 0.7) * gain, d);
-    n.connect(g).connect(f); n.start(t + off); n.stop(t + off + d + 0.02);
+    env(g, t + off, amp * gain, 0.02);
+    n.connect(g).connect(f); n.start(t + off); n.stop(t + off + 0.04);
   });
+  // short, quiet body — keeps the clap character without dragging the timing
+  const n = noiseSource(), g = ctx.createGain();
+  env(g, t + 0.014, 0.25 * gain, 0.08);
+  n.connect(g).connect(f); n.start(t + 0.014); n.stop(t + 0.11);
 }
 
 function tom(t, gain) {
