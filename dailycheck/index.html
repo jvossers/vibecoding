@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#12100E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dailycheck">
+<meta name="description" content="A daily checklist for tasks you repeat several times a day.">
+<title>DAILYCHECK</title>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='10'%20fill='%2312100E'/%3E%3Cg%20stroke='%23E8A33D'%20stroke-width='5'%20stroke-linecap='round'%3E%3Cpath%20d='M16%2016v32M28%2016v32M40%2016v32M52%2016v32M10%2050L58%2014'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Dailycheck%22%2C%22short_name%22%3A%22Dailycheck%22%2C%22start_url%22%3A%22.%22%2C%22scope%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%2312100E%22%2C%22theme_color%22%3A%22%2312100E%22%7D">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,400..700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DAILYCHECK — daily repeating-task checklist
+   Aesthetic: analogue training ledger. Ink, brass, ruled lines.
+   ============================================================ */
+
+:root {
+  /* ink */
+  --ink:        #12100E;
+  --ink-2:      #191511;
+  --ink-3:      #221D17;
+  --well:       #0C0A08;
+  --rule:       #2B251E;
+  --rule-2:     #3B3226;
+
+  /* paper */
+  --paper:      #EDE4D3;
+  --paper-dim:  #978C79;
+  --paper-faint:#61594B;
+
+  /* brass + the warm accent family */
+  --brass:      #E8A33D;
+  --a0:         #E8A33D;
+  --a1:         #D2703F;
+  --a2:         #9AA663;
+  --a3:         #C98B7B;
+
+  /* geometry */
+  --strip:      42px;   /* collapsed column width */
+  --minopen:    150px;  /* an open column never gets narrower than this */
+  --row:        44px;   /* slot row height — identical in every column */
+  --headh:      88px;   /* column header — exactly two rows, so the ruling stays in rhythm */
+  --box:        26px;
+  --pad:        14px;
+
+  /* motion */
+  --ease:       cubic-bezier(.22, 1, .36, 1);
+  --dur:        280ms;
+  --dur-fast:   150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur: 1ms; --dur-fast: 1ms; }
+  * { animation-duration: 1ms !important; animation-delay: 0ms !important; }
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+/* warm vignette from the top — the lamp over the ledger */
+body::before {
+  content: "";
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(120% 55% at 50% -12%, #2A2118 0%, #191510 42%, var(--ink) 78%);
+}
+
+/* grain */
+body::after {
+  content: "";
+  position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+  opacity: .05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+input  { font: inherit; color: inherit; }
+
+/* ---------- shell ---------- */
+
+.app {
+  position: relative; z-index: 1;
+  height: 100dvh;
+  display: flex; flex-direction: column;
+  max-width: 620px; margin: 0 auto;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.topbar {
+  flex: none;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px var(--pad) 11px;
+  border-bottom: 1px solid var(--rule);
+}
+.mark { width: 22px; height: 14px; flex: none; overflow: visible; }
+.wordmark {
+  font-family: Fraunces, Georgia, serif;
+  font-weight: 600; font-size: 15px;
+  letter-spacing: .22em; text-transform: uppercase;
+  font-variation-settings: "opsz" 20;
+}
+.gear {
+  margin-left: auto;
+  width: 40px; height: 40px; margin-right: -8px;
+  display: grid; place-items: center;
+  color: var(--paper-dim);
+  transition: color var(--dur-fast), transform 400ms var(--ease);
+}
+.gear:active { color: var(--brass); transform: rotate(60deg); }
+.gear svg { width: 19px; height: 19px; }
+
+main {
+  flex: 1 1 auto;
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* the unused remainder of the page: ruled, like the rest of the ledger */
+.fill {
+  flex: 1 1 auto; min-height: 0;
+  background: repeating-linear-gradient(to bottom, transparent 0 43px, var(--rule) 43px 44px);
+  opacity: .3;
+}
+
+/* ---------- day accordion (vertical) ---------- */
+
+.day { flex: none; border-bottom: 1px solid var(--rule); }
+
+.day-head {
+  display: flex; align-items: baseline; gap: 10px;
+  width: 100%; text-align: left;
+  padding: 15px var(--pad) 14px;
+}
+.day-name {
+  font-family: Fraunces, Georgia, serif;
+  font-weight: 600; font-size: 19px; letter-spacing: .04em;
+  font-variation-settings: "opsz" 40;
+  transition: color var(--dur-fast);
+}
+.day:not(.open) .day-name { color: var(--paper-dim); }
+.day-date {
+  font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--paper-faint);
+}
+.day-count {
+  margin-left: auto;
+  font-size: 11px; letter-spacing: .08em;
+  color: var(--paper-faint);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--dur-fast);
+}
+.day.done .day-count { color: var(--brass); }
+.chev {
+  width: 9px; height: 9px; flex: none;
+  border-right: 1.5px solid var(--paper-faint);
+  border-bottom: 1.5px solid var(--paper-faint);
+  transform: rotate(-45deg); margin-left: 2px; margin-bottom: 2px;
+  transition: transform var(--dur) var(--ease);
+}
+.day.open .chev { transform: rotate(45deg); }
+
+/* a thin brass sweep under a fully-completed day */
+.day-head { position: relative; }
+.day-head::after {
+  content: ""; position: absolute; left: var(--pad); right: var(--pad); bottom: 6px;
+  height: 1px; background: var(--brass);
+  transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform 520ms var(--ease);
+  opacity: .55;
+}
+.day.done .day-head::after { transform: scaleX(1); }
+
+.day-body {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur) var(--ease);
+}
+.day.open .day-body { grid-template-rows: 1fr; }
+.day-body > .clip { position: relative; overflow: hidden; min-height: 0; }
+
+/* Ruled paper, edge to edge, behind every column. The column header is exactly
+   two rows tall, so every line lands on a slot-row boundary. The open column's
+   wash is translucent, so the ruling reads straight through it. Lives on the
+   wrapper, not on .cols, so it stays put if the columns scroll sideways. */
+.day-body > .clip::after {
+  content: "";
+  position: absolute; left: 0; right: 0; top: 0; bottom: 14px;
+  z-index: 0; pointer-events: none;
+  background: repeating-linear-gradient(to bottom, transparent 0 43px, var(--rule) 43px 44px);
+}
+
+/* ---------- column accordion (horizontal) ---------- */
+
+.cols {
+  position: relative;
+  display: flex; align-items: stretch;
+  padding: 0 8px 14px;
+  overflow-x: auto;              /* only bites with an unusual number of categories */
+  overflow-y: hidden;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.cols::-webkit-scrollbar { display: none; }
+
+.col {
+  flex: 0 0 var(--strip);
+  min-width: 0;
+  overflow: hidden;
+  position: relative; z-index: 1;
+  --acc: var(--a0);
+  --tl: calc(50% + 7px);            /* title pivot x — centred in the strip */
+  --sl: calc(50% - (var(--box) / 2)); /* slot indent — box centred in the strip */
+  transition: flex-basis var(--dur) var(--ease), background var(--dur) var(--ease);
+  animation: rise 460ms var(--ease) backwards;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+/* Exactly the space the collapsed strips leave over — so the row fills the
+   screen and nothing scrolls — but never below --minopen. Past roughly six
+   categories the strips alone outgrow a phone; the row starts scrolling and
+   the open column stays readable instead of collapsing to a sliver. */
+.col.open {
+  flex-basis: max(var(--minopen), calc(100% - (var(--n, 1) - 1) * var(--strip)));
+  flex-grow: 1;
+  --tl: var(--pad);
+  --sl: var(--pad);
+  background: linear-gradient(180deg, rgba(237,228,211,.035) 0%, rgba(237,228,211,0) 84%);
+}
+.col + .col::before {
+  content: ""; position: absolute; left: 0; top: 12px; bottom: 12px;
+  width: 1px; background: var(--rule);
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- column header: the pivoting title --- */
+
+.col-head { position: relative; height: var(--headh); }
+
+.col-title {
+  position: absolute; bottom: 12px; left: var(--tl);
+  transform-origin: 0 100%;
+  transform: rotate(-90deg);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: calc(var(--headh) - 14px);
+  font-size: 11px; line-height: 14px;
+  letter-spacing: .1em; text-transform: uppercase;   /* tighter while vertical — buys ~2 characters */
+  color: var(--paper-dim);
+  transition:
+    transform var(--dur) var(--ease),
+    left var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    letter-spacing var(--dur) var(--ease),
+    max-width 0ms linear var(--dur);
+}
+/* Unclamped while open: a percentage clamp would resolve against the column's
+   in-flight width and squeeze the title to nothing mid-slide. The collapsed
+   clamp is re-applied only once the column has finished closing. */
+.col.open .col-title {
+  transform: rotate(0deg);
+  color: var(--acc);
+  letter-spacing: .16em;
+  max-width: none;
+}
+
+/* accent rule that draws itself under the open title */
+.col-rule {
+  position: absolute; left: var(--pad); bottom: 6px;
+  height: 2px; width: 0; background: var(--acc);
+  transition: width var(--dur) var(--ease);
+}
+.col.open .col-rule { width: 24px; }
+
+.col-count {
+  position: absolute; right: var(--pad); bottom: 14px;
+  font-size: 11px; letter-spacing: .06em;
+  color: var(--paper-faint);
+  font-variant-numeric: tabular-nums;
+  opacity: 0; transform: translateX(6px);
+  transition: opacity var(--dur-fast) linear, transform var(--dur) var(--ease);
+}
+.col.open .col-count { opacity: 1; transform: none; transition-delay: 110ms, 0ms; }
+
+/* --- slots --- */
+
+.col-slots { display: flex; flex-direction: column; }
+
+.slot {
+  display: flex; align-items: center; gap: 12px;
+  height: var(--row); width: 100%;
+  padding-left: var(--sl); padding-right: 6px;
+  transition: padding-left var(--dur) var(--ease);
+}
+.col:not(.open) .slot { pointer-events: none; }
+
+.box {
+  position: relative;
+  width: var(--box); height: var(--box); flex: none;
+  display: grid; place-items: center;
+  background: var(--well);
+  border: 1px solid var(--rule-2);
+  transition:
+    background var(--dur-fast) linear,
+    border-color var(--dur-fast) linear,
+    box-shadow var(--dur-fast) linear,
+    opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+.col:not(.open) .box { opacity: .55; transform: scale(.84); }
+.col:not(.open) .slot[aria-pressed="true"] .box { opacity: .8; }
+
+.box svg { width: 15px; height: 15px; overflow: visible; }
+.box path {
+  fill: none; stroke: var(--ink); stroke-width: 2.8;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 26; stroke-dashoffset: 26;
+  transition: stroke-dashoffset var(--dur) var(--ease);
+}
+.slot[aria-pressed="true"] .box {
+  background: var(--acc); border-color: var(--acc);
+  box-shadow: 0 2px 14px -6px var(--acc);
+}
+.slot[aria-pressed="true"] .box path { stroke-dashoffset: 0; }
+
+.box.pop { animation: pop 380ms var(--ease); }
+@keyframes pop {
+  0%   { transform: scale(1); }
+  38%  { transform: scale(1.16); }
+  100% { transform: scale(1); }
+}
+
+.slot-label {
+  font-size: 13px; letter-spacing: .01em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  opacity: 0; transform: translateX(-8px);
+  transition: opacity var(--dur-fast) linear, transform var(--dur) var(--ease);
+}
+.col.open .slot-label { opacity: 1; transform: none; transition-delay: 110ms, 0ms; }
+.col.open .slot[aria-pressed="true"] .slot-label { color: var(--paper-dim); }
+
+/* ---------- first run ---------- */
+
+.intro { padding: 34px var(--pad) 24px; }
+.intro h1 {
+  font-family: Fraunces, Georgia, serif;
+  font-weight: 600; font-size: 27px; line-height: 1.2;
+  margin: 0 0 12px; letter-spacing: .01em;
+  font-variation-settings: "opsz" 80;
+}
+.intro p { color: var(--paper-dim); font-size: 13px; margin: 0 0 26px; max-width: 34em; }
+.intro .row { display: flex; flex-direction: column; gap: 10px; max-width: 320px; }
+
+.btn {
+  display: block; width: 100%; text-align: left;
+  padding: 14px 16px;
+  border: 1px solid var(--rule-2);
+  background: var(--ink-2);
+  font-size: 13px; letter-spacing: .06em; text-transform: uppercase;
+  transition: border-color var(--dur-fast), color var(--dur-fast), background var(--dur-fast);
+}
+.btn:active { border-color: var(--brass); color: var(--brass); }
+.btn.primary { border-color: var(--brass); color: var(--brass); }
+.btn.primary:active { background: rgba(232,163,61,.1); }
+.btn.danger { color: var(--a1); border-color: rgba(210,112,63,.4); }
+
+/* ---------- settings sheet ---------- */
+
+.sheet {
+  position: fixed; inset: 0; z-index: 60;
+  background: var(--ink);
+  transform: translateY(100%);
+  transition: transform 340ms var(--ease);
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(env(safe-area-inset-bottom) + 40px) env(safe-area-inset-left);
+  visibility: hidden;
+}
+.sheet.on { transform: none; visibility: visible; }
+
+.sheet-in { max-width: 620px; margin: 0 auto; }
+
+.sheet-head {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; align-items: center;
+  padding: 15px var(--pad) 13px;
+  background: var(--ink);
+  border-bottom: 1px solid var(--rule);
+}
+.sheet-title {
+  font-family: Fraunces, Georgia, serif;
+  font-weight: 600; font-size: 16px;
+  letter-spacing: .16em; text-transform: uppercase;
+}
+.done-btn {
+  margin-left: auto; color: var(--brass);
+  font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+  padding: 6px 2px 6px 16px;
+}
+
+.sect-label {
+  font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--paper-faint);
+  padding: 26px var(--pad) 10px;
+}
+
+.cat {
+  border-top: 1px solid var(--rule);
+  padding: 12px var(--pad) 14px;
+}
+.cat-top { display: flex; align-items: center; gap: 6px; }
+.cat-name {
+  flex: 1 1 auto; min-width: 0;
+  background: none; border: 0; border-bottom: 1px solid var(--rule-2);
+  padding: 7px 2px; font-size: 15px; letter-spacing: .02em;
+  color: var(--cat-acc, var(--paper));
+}
+.cat-name:focus { outline: none; border-bottom-color: var(--brass); }
+
+.mini {
+  width: 32px; height: 32px; flex: none;
+  display: grid; place-items: center;
+  color: var(--paper-faint); font-size: 13px;
+  transition: color var(--dur-fast);
+}
+.mini:active { color: var(--paper); }
+.mini.del:active { color: var(--a1); }
+
+.swatches { display: flex; gap: 8px; padding: 12px 2px 4px; }
+.sw {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1px solid rgba(0,0,0,.5);
+  box-shadow: 0 0 0 1px transparent;
+  transition: box-shadow var(--dur-fast), transform var(--dur-fast);
+}
+.sw[aria-pressed="true"] { box-shadow: 0 0 0 1px var(--ink), 0 0 0 2.5px currentColor; transform: scale(1.05); }
+
+.slot-edit { display: flex; align-items: center; gap: 6px; padding-left: 2px; }
+.slot-edit .tick {
+  width: 12px; height: 12px; flex: none;
+  border: 1px solid var(--rule-2); background: var(--well);
+}
+.slot-name {
+  flex: 1 1 auto; min-width: 0;
+  background: none; border: 0; border-bottom: 1px solid var(--rule);
+  padding: 8px 2px; font-size: 13px;
+}
+.slot-name:focus { outline: none; border-bottom-color: var(--brass); }
+
+.add {
+  margin-top: 10px;
+  font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--paper-faint); padding: 8px 2px;
+  transition: color var(--dur-fast);
+}
+.add:active { color: var(--brass); }
+.add-cat { display: block; padding: 16px var(--pad); border-top: 1px solid var(--rule); width: 100%; text-align: left; }
+
+.stack { display: flex; flex-direction: column; gap: 10px; padding: 0 var(--pad); }
+.note { font-size: 11px; color: var(--paper-faint); padding: 12px var(--pad) 0; line-height: 1.6; }
+
+.empty-note { padding: 16px var(--pad); color: var(--paper-faint); font-size: 12px; }
+
+/* ---------- desktop courtesy ---------- */
+
+@media (min-width: 640px) {
+  :root { --strip: 52px; --pad: 18px; }
+  .app { border-left: 1px solid var(--rule); border-right: 1px solid var(--rule); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+  <header class="topbar">
+    <svg class="mark" viewBox="0 0 22 14" aria-hidden="true">
+      <g stroke="var(--brass)" stroke-width="1.8" stroke-linecap="round" fill="none">
+        <path d="M3 2v10M8 2v10M13 2v10M18 2v10M1.5 11.5L20 2.5"/>
+      </g>
+    </svg>
+    <span class="wordmark">Dailycheck</span>
+    <button class="gear" id="gear" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <circle cx="12" cy="12" r="3.2"/>
+        <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1.03-1.56V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9v0c.2.63.78 1.05 1.44 1.03H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+  </header>
+
+  <main id="main"></main>
+</div>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Edit daily template">
+  <div class="sheet-in">
+    <div class="sheet-head">
+      <span class="sheet-title">The day</span>
+      <button class="done-btn" id="sheetDone">Done</button>
+    </div>
+    <div id="editor"></div>
+
+    <div class="sect-label">Backup</div>
+    <div class="stack">
+      <button class="btn" id="exportBtn">Export to file</button>
+      <button class="btn" id="importBtn">Import from file</button>
+    </div>
+    <p class="note">
+      Everything lives in this browser only. Clearing site data — or leaving the app unused for a
+      week on iOS — wipes it. Export now and then.
+    </p>
+
+    <div class="sect-label">Danger</div>
+    <div class="stack">
+      <button class="btn danger" id="resetToday">Clear today's ticks</button>
+      <button class="btn danger" id="wipe">Delete everything</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileIn" accept="application/json,.json" hidden>
+
+<script>
+(function () {
+  'use strict';
+
+  var KEY = 'dailycheck.v1';
+  var ACCENTS = 4;
+  var KEEP_DAYS = 60;
+
+  /* ============================================================
+     State
+     ============================================================ */
+
+  function blank() {
+    return { version: 1, template: { categories: [] }, days: {}, ui: { openCategory: null } };
+  }
+
+  function uid(p) {
+    return p + '_' + Math.random().toString(36).slice(2, 7) + Date.now().toString(36).slice(-3);
+  }
+
+  /* Defensive: also the gate for imported files. */
+  function normalize(o) {
+    var s = blank();
+    if (!o || typeof o !== 'object') return s;
+
+    var cats = (o.template && Array.isArray(o.template.categories)) ? o.template.categories : [];
+    s.template.categories = cats.filter(Boolean).map(function (c) {
+      var slots = Array.isArray(c.slots) ? c.slots : [];
+      return {
+        id: typeof c.id === 'string' && c.id ? c.id : uid('c'),
+        name: String(c.name == null ? '' : c.name).slice(0, 40) || 'Untitled',
+        accent: Number.isInteger(c.accent) ? ((c.accent % ACCENTS) + ACCENTS) % ACCENTS : 0,
+        slots: slots.filter(Boolean).map(function (sl) {
+          return {
+            id: typeof sl.id === 'string' && sl.id ? sl.id : uid('s'),
+            label: String(sl.label == null ? '' : sl.label).slice(0, 40)
+          };
+        })
+      };
+    });
+
+    if (o.days && typeof o.days === 'object') {
+      Object.keys(o.days).forEach(function (k) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+        var src = o.days[k];
+        if (!src || typeof src !== 'object') return;
+        var day = {};
+        Object.keys(src).forEach(function (sid) {
+          var ts = src[sid];
+          day[sid] = typeof ts === 'number' && isFinite(ts) ? ts : Date.now();
+        });
+        s.days[k] = day;
+      });
+    }
+
+    if (o.ui && typeof o.ui.openCategory === 'string') s.ui.openCategory = o.ui.openCategory;
+    return s;
+  }
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return blank();
+      return normalize(JSON.parse(raw));
+    } catch (e) {
+      return blank();
+    }
+  }
+
+  /* localStorage can throw (private mode, quota). Degrade to memory, never to a blank screen. */
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  function prune() {
+    var cutoff = dateKey(addDays(new Date(), -KEEP_DAYS));
+    Object.keys(state.days).forEach(function (k) {
+      if (k < cutoff) delete state.days[k];
+      else if (!Object.keys(state.days[k]).length) delete state.days[k];
+    });
+  }
+
+  var state = load();
+  prune();
+
+  var EXAMPLE = {
+    categories: [
+      { name: 'Push-ups', accent: 0, labels: ['AM ×15', 'Lunch ×15', 'PM ×15'] },
+      { name: 'Pull-ups', accent: 1, labels: ['AM ×8', 'PM ×8'] },
+      { name: 'Garden',   accent: 2, labels: ['Water'] }
+    ]
+  };
+
+  /* ============================================================
+     Dates — all local, never UTC
+     ============================================================ */
+
+  function dateKey(d) {
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + m + '-' + day;
+  }
+  function addDays(d, n) {
+    var c = new Date(d.getTime());
+    c.setDate(c.getDate() + n);
+    return c;
+  }
+  function todayKey() { return dateKey(new Date()); }
+  function yesterdayKey() { return dateKey(addDays(new Date(), -1)); }
+
+  function prettyDate(key) {
+    var p = key.split('-');
+    var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    return d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+
+  /* ============================================================
+     Derived
+     ============================================================ */
+
+  function cats() { return state.template.categories; }
+
+  function ticksFor(dayKey) {
+    if (!state.days[dayKey]) state.days[dayKey] = {};
+    return state.days[dayKey];
+  }
+
+  function dayTotals(dayKey) {
+    var t = state.days[dayKey] || {};
+    var done = 0, total = 0;
+    cats().forEach(function (c) {
+      c.slots.forEach(function (s) { total++; if (t[s.id]) done++; });
+    });
+    return { done: done, total: total };
+  }
+
+  function catTotals(dayKey, cat) {
+    var t = state.days[dayKey] || {};
+    var done = 0;
+    cat.slots.forEach(function (s) { if (t[s.id]) done++; });
+    return { done: done, total: cat.slots.length };
+  }
+
+  function openCatId() {
+    var list = cats();
+    if (!list.length) return null;
+    var found = list.some(function (c) { return c.id === state.ui.openCategory; });
+    if (!found) state.ui.openCategory = list[0].id;
+    return state.ui.openCategory;
+  }
+
+  /* ============================================================
+     Render — build once, then mutate.
+     Full rebuilds kill CSS transitions, so they happen only on
+     template change, rollover and import.
+     ============================================================ */
+
+  var main = document.getElementById('main');
+  var CHECK = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.4l3.4 3.4L13 4.8"/></svg>';
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch];
+    });
+  }
+
+  function render() {
+    if (!cats().length) { renderIntro(); return; }
+
+    var today = todayKey(), yest = yesterdayKey();
+    main.innerHTML =
+      dayHTML('Today', today, true) +
+      dayHTML('Yesterday', yest, false) +
+      '<div class="fill" aria-hidden="true"></div>';
+
+    syncDisabled();
+  }
+
+  function renderIntro() {
+    main.innerHTML =
+      '<div class="intro">' +
+        '<h1>What does<br>a day look like?</h1>' +
+        '<p>Set up the things you repeat — a column each, a checkbox for every time you do it. ' +
+          'Every morning you get a fresh, empty copy.</p>' +
+        '<div class="row">' +
+          '<button class="btn primary" id="useExample">Start from the example</button>' +
+          '<button class="btn" id="buildOwn">Build my own</button>' +
+        '</div>' +
+      '</div>';
+
+    document.getElementById('useExample').addEventListener('click', function () {
+      state.template.categories = EXAMPLE.categories.map(function (c) {
+        return {
+          id: uid('c'), name: c.name, accent: c.accent,
+          slots: c.labels.map(function (l) { return { id: uid('s'), label: l }; })
+        };
+      });
+      state.ui.openCategory = state.template.categories[0].id;
+      save(); render();
+    });
+
+    document.getElementById('buildOwn').addEventListener('click', function () {
+      addCategory();
+      openSheet();
+    });
+  }
+
+  function dayHTML(name, key, isToday) {
+    var tot = dayTotals(key);
+    var open = isToday;
+    var done = tot.total > 0 && tot.done === tot.total;
+
+    return '' +
+      '<section class="day' + (open ? ' open' : '') + (done ? ' done' : '') + '" data-day="' + key + '">' +
+        '<button class="day-head" aria-expanded="' + open + '">' +
+          '<span class="day-name">' + name + '</span>' +
+          '<span class="day-date">' + esc(prettyDate(key)) + '</span>' +
+          '<span class="day-count">' + tot.done + '/' + tot.total + '</span>' +
+          '<span class="chev" aria-hidden="true"></span>' +
+        '</button>' +
+        '<div class="day-body"><div class="clip">' +
+          '<div class="cols" style="--n:' + cats().length + '">' + colsHTML(key) + '</div>' +
+        '</div></div>' +
+      '</section>';
+  }
+
+  function colsHTML(dayKey) {
+    var openId = openCatId();
+    var t = state.days[dayKey] || {};
+
+    return cats().map(function (c, i) {
+      var isOpen = c.id === openId;
+      var ct = catTotals(dayKey, c);
+
+      var slots = c.slots.map(function (s) {
+        var on = !!t[s.id];
+        return '' +
+          '<button class="slot" data-slot="' + s.id + '" aria-pressed="' + on + '"' +
+            ' aria-label="' + esc(c.name + ' — ' + (s.label || 'checkbox')) + '">' +
+            '<span class="box">' + CHECK + '</span>' +
+            '<span class="slot-label">' + esc(s.label) + '</span>' +
+          '</button>';
+      }).join('');
+
+      return '' +
+        '<div class="col' + (isOpen ? ' open' : '') + '" data-cat="' + c.id + '"' +
+          ' style="--acc:var(--a' + c.accent + ');--i:' + i + '">' +
+          '<div class="col-head">' +
+            '<span class="col-title">' + esc(c.name) + '</span>' +
+            '<span class="col-rule"></span>' +
+            '<span class="col-count">' + ct.done + '/' + ct.total + '</span>' +
+          '</div>' +
+          '<div class="col-slots">' + slots + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  /* Only the open column's checkboxes are operable. Collapsed ones stay
+     visible and announced, but disabled + pointer-events:none, so a tap
+     falls through to the column and opens it instead. */
+  function syncDisabled() {
+    Array.prototype.forEach.call(main.querySelectorAll('.col'), function (col) {
+      var operable = col.classList.contains('open');
+      Array.prototype.forEach.call(col.querySelectorAll('.slot'), function (b) {
+        b.disabled = !operable;
+      });
+    });
+  }
+
+  /* ---------- targeted updates (no rebuild) ---------- */
+
+  function refreshCounts(section) {
+    var key = section.dataset.day;
+    var tot = dayTotals(key);
+    section.querySelector('.day-count').textContent = tot.done + '/' + tot.total;
+    section.classList.toggle('done', tot.total > 0 && tot.done === tot.total);
+
+    Array.prototype.forEach.call(section.querySelectorAll('.col'), function (col) {
+      var cat = cats().find(function (c) { return c.id === col.dataset.cat; });
+      if (!cat) return;
+      var ct = catTotals(key, cat);
+      col.querySelector('.col-count').textContent = ct.done + '/' + ct.total;
+    });
+  }
+
+  function toggleSlot(section, btn) {
+    var key = section.dataset.day;
+    var id = btn.dataset.slot;
+    var t = ticksFor(key);
+    var on = !t[id];
+
+    if (on) t[id] = Date.now(); else delete t[id];
+    btn.setAttribute('aria-pressed', String(on));
+
+    var box = btn.querySelector('.box');
+    box.classList.remove('pop');
+    void box.offsetWidth;
+    if (on) box.classList.add('pop');
+
+    if (on && navigator.vibrate) { try { navigator.vibrate(10); } catch (e) {} }
+
+    refreshCounts(section);
+    save();
+  }
+
+  function openColumn(col) {
+    var section = col.closest('.day');
+    state.ui.openCategory = col.dataset.cat;
+
+    /* keep both day panels in step */
+    Array.prototype.forEach.call(main.querySelectorAll('.col'), function (c) {
+      c.classList.toggle('open', c.dataset.cat === state.ui.openCategory);
+    });
+    syncDisabled();
+    save();
+
+    if (section) {
+      var box = col.getBoundingClientRect();
+      var host = col.parentElement.getBoundingClientRect();
+      if (box.left < host.left || box.right > host.right) {
+        col.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+      }
+    }
+  }
+
+  function openDay(section) {
+    var already = section.classList.contains('open');
+    Array.prototype.forEach.call(main.querySelectorAll('.day'), function (d) {
+      var on = d === section && !already;
+      d.classList.toggle('open', on);
+      d.querySelector('.day-head').setAttribute('aria-expanded', String(on));
+    });
+  }
+
+  main.addEventListener('click', function (e) {
+    var head = e.target.closest('.day-head');
+    if (head) { openDay(head.closest('.day')); return; }
+
+    var slot = e.target.closest('.slot');
+    if (slot && !slot.disabled) { toggleSlot(slot.closest('.day'), slot); return; }
+
+    var col = e.target.closest('.col');
+    if (col && !col.classList.contains('open')) openColumn(col);
+  });
+
+  /* ============================================================
+     Editor
+     ============================================================ */
+
+  var sheet = document.getElementById('sheet');
+  var editor = document.getElementById('editor');
+  var dirty = false;
+
+  function openSheet() { renderEditor(); sheet.classList.add('on'); }
+  function closeSheet() {
+    sheet.classList.remove('on');
+    if (dirty) { dirty = false; save(); render(); }
+  }
+
+  function renderEditor() {
+    var list = cats();
+
+    editor.innerHTML =
+      '<div class="sect-label">Categories &mdash; one column each</div>' +
+      (list.length ? '' : '<p class="empty-note">Nothing yet. Add your first category below.</p>') +
+      list.map(function (c, ci) {
+        var slots = c.slots.map(function (s, si) {
+          return '' +
+            '<div class="slot-edit">' +
+              '<span class="tick"></span>' +
+              '<input class="slot-name" value="' + esc(s.label) + '" placeholder="Label, e.g. AM ×15"' +
+                ' data-c="' + ci + '" data-s="' + si + '" maxlength="40">' +
+              '<button class="mini" data-act="s-up"   data-c="' + ci + '" data-s="' + si + '" aria-label="Move up">&#9650;</button>' +
+              '<button class="mini" data-act="s-down" data-c="' + ci + '" data-s="' + si + '" aria-label="Move down">&#9660;</button>' +
+              '<button class="mini del" data-act="s-del" data-c="' + ci + '" data-s="' + si + '" aria-label="Delete">&#10005;</button>' +
+            '</div>';
+        }).join('');
+
+        var swatches = [0, 1, 2, 3].map(function (a) {
+          return '<button class="sw" data-act="accent" data-c="' + ci + '" data-a="' + a + '"' +
+            ' aria-pressed="' + (c.accent === a ? 'true' : 'false') + '" aria-label="Accent ' + (a + 1) + '"' +
+            ' style="background:var(--a' + a + ');color:var(--a' + a + ')"></button>';
+        }).join('');
+
+        return '' +
+          '<div class="cat" style="--cat-acc:var(--a' + c.accent + ')">' +
+            '<div class="cat-top">' +
+              '<input class="cat-name" value="' + esc(c.name) + '" placeholder="Category" data-c="' + ci + '" maxlength="40">' +
+              '<button class="mini" data-act="c-up"   data-c="' + ci + '" aria-label="Move up">&#9650;</button>' +
+              '<button class="mini" data-act="c-down" data-c="' + ci + '" aria-label="Move down">&#9660;</button>' +
+              '<button class="mini del" data-act="c-del" data-c="' + ci + '" aria-label="Delete">&#10005;</button>' +
+            '</div>' +
+            '<div class="swatches">' + swatches + '</div>' +
+            slots +
+            '<button class="add" data-act="s-add" data-c="' + ci + '">+ Checkbox</button>' +
+          '</div>';
+      }).join('') +
+      '<button class="add-cat add" data-act="c-add">+ Category</button>';
+  }
+
+  function move(arr, i, delta) {
+    var j = i + delta;
+    if (j < 0 || j >= arr.length) return false;
+    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    return true;
+  }
+
+  function addCategory() {
+    var c = { id: uid('c'), name: '', accent: cats().length % ACCENTS, slots: [{ id: uid('s'), label: '' }] };
+    cats().push(c);
+    state.ui.openCategory = c.id;
+    dirty = true;
+    save();
+    return c;
+  }
+
+  editor.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-act]');
+    if (!btn) return;
+
+    var act = btn.dataset.act;
+    var ci = +btn.dataset.c;
+    var si = +btn.dataset.s;
+    var list = cats();
+    var cat = list[ci];
+
+    if (act === 'c-add') { addCategory(); renderEditor(); return; }
+    if (!cat && act !== 'c-add') return;
+
+    if (act === 'accent')  { cat.accent = +btn.dataset.a; }
+    else if (act === 'c-up')   { if (!move(list, ci, -1)) return; }
+    else if (act === 'c-down') { if (!move(list, ci, 1)) return; }
+    else if (act === 'c-del')  {
+      if (!confirm('Delete "' + (cat.name || 'this category') + '" and its checkboxes?')) return;
+      list.splice(ci, 1);
+    }
+    else if (act === 's-add')  { cat.slots.push({ id: uid('s'), label: '' }); }
+    else if (act === 's-up')   { if (!move(cat.slots, si, -1)) return; }
+    else if (act === 's-down') { if (!move(cat.slots, si, 1)) return; }
+    else if (act === 's-del')  {
+      if (cat.slots.length === 1) { if (!confirm('That is the last checkbox in this category. Delete it?')) return; }
+      cat.slots.splice(si, 1);
+    }
+    else return;
+
+    dirty = true;
+    save();
+    renderEditor();
+  });
+
+  /* Live text edits — no save button. */
+  editor.addEventListener('input', function (e) {
+    var el = e.target;
+    var ci = +el.dataset.c;
+    var cat = cats()[ci];
+    if (!cat) return;
+
+    if (el.classList.contains('cat-name')) cat.name = el.value;
+    else if (el.classList.contains('slot-name')) {
+      var s = cat.slots[+el.dataset.s];
+      if (s) s.label = el.value;
+    } else return;
+
+    dirty = true;
+    save();
+  });
+
+  /* Blank names would render an invisible column — backfill on close. */
+  function backfillNames() {
+    cats().forEach(function (c, i) {
+      if (!c.name.trim()) c.name = 'Category ' + (i + 1);
+      c.slots.forEach(function (s, j) {
+        if (!s.label.trim()) s.label = 'Check ' + (j + 1);
+      });
+    });
+  }
+
+  document.getElementById('gear').addEventListener('click', openSheet);
+  document.getElementById('sheetDone').addEventListener('click', function () {
+    backfillNames();
+    dirty = true;
+    closeSheet();
+  });
+
+  /* ============================================================
+     Backup + danger
+     ============================================================ */
+
+  document.getElementById('exportBtn').addEventListener('click', function () {
+    var blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'dailycheck-' + todayKey() + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  });
+
+  var fileIn = document.getElementById('fileIn');
+  document.getElementById('importBtn').addEventListener('click', function () { fileIn.click(); });
+
+  fileIn.addEventListener('change', function () {
+    var f = fileIn.files && fileIn.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var parsed;
+      try { parsed = JSON.parse(String(reader.result)); }
+      catch (err) { alert('That file is not valid JSON.'); return; }
+
+      var next = normalize(parsed);
+      if (!next.template.categories.length) { alert('No categories found in that file.'); return; }
+      if (!confirm('Replace everything on this device with the contents of that file?')) return;
+
+      state = next;
+      prune();
+      save();
+      renderEditor();
+      render();
+      closeSheet();
+    };
+    reader.readAsText(f);
+    fileIn.value = '';
+  });
+
+  document.getElementById('resetToday').addEventListener('click', function () {
+    if (!confirm("Clear today's ticks?")) return;
+    delete state.days[todayKey()];
+    save();
+    render();
+    closeSheet();
+  });
+
+  document.getElementById('wipe').addEventListener('click', function () {
+    if (!confirm('Delete the template and all history on this device? This cannot be undone.')) return;
+    state = blank();
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    renderEditor();
+    render();
+    closeSheet();
+  });
+
+  /* ============================================================
+     Day rollover — recomputed, never cached
+     ============================================================ */
+
+  var shownDay = null;
+
+  function checkRollover() {
+    if (shownDay !== todayKey()) {
+      shownDay = todayKey();
+      render();
+    }
+  }
+
+  function scheduleMidnight() {
+    var now = new Date();
+    var next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2);
+    var ms = Math.max(1000, next - now);
+    setTimeout(function () { checkRollover(); scheduleMidnight(); }, Math.min(ms, 2147483000));
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) checkRollover();
+  });
+  window.addEventListener('pageshow', checkRollover);
+
+  /* another tab edited the same data */
+  window.addEventListener('storage', function (e) {
+    if (e.key !== KEY) return;
+    state = load();
+    prune();
+    render();
+  });
+
+  /* ============================================================
+     Boot
+     ============================================================ */
+
+  shownDay = todayKey();
+  render();
+  scheduleMidnight();
+})();
+</script>
+
+</body>
+</html>
