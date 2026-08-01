@@ -141,12 +141,8 @@ main {
   -webkit-overflow-scrolling: touch;
 }
 
-/* the unused remainder of the page: ruled, like the rest of the ledger */
-.fill {
-  flex: 1 1 auto; min-height: 0;
-  background: repeating-linear-gradient(to bottom, transparent 0 43px, var(--rule) 43px 44px);
-  opacity: .3;
-}
+/* the unused remainder of the page — just holds the days up against the top */
+.fill { flex: 1 1 auto; min-height: 0; }
 
 /* ---------- day accordion (vertical) ---------- */
 
@@ -203,16 +199,6 @@ main {
 .day.open .day-body { grid-template-rows: 1fr; }
 .day-body > .clip { position: relative; overflow: hidden; min-height: 0; }
 
-/* Ruled paper, edge to edge, behind every column. The column header is exactly
-   one row tall, so every line lands on a slot-row boundary. Lives on the
-   wrapper, not on .cols, so the ruling holds still while the columns scroll. */
-.day-body > .clip::after {
-  content: "";
-  position: absolute; left: 0; right: 0; top: 0; bottom: 14px;
-  z-index: 0; pointer-events: none;
-  background: repeating-linear-gradient(to bottom, transparent 0 43px, var(--rule) 43px 44px);
-}
-
 /* ---------- columns ---------- */
 
 /* Two per row, wrapping. Nothing scrolls sideways. Every column is
@@ -238,21 +224,14 @@ main {
    stretch to full width and read as broken. */
 .cols:not(:has(.col:nth-child(3))) .col { flex-grow: 1; }
 
-.col + .col::before {
-  content: ""; position: absolute; left: 0; top: 10px; bottom: 12px;
-  width: 1px; background: var(--rule);
-}
-
-/* The first column of each wrapped row gets no vertical divider. Instead its
-   ::before becomes the horizontal rule marking where the previous row ended,
-   so a wrapped column header is not mistaken for another checkbox row. Every
-   column is exactly half wide, so 200% spans the full width. Drawn rather
-   than bordered: no height, no drift out of the 44px rhythm. */
-.col:nth-child(2n + 1)::before { content: none; }
+/* The only line left in the grid: where one wrapped row ends and the next
+   begins, so a wrapped column header is not mistaken for another checkbox row.
+   Drawn on the row's first column; every column is exactly half wide, so 200%
+   spans the full width. Drawn rather than bordered: adds no height. */
 .col:nth-child(2n + 1):not(:first-child)::before {
-  content: ""; left: 0; top: 0; bottom: auto;
+  content: ""; position: absolute; left: 0; top: 0;
   width: 200%; height: 1px;
-  background: var(--rule-2);
+  background: var(--rule);
 }
 
 @keyframes rise {

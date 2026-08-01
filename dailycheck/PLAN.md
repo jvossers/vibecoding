@@ -85,16 +85,16 @@ scrolls sideways — every checkbox for the day is on screen at once.
 
 ```
 ┌───────────────────────┬───────────────────────┐
-│ PUSH-UPS              │ PULL-UPS              │
-│ ▔▔▔                   │ ▔▔▔                   │
-│  ▣  AM ×15            │  ▣  AM ×8             │
-│  ▣  Lunch ×15         │  ☐  PM ×8             │
-│  ☐  PM ×15            │                       │
-├───────────────────────┴───────────────────────┤   ← row rule, full width
-│ GARDEN                │                       │
-│ ▔▔▔                   │                       │
-│  ☐  Water             │                       │
-└───────────────────────┴───────────────────────┘
+│ PUSH-UPS                PULL-UPS              │
+│ ▔▔▔                     ▔▔▔                   │
+│  ▣  AM ×15               ▣  AM ×8             │
+│  ▣  Lunch ×15            ☐  PM ×8             │
+│  ☐  PM ×15                                    │
+├───────────────────────────────────────────────┤   ← the only line: row boundary
+│ GARDEN                                        │
+│ ▔▔▔                                           │
+│  ☐  Water                                     │
+└───────────────────────────────────────────────┘
 ```
 
 Notes on the geometry:
@@ -106,11 +106,10 @@ Notes on the geometry:
   are. The one exception: a single category spreads across the row it already owns — from three
   upwards that would leave the odd column on the last row stretched to full width, which reads as
   broken.
-- The column header is one row (44px) tall and each column is a whole number of 44px rows, so every
-  wrapped row starts on a rule and the ruled-paper background stays in rhythm all the way down.
-  Names wrap to two lines before ellipsizing — roughly 15 characters a line.
-- A full-width rule marks each row boundary, so a wrapped column header isn't mistaken for another
-  checkbox row.
+- The column header and every checkbox row are both 44px, so two columns side by side keep their
+  checkboxes aligned. Names wrap to two lines before ellipsizing — roughly 15 characters a line.
+- **No grid lines.** A full-width rule marks each wrapped-row boundary, and that is the only line
+  inside a day; whitespace does the rest.
 - On a 390px phone a column is 195px, and still 160px on a 320px screen — labels have room to
   spare at either width.
 - Checkbox order within a column follows the template order (AM → Lunch → PM), never completion
@@ -272,10 +271,11 @@ SaaS card layout, not a fitness app with gradients.
   as a Victorian invoice), paired with `DM Mono` for category names, slot labels, and counts.
   Column names are uppercase mono with wide tracking, clamped to two lines. Explicitly avoiding
   Inter, Roboto, system stacks, and Space Grotesk.
-- **Texture:** an inline SVG `feTurbulence` grain overlay at very low opacity, a subtle warm radial
-  vignette at the top of the page, and hairline rules between columns that read as ruled ledger
-  paper. Checkboxes are square with a 1px inked border and a hand-drawn-feeling check path, not
-  a rounded system checkbox.
+- **Texture:** an inline SVG `feTurbulence` grain overlay at very low opacity and a subtle warm
+  radial vignette at the top of the page. Checkboxes are square with a 1px inked border and a
+  hand-drawn-feeling check path, not a rounded system checkbox. *(Review round 4 removed the ruled
+  ledger paper and the column dividers — too many lines. The ledger now reads through type, colour
+  and rhythm.)*
 - **Motion:** one orchestrated load-in (day header, then columns staggering in left to right at
   ~40ms intervals), then quiet. After load, the only motion is the accordion slide and the tick pop.
   A tool you open twenty times a day must not perform for you each time.
@@ -349,6 +349,11 @@ header shrank from two rows to one.
 8. **Two columns to a row** (first tried at three). Two is roomier: a column is 195px on a phone
    rather than 130px, so labels have space to spare and the narrow-screen special case that three
    columns needed is gone. The trade-off is height — three categories now take two rows.
+
+**Round 4 — fewer lines**
+
+9. **The ruled-paper background and the column dividers are gone.** Too many lines. The only rule
+   left inside a day is the one marking a wrapped-row boundary.
 
 This restores the property the very first draft was built around — *every checkbox for the day is
 visible at once* — which horizontal scrolling had quietly given up. The cost is vertical: many
