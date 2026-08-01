@@ -46,7 +46,7 @@
   --a3:         #C98B7B;
 
   /* geometry */
-  --colw:       33.3333%;  /* exactly three per row; the fourth wraps */
+  --colw:       50%;    /* exactly two per row; the third wraps */
   --row:        44px;   /* slot row height — identical in every column */
   --headh:      44px;   /* column header — exactly one row, so the ruling stays in rhythm */
   --box:        26px;
@@ -215,7 +215,7 @@ main {
 
 /* ---------- columns ---------- */
 
-/* Three per row, wrapping. Nothing scrolls sideways. Every column is
+/* Two per row, wrapping. Nothing scrolls sideways. Every column is
    44px of header plus a whole number of 44px rows, so each wrapped row
    starts on a rule and the ruled paper stays in rhythm all the way down. */
 .cols {
@@ -233,10 +233,10 @@ main {
   animation-delay: calc(var(--i, 0) * 45ms);
 }
 
-/* One or two categories have a whole row to themselves — let them use it.
-   From four upwards the grid must stay strict, or the odd column on the last
-   row would stretch to full width and read as broken. */
-.cols:not(:has(.col:nth-child(4))) .col { flex-grow: 1; }
+/* A lone category has the whole row to itself — let it use it. From three
+   upwards the grid must stay strict, or the odd column on the last row would
+   stretch to full width and read as broken. */
+.cols:not(:has(.col:nth-child(3))) .col { flex-grow: 1; }
 
 .col + .col::before {
   content: ""; position: absolute; left: 0; top: 10px; bottom: 12px;
@@ -246,12 +246,12 @@ main {
 /* The first column of each wrapped row gets no vertical divider. Instead its
    ::before becomes the horizontal rule marking where the previous row ended,
    so a wrapped column header is not mistaken for another checkbox row. Every
-   column is exactly a third wide, so 300% spans the full width. Drawn rather
+   column is exactly half wide, so 200% spans the full width. Drawn rather
    than bordered: no height, no drift out of the 44px rhythm. */
-.col:nth-child(3n + 1)::before { content: none; }
-.col:nth-child(3n + 1):not(:first-child)::before {
+.col:nth-child(2n + 1)::before { content: none; }
+.col:nth-child(2n + 1):not(:first-child)::before {
   content: ""; left: 0; top: 0; bottom: auto;
-  width: 300%; height: 1px;
+  width: 200%; height: 1px;
   background: var(--rule-2);
 }
 
@@ -452,14 +452,6 @@ main {
 .empty-note { padding: 16px var(--pad); color: var(--paper-faint); font-size: 12px; }
 
 /* ---------- desktop courtesy ---------- */
-
-/* Very narrow phones. Three columns still have to fit, so trim the chrome
-   around the checkbox rather than the label. */
-@media (max-width: 359px) {
-  :root { --box: 24px; --pad: 8px; }
-  .slot { gap: 5px; padding-right: 3px; }
-  .slot-label { font-size: 12px; }
-}
 
 @media (min-width: 640px) {
   :root { --pad: 16px; }

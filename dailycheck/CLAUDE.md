@@ -31,10 +31,10 @@ Everything lives in a single `index.html`. It is built for a phone: unlock, open
   clicking the open day closes it. Header carries the day name, date and a `done/total` count, so a
   collapsed Yesterday still says whether you finished. Height animates via a
   `grid-template-rows: 0fr → 1fr` transition, which animates to `auto` height without measuring JS.
-- **Categories are plain columns — always expanded, three to a row.** Every column shows its name,
+- **Categories are plain columns — always expanded, two to a row.** Every column shows its name,
   its labels and its checkboxes at all times, and every checkbox is always tickable. There is no
-  open/collapsed state and nothing to tap before ticking. A fourth category wraps onto a new row,
-  and so on every three. Nothing scrolls sideways.
+  open/collapsed state and nothing to tap before ticking. A third category wraps onto a new row,
+  and so on every two. Nothing scrolls sideways.
 
 An earlier revision made the columns a *horizontal accordion* — one open column with labels, the
 rest collapsed to 42px strips with their names rotated 90°. That is gone. If you are tempted to
@@ -51,21 +51,24 @@ second line.
 - The ruling is drawn on `.clip::after` (the day-body wrapper) at `z-index: 0`, behind the columns,
   so it runs edge to edge regardless of how many columns a row holds.
 - Columns are top-aligned stacks, not a grid. Garden's single checkbox does not get filler rows.
-- Width is a flat `flex: 0 0 33.3333%` on a wrapping flex row — exactly three per row, no growing,
-  no shrinking, no scrolling. **One exception:** `.cols:not(:has(.col:nth-child(4))) .col` sets
-  `flex-grow: 1`, so one or two categories spread across the row they already own. From four
-  upwards the grid stays strict; without that guard the odd column on the last row would stretch to
-  full width and read as broken.
+- Width is a flat `flex: 0 0 50%` on a wrapping flex row — exactly two per row, no growing, no
+  shrinking, no scrolling. **One exception:** `.cols:not(:has(.col:nth-child(3))) .col` sets
+  `flex-grow: 1`, so a lone category uses the row it already owns. From three upwards the grid
+  stays strict; without that guard the odd column on the last row would stretch to full width and
+  read as broken.
 - **Each wrapped row still lands on the ruling.** A column is `--headh` + n × `--row` tall, both
   44px, so a flex line's height is always a multiple of 44 and row two starts on a rule. Verified
-  by measurement (offsets 0 / 176 / 352 with 7 categories) — but only *after* the staggered load-in
+  by measurement (offsets 0 / 132 / 308 with 5 categories) — but only *after* the staggered load-in
   finishes. Measure during the animation and `translateY` will make it look 1px out.
-- `.col:nth-child(3n + 1)` is the first column of each row. Its `::before` is repurposed from the
-  vertical divider into the **horizontal rule marking the row boundary**: `width: 300%`, which is
-  exactly the full container width because every column is a third. This is why `.col` must not set
+- `.col:nth-child(2n + 1)` is the first column of each row. Its `::before` is repurposed from the
+  vertical divider into the **horizontal rule marking the row boundary**: `width: 200%`, which is
+  exactly the full container width because every column is a half. This is why `.col` must not set
   `overflow: hidden` — the title and labels clip themselves.
-- Below 360px the columns get tight (107px at 320px), so a media query trims the checkbox and the
-  gaps rather than the label. Verified: no clipped labels at 320px or 390px.
+- At two per row a column is 195px on a 390px phone and still 160px at 320px, so labels have room
+  to spare and no narrow-screen special case is needed. Verified: no clipped labels at either width.
+
+Note the coupling: `--colw`, the `nth-child` selectors and the row rule's `width` all encode the
+same "columns per row" number. Changing the count means changing all four.
 
 ### Ticking
 

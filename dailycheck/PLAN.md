@@ -80,22 +80,21 @@ Inside a day, categories are columns laid out left-to-right in a flex row. **Eve
 expanded**: name, labels and checkboxes visible, all the time. There is no open/collapsed state and
 nothing to tap before ticking.
 
-**Three columns to a row.** A fourth category wraps onto a new row, and so on every three. Nothing
+**Two columns to a row.** A third category wraps onto a new row, and so on every two. Nothing
 scrolls sideways — every checkbox for the day is on screen at once.
 
 ```
-┌───────────────┬───────────────┬───────────────┐
-│ PUSH-UPS      │ PULL-UPS      │ GARDEN        │
-│ ▔▔▔           │ ▔▔▔           │ ▔▔▔           │
-│  ▣  AM ×15    │  ▣  AM ×8     │  ☐  Water     │
-│  ▣  Lunch ×15 │  ☐  PM ×8     │               │
-│  ☐  PM ×15    │               │               │
-├───────────────┴───────────────┴───────────────┤   ← row rule, full width
-│ STRETCH       │ MEDS          │               │
-│ ▔▔▔           │ ▔▔▔           │               │
-│  ☐  Morning   │  ☐  AM        │               │
-│  ☐  Evening   │               │               │
-└───────────────┴───────────────┴───────────────┘
+┌───────────────────────┬───────────────────────┐
+│ PUSH-UPS              │ PULL-UPS              │
+│ ▔▔▔                   │ ▔▔▔                   │
+│  ▣  AM ×15            │  ▣  AM ×8             │
+│  ▣  Lunch ×15         │  ☐  PM ×8             │
+│  ☐  PM ×15            │                       │
+├───────────────────────┴───────────────────────┤   ← row rule, full width
+│ GARDEN                │                       │
+│ ▔▔▔                   │                       │
+│  ☐  Water             │                       │
+└───────────────────────┴───────────────────────┘
 ```
 
 Notes on the geometry:
@@ -103,17 +102,17 @@ Notes on the geometry:
 - Columns are **top-aligned stacks**, not a grid. A column with one slot is short; a column with
   three is taller. No filler rows, no forced alignment — a grid would waste vertical space and lie
   about the structure.
-- Width is a flat third (`flex: 0 0 33.3333%`), so the grid stays strict however many categories
-  there are. The one exception: with only one or two categories they spread across the row they
-  already own — from four upwards that would leave the odd column on the last row stretched to full
-  width, which reads as broken.
+- Width is a flat half (`flex: 0 0 50%`), so the grid stays strict however many categories there
+  are. The one exception: a single category spreads across the row it already owns — from three
+  upwards that would leave the odd column on the last row stretched to full width, which reads as
+  broken.
 - The column header is one row (44px) tall and each column is a whole number of 44px rows, so every
   wrapped row starts on a rule and the ruled-paper background stays in rhythm all the way down.
   Names wrap to two lines before ellipsizing — roughly 15 characters a line.
 - A full-width rule marks each row boundary, so a wrapped column header isn't mistaken for another
   checkbox row.
-- On a 390px phone a column is 130px, comfortably fitting `Lunch ×15`. Below 360px they get tight
-  (107px at 320px) and a media query trims the checkbox and gaps rather than the label.
+- On a 390px phone a column is 195px, and still 160px on a 320px screen — labels have room to
+  spare at either width.
 - Checkbox order within a column follows the template order (AM → Lunch → PM), never completion
   state. The layout must be *muscle-memory stable*: the same box is always in the same place.
 
@@ -252,7 +251,7 @@ the editor). No wizard, no tour.
   webpage and something you actually use every morning.
 - Works offline once loaded — it's one file with no network calls after the font fetch, and fonts
   are `font-display: swap` so a cold offline start still renders.
-- Responsive above 640px: the layout centres in a max-width column; still three across, just wider.
+- Responsive above 640px: the layout centres in a max-width column; still two across, just wider.
   Desktop is a courtesy, not the target.
 
 ---
@@ -346,8 +345,10 @@ header shrank from two rows to one.
 
 **Round 3 — wrapping instead of scrolling**
 
-7. **No horizontal scrolling at all.** Three columns to a row; a fourth wraps onto a new row, and so
-   on every three.
+7. **No horizontal scrolling at all.** Columns wrap onto a new row instead.
+8. **Two columns to a row** (first tried at three). Two is roomier: a column is 195px on a phone
+   rather than 130px, so labels have space to spare and the narrow-screen special case that three
+   columns needed is gone. The trade-off is height — three categories now take two rows.
 
 This restores the property the very first draft was built around — *every checkbox for the day is
 visible at once* — which horizontal scrolling had quietly given up. The cost is vertical: many
