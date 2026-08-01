@@ -1,6 +1,6 @@
 # DAILYCHECK — a daily repeating-task checklist
 
-**Status:** built. Revised after review rounds 1 and 2; this describes what was implemented.
+**Status:** built. Revised after review rounds 1–3; this describes what was implemented.
 `CLAUDE.md` documents the code as it stands.
 **Location:** `/dailycheck/index.html` → deployed at `labs.vossers.com/dailycheck/`
 **Stack:** single-file vanilla HTML/CSS/JS. No build, no dependencies, no back end. All state in `localStorage`.
@@ -80,6 +80,9 @@ Inside a day, categories are columns laid out left-to-right in a flex row. **Eve
 expanded**: name, labels and checkboxes visible, all the time. There is no open/collapsed state and
 nothing to tap before ticking.
 
+**Three columns to a row.** A fourth category wraps onto a new row, and so on every three. Nothing
+scrolls sideways — every checkbox for the day is on screen at once.
+
 ```
 ┌───────────────┬───────────────┬───────────────┐
 │ PUSH-UPS      │ PULL-UPS      │ GARDEN        │
@@ -87,24 +90,30 @@ nothing to tap before ticking.
 │  ▣  AM ×15    │  ▣  AM ×8     │  ☐  Water     │
 │  ▣  Lunch ×15 │  ☐  PM ×8     │               │
 │  ☐  PM ×15    │               │               │
+├───────────────┴───────────────┴───────────────┤   ← row rule, full width
+│ STRETCH       │ MEDS          │               │
+│ ▔▔▔           │ ▔▔▔           │               │
+│  ☐  Morning   │  ☐  AM        │               │
+│  ☐  Evening   │               │               │
 └───────────────┴───────────────┴───────────────┘
 ```
-
-When the columns don't all fit, **the row scrolls sideways** — it never shrinks them below a
-readable width. Three columns fit a phone exactly; a fourth leaves a sliver showing at the right
-edge, which together with a narrow edge fade is the cue to keep swiping.
 
 Notes on the geometry:
 
 - Columns are **top-aligned stacks**, not a grid. A column with one slot is short; a column with
   three is taller. No filler rows, no forced alignment — a grid would waste vertical space and lie
   about the structure.
-- Width is `flex: 1 0 31.5%` with `min-width: 126px`. The 31.5% is chosen so three columns have
-  space left over and grow to fill the screen exactly (130px each on a 390px phone), while a fourth
-  pushes past the edge. 126px is the width at which a label like `Lunch ×15` starts to clip; below
-  roughly a 360px screen the row scrolls rather than squeezing.
-- The column header is one row (44px) tall, so the ruled-paper background stays in rhythm with the
-  checkbox rows. Names wrap to two lines before ellipsizing — roughly 15 characters a line.
+- Width is a flat third (`flex: 0 0 33.3333%`), so the grid stays strict however many categories
+  there are. The one exception: with only one or two categories they spread across the row they
+  already own — from four upwards that would leave the odd column on the last row stretched to full
+  width, which reads as broken.
+- The column header is one row (44px) tall and each column is a whole number of 44px rows, so every
+  wrapped row starts on a rule and the ruled-paper background stays in rhythm all the way down.
+  Names wrap to two lines before ellipsizing — roughly 15 characters a line.
+- A full-width rule marks each row boundary, so a wrapped column header isn't mistaken for another
+  checkbox row.
+- On a 390px phone a column is 130px, comfortably fitting `Lunch ×15`. Below 360px they get tight
+  (107px at 320px) and a media query trims the checkbox and gaps rather than the label.
 - Checkbox order within a column follows the template order (AM → Lunch → PM), never completion
   state. The layout must be *muscle-memory stable*: the same box is always in the same place.
 
@@ -233,8 +242,8 @@ the editor). No wizard, no tour.
 - `<meta name="viewport" ... viewport-fit=cover>`; `100dvh` layout so it fills the screen and
   doesn't jump when Safari's chrome collapses; `env(safe-area-inset-*)` padding for notch and
   home-indicator.
-- Body doesn't scroll vertically in the expected case. The column row scrolls horizontally when the
-  categories don't all fit.
+- Body doesn't scroll in the expected case. Nothing scrolls horizontally, ever; enough categories to
+  make the day taller than the screen will scroll the page vertically.
 - `-webkit-tap-highlight-color: transparent`, `user-select: none`, `touch-action: manipulation`
   (kills the 300ms double-tap zoom delay).
 - **Installable**: inline `<link rel="manifest">` via a data URI (keeps the single-file rule),
@@ -243,8 +252,8 @@ the editor). No wizard, no tour.
   webpage and something you actually use every morning.
 - Works offline once loaded — it's one file with no network calls after the font fetch, and fonts
   are `font-display: swap` so a cold offline start still renders.
-- Responsive above 640px: the layout centres in a max-width column and the columns widen so four sit
-  across; everything else is unchanged. Desktop is a courtesy, not the target.
+- Responsive above 640px: the layout centres in a max-width column; still three across, just wider.
+  Desktop is a courtesy, not the target.
 
 ---
 
@@ -329,9 +338,17 @@ Listed so we agree on what we're *not* building yet, not as a promise to build t
 
 5. **No vertical column text, no column accordion.** Every column is expanded by default, with its
    name horizontal and its labels always visible.
-6. **Horizontal scrolling within a day**, used only when the columns don't all fit. Three fit a
-   phone exactly, which covers the worked example in §1 with no scrolling at all.
+6. Horizontal scrolling when the columns don't all fit — superseded by round 3.
 
 Two things that fell out of round 2, both improvements: category names now fit ~15 characters a line
 across two lines instead of ~9 vertically, and the day block is 44px shorter because the column
 header shrank from two rows to one.
+
+**Round 3 — wrapping instead of scrolling**
+
+7. **No horizontal scrolling at all.** Three columns to a row; a fourth wraps onto a new row, and so
+   on every three.
+
+This restores the property the very first draft was built around — *every checkbox for the day is
+visible at once* — which horizontal scrolling had quietly given up. The cost is vertical: many
+categories make the day taller, and the page scrolls down instead.

@@ -46,8 +46,7 @@
   --a3:         #C98B7B;
 
   /* geometry */
-  --colw:       31.5%;  /* three columns fill a phone exactly; a fourth peeks in */
-  --colmin:     126px;  /* narrow enough to fit three, wide enough to read a label */
+  --colw:       33.3333%;  /* exactly three per row; the fourth wraps */
   --row:        44px;   /* slot row height — identical in every column */
   --headh:      44px;   /* column header — exactly one row, so the ruling stays in rhythm */
   --box:        26px;
@@ -214,51 +213,46 @@ main {
   background: repeating-linear-gradient(to bottom, transparent 0 43px, var(--rule) 43px 44px);
 }
 
-/* More columns off to the right: fade the edge. Three columns leave only ~12px
-   of the fourth showing, which on its own does not read as "keep swiping".
-   Toggled by JS, since CSS cannot ask whether a box is scrollable. */
-.day-body > .clip::before {
-  content: "";
-  position: absolute; z-index: 2; top: 0; bottom: 14px; right: 0;
-  width: 20px; pointer-events: none;
-  background: linear-gradient(to left, rgba(18,16,14,.92), rgba(18,16,14,0));
-  opacity: 0; transition: opacity 200ms linear;
-}
-.day-body > .clip.more-right::before { opacity: 1; }
-
 /* ---------- columns ---------- */
 
-/* Every column is always open. When they do not all fit, the row scrolls
-   sideways rather than shrinking anything — a checkbox you can reach is worth
-   more than one you can only squint at. */
+/* Three per row, wrapping. Nothing scrolls sideways. Every column is
+   44px of header plus a whole number of 44px rows, so each wrapped row
+   starts on a rule and the ruled paper stays in rhythm all the way down. */
 .cols {
   position: relative;
-  display: flex; align-items: stretch;
+  display: flex; flex-wrap: wrap; align-items: stretch;
   padding: 0 0 14px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x proximity;
-  scrollbar-width: none;
-  overscroll-behavior-x: contain;
 }
-.cols::-webkit-scrollbar { display: none; }
 
-/* 31.5% is deliberate: three columns have free space left over and grow to
-   fill the screen exactly, while a fourth leaves ~20px of the next column
-   showing — the scroll hint, without needing a scrollbar. */
 .col {
-  flex: 1 0 var(--colw);
-  min-width: var(--colmin);
-  overflow: hidden;
+  flex: 0 0 var(--colw);
+  min-width: 0;
   position: relative; z-index: 1;
-  scroll-snap-align: start;
   --acc: var(--a0);
   animation: rise 460ms var(--ease) backwards;
   animation-delay: calc(var(--i, 0) * 45ms);
 }
+
+/* One or two categories have a whole row to themselves — let them use it.
+   From four upwards the grid must stay strict, or the odd column on the last
+   row would stretch to full width and read as broken. */
+.cols:not(:has(.col:nth-child(4))) .col { flex-grow: 1; }
+
 .col + .col::before {
   content: ""; position: absolute; left: 0; top: 10px; bottom: 12px;
   width: 1px; background: var(--rule);
+}
+
+/* The first column of each wrapped row gets no vertical divider. Instead its
+   ::before becomes the horizontal rule marking where the previous row ended,
+   so a wrapped column header is not mistaken for another checkbox row. Every
+   column is exactly a third wide, so 300% spans the full width. Drawn rather
+   than bordered: no height, no drift out of the 44px rhythm. */
+.col:nth-child(3n + 1)::before { content: none; }
+.col:nth-child(3n + 1):not(:first-child)::before {
+  content: ""; left: 0; top: 0; bottom: auto;
+  width: 300%; height: 1px;
+  background: var(--rule-2);
 }
 
 @keyframes rise {
@@ -459,8 +453,16 @@ main {
 
 /* ---------- desktop courtesy ---------- */
 
+/* Very narrow phones. Three columns still have to fit, so trim the chrome
+   around the checkbox rather than the label. */
+@media (max-width: 359px) {
+  :root { --box: 24px; --pad: 8px; }
+  .slot { gap: 5px; padding-right: 3px; }
+  .slot-label { font-size: 12px; }
+}
+
 @media (min-width: 640px) {
-  :root { --colw: 24%; --colmin: 140px; --pad: 16px; }   /* four across on a wider screen */
+  :root { --pad: 16px; }
   .app { border-left: 1px solid var(--rule); border-right: 1px solid var(--rule); }
 }
 </style>
@@ -673,17 +675,6 @@ main {
       dayHTML('Today', today, true) +
       dayHTML('Yesterday', yest, false) +
       '<div class="fill" aria-hidden="true"></div>';
-
-    Array.prototype.forEach.call(main.querySelectorAll('.cols'), function (cols) {
-      syncScrollHint(cols);
-      cols.addEventListener('scroll', function () { syncScrollHint(cols); }, { passive: true });
-    });
-  }
-
-  /* Is there more column to the right? The day panel wears the answer. */
-  function syncScrollHint(cols) {
-    var max = cols.scrollWidth - cols.clientWidth;
-    cols.parentElement.classList.toggle('more-right', max > 2 && cols.scrollLeft < max - 2);
   }
 
   function renderIntro() {
@@ -794,14 +785,7 @@ main {
       d.classList.toggle('open', on);
       d.querySelector('.day-head').setAttribute('aria-expanded', String(on));
     });
-    syncAllScrollHints();
   }
-
-  function syncAllScrollHints() {
-    Array.prototype.forEach.call(main.querySelectorAll('.cols'), function (c) { syncScrollHint(c); });
-  }
-
-  window.addEventListener('resize', syncAllScrollHints);
 
   main.addEventListener('click', function (e) {
     var head = e.target.closest('.day-head');
