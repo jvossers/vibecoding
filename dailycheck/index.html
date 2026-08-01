@@ -224,16 +224,6 @@ main {
    stretch to full width and read as broken. */
 .cols:not(:has(.col:nth-child(3))) .col { flex-grow: 1; }
 
-/* The only line left in the grid: where one wrapped row ends and the next
-   begins, so a wrapped column header is not mistaken for another checkbox row.
-   Drawn on the row's first column; every column is exactly half wide, so 200%
-   spans the full width. Drawn rather than bordered: adds no height. */
-.col:nth-child(2n + 1):not(:first-child)::before {
-  content: ""; position: absolute; left: 0; top: 0;
-  width: 200%; height: 1px;
-  background: var(--rule);
-}
-
 @keyframes rise {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: none; }

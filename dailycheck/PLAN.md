@@ -90,7 +90,7 @@ scrolls sideways — every checkbox for the day is on screen at once.
 │  ▣  AM ×15               ▣  AM ×8             │
 │  ▣  Lunch ×15            ☐  PM ×8             │
 │  ☐  PM ×15                                    │
-├───────────────────────────────────────────────┤   ← the only line: row boundary
+│                                               │   ← wrapped row, no rule
 │ GARDEN                                        │
 │ ▔▔▔                                           │
 │  ☐  Water                                     │
@@ -108,8 +108,8 @@ Notes on the geometry:
   broken.
 - The column header and every checkbox row are both 44px, so two columns side by side keep their
   checkboxes aligned. Names wrap to two lines before ellipsizing — roughly 15 characters a line.
-- **No grid lines.** A full-width rule marks each wrapped-row boundary, and that is the only line
-  inside a day; whitespace does the rest.
+- **No lines inside a day at all.** Whitespace, the 44px rhythm and the column header's own styling
+  (uppercase mono, dimmed, with an accent tick) do the separating.
 - On a 390px phone a column is 195px, and still 160px on a 320px screen — labels have room to
   spare at either width.
 - Checkbox order within a column follows the template order (AM → Lunch → PM), never completion
@@ -350,10 +350,11 @@ header shrank from two rows to one.
    rather than 130px, so labels have space to spare and the narrow-screen special case that three
    columns needed is gone. The trade-off is height — three categories now take two rows.
 
-**Round 4 — fewer lines**
+**Rounds 4 and 5 — fewer lines, then none**
 
-9. **The ruled-paper background and the column dividers are gone.** Too many lines. The only rule
-   left inside a day is the one marking a wrapped-row boundary.
+9. **The ruled-paper background and the column dividers are gone.** Too many lines.
+10. **The wrapped-row boundary rule is gone too**, on a try-it-and-see basis. Nothing is drawn
+    inside a day now. The exact rule is recorded in `CLAUDE.md` in case it goes back.
 
 This restores the property the very first draft was built around — *every checkbox for the day is
 visible at once* — which horizontal scrolling had quietly given up. The cost is vertical: many

@@ -53,12 +53,21 @@ second line.
   `flex-grow: 1`, so a lone category uses the row it already owns. From three upwards the grid
   stays strict; without that guard the odd column on the last row would stretch to full width and
   read as broken.
-- **There are no grid lines.** No ruled-paper background behind the columns, no dividers between
-  them, no rule under each checkbox row. They were removed as visual noise; whitespace and the
-  44px rhythm do the separating. The one line left inside a day is the wrapped-row boundary.
-- `.col:nth-child(2n + 1):not(:first-child)::before` draws that boundary: `width: 200%`, which is
-  exactly the full container width because every column is a half. This is why `.col` must not set
-  `overflow: hidden` — the title and labels clip themselves.
+- **There are no lines inside a day at all.** No ruled-paper background behind the columns, no
+  dividers between them, no rule under each checkbox row, and since round 5 no wrapped-row boundary
+  either. Whitespace, the 44px rhythm and the column header's own styling (uppercase mono, dimmed,
+  accent tick) do all the separating.
+- The wrapped-row boundary may come back — the user asked to try it removed first. It was:
+
+  ```css
+  .col:nth-child(2n + 1):not(:first-child)::before {
+    content: ""; position: absolute; left: 0; top: 0;
+    width: 200%; height: 1px;            /* every column is a half, so 200% is full width */
+    background: var(--rule);
+  }
+  ```
+
+  `.col` keeps `position: relative` as its anchor. Nothing else needs changing to restore it.
 - Row offsets are still whole multiples of 44 (0 / 132 / 308 with 5 categories), which is worth
   keeping even without the ruling. Measure only *after* the staggered load-in finishes — during the
   animation `translateY` makes it look 1px out.
@@ -141,7 +150,7 @@ plan still stands. Remaining deviations:
 - The per-column `done/total` count was removed along with the accordion. With every checkbox and
   label on screen it was redundant, and a ~130px column has no room for a name *and* a count.
 - Horizontal scrolling (review round 3) is gone; columns wrap instead. Do not reintroduce
-  `overflow-x` on `.cols` — the wrap is the whole layout now, and the row-boundary rule assumes
-  two equal columns.
+  `overflow-x` on `.cols` — the wrap is the whole layout now.
 - The ruled-paper background and column dividers described in `PLAN.md` §8 were removed in review
-  round 4 as too many lines.
+  round 4 as too many lines, and the wrapped-row boundary in round 5. The snippet for restoring
+  that last one is under "Column geometry" above.
