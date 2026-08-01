@@ -25,65 +25,59 @@ Deployed via GitHub Pages at labs.vossers.com/dailycheck/
 
 Everything lives in a single `index.html`. It is built for a phone: unlock, open, tick, gone.
 
-### The two nested accordions
+### Layout
 
-The interface is two accordions running in different axes:
-
-- **Outer, vertical — days.** Today and Yesterday only. Today is open on load. Single-open;
+- **Days are a vertical accordion.** Today and Yesterday only. Today is open on load. Single-open;
   clicking the open day closes it. Header carries the day name, date and a `done/total` count, so a
   collapsed Yesterday still says whether you finished. Height animates via a
   `grid-template-rows: 0fr → 1fr` transition, which animates to `auto` height without measuring JS.
-- **Inner, horizontal — categories.** Each category is a column in a flex row; exactly one is open.
-  **The rule the whole layout serves: every checkbox for the day stays visible; only the open
-  column's labels are shown.** Collapsing a column hides its text, never its checkboxes.
+- **Categories are plain columns — always expanded.** Every column shows its name, its labels and
+  its checkboxes at all times, and every checkbox is always tickable. There is no open/collapsed
+  state and nothing to tap before ticking. When the columns do not all fit, the row scrolls
+  sideways; it never shrinks them below a readable width.
+
+An earlier revision made the columns a *horizontal accordion* — one open column with labels, the
+rest collapsed to 42px strips with their names rotated 90°. That is gone. If you are tempted to
+reintroduce rotated column headers, note why they were dropped: vertical text is hard to read at a
+glance, and it capped category names at about 9 characters. Horizontal names fit ~15 and wrap to a
+second line.
 
 ### Column geometry
 
-- `--headh` (88px) is **exactly two `--row` (44px) units**. That is load-bearing: the ruled-paper
+- `--headh` (44px) is **exactly one `--row` (44px) unit**. That is load-bearing: the ruled-paper
   background is a 44px `repeating-linear-gradient`, so every rule lands on a slot-row boundary and
-  columns of different lengths sit on the same ruling. Changing one without the other breaks the
-  alignment.
-- The ruling is drawn on `.clip::after` (the day-body wrapper), *not* on `.cols`, so it stays fixed
-  if the column row ever scrolls sideways. It sits at `z-index: 0`, behind the columns, and the open
-  column's wash is translucent so the rules read through it.
+  columns of different lengths sit on the same ruling. Change one without the other and the
+  alignment breaks.
+- The ruling is drawn on `.clip::after` (the day-body wrapper), *not* on `.cols`, so it holds still
+  while the columns scroll sideways. It sits at `z-index: 0`, behind the columns.
 - Columns are top-aligned stacks, not a grid. Garden's single checkbox does not get filler rows.
-- Open column width is `max(--minopen, calc(100% - (n-1) * --strip))`, where `--n` is written onto
-  `.cols` by JS. That is exactly the space the collapsed strips leave over, so the row fills the
-  screen and nothing scrolls — until roughly seven categories, where the strips alone outgrow a
-  phone. Past that `.cols` scrolls horizontally and the open column holds at `--minopen` (150px)
-  rather than collapsing to a sliver. `flex-shrink` is 0 throughout; the transition is on
-  `flex-basis`.
+- Width is `flex: 1 0 var(--colw)` with `min-width: var(--colmin)`. `--colw` is **31.5%**, chosen so
+  that three columns have free space left over and grow to fill a phone exactly (130px each at
+  390px, no scrolling — the common case), while a fourth pushes past the edge and leaves a sliver
+  showing. `--colmin` (126px) is the point at which a label like `Lunch ×15` starts to clip; below
+  ~360px wide the row scrolls rather than squeezing. `flex-shrink` is 0 throughout.
+- `.cols` scrolls with `scroll-snap-type: x proximity` and `scroll-snap-align: start` on each
+  column, so swiping settles on a column edge instead of mid-label.
 
-### The pivoting column title
+### Scroll hint
 
-`writing-mode` cannot be animated, so `.col-title` is absolutely positioned and rotated:
-`rotate(-90deg)` with `transform-origin: 0 100%` when collapsed, `rotate(0deg)` when open. It pivots
-around its own bottom-left corner while `left` and `letter-spacing` transition alongside, so the
-text appears to swing down and relax into place.
-
-Two traps worth knowing:
-
-- The open state uses `max-width: none`, **not** a percentage. A percentage clamp resolves against
-  the column's in-flight width and squeezes the title to nothing mid-slide. The collapsed clamp is
-  re-applied through a `max-width 0ms linear var(--dur)` transition — i.e. only after the column has
-  finished closing.
-- Collapsed titles fit about 9 characters before ellipsizing; that is the practical ceiling on a
-  category name's *vertical* rendering. The full name always shows when the column is open.
+CSS cannot ask whether a box is scrollable, so `syncScrollHint()` toggles `.more-right` on the day
+wrapper and `.clip::before` fades the right edge. It is deliberately narrow (20px): a wider fade
+swallowed the ~12px sliver of the next column, hiding the very thing that signals "keep swiping".
+Re-synced on scroll, on day open, and on resize. Listeners are attached in `render()` because a
+rebuild replaces the elements.
 
 ### Ticking
 
-**Checkboxes are only operable while their column is open.** Collapsed boxes are `disabled` (set by
-`syncDisabled()`) and `pointer-events: none`, so a tap falls through to the column and opens it
-instead — the whole collapsed strip is one big "open me" target and a mis-aimed thumb can never
-silently mark a task done. Screen readers still announce their pressed state.
+Every checkbox is operable at all times — one tap, no gating. `toggleSlot()` flips `aria-pressed`,
+writes the timestamp, replays the pop animation and updates the day count.
 
 ### Rendering model
 
 `render()` builds the DOM; **interactions mutate it in place**. A full `innerHTML` rebuild would
 destroy every CSS transition mid-flight, so rebuilds happen only on template change, day rollover,
-import and cross-tab sync. Ticking updates one `aria-pressed` plus the counts (`refreshCounts`);
-opening a column just moves the `.open` class. A single delegated click listener on `#days` handles
-day headers, slots and columns, with the column's open state as the gate between the last two.
+import and cross-tab sync. Ticking updates one `aria-pressed` plus the day count
+(`refreshCounts`). A single delegated click listener on `#main` handles day headers and slots.
 
 ## Storage
 
@@ -94,9 +88,12 @@ One `localStorage` key, `dailycheck.v1`, holding the whole blob:
   "version": 1,
   "template": { "categories": [ { "id", "name", "accent": 0-3, "slots": [ { "id", "label" } ] } ] },
   "days": { "2026-08-01": { "<slotId>": 1754043210000 } },
-  "ui": { "openCategory": "c_x" }
+  "ui": {}
 }
 ```
+
+`ui` is currently empty — it held `openCategory` while the columns were an accordion. Kept as a
+slot for future view state; `normalize()` drops anything it does not recognise.
 
 - **Day keys are local `YYYY-MM-DD`, never UTC** — a UTC key flips the day at the wrong moment for
   anyone off GMT. `dateKey()` is the only place that formats them.
@@ -123,21 +120,22 @@ a tab left open overnight rolls Today into Yesterday on its own. Verified with a
 
 - **Aesthetic**: an analogue training ledger. Ink, brass, ruled lines. The screen visibly warms as
   the day fills in — that is the emotional point of the app.
-- **Fonts**: Fraunces (day headers, wordmark, intro) + DM Mono (everything else). The mono does real
-  work in the rotated column headers.
+- **Fonts**: Fraunces (day headers, wordmark, intro) + DM Mono (everything else). Column names are
+  uppercase mono with wide tracking, clamped to two lines.
 - **Palette**: warm near-black `--ink`, aged paper `--paper`, and four accents in one warm family —
   brass `--a0`, copper `--a1`, moss `--a2`, clay `--a3`. Categories pick one; ticked boxes fill with
   it. Dark only; no light theme. Everything routes through custom properties on `:root`.
 - **Texture**: SVG `feTurbulence` grain overlay, a warm radial vignette from the top, hairline
   column dividers and the 44px ruling.
-- **Motion**: one staggered load-in (`--i` per column), then quiet. `--dur`/`--dur-fast` collapse to
-  1ms under `prefers-reduced-motion`.
+- **Motion**: one staggered load-in (`--i` per column), then quiet. The only other motion is the day
+  accordion and the tick pop. `--dur`/`--dur-fast` collapse to 1ms under `prefers-reduced-motion`.
 
 ## Deviations from PLAN.md
 
+`PLAN.md` §3.2–§4 were rewritten after review round 2 dropped the column accordion; the rest of the
+plan still stands. Remaining deviations:
+
 - `ui.openDay` was dropped. The app always opens Today on load; persisting "Yesterday was open"
-  would be actively annoying. Only `openCategory` persists.
-- Collapsed checkboxes are `disabled` `<button>`s rather than inert `<span>`s. Same effect, but it
-  keeps the DOM shape identical between states and preserves the accessible name and pressed state.
-- Collapsed strips stayed at 42px (the plan floated dropping them further); below that the rotated
-  title stops being readable.
+  would be actively annoying.
+- The per-column `done/total` count was removed along with the accordion. With every checkbox and
+  label on screen it was redundant, and a ~130px column has no room for a name *and* a count.

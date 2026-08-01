@@ -46,10 +46,10 @@
   --a3:         #C98B7B;
 
   /* geometry */
-  --strip:      42px;   /* collapsed column width */
-  --minopen:    150px;  /* an open column never gets narrower than this */
+  --colw:       31.5%;  /* three columns fill a phone exactly; a fourth peeks in */
+  --colmin:     126px;  /* narrow enough to fit three, wide enough to read a label */
   --row:        44px;   /* slot row height — identical in every column */
-  --headh:      88px;   /* column header — exactly two rows, so the ruling stays in rhythm */
+  --headh:      44px;   /* column header — exactly one row, so the ruling stays in rhythm */
   --box:        26px;
   --pad:        14px;
 
@@ -205,9 +205,8 @@ main {
 .day-body > .clip { position: relative; overflow: hidden; min-height: 0; }
 
 /* Ruled paper, edge to edge, behind every column. The column header is exactly
-   two rows tall, so every line lands on a slot-row boundary. The open column's
-   wash is translucent, so the ruling reads straight through it. Lives on the
-   wrapper, not on .cols, so it stays put if the columns scroll sideways. */
+   one row tall, so every line lands on a slot-row boundary. Lives on the
+   wrapper, not on .cols, so the ruling holds still while the columns scroll. */
 .day-body > .clip::after {
   content: "";
   position: absolute; left: 0; right: 0; top: 0; bottom: 14px;
@@ -215,45 +214,50 @@ main {
   background: repeating-linear-gradient(to bottom, transparent 0 43px, var(--rule) 43px 44px);
 }
 
-/* ---------- column accordion (horizontal) ---------- */
+/* More columns off to the right: fade the edge. Three columns leave only ~12px
+   of the fourth showing, which on its own does not read as "keep swiping".
+   Toggled by JS, since CSS cannot ask whether a box is scrollable. */
+.day-body > .clip::before {
+  content: "";
+  position: absolute; z-index: 2; top: 0; bottom: 14px; right: 0;
+  width: 20px; pointer-events: none;
+  background: linear-gradient(to left, rgba(18,16,14,.92), rgba(18,16,14,0));
+  opacity: 0; transition: opacity 200ms linear;
+}
+.day-body > .clip.more-right::before { opacity: 1; }
 
+/* ---------- columns ---------- */
+
+/* Every column is always open. When they do not all fit, the row scrolls
+   sideways rather than shrinking anything — a checkbox you can reach is worth
+   more than one you can only squint at. */
 .cols {
   position: relative;
   display: flex; align-items: stretch;
-  padding: 0 8px 14px;
-  overflow-x: auto;              /* only bites with an unusual number of categories */
+  padding: 0 0 14px;
+  overflow-x: auto;
   overflow-y: hidden;
+  scroll-snap-type: x proximity;
   scrollbar-width: none;
   overscroll-behavior-x: contain;
 }
 .cols::-webkit-scrollbar { display: none; }
 
+/* 31.5% is deliberate: three columns have free space left over and grow to
+   fill the screen exactly, while a fourth leaves ~20px of the next column
+   showing — the scroll hint, without needing a scrollbar. */
 .col {
-  flex: 0 0 var(--strip);
-  min-width: 0;
+  flex: 1 0 var(--colw);
+  min-width: var(--colmin);
   overflow: hidden;
   position: relative; z-index: 1;
+  scroll-snap-align: start;
   --acc: var(--a0);
-  --tl: calc(50% + 7px);            /* title pivot x — centred in the strip */
-  --sl: calc(50% - (var(--box) / 2)); /* slot indent — box centred in the strip */
-  transition: flex-basis var(--dur) var(--ease), background var(--dur) var(--ease);
   animation: rise 460ms var(--ease) backwards;
   animation-delay: calc(var(--i, 0) * 45ms);
 }
-
-/* Exactly the space the collapsed strips leave over — so the row fills the
-   screen and nothing scrolls — but never below --minopen. Past roughly six
-   categories the strips alone outgrow a phone; the row starts scrolling and
-   the open column stays readable instead of collapsing to a sliver. */
-.col.open {
-  flex-basis: max(var(--minopen), calc(100% - (var(--n, 1) - 1) * var(--strip)));
-  flex-grow: 1;
-  --tl: var(--pad);
-  --sl: var(--pad);
-  background: linear-gradient(180deg, rgba(237,228,211,.035) 0%, rgba(237,228,211,0) 84%);
-}
 .col + .col::before {
-  content: ""; position: absolute; left: 0; top: 12px; bottom: 12px;
+  content: ""; position: absolute; left: 0; top: 10px; bottom: 12px;
   width: 1px; background: var(--rule);
 }
 
@@ -262,65 +266,36 @@ main {
   to   { opacity: 1; transform: none; }
 }
 
-/* --- column header: the pivoting title --- */
+/* --- column header --- */
 
 .col-head { position: relative; height: var(--headh); }
 
 .col-title {
-  position: absolute; bottom: 12px; left: var(--tl);
-  transform-origin: 0 100%;
-  transform: rotate(-90deg);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  max-width: calc(var(--headh) - 14px);
-  font-size: 11px; line-height: 14px;
-  letter-spacing: .1em; text-transform: uppercase;   /* tighter while vertical — buys ~2 characters */
+  position: absolute; left: var(--pad); right: 8px; bottom: 11px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 11px; line-height: 13px;
+  letter-spacing: .14em; text-transform: uppercase;
   color: var(--paper-dim);
-  transition:
-    transform var(--dur) var(--ease),
-    left var(--dur) var(--ease),
-    color var(--dur) var(--ease),
-    letter-spacing var(--dur) var(--ease),
-    max-width 0ms linear var(--dur);
-}
-/* Unclamped while open: a percentage clamp would resolve against the column's
-   in-flight width and squeeze the title to nothing mid-slide. The collapsed
-   clamp is re-applied only once the column has finished closing. */
-.col.open .col-title {
-  transform: rotate(0deg);
-  color: var(--acc);
-  letter-spacing: .16em;
-  max-width: none;
 }
 
-/* accent rule that draws itself under the open title */
+/* a short accent tick under each name — the column's colour identity while
+   its boxes are still empty */
 .col-rule {
-  position: absolute; left: var(--pad); bottom: 6px;
-  height: 2px; width: 0; background: var(--acc);
-  transition: width var(--dur) var(--ease);
+  position: absolute; left: var(--pad); bottom: 4px;
+  height: 2px; width: 18px; background: var(--acc);
+  opacity: .85;
 }
-.col.open .col-rule { width: 24px; }
-
-.col-count {
-  position: absolute; right: var(--pad); bottom: 14px;
-  font-size: 11px; letter-spacing: .06em;
-  color: var(--paper-faint);
-  font-variant-numeric: tabular-nums;
-  opacity: 0; transform: translateX(6px);
-  transition: opacity var(--dur-fast) linear, transform var(--dur) var(--ease);
-}
-.col.open .col-count { opacity: 1; transform: none; transition-delay: 110ms, 0ms; }
 
 /* --- slots --- */
 
 .col-slots { display: flex; flex-direction: column; }
 
 .slot {
-  display: flex; align-items: center; gap: 12px;
+  display: flex; align-items: center; gap: 8px;
   height: var(--row); width: 100%;
-  padding-left: var(--sl); padding-right: 6px;
-  transition: padding-left var(--dur) var(--ease);
+  padding-left: var(--pad); padding-right: 6px;
 }
-.col:not(.open) .slot { pointer-events: none; }
 
 .box {
   position: relative;
@@ -331,12 +306,8 @@ main {
   transition:
     background var(--dur-fast) linear,
     border-color var(--dur-fast) linear,
-    box-shadow var(--dur-fast) linear,
-    opacity var(--dur) var(--ease),
-    transform var(--dur) var(--ease);
+    box-shadow var(--dur-fast) linear;
 }
-.col:not(.open) .box { opacity: .55; transform: scale(.84); }
-.col:not(.open) .slot[aria-pressed="true"] .box { opacity: .8; }
 
 .box svg { width: 15px; height: 15px; overflow: visible; }
 .box path {
@@ -361,11 +332,9 @@ main {
 .slot-label {
   font-size: 13px; letter-spacing: .01em;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  opacity: 0; transform: translateX(-8px);
-  transition: opacity var(--dur-fast) linear, transform var(--dur) var(--ease);
+  transition: color var(--dur-fast) linear;
 }
-.col.open .slot-label { opacity: 1; transform: none; transition-delay: 110ms, 0ms; }
-.col.open .slot[aria-pressed="true"] .slot-label { color: var(--paper-dim); }
+.slot[aria-pressed="true"] .slot-label { color: var(--paper-dim); }
 
 /* ---------- first run ---------- */
 
@@ -491,7 +460,7 @@ main {
 /* ---------- desktop courtesy ---------- */
 
 @media (min-width: 640px) {
-  :root { --strip: 52px; --pad: 18px; }
+  :root { --colw: 24%; --colmin: 140px; --pad: 16px; }   /* four across on a wider screen */
   .app { border-left: 1px solid var(--rule); border-right: 1px solid var(--rule); }
 }
 </style>
@@ -559,7 +528,7 @@ main {
      ============================================================ */
 
   function blank() {
-    return { version: 1, template: { categories: [] }, days: {}, ui: { openCategory: null } };
+    return { version: 1, template: { categories: [] }, days: {}, ui: {} };
   }
 
   function uid(p) {
@@ -601,7 +570,6 @@ main {
       });
     }
 
-    if (o.ui && typeof o.ui.openCategory === 'string') s.ui.openCategory = o.ui.openCategory;
     return s;
   }
 
@@ -682,21 +650,6 @@ main {
     return { done: done, total: total };
   }
 
-  function catTotals(dayKey, cat) {
-    var t = state.days[dayKey] || {};
-    var done = 0;
-    cat.slots.forEach(function (s) { if (t[s.id]) done++; });
-    return { done: done, total: cat.slots.length };
-  }
-
-  function openCatId() {
-    var list = cats();
-    if (!list.length) return null;
-    var found = list.some(function (c) { return c.id === state.ui.openCategory; });
-    if (!found) state.ui.openCategory = list[0].id;
-    return state.ui.openCategory;
-  }
-
   /* ============================================================
      Render — build once, then mutate.
      Full rebuilds kill CSS transitions, so they happen only on
@@ -721,7 +674,16 @@ main {
       dayHTML('Yesterday', yest, false) +
       '<div class="fill" aria-hidden="true"></div>';
 
-    syncDisabled();
+    Array.prototype.forEach.call(main.querySelectorAll('.cols'), function (cols) {
+      syncScrollHint(cols);
+      cols.addEventListener('scroll', function () { syncScrollHint(cols); }, { passive: true });
+    });
+  }
+
+  /* Is there more column to the right? The day panel wears the answer. */
+  function syncScrollHint(cols) {
+    var max = cols.scrollWidth - cols.clientWidth;
+    cols.parentElement.classList.toggle('more-right', max > 2 && cols.scrollLeft < max - 2);
   }
 
   function renderIntro() {
@@ -743,7 +705,6 @@ main {
           slots: c.labels.map(function (l) { return { id: uid('s'), label: l }; })
         };
       });
-      state.ui.openCategory = state.template.categories[0].id;
       save(); render();
     });
 
@@ -767,19 +728,15 @@ main {
           '<span class="chev" aria-hidden="true"></span>' +
         '</button>' +
         '<div class="day-body"><div class="clip">' +
-          '<div class="cols" style="--n:' + cats().length + '">' + colsHTML(key) + '</div>' +
+          '<div class="cols">' + colsHTML(key) + '</div>' +
         '</div></div>' +
       '</section>';
   }
 
   function colsHTML(dayKey) {
-    var openId = openCatId();
     var t = state.days[dayKey] || {};
 
     return cats().map(function (c, i) {
-      var isOpen = c.id === openId;
-      var ct = catTotals(dayKey, c);
-
       var slots = c.slots.map(function (s) {
         var on = !!t[s.id];
         return '' +
@@ -791,44 +748,23 @@ main {
       }).join('');
 
       return '' +
-        '<div class="col' + (isOpen ? ' open' : '') + '" data-cat="' + c.id + '"' +
+        '<div class="col" data-cat="' + c.id + '"' +
           ' style="--acc:var(--a' + c.accent + ');--i:' + i + '">' +
           '<div class="col-head">' +
             '<span class="col-title">' + esc(c.name) + '</span>' +
             '<span class="col-rule"></span>' +
-            '<span class="col-count">' + ct.done + '/' + ct.total + '</span>' +
           '</div>' +
           '<div class="col-slots">' + slots + '</div>' +
         '</div>';
     }).join('');
   }
 
-  /* Only the open column's checkboxes are operable. Collapsed ones stay
-     visible and announced, but disabled + pointer-events:none, so a tap
-     falls through to the column and opens it instead. */
-  function syncDisabled() {
-    Array.prototype.forEach.call(main.querySelectorAll('.col'), function (col) {
-      var operable = col.classList.contains('open');
-      Array.prototype.forEach.call(col.querySelectorAll('.slot'), function (b) {
-        b.disabled = !operable;
-      });
-    });
-  }
-
   /* ---------- targeted updates (no rebuild) ---------- */
 
   function refreshCounts(section) {
-    var key = section.dataset.day;
-    var tot = dayTotals(key);
+    var tot = dayTotals(section.dataset.day);
     section.querySelector('.day-count').textContent = tot.done + '/' + tot.total;
     section.classList.toggle('done', tot.total > 0 && tot.done === tot.total);
-
-    Array.prototype.forEach.call(section.querySelectorAll('.col'), function (col) {
-      var cat = cats().find(function (c) { return c.id === col.dataset.cat; });
-      if (!cat) return;
-      var ct = catTotals(key, cat);
-      col.querySelector('.col-count').textContent = ct.done + '/' + ct.total;
-    });
   }
 
   function toggleSlot(section, btn) {
@@ -851,26 +787,6 @@ main {
     save();
   }
 
-  function openColumn(col) {
-    var section = col.closest('.day');
-    state.ui.openCategory = col.dataset.cat;
-
-    /* keep both day panels in step */
-    Array.prototype.forEach.call(main.querySelectorAll('.col'), function (c) {
-      c.classList.toggle('open', c.dataset.cat === state.ui.openCategory);
-    });
-    syncDisabled();
-    save();
-
-    if (section) {
-      var box = col.getBoundingClientRect();
-      var host = col.parentElement.getBoundingClientRect();
-      if (box.left < host.left || box.right > host.right) {
-        col.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
-      }
-    }
-  }
-
   function openDay(section) {
     var already = section.classList.contains('open');
     Array.prototype.forEach.call(main.querySelectorAll('.day'), function (d) {
@@ -878,17 +794,21 @@ main {
       d.classList.toggle('open', on);
       d.querySelector('.day-head').setAttribute('aria-expanded', String(on));
     });
+    syncAllScrollHints();
   }
+
+  function syncAllScrollHints() {
+    Array.prototype.forEach.call(main.querySelectorAll('.cols'), function (c) { syncScrollHint(c); });
+  }
+
+  window.addEventListener('resize', syncAllScrollHints);
 
   main.addEventListener('click', function (e) {
     var head = e.target.closest('.day-head');
     if (head) { openDay(head.closest('.day')); return; }
 
     var slot = e.target.closest('.slot');
-    if (slot && !slot.disabled) { toggleSlot(slot.closest('.day'), slot); return; }
-
-    var col = e.target.closest('.col');
-    if (col && !col.classList.contains('open')) openColumn(col);
+    if (slot) toggleSlot(slot.closest('.day'), slot);
   });
 
   /* ============================================================
@@ -956,7 +876,6 @@ main {
   function addCategory() {
     var c = { id: uid('c'), name: '', accent: cats().length % ACCENTS, slots: [{ id: uid('s'), label: '' }] };
     cats().push(c);
-    state.ui.openCategory = c.id;
     dirty = true;
     save();
     return c;
