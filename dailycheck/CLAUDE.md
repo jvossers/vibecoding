@@ -91,12 +91,16 @@ Per category, shown under the column name next to its accent tick, as a flame pl
   is complete; until then the number shown is the run up to yesterday. That is deliberate — the
   number the user is protecting stays visible all day, and ticking the last box of a category is
   what makes it tick over, which is when the burst fires.
-- **`isComplete(cat, day)`** requires every checkbox *that existed on that day* to be ticked. Slots
-  carry `since` (the day they were added), so adding a fourth push-up slot today does not
-  retroactively unmake a month of complete days and wipe the streak. Slots with no `since` predate
-  the field and count as always having existed. A category with nothing required on a day — no
-  checkboxes, or none created yet — is never complete, so a new category cannot inherit a streak
-  from before it existed. All four cases are covered by tests.
+- **`isComplete(cat, day)`** requires every checkbox *that counts for that day* to be ticked. A slot
+  counts if it existed then (`since` <= day, where slots with no `since` predate the field and count
+  as always having existed) **or if it was actually ticked then**. That second clause is not
+  optional — yesterday's panel renders against the *current* template, so a checkbox added today can
+  be ticked for yesterday, and skipping it silently threw that tick away (the round-6 bug: a new
+  category ticked both yesterday and today showed a streak of 1). The `since` exemption exists to
+  stop a template edit *penalising* past days; it must never discard a deliberate tick.
+  A category with nothing counting on a day — no checkboxes, or none created yet and none ticked —
+  is never complete, so a new category cannot inherit a streak from before it existed.
+  Covered by tests: old-only ticked, old+new ticked, new-only ticked (must not count), neither.
 - **Badges live on today's panel only**; they are a "right now" number. A tick in *yesterday* can
   still change one (it can repair a broken run), so `refreshStreaks()` runs after every tick
   wherever it happened and bursts wherever the number went up.

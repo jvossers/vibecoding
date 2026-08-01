@@ -697,11 +697,19 @@ main {
      brand new category cannot inherit a streak from days before it existed. */
   function isComplete(cat, dayKey) {
     if (!cat || !cat.slots.length) return false;
-    var required = cat.slots.filter(function (s) { return !s.since || s.since <= dayKey; });
-    if (!required.length) return false;
     var t = state.days[dayKey];
+
+    /* A slot counts for a day if it existed then — OR if it was ticked then.
+       The `since` exemption is there to stop a template edit penalising past
+       days; it must never discard a tick the user actually made. Yesterday's
+       panel renders against the current template, so a checkbox added today
+       can be ticked for yesterday, and that tick has to count. */
+    var considered = cat.slots.filter(function (s) {
+      return !s.since || s.since <= dayKey || (t && t[s.id]);
+    });
+    if (!considered.length) return false;
     if (!t) return false;
-    return required.every(function (s) { return !!t[s.id]; });
+    return considered.every(function (s) { return !!t[s.id]; });
   }
 
   /* Consecutive complete days, counting back from today. Today counts only
