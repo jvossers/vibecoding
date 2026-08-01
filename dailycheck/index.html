@@ -38,17 +38,22 @@
   --paper-dim:  #978C79;
   --paper-faint:#61594B;
 
-  /* brass + the warm accent family */
+  /* brass + the accent family. Muted enough to sit in the ink world; the
+     later four lean cooler so a long list of categories stays tellable apart. */
   --brass:      #E8A33D;
-  --a0:         #E8A33D;
-  --a1:         #D2703F;
-  --a2:         #9AA663;
-  --a3:         #C98B7B;
+  --a0:         #E8A33D;   /* brass     */
+  --a1:         #D2703F;   /* copper    */
+  --a2:         #9AA663;   /* moss      */
+  --a3:         #C98B7B;   /* clay      */
+  --a4:         #5FA08F;   /* verdigris */
+  --a5:         #7C86C0;   /* indigo    */
+  --a6:         #B06E9A;   /* plum      */
+  --a7:         #C4605F;   /* rose      */
 
   /* geometry */
   --colw:       50%;    /* exactly two per row; the third wraps */
   --row:        44px;   /* slot row height — identical in every column */
-  --headh:      44px;   /* column header — exactly one row, so the ruling stays in rhythm */
+  --headh:      58px;   /* column header: name, then accent tick + streak on one line */
   --box:        26px;
   --pad:        14px;
 
@@ -234,7 +239,7 @@ main {
 .col-head { position: relative; height: var(--headh); }
 
 .col-title {
-  position: absolute; left: var(--pad); right: 8px; bottom: 11px;
+  position: absolute; left: var(--pad); right: 8px; bottom: 20px;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden;
   font-size: 11px; line-height: 13px;
@@ -245,9 +250,70 @@ main {
 /* a short accent tick under each name — the column's colour identity while
    its boxes are still empty */
 .col-rule {
-  position: absolute; left: var(--pad); bottom: 4px;
+  position: absolute; left: var(--pad); bottom: 8px;
   height: 2px; width: 18px; background: var(--acc);
   opacity: .85;
+}
+
+/* --- streak badge --- */
+
+.streak {
+  position: absolute; left: calc(var(--pad) + 26px); bottom: 3px;
+  display: flex; align-items: center; gap: 3px;
+  font-size: 12px; font-weight: 500; letter-spacing: .03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--acc);
+  opacity: 0; transform: scale(.6);
+  transition: opacity var(--dur-fast) linear, transform var(--dur) var(--ease);
+  pointer-events: none;
+}
+.streak.on { opacity: 1; transform: none; }
+.streak .sicon { width: 11px; height: 13px; opacity: .9; }
+.streak .n { line-height: 1; }
+
+/* the reward: a ring and ten sparks off the number, played by class so a burst
+   costs nothing until it fires */
+.streak .ring,
+.streak .spark {
+  position: absolute; right: 5px; bottom: 5px;
+  pointer-events: none; opacity: 0;
+}
+.streak .ring {
+  width: 12px; height: 12px; margin: 0 -6px -6px 0;
+  border: 1px solid var(--acc); border-radius: 50%;
+}
+.streak .spark {
+  width: 3px; height: 3px; margin: 0 -1.5px -1.5px 0;
+  border-radius: 50%; background: var(--acc);
+}
+
+.streak.pop .ring  { animation: ring 640ms cubic-bezier(.2, .7, .3, 1) forwards; }
+.streak.pop .spark { animation: spark 720ms cubic-bezier(.2, .7, .3, 1) forwards; }
+.streak.pop .n     { animation: numpop 640ms var(--ease); }
+.streak.pop .sicon { animation: flicker 640ms var(--ease) 40ms; }
+
+/* alternating throw distances so the burst does not read as a clock face */
+.streak.pop .spark:nth-child(even) { animation-duration: 560ms; }
+
+@keyframes ring {
+  0%   { opacity: .95; transform: scale(.35); }
+  100% { opacity: 0;   transform: scale(3.6); }
+}
+@keyframes spark {
+  0%   { opacity: 1; transform: rotate(var(--a)) translateY(-3px) scale(1); }
+  65%  { opacity: .95; }
+  100% { opacity: 0; transform: rotate(var(--a)) translateY(-24px) scale(.25); }
+}
+@keyframes numpop {
+  0%   { transform: scale(1); }
+  28%  { transform: scale(1.55); }
+  100% { transform: scale(1); }
+}
+@keyframes flicker {
+  0%   { transform: scale(1) translateY(0); }
+  30%  { transform: scale(1.4) translateY(-2px); }
+  55%  { transform: scale(1.1) translateY(0); }
+  100% { transform: scale(1) translateY(0); }
 }
 
 /* --- slots --- */
@@ -385,7 +451,7 @@ main {
 .mini:active { color: var(--paper); }
 .mini.del:active { color: var(--a1); }
 
-.swatches { display: flex; gap: 8px; padding: 12px 2px 4px; }
+.swatches { display: flex; flex-wrap: wrap; gap: 9px; padding: 12px 2px 4px; }
 .sw {
   width: 18px; height: 18px; border-radius: 50%;
   border: 1px solid rgba(0,0,0,.5);
@@ -483,8 +549,10 @@ main {
   'use strict';
 
   var KEY = 'dailycheck.v1';
-  var ACCENTS = 4;
-  var KEEP_DAYS = 60;
+  var ACCENTS = 8;
+  /* Streaks are counted from this history, so the retention window is also the
+     longest streak the app can show. Even 400 days of ticks is a few tens of KB. */
+  var KEEP_DAYS = 400;
 
   /* ============================================================
      State
@@ -511,10 +579,12 @@ main {
         name: String(c.name == null ? '' : c.name).slice(0, 40) || 'Untitled',
         accent: Number.isInteger(c.accent) ? ((c.accent % ACCENTS) + ACCENTS) % ACCENTS : 0,
         slots: slots.filter(Boolean).map(function (sl) {
-          return {
+          var out = {
             id: typeof sl.id === 'string' && sl.id ? sl.id : uid('s'),
             label: String(sl.label == null ? '' : sl.label).slice(0, 40)
           };
+          if (typeof sl.since === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(sl.since)) out.since = sl.since;
+          return out;
         })
       };
     });
@@ -561,6 +631,9 @@ main {
 
   var state = load();
   prune();
+
+  var ACCENT_LIST = [];
+  for (var ai = 0; ai < ACCENTS; ai++) ACCENT_LIST.push(ai);
 
   var EXAMPLE = {
     categories: [
@@ -611,6 +684,41 @@ main {
       c.slots.forEach(function (s) { total++; if (t[s.id]) done++; });
     });
     return { done: done, total: total };
+  }
+
+  /* ---------- streaks ---------- */
+
+  /* Complete = every checkbox that existed on that day is ticked.
+     A slot carries `since` (the day it was added), so adding a fourth push-up
+     slot today does not retroactively unmake the last month of complete days
+     and wipe the streak. Slots with no `since` predate the field and count as
+     always having existed. A category with nothing required on that day — no
+     checkboxes at all, or none of them created yet — is never complete, so a
+     brand new category cannot inherit a streak from days before it existed. */
+  function isComplete(cat, dayKey) {
+    if (!cat || !cat.slots.length) return false;
+    var required = cat.slots.filter(function (s) { return !s.since || s.since <= dayKey; });
+    if (!required.length) return false;
+    var t = state.days[dayKey];
+    if (!t) return false;
+    return required.every(function (s) { return !!t[s.id]; });
+  }
+
+  /* Consecutive complete days, counting back from today. Today counts only
+     once it is complete; until then the streak still shows the run up to
+     yesterday, so the number the user is protecting stays visible all day and
+     ticking the last box of the day is what makes it tick over. */
+  function streakFor(cat) {
+    var d = todayKey();
+    if (!isComplete(cat, d)) d = shiftKey(d, -1);
+    var n = 0;
+    while (isComplete(cat, d)) { n++; d = shiftKey(d, -1); }
+    return n;
+  }
+
+  function shiftKey(key, delta) {
+    var p = key.split('-');
+    return dateKey(addDays(new Date(+p[0], +p[1] - 1, +p[2]), delta));
   }
 
   /* ============================================================
@@ -680,12 +788,12 @@ main {
           '<span class="chev" aria-hidden="true"></span>' +
         '</button>' +
         '<div class="day-body"><div class="clip">' +
-          '<div class="cols">' + colsHTML(key) + '</div>' +
+          '<div class="cols">' + colsHTML(key, isToday) + '</div>' +
         '</div></div>' +
       '</section>';
   }
 
-  function colsHTML(dayKey) {
+  function colsHTML(dayKey, withStreaks) {
     var t = state.days[dayKey] || {};
 
     return cats().map(function (c, i) {
@@ -705,10 +813,35 @@ main {
           '<div class="col-head">' +
             '<span class="col-title">' + esc(c.name) + '</span>' +
             '<span class="col-rule"></span>' +
+            (withStreaks ? streakHTML(streakFor(c)) : '') +
           '</div>' +
           '<div class="col-slots">' + slots + '</div>' +
         '</div>';
     }).join('');
+  }
+
+  /* Sparks are laid down once and replayed by class, so a burst costs no DOM
+     work at the moment it fires. */
+  var SPARKS = (function () {
+    var out = '<i class="ring" aria-hidden="true"></i>';
+    for (var k = 0; k < 10; k++) {
+      out += '<i class="spark" aria-hidden="true" style="--a:' + (k * 36) + 'deg"></i>';
+    }
+    return out;
+  })();
+
+  /* Flame: filled, so it holds together at 13px. A thunderbolt alternative is
+     recorded in CLAUDE.md — swapping is a one-path change. */
+  var SICON = '<svg class="sicon" viewBox="0 0 16 16" aria-hidden="true">' +
+    '<path fill="currentColor" d="M8 .8c0 3.4 4.5 4.7 4.5 8.9 0 3.2-2.1 5.5-4.5 5.5' +
+    's-4.5-2.3-4.5-5.5c0-2.2 1.2-3.6 2.3-4.4-.2 2.1.7 3.2 1.6 2.8C8.6 7.5 7.5 4.2 8 .8z"/>' +
+    '</svg>';
+
+  function streakHTML(n) {
+    return '<span class="streak' + (n > 0 ? ' on' : '') + '" data-n="' + n + '"' +
+      ' aria-label="' + n + ' day streak">' +
+      SICON + '<span class="n">' + n + '</span>' + SPARKS +
+    '</span>';
   }
 
   /* ---------- targeted updates (no rebuild) ---------- */
@@ -717,6 +850,38 @@ main {
     var tot = dayTotals(section.dataset.day);
     section.querySelector('.day-count').textContent = tot.done + '/' + tot.total;
     section.classList.toggle('done', tot.total > 0 && tot.done === tot.total);
+  }
+
+  /* Streaks live on today's panel only — they are a "right now" number. A tick
+     in yesterday can still change one, so this runs after every tick wherever
+     it happened, and bursts wherever the number went up. */
+  function refreshStreaks() {
+    var today = main.querySelector('.day[data-day="' + todayKey() + '"]');
+    if (!today) return;
+
+    Array.prototype.forEach.call(today.querySelectorAll('.col'), function (col) {
+      var cat = cats().find(function (c) { return c.id === col.dataset.cat; });
+      var el = col.querySelector('.streak');
+      if (!cat || !el) return;
+
+      var was = +el.dataset.n || 0;
+      var now = streakFor(cat);
+      if (now === was) return;
+
+      el.dataset.n = now;
+      el.querySelector('.n').textContent = now;
+      el.setAttribute('aria-label', now + ' day streak');
+      el.classList.toggle('on', now > 0);
+
+      if (now > was) {
+        el.classList.remove('pop');
+        void el.offsetWidth;           /* restart the animation */
+        el.classList.add('pop');
+        if (navigator.vibrate) { try { navigator.vibrate([12, 40, 18]); } catch (e) {} }
+      } else {
+        el.classList.remove('pop');    /* losing the streak is not a celebration */
+      }
+    });
   }
 
   function toggleSlot(section, btn) {
@@ -736,6 +901,7 @@ main {
     if (on && navigator.vibrate) { try { navigator.vibrate(10); } catch (e) {} }
 
     refreshCounts(section);
+    refreshStreaks();
     save();
   }
 
@@ -789,7 +955,7 @@ main {
             '</div>';
         }).join('');
 
-        var swatches = [0, 1, 2, 3].map(function (a) {
+        var swatches = ACCENT_LIST.map(function (a) {
           return '<button class="sw" data-act="accent" data-c="' + ci + '" data-a="' + a + '"' +
             ' aria-pressed="' + (c.accent === a ? 'true' : 'false') + '" aria-label="Accent ' + (a + 1) + '"' +
             ' style="background:var(--a' + a + ');color:var(--a' + a + ')"></button>';
@@ -819,7 +985,8 @@ main {
   }
 
   function addCategory() {
-    var c = { id: uid('c'), name: '', accent: cats().length % ACCENTS, slots: [{ id: uid('s'), label: '' }] };
+    var c = { id: uid('c'), name: '', accent: cats().length % ACCENTS,
+              slots: [{ id: uid('s'), label: '', since: todayKey() }] };
     cats().push(c);
     dirty = true;
     save();
@@ -846,7 +1013,7 @@ main {
       if (!confirm('Delete "' + (cat.name || 'this category') + '" and its checkboxes?')) return;
       list.splice(ci, 1);
     }
-    else if (act === 's-add')  { cat.slots.push({ id: uid('s'), label: '' }); }
+    else if (act === 's-add')  { cat.slots.push({ id: uid('s'), label: '', since: todayKey() }); }
     else if (act === 's-up')   { if (!move(cat.slots, si, -1)) return; }
     else if (act === 's-down') { if (!move(cat.slots, si, 1)) return; }
     else if (act === 's-del')  {

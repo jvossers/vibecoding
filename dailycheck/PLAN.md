@@ -40,6 +40,11 @@ Everything below is subordinate to that.
 
 A tick means "this slot is done for this day". Unticking is allowed (mis-taps happen).
 
+**Streak** — per category, the number of consecutive days it was fully checked, counting back from
+today. Today counts once it is complete; until then the number shown is the run up to yesterday, so
+what you stand to lose is visible all day. Completing a category is what makes it tick over — and
+that is when the fireworks fire.
+
 **Labels are just text on checkboxes.** Sets and reps live *in* the label — `AM ×15`, `PM ×8` —
 and the app treats that as an opaque string. There is no numeric rep field, no totals, no volume
 tracking. A tick is binary: done or not. This keeps both the data model and the editor as small as
@@ -349,6 +354,19 @@ header shrank from two rows to one.
 8. **Two columns to a row** (first tried at three). Two is roomier: a column is 195px on a phone
    rather than 130px, so labels have space to spare and the narrow-screen special case that three
    columns needed is gone. The trade-off is height — three categories now take two rows.
+
+**Round 6 — streaks and more colours**
+
+11. **A streak counter per category**, under the column name beside its accent tick: a flame and a
+    number. It increments when the last box of that category is ticked for today, and a burst of
+    sparks fires on the number. It resets when a day passes without that category fully checked.
+12. **Eight accent colours** instead of four — brass, copper, moss, clay, verdigris, indigo, plum,
+    rose.
+
+Two things that fell out of building it. Day retention went from 60 to 400 days, because streaks
+are derived from stored history and the retention window silently caps them. And checkboxes now
+record the day they were added, so adding a checkbox to an existing category doesn't retroactively
+break days that were complete at the time.
 
 **Rounds 4 and 5 — fewer lines, then none**
 

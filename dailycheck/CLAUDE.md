@@ -44,9 +44,10 @@ second line.
 
 ### Column geometry
 
-- `--headh` and `--row` are both 44px, so the checkbox rows of two columns sitting side by side line
-  up with each other. Nothing draws that alignment any more — see below — but it is still what makes
-  a row of columns read as a row.
+- `--row` is 44px for every checkbox row, so two columns side by side keep their checkboxes aligned.
+  `--headh` (58px) only has to be *the same for every column*; it stopped needing to be a multiple
+  of `--row` when the ruled background went away, and it grew to fit the accent tick and streak
+  badge on their own line under the name.
 - Columns are top-aligned stacks, not a grid. Garden's single checkbox does not get filler rows.
 - Width is a flat `flex: 0 0 50%` on a wrapping flex row — exactly two per row, no growing, no
   shrinking, no scrolling. **One exception:** `.cols:not(:has(.col:nth-child(3))) .col` sets
@@ -80,7 +81,34 @@ same "columns per row" number. Changing the count means changing all four.
 ### Ticking
 
 Every checkbox is operable at all times — one tap, no gating. `toggleSlot()` flips `aria-pressed`,
-writes the timestamp, replays the pop animation and updates the day count.
+writes the timestamp, replays the pop animation, updates the day count and refreshes streaks.
+
+### Streaks
+
+Per category, shown under the column name next to its accent tick, as a flame plus a number.
+
+- **`streakFor(cat)`** counts consecutive complete days back from today. Today counts only once it
+  is complete; until then the number shown is the run up to yesterday. That is deliberate — the
+  number the user is protecting stays visible all day, and ticking the last box of a category is
+  what makes it tick over, which is when the burst fires.
+- **`isComplete(cat, day)`** requires every checkbox *that existed on that day* to be ticked. Slots
+  carry `since` (the day they were added), so adding a fourth push-up slot today does not
+  retroactively unmake a month of complete days and wipe the streak. Slots with no `since` predate
+  the field and count as always having existed. A category with nothing required on a day — no
+  checkboxes, or none created yet — is never complete, so a new category cannot inherit a streak
+  from before it existed. All four cases are covered by tests.
+- **Badges live on today's panel only**; they are a "right now" number. A tick in *yesterday* can
+  still change one (it can repair a broken run), so `refreshStreaks()` runs after every tick
+  wherever it happened and bursts wherever the number went up.
+- **`KEEP_DAYS` bounds the longest possible streak**, since streaks are derived from stored history
+  and nothing else. It was raised from 60 to 400 for exactly this reason. Lower it and you silently
+  cap streaks.
+- The burst is ten sparks plus a ring, laid into the DOM once at render and replayed by toggling
+  `.pop` (with a forced reflow between remove and add). Losing a streak removes `.pop` — a drop is
+  not a celebration.
+
+The icon is a filled flame at 11×13px. A thunderbolt was the alternative; to swap, replace the
+`SICON` path with `M9.6 1 L3 9.3 h3.7 L6.2 15 l6.4-8.7 h-3.9 z` on a `0 0 16 16` viewBox.
 
 ### Rendering model
 
@@ -132,9 +160,12 @@ a tab left open overnight rolls Today into Yesterday on its own. Verified with a
   the day fills in — that is the emotional point of the app.
 - **Fonts**: Fraunces (day headers, wordmark, intro) + DM Mono (everything else). Column names are
   uppercase mono with wide tracking, clamped to two lines.
-- **Palette**: warm near-black `--ink`, aged paper `--paper`, and four accents in one warm family —
-  brass `--a0`, copper `--a1`, moss `--a2`, clay `--a3`. Categories pick one; ticked boxes fill with
-  it. Dark only; no light theme. Everything routes through custom properties on `:root`.
+- **Palette**: warm near-black `--ink`, aged paper `--paper`, and eight accents — brass, copper,
+  moss, clay, verdigris, indigo, plum, rose (`--a0`…`--a7`). The first four are warm, the last four
+  lean cooler so a long list of categories stays tellable apart; all are muted enough to sit in the
+  ink world. Categories pick one; ticked boxes, the accent tick and the streak all use it. To add
+  more, define `--a8` and bump `ACCENTS` — `ACCENT_LIST` and the editor swatches follow. Dark only;
+  no light theme.
 - **Texture**: SVG `feTurbulence` grain overlay and a warm radial vignette from the top. No rules,
   no dividers — the ledger reads through type, colour and rhythm rather than drawn lines.
 - **Motion**: one staggered load-in (`--i` per column, left to right and down), then quiet. The only
