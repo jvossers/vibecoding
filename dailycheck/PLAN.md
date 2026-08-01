@@ -1,7 +1,7 @@
-# TALLY — a daily repeating-task checklist
+# DAILYCHECK — a daily repeating-task checklist
 
-**Status:** plan for review. No code written yet.
-**Location:** `/tally/index.html` → deployed at `labs.vossers.com/tally/`
+**Status:** plan, revised after review round 1. No code written yet.
+**Location:** `/dailycheck/index.html` → deployed at `labs.vossers.com/dailycheck/`
 **Stack:** single-file vanilla HTML/CSS/JS. No build, no dependencies, no back end. All state in `localStorage`.
 
 ---
@@ -17,8 +17,8 @@ The worked example from your description:
 
 | Category | Slots (checkboxes) |
 |---|---|
-| Push-ups | AM · Lunch · PM |
-| Pull-ups | AM · PM |
+| Push-ups | AM ×15 · Lunch ×15 · PM ×15 |
+| Pull-ups | AM ×8 · PM ×8 |
 | Garden | Water |
 
 That's 6 checkboxes for the day. Tomorrow, 6 empty ones again.
@@ -39,6 +39,11 @@ Everything below is subordinate to that.
 
 A tick means "this slot is done for this day". Unticking is allowed (mis-taps happen).
 
+**Labels are just text on checkboxes.** Sets and reps live *in* the label — `AM ×15`, `PM ×8` —
+and the app treats that as an opaque string. There is no numeric rep field, no totals, no volume
+tracking. A tick is binary: done or not. This keeps both the data model and the editor as small as
+they can be, and it means changing your rep target is a rename, not a migration.
+
 ---
 
 ## 3. Screen layout
@@ -53,7 +58,7 @@ count so a collapsed Yesterday still tells you whether you finished.
 
 ```
 ┌────────────────────────────────────┐
-│  TALLY                        ⚙︎    │   ← thin top bar
+│  DAILYCHECK                   ⚙︎    │   ← thin top bar
 ├────────────────────────────────────┤
 │  TODAY        Sat 1 Aug      4/6  ▾│   ← open
 │  ┌──────────────────────────────┐  │
@@ -76,17 +81,18 @@ flex row. Exactly one column is open at a time.
 **The rule that drives everything: every checkbox for the day is always visible. Only the *labels*
 of the open column are visible.** Collapsing a column hides its text, never its checkboxes.
 
-Open column: full-width-ish, horizontal header text, each row shows `[ ✓ ]  Lunch`.
-Collapsed column: ~48px wide, header text rotated 90°, rows show the bare checkbox only.
+Open column: full-width-ish, horizontal header text, each row shows `[ ✓ ]  Lunch ×15`.
+Collapsed column: ~42px wide, header text rotated 90°, bare checkboxes only — visible, dimmed,
+and **not tickable** (§4).
 
 ```
    PUSH-UPS open                          PULL-UPS open
 ┌───────────────────────┬────┬────┐   ┌────┬───────────────────────┬────┐
 │ PUSH-UPS         2/3  │ P  │ G  │   │ P  │ PULL-UPS         0/2  │ G  │
 │                       │ U  │ A  │   │ U  │                       │ A  │
-│  ▣  AM                │ L  │ R  │   │ S  │  ☐  AM                │ R  │
-│  ▣  Lunch             │ L  │ D  │   │ H  │  ☐  PM                │ D  │
-│  ☐  PM                │ ·  │ E  │   │ ·  │                       │ E  │
+│  ▣  AM ×15            │ L  │ R  │   │ S  │  ☐  AM ×8             │ R  │
+│  ▣  Lunch ×15         │ L  │ D  │   │ H  │  ☐  PM ×8             │ D  │
+│  ☐  PM ×15            │ ·  │ E  │   │ ·  │                       │ E  │
 │                       │ U  │ N  │   │ U  │                       │ N  │
 │                       │    │    │   │ P  │                       │    │
 │                       │ ▣  │ ☐  │   │ S  │                       │ ☐  │
@@ -95,7 +101,7 @@ Collapsed column: ~48px wide, header text rotated 90°, rows show the bare check
 └───────────────────────┴────┴────┘   └────┴───────────────────────┴────┘
 ```
 
-Tapping a collapsed column's strip opens it and closes the previous one, sliding smoothly.
+Tapping a collapsed column anywhere opens it and closes the previous one, sliding smoothly.
 The checkbox count on screen never changes — 3 + 2 + 1 = 6 boxes, before and after. That's the
 whole trick, and it's what keeps a phone-sized screen usable with many categories.
 
@@ -104,13 +110,15 @@ Notes on the geometry:
 - Columns are **top-aligned stacks**, not a grid. A column with one slot is short; a column with
   three is taller. No filler rows, no forced alignment — a grid would waste vertical space and lie
   about the structure.
-- Collapsed columns sit at a fixed ~48px. The open column takes the remaining width (`flex: 1`).
+- Collapsed columns sit at a fixed ~42px. Because their checkboxes are no longer tap targets, the
+  strip only has to be wide enough to *read* — it doesn't have to clear 44px for a thumb. The open
+  column gets that width back (`flex: 1`).
 - Beyond ~6 categories the collapsed strips would squeeze the open column too far. Fallback: the
   column row scrolls horizontally, with the open column pinned into view on selection. Rare case,
   but it degrades sensibly rather than breaking.
 - Vertical checkbox order within a column follows the template order (AM → Lunch → PM), not
   completion state. The layout must be *muscle-memory stable*: the same box is always in the same
-  place, so you can tick without reading.
+  place, so the shape of a column's ticks is recognisable at a glance.
 
 ### 3.3 Animating the rotation
 
@@ -133,11 +141,27 @@ to collapse to instant state changes.
 
 ## 4. Interaction details
 
-- **Tap targets:** every checkbox is at least 44×44 CSS px including padding, in both open and
-  collapsed columns. Collapsed strips are 48px wide precisely so their boxes stay tappable.
-- **Ticking in a collapsed column is allowed.** You can see the box, so you can tap it. Tapping the
-  box ticks it; tapping the strip's header area opens the column. This matters: if you know your
-  layout, you can tick a collapsed box without ever expanding.
+**Checkboxes are only tickable while their column is expanded.** A collapsed column's boxes are
+*status only*: you can see whether they're ticked, you cannot change them. This is the safety rule
+of the whole interface — the strips are narrow and you're tapping fast, so a mis-aimed thumb must
+never silently mark push-ups done.
+
+The consequences, which make the interaction simpler rather than more awkward:
+
+- **The entire collapsed column is one big tap target.** Header, checkboxes, whitespace — all of it
+  opens the column. There is no sub-region to aim at, so a hurried tap always does the harmless
+  thing. Two taps to tick a non-open category: open, then tick.
+- Collapsed boxes render dimmed (reduced opacity, no border emphasis) so "not interactive right now"
+  is visible, while a tick still reads clearly at a glance — the whole point of keeping them on
+  screen is the overview.
+- Implementation: in a collapsed column the boxes are rendered as inert `<span>`s with
+  `pointer-events: none` and an `aria-label` carrying their state, so the tap always lands on the
+  column's open-handler behind them. Screen readers still announce what's done; nothing there can be
+  activated. They become real `<button>`s again when the column opens.
+- In the open column, checkboxes are at least 44×44 CSS px including padding.
+
+Everything else:
+
 - **Feedback on tick:** the box fills with a spring-ish scale pop, a check mark strokes in
   (SVG `stroke-dashoffset`), and `navigator.vibrate(10)` fires where supported. The day header count
   and the column count both animate up.
@@ -146,13 +170,13 @@ to collapse to instant state changes.
   daily tool and confetti gets old on day three.
 - **No undo dialogs, no confirmations** on ticking. Tapping again unticks.
 - **Editing the template requires an explicit trip to Settings** (⚙︎). Nothing destructive is
-  reachable from the main screen — you're tapping fast and half-awake.
+  reachable from the main screen.
 
 ---
 
 ## 5. Data model & storage
 
-Single `localStorage` key: `tally.v1`, one JSON blob.
+Single `localStorage` key: `dailycheck.v1`, one JSON blob.
 
 ```jsonc
 {
@@ -160,11 +184,11 @@ Single `localStorage` key: `tally.v1`, one JSON blob.
   "template": {
     "categories": [
       { "id": "c_k3f9", "name": "Push-ups", "accent": 0,
-        "slots": [ { "id": "s_a1", "label": "AM" },
-                   { "id": "s_a2", "label": "Lunch" },
-                   { "id": "s_a3", "label": "PM" } ] },
+        "slots": [ { "id": "s_a1", "label": "AM ×15" },
+                   { "id": "s_a2", "label": "Lunch ×15" },
+                   { "id": "s_a3", "label": "PM ×15" } ] },
       { "id": "c_m2p1", "name": "Pull-ups", "accent": 1,
-        "slots": [ { "id": "s_b1", "label": "AM" }, { "id": "s_b2", "label": "PM" } ] },
+        "slots": [ { "id": "s_b1", "label": "AM ×8" }, { "id": "s_b2", "label": "PM ×8" } ] },
       { "id": "c_q7z0", "name": "Garden", "accent": 2,
         "slots": [ { "id": "s_c1", "label": "Water" } ] }
     ]
@@ -184,7 +208,8 @@ Design decisions behind this shape:
   in storage once something is ticked. No nightly "generate tomorrow" job, no empty-day rows.
 - **Ticks are keyed by slot id, storing the timestamp** rather than `true`. Same storage cost,
   and it makes "you did this at 07:12" and any future streak/heat-map view possible for free.
-- **Slot ids are stable and independent of labels.** Renaming "AM" to "Morning" preserves history.
+- **Slot ids are stable and independent of labels.** Changing `AM ×15` to `AM ×20` preserves
+  history — which is exactly why reps belong in the label rather than in a tracked field.
   Deleting a slot leaves orphan tick data in past days; the renderer ignores unknown ids rather than
   pruning them, so an accidental delete + re-add doesn't silently destroy yesterday.
 - **Template is not versioned per day.** If you add a category today, yesterday's row renders
@@ -215,7 +240,7 @@ Reached via ⚙︎ in the top bar. Opens as a full-screen sheet sliding up from 
 - List of categories, each expandable to edit its slots.
 - Per category: rename, reorder (▲▼ buttons — drag-and-drop is fiddly and unreliable on mobile),
   delete (with confirm), pick an accent colour from the palette.
-- Per slot: rename, reorder, delete, "+ Add checkbox".
+- Per slot: rename its label, reorder, delete, "+ Add checkbox".
 - "+ Add category".
 - **Export / Import**: dump the JSON blob to a downloadable file, and paste/upload it back.
   `localStorage` is genuinely fragile — cleared by "clear browsing data", by iOS Safari's 7-day
@@ -228,8 +253,8 @@ Changes apply live on close. No save button.
 ### First run
 
 Empty state offers two paths: **"Start from the example"** (loads exactly the Push-ups / Pull-ups /
-Garden template from your description, so the app is immediately explorable) or **"Build my own"**
-(straight into the editor). No wizard, no tour.
+Garden template above, so the app is immediately explorable) or **"Build my own"** (straight into
+the editor). No wizard, no tour.
 
 ---
 
@@ -253,10 +278,10 @@ Garden template from your description, so the app is immediately explorable) or 
 
 ---
 
-## 8. Design direction
+## 8. Design direction — approved
 
-Committing to one aesthetic: **an analogue training ledger / tally counter.** Dark, inky, tactile,
-mechanical. Not a productivity SaaS card layout, not a fitness app with gradients.
+**An analogue training ledger / tally counter.** Dark, inky, tactile, mechanical. Not a productivity
+SaaS card layout, not a fitness app with gradients.
 
 - **Palette:** deep ink background (`#12100E`-ish warm near-black), aged paper-white text, and a
   single hot accent — **amber/brass** (`#E8A33D`) for the "done" state. Untouched checkboxes are
@@ -284,7 +309,7 @@ mechanical. Not a productivity SaaS card layout, not a fitness app with gradient
 
 ## 9. Implementation structure
 
-Single `tally/index.html`, roughly:
+Single `dailycheck/index.html`, roughly:
 
 1. `<head>` — meta, inline manifest data URI, Google Fonts link, all CSS in one `<style>`.
 2. CSS custom properties block (`:root`) → reset → shell/safe-area → day accordion → column
@@ -295,14 +320,14 @@ Single `tally/index.html`, roughly:
      try/catch so a private-mode failure degrades to in-memory rather than a blank screen.
    - `dateKey()`, `todayKey()`, `yesterdayKey()`, rollover scheduling.
    - `renderDay(dayKey)` / `renderColumns()` — full re-render is cheap at this size; no diffing.
-   - Event delegation on the days container for ticks and column opens (one listener, survives
-     re-render).
+   - Event delegation on the days container: one listener handles both "open this column" and
+     "tick this box", with the open/collapsed state of the column as the gate between them.
    - `Editor` — the settings sheet.
 
 Target: ~900–1100 lines including CSS, comfortably in line with the other apps in this repo.
 
-No `CLAUDE.md` for the folder until the code exists; I'll write one alongside the implementation,
-matching the pattern in `mass/` and `geo/`.
+A folder `CLAUDE.md` gets written alongside the implementation, matching the pattern in `mass/`
+and `geo/`.
 
 ---
 
@@ -317,17 +342,20 @@ Listed so we agree on what we're *not* building yet, not as a promise to build t
 - Reminders / notifications — needs a service worker and push permission; a different kind of app.
 - Sync across devices — would need the back end you explicitly don't want. Export/Import is the
   deliberate manual substitute.
-- Numeric targets ("15 reps") as tracked values. Rep counts live in the label text
-  ("AM ×15") for now; making them first-class data is a real feature, not a tweak.
+- Reps as tracked numeric data. Settled: they're text in the label (§2).
 
 ---
 
-## Open questions for you
+## Decisions confirmed in review round 1
 
-1. **Folder/name.** I've assumed `/tally/` and the name "TALLY". Happy to change both.
-2. **Rep counts.** Is "AM ×15" as free text in the label enough, or do you want reps as a real
-   field the app knows about (and therefore could total, chart, or progress later)?
-3. **Ticking a collapsed column's checkbox** — §4 allows it. It's the fast path, but it does make a
-   mis-tap on a narrow strip slightly easier. Keep it, or require opening the column first?
-4. **Aesthetic** — the dark brass-and-ink ledger of §8. Say the word if you'd rather have something
-   lighter or cooler and I'll re-pitch before writing any code.
+1. **Name / folder** — `dailycheck`, app title "DAILYCHECK".
+2. **Labels are only checkbox text** — no numeric rep field anywhere in the model or the editor.
+   Reps are written into the label (`AM ×15`) and the app never parses them. *(This is my reading of
+   "labels only for check boxes" — if you meant something else by it, say so and I'll adjust before
+   writing code.)*
+3. **Checkboxes tickable only in an expanded column** — collapsed boxes are visible but inert, and
+   the whole collapsed strip becomes a single "open me" target. Reverses what the first draft
+   proposed.
+4. **Design direction approved** — dark brass-and-ink ledger, as §8.
+
+Nothing else is outstanding. On your go-ahead the next step is building `dailycheck/index.html`.
