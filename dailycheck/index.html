@@ -184,11 +184,21 @@ input  { font: inherit; color: inherit; }
 
 .topbar {
   flex: none;
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: baseline; gap: 10px;
   padding: 12px var(--pad) 11px;
   border-bottom: 1px solid var(--rule);
 }
-.mark { width: 23px; height: 15px; flex: none; overflow: visible; }
+/* Lockup. The viewBox is tightened to the painted ink — the path's fill box
+   grown by half the stroke — so the element box IS the ink box, and baseline
+   alignment on the flex row drops the tick's vertex exactly on the baseline.
+   Height is 1.15x the wordmark's cap height (cap is .667em in Fraunces 600),
+   letting the wing tip rise just above the caps. Sized in em so the two stay
+   locked together if the wordmark ever changes size. */
+.mark {
+  font-size: 15px;            /* matches .wordmark, so the em below tracks it */
+  height: .77em; width: auto;
+  flex: none; overflow: visible; align-self: baseline;
+}
 .wordmark {
   font-family: Fraunces, Georgia, serif;
   font-weight: 600; font-size: 15px;
@@ -196,7 +206,7 @@ input  { font: inherit; color: inherit; }
   font-variation-settings: "opsz" 20;
 }
 .gear {
-  margin-left: auto;
+  margin-left: auto; align-self: center;
   width: 40px; height: 40px; margin-right: -8px;
   display: grid; place-items: center;
   color: var(--paper-dim);
@@ -617,7 +627,7 @@ main {
 
 <div class="app">
   <header class="topbar">
-    <svg class="mark" viewBox="0 0 24 16" aria-hidden="true">
+    <svg class="mark" viewBox="0.6 1.2 22.8 14.88" aria-hidden="true">
       <path d="M1 4.2C4.4 5.6 6.8 8.6 8.8 13.8 11 8.4 15.8 4.2 23 1.6 17.4 6.4 12.8 11 9.6 15.4 8.9 15.9 8.3 15.7 8 15.1 6 10.4 3.9 7 1 4.2Z" fill="var(--brass)" stroke="var(--brass)"
         stroke-width=".8" stroke-linejoin="round"/>
     </svg>

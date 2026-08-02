@@ -248,8 +248,18 @@ a tab left open overnight rolls Today into Yesterday on its own. Verified with a
   the day fills in — that is the emotional point of the app.
 - **The mark**: a filled, tapered checkmark that also reads as a bird in flight — *vink* is Dutch
   for both the tick and a finch. It replaced a tally gate at the rename. It is drawn as a filled
-  path rather than a stroke because at 23×15px a stroked curve reads as a squiggle; the taper is
+  path rather than a stroke because at this size a stroked curve reads as a squiggle; the taper is
   what makes it a bird rather than a check. Same path serves the top bar and the favicon.
+- **The lockup is measured, not eyeballed.** The mark's `viewBox` is tightened to the *painted* ink
+  — the path's fill box grown by half the stroke width — so the element box and the ink box are the
+  same rectangle. The top bar then uses `align-items: baseline`, which drops the tick's vertex
+  exactly on the wordmark's baseline; the gear opts out with `align-self: center` since it is not
+  part of the lockup. Height is `.77em` of the wordmark, i.e. **1.15× its cap height** (cap is
+  `.667em` in Fraunces 600), so the wing tip rises a little above the caps while the vertex stays
+  on the baseline. Fraunces' V has no overshoot, so there is nothing to compensate for.
+- Two traps if you re-measure this: `getBoundingClientRect()` on an SVG path **excludes the stroke**
+  in Chrome, so ink looks half a stroke-width smaller than it is; and sizing the mark in `em` means
+  ems of *its own* font-size, which is why `.mark` sets `font-size: 15px` to match `.wordmark`.
 - **Fonts**: Fraunces (day headers, wordmark, intro) + DM Mono (everything else). Column names are
   uppercase mono with wide tracking, clamped to two lines.
 - **Palette**: warm near-black `--ink`, aged paper `--paper`, and eight accents — brass, copper,
