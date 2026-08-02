@@ -287,8 +287,10 @@ SaaS card layout, not a fitness app with gradients.
 - **Motion:** one orchestrated load-in (day header, then columns staggering in left to right at
   ~40ms intervals), then quiet. After load, the only motion is the accordion slide and the tick pop.
   A tool you open twenty times a day must not perform for you each time.
-- Light theme is *not* included in v1 — the dark ink is the identity. (Easy to add later via
-  `prefers-color-scheme` since everything routes through CSS custom properties.)
+- **Light theme added in round 9** (System / Dark / Light under Settings → Look, defaulting to
+  System). It is aged paper rather than white — the same ledger, other side up — with accents
+  darkened so they hold as text on a light ground. Everything routing through CSS custom properties
+  is what made it a palette swap rather than a rewrite.
 
 ---
 

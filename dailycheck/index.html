@@ -14,6 +14,21 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2710%27%20fill%3D%27%2312100E%27%2F%3E%3Cg%20transform%3D%27translate%285%2C14%29%20scale%282.25%29%27%3E%3Cpath%20d%3D%27M1%204.2C4.4%205.6%206.8%208.6%208.8%2013.8%2011%208.4%2015.8%204.2%2023%201.6%2017.4%206.4%2012.8%2011%209.6%2015.4%208.9%2015.9%208.3%2015.7%208%2015.1%206%2010.4%203.9%207%201%204.2Z%27%20fill%3D%27%23E8A33D%27%20stroke%3D%27%23E8A33D%27%20stroke-width%3D%27.8%27%20stroke-linejoin%3D%27round%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
 <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Vinker%22%2C%22short_name%22%3A%22Vinker%22%2C%22start_url%22%3A%22.%22%2C%22scope%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%2312100E%22%2C%22theme_color%22%3A%22%2312100E%22%7D">
 
+<script>
+/* Runs before anything paints, so the page never flashes the wrong theme.
+   Kept deliberately tiny and separate from the app script at the bottom. */
+(function () {
+  try {
+    var pref = localStorage.getItem('vinker.theme') || 'system';
+    var dark = pref === 'dark' ||
+      (pref === 'system' && !window.matchMedia('(prefers-color-scheme: light)').matches);
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,400..700&display=swap" rel="stylesheet">
@@ -50,6 +65,19 @@
   --a6:         #B06E9A;   /* plum      */
   --a7:         #C4605F;   /* rose      */
 
+  /* drawn on top of an accent fill — the tick inside a ticked box */
+  --on-acc:     #12100E;
+  --brass-wash: rgba(232, 163, 61, .10);
+  --danger-brd: rgba(210, 112, 63, .40);
+
+  /* the lamp over the ledger, and the grain on the paper */
+  --vig-1:      #2A2118;
+  --vig-2:      #191510;
+  --grain-blend: overlay;
+  --grain-op:   .05;
+
+  color-scheme: dark;
+
   /* geometry */
   --colw:       50%;    /* exactly two per row; the third wraps */
   --row:        44px;   /* slot row height — identical in every column */
@@ -61,6 +89,44 @@
   --ease:       cubic-bezier(.22, 1, .36, 1);
   --dur:        280ms;
   --dur-fast:   150ms;
+}
+
+/* The paper side of the ledger. JS resolves system/dark/light and writes the
+   answer to data-theme, so there is exactly one place per theme here — no
+   duplicated block for the media-query case. */
+:root[data-theme="light"] {
+  --ink:        #F4EFE3;
+  --ink-2:      #EBE4D4;
+  --ink-3:      #E2DAC7;
+  --well:       #E9E2D0;
+  --rule:       #DBD2BE;
+  --rule-2:     #C5B9A0;
+
+  --paper:      #2C251B;
+  --paper-dim:  #6B6151;
+  --paper-faint:#7E7464;
+
+  --brass:      #A96F14;
+  --a0:         #A96F14;
+  --a1:         #A85328;
+  --a2:         #6C7A3A;
+  --a3:         #A2604F;
+  --a4:         #2F776A;
+  --a5:         #545FA0;
+  --a6:         #8A4672;
+  --a7:         #9E3D3C;
+
+  /* accents are darker on paper, so what sits on them flips to light */
+  --on-acc:     #FBF7EC;
+  --brass-wash: rgba(169, 111, 20, .12);
+  --danger-brd: rgba(168, 83, 40, .45);
+
+  --vig-1:      #FFFDF6;
+  --vig-2:      #F8F3E8;
+  --grain-blend: multiply;
+  --grain-op:   .045;
+
+  color-scheme: light;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -92,14 +158,14 @@ body::before {
   content: "";
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background:
-    radial-gradient(120% 55% at 50% -12%, #2A2118 0%, #191510 42%, var(--ink) 78%);
+    radial-gradient(120% 55% at 50% -12%, var(--vig-1) 0%, var(--vig-2) 42%, var(--ink) 78%);
 }
 
 /* grain */
 body::after {
   content: "";
   position: fixed; inset: 0; z-index: 9999; pointer-events: none;
-  opacity: .05; mix-blend-mode: overlay;
+  opacity: var(--grain-op); mix-blend-mode: var(--grain-blend);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -350,7 +416,7 @@ main {
 
 .box svg { width: 15px; height: 15px; overflow: visible; }
 .box path {
-  fill: none; stroke: var(--ink); stroke-width: 2.8;
+  fill: none; stroke: var(--on-acc); stroke-width: 2.8;
   stroke-linecap: round; stroke-linejoin: round;
   stroke-dasharray: 26; stroke-dashoffset: 26;
   transition: stroke-dashoffset var(--dur) var(--ease);
@@ -407,8 +473,8 @@ main {
 }
 .btn:active { border-color: var(--brass); color: var(--brass); }
 .btn.primary { border-color: var(--brass); color: var(--brass); }
-.btn.primary:active { background: rgba(232,163,61,.1); }
-.btn.danger { color: var(--a1); border-color: rgba(210,112,63,.4); }
+.btn.primary:active { background: var(--brass-wash); }
+.btn.danger { color: var(--a1); border-color: var(--danger-brd); }
 
 /* ---------- settings sheet ---------- */
 
@@ -480,6 +546,19 @@ main {
 }
 .sw[aria-pressed="true"] { box-shadow: 0 0 0 1px var(--ink), 0 0 0 2.5px currentColor; transform: scale(1.05); }
 
+/* three-way theme control — same shape as the day toggles */
+.seg { display: flex; gap: 6px; padding: 0 var(--pad); }
+.segb {
+  flex: 1 1 0; height: 38px;
+  border: 1px solid var(--rule-2); background: none;
+  font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--paper-faint);
+  transition: color var(--dur-fast), border-color var(--dur-fast), background var(--dur-fast);
+}
+.segb[aria-pressed="true"] {
+  color: var(--on-acc); border-color: var(--brass); background: var(--brass);
+}
+
 /* seven day toggles, Monday first */
 .days { display: flex; gap: 6px; padding: 12px 2px 6px; }
 .dayt {
@@ -491,7 +570,7 @@ main {
   transition: color var(--dur-fast), border-color var(--dur-fast), background var(--dur-fast);
 }
 .dayt[aria-pressed="true"] {
-  color: var(--ink); border-color: var(--cat-acc, var(--brass));
+  color: var(--on-acc); border-color: var(--cat-acc, var(--brass));
   background: var(--cat-acc, var(--brass));
 }
 .days-note {
@@ -562,6 +641,13 @@ main {
     </div>
     <div id="editor"></div>
 
+    <div class="sect-label">Look</div>
+    <div class="seg" id="themeSeg" role="group" aria-label="Theme">
+      <button class="segb" data-theme-pref="system">System</button>
+      <button class="segb" data-theme-pref="dark">Dark</button>
+      <button class="segb" data-theme-pref="light">Light</button>
+    </div>
+
     <div class="sect-label">Backup</div>
     <div class="stack">
       <button class="btn" id="exportBtn">Export to file</button>
@@ -587,6 +673,10 @@ main {
   'use strict';
 
   var KEY = 'vinker.v1';
+  /* A device preference, not user data: kept out of the blob so an imported
+     backup cannot change how someone's phone looks, and so the head script can
+     read it without parsing JSON. */
+  var THEME_KEY = 'vinker.theme';
   /* Renamed twice in Aug 2026: Dailycheck -> Day After Day -> Vinker. Newest
      first, so whichever version a user last opened, their data comes with. */
   var OLD_KEYS = ['dayafterday.v1', 'dailycheck.v1'];
@@ -719,6 +809,38 @@ main {
       { name: 'Groceries', accent: 3, labels: ['Delivery slot'], days: [6] }
     ]
   };
+
+  /* ============================================================
+     Theme — system / dark / light
+     ============================================================ */
+
+  var systemLight = window.matchMedia('(prefers-color-scheme: light)');
+
+  function themePref() {
+    try { return localStorage.getItem(THEME_KEY) || 'system'; } catch (e) { return 'system'; }
+  }
+
+  /* The stored preference can be "system"; the DOM only ever carries the
+     resolved answer, so the CSS needs one block per theme and no media query. */
+  function applyTheme() {
+    var pref = themePref();
+    var dark = pref === 'dark' || (pref === 'system' && !systemLight.matches);
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', dark ? '#12100E' : '#F4EFE3');
+  }
+
+  function setTheme(pref) {
+    try { localStorage.setItem(THEME_KEY, pref); } catch (e) {}
+    applyTheme();
+  }
+
+  /* Follow the system while the preference is "system" — someone on an
+     automatic light/dark schedule should see it change under them. */
+  var onSystemChange = function () { if (themePref() === 'system') applyTheme(); };
+  if (systemLight.addEventListener) systemLight.addEventListener('change', onSystemChange);
+  else if (systemLight.addListener) systemLight.addListener(onSystemChange);
 
   /* ============================================================
      Dates — all local, never UTC
@@ -1123,7 +1245,7 @@ main {
   var editor = document.getElementById('editor');
   var dirty = false;
 
-  function openSheet() { renderEditor(); sheet.classList.add('on'); }
+  function openSheet() { renderEditor(); syncThemeSeg(); sheet.classList.add('on'); }
   function closeSheet() {
     sheet.classList.remove('on');
     if (dirty) { dirty = false; save(); render(); }
@@ -1267,6 +1389,22 @@ main {
     });
   }
 
+  var themeSeg = document.getElementById('themeSeg');
+
+  function syncThemeSeg() {
+    var pref = themePref();
+    Array.prototype.forEach.call(themeSeg.querySelectorAll('.segb'), function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.themePref === pref));
+    });
+  }
+
+  themeSeg.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-theme-pref]');
+    if (!btn) return;
+    setTheme(btn.dataset.themePref);
+    syncThemeSeg();
+  });
+
   document.getElementById('gear').addEventListener('click', openSheet);
   document.getElementById('sheetDone').addEventListener('click', function () {
     backfillNames();
@@ -1373,6 +1511,7 @@ main {
      Boot
      ============================================================ */
 
+  applyTheme();
   shownDay = todayKey();
   render();
   scheduleMidnight();

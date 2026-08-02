@@ -125,6 +125,32 @@ every import without the field is daily by default.
 Deliberately not built: any way to record an off-schedule tick. Solving it means showing hidden
 categories again, which undoes the decision above.
 
+### Theme
+
+System / Dark / Light, chosen under Settings → Look. Default is System.
+
+- **JS resolves, CSS renders.** The stored preference can be `system`, but `data-theme` on `<html>`
+  only ever carries the *resolved* answer, `dark` or `light`. That means the CSS needs exactly one
+  block per theme and no `prefers-color-scheme` media query — otherwise the light palette would
+  have to be written twice (once for the media query, once for the explicit override).
+- **A tiny inline script in `<head>` sets `data-theme` before first paint**, so the page never
+  flashes the wrong theme. It is deliberately separate from the app script at the bottom and reads
+  the preference directly.
+- **The preference lives in its own key, `vinker.theme`,** not in the state blob. Three reasons: an
+  imported backup must not change how someone else's phone looks; the head script can read a plain
+  string without parsing JSON; and it survives "Delete everything", which clears *data*, not device
+  settings.
+- A `matchMedia` listener follows the OS while the preference is `system`, so an automatic
+  light/dark schedule changes the app under the user without a reload.
+- `applyTheme()` also rewrites the `theme-color` meta so the browser chrome matches, and each
+  palette sets `color-scheme` so form controls and scrollbars follow.
+- **`--on-acc` is the colour drawn *on* an accent fill** — the tick inside a ticked box, the label
+  on a selected day toggle. It is not simply `--ink`: light-theme accents are darkened so they work
+  as text on paper, which means what sits on them has to flip to near-white. Using `--ink` there
+  would have given a paper-coloured tick on a pale brass box in dark mode and vice versa.
+- The light palette is aged paper, not white — same ledger, other side. Accents are ~25% darker
+  than their dark-theme counterparts so they hold up as text on a light ground.
+
 ### Ticking
 
 Every checkbox is operable at all times — one tap, no gating. `toggleSlot()` flips `aria-pressed`,
