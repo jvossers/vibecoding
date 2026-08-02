@@ -78,6 +78,38 @@ second line.
 Note the coupling: `--colw`, the `nth-child` selectors and the row rule's `width` all encode the
 same "columns per row" number. Changing the count means changing all four.
 
+### Schedules
+
+A category can run on only some weekdays. `days` is an array in JS `getDay()` numbering
+(0 = Sunday); absent, empty or all seven means daily, so everything that predates the feature and
+every import without the field is daily by default.
+
+- **`appliesOn(cat, day)`** answers only the schedule question — it deliberately does *not* care
+  whether the category has any checkboxes, or that would hide an empty category from the day view.
+- **Editing a schedule must not rewrite history.** `schedSince` records the day the schedule was
+  last changed. For days *before* it we don't know what the schedule was, so we judge by behaviour:
+  a day with ticks counts as a day it applied, a day without is treated as not applicable. Without
+  this, adding Wednesday to a Saturday-only category would make every past Wednesday a missed
+  scheduled day and kill the streak instantly — the same trap as slot `since`. The bias is
+  deliberate: editing config never destroys history.
+- **Non-applicable categories are hidden, not greyed out.** A ghost column costs a full column of
+  screen for something you can't tick, and the cost scales with how much you use scheduling.
+  Instead `restHTML()` emits one dim line — `Not today — Groceries (Sat)`. If *nothing* runs today
+  it emits `Nothing scheduled today`, and since `total` is 0 such a day is never "done".
+- **Streaks step over unscheduled days.** `streakFor` skips days the category doesn't run — they
+  neither count nor break — so a Saturday-only category keeps its streak all week. The walk is
+  bounded by `KEEP_DAYS + 7`: with the behaviour rule above, days with no ticks read as "doesn't
+  apply", so an unbounded walk would run backwards forever.
+- Counts (`dayTotals`) only consider what runs that day, so a Wednesday reads `0/6`, not `0/7`.
+- The editor shows seven toggles, **Monday first** (`WEEK` = `[1..6,0]`), and refuses to switch off
+  the last remaining day — a category with no days would silently never appear again.
+- Known gap: completing a Saturday-only category *from yesterday's panel on a Sunday* increments
+  the streak but shows no badge or burst, because the column isn't on today's screen. It surfaces
+  next Saturday.
+
+Deliberately not built: any way to record an off-schedule tick. Solving it means showing hidden
+categories again, which undoes the decision above.
+
 ### Ticking
 
 Every checkbox is operable at all times — one tap, no gating. `toggleSlot()` flips `aria-pressed`,
@@ -128,7 +160,10 @@ One `localStorage` key, `dailycheck.v1`, holding the whole blob:
 ```jsonc
 {
   "version": 1,
-  "template": { "categories": [ { "id", "name", "accent": 0-3, "slots": [ { "id", "label" } ] } ] },
+  "template": { "categories": [
+    { "id", "name", "accent": 0-7,
+      "days": [3, 6], "schedSince": "2026-08-05",     // both absent = daily
+      "slots": [ { "id", "label", "since": "2026-08-05" } ] } ] },
   "days": { "2026-08-01": { "<slotId>": 1754043210000 } },
   "ui": {}
 }

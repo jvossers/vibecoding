@@ -247,27 +247,37 @@ main {
   color: var(--paper-dim);
 }
 
-/* a short accent tick under each name — the column's colour identity while
-   its boxes are still empty */
+/* one line under the name: accent tick, streak, schedule */
+.col-meta {
+  position: absolute; left: var(--pad); right: 8px; bottom: 5px;
+  display: flex; align-items: center; gap: 8px;
+  pointer-events: none;
+}
+
+/* a short accent tick — the column's colour identity while its boxes are
+   still empty */
 .col-rule {
-  position: absolute; left: var(--pad); bottom: 8px;
-  height: 2px; width: 18px; background: var(--acc);
-  opacity: .85;
+  height: 2px; width: 18px; flex: none;
+  background: var(--acc); opacity: .85;
+}
+
+/* which days this category runs, shown only when it is not daily */
+.sched {
+  font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--paper-faint); white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* --- streak badge --- */
 
 .streak {
-  position: absolute; left: calc(var(--pad) + 26px); bottom: 3px;
-  display: flex; align-items: center; gap: 3px;
+  position: relative;
+  display: none; align-items: center; gap: 3px;
   font-size: 12px; font-weight: 500; letter-spacing: .03em;
   font-variant-numeric: tabular-nums;
   color: var(--acc);
-  opacity: 0; transform: scale(.6);
-  transition: opacity var(--dur-fast) linear, transform var(--dur) var(--ease);
-  pointer-events: none;
 }
-.streak.on { opacity: 1; transform: none; }
+.streak.on { display: flex; }
 .streak .sicon { width: 11px; height: 13px; opacity: .9; }
 .streak .n { line-height: 1; }
 
@@ -365,6 +375,16 @@ main {
 }
 .slot[aria-pressed="true"] .slot-label { color: var(--paper-dim); }
 
+/* categories that do not run today: one dim line, not a column */
+.notday, .none {
+  padding: 2px var(--pad) 12px;
+  font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--paper-faint);
+  line-height: 1.7;
+}
+.none { padding-top: 16px; }
+.notday b { font-weight: 400; color: var(--paper-dim); }
+
 /* ---------- first run ---------- */
 
 .intro { padding: 34px var(--pad) 24px; }
@@ -459,6 +479,25 @@ main {
   transition: box-shadow var(--dur-fast), transform var(--dur-fast);
 }
 .sw[aria-pressed="true"] { box-shadow: 0 0 0 1px var(--ink), 0 0 0 2.5px currentColor; transform: scale(1.05); }
+
+/* seven day toggles, Monday first */
+.days { display: flex; gap: 6px; padding: 12px 2px 6px; }
+.dayt {
+  flex: 1 1 0; min-width: 0; height: 30px;
+  display: grid; place-items: center;
+  border: 1px solid var(--rule-2); background: none;
+  font-size: 11px; letter-spacing: .04em;
+  color: var(--paper-faint);
+  transition: color var(--dur-fast), border-color var(--dur-fast), background var(--dur-fast);
+}
+.dayt[aria-pressed="true"] {
+  color: var(--ink); border-color: var(--cat-acc, var(--brass));
+  background: var(--cat-acc, var(--brass));
+}
+.days-note {
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--paper-faint); padding: 0 2px 6px;
+}
 
 .slot-edit { display: flex; align-items: center; gap: 6px; padding-left: 2px; }
 .slot-edit .tick {
@@ -574,19 +613,36 @@ main {
     var cats = (o.template && Array.isArray(o.template.categories)) ? o.template.categories : [];
     s.template.categories = cats.filter(Boolean).map(function (c) {
       var slots = Array.isArray(c.slots) ? c.slots : [];
-      return {
+      var days = null;
+      if (Array.isArray(c.days)) {
+        days = c.days
+          .filter(function (d) { return Number.isInteger(d) && d >= 0 && d <= 6; })
+          .filter(function (d, i, a) { return a.indexOf(d) === i; })
+          .sort(function (a, b) { return a - b; });
+        if (!days.length || days.length === 7) days = null;   /* daily */
+      }
+
+      var out = {
         id: typeof c.id === 'string' && c.id ? c.id : uid('c'),
         name: String(c.name == null ? '' : c.name).slice(0, 40) || 'Untitled',
         accent: Number.isInteger(c.accent) ? ((c.accent % ACCENTS) + ACCENTS) % ACCENTS : 0,
         slots: slots.filter(Boolean).map(function (sl) {
-          var out = {
+          var so = {
             id: typeof sl.id === 'string' && sl.id ? sl.id : uid('s'),
             label: String(sl.label == null ? '' : sl.label).slice(0, 40)
           };
-          if (typeof sl.since === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(sl.since)) out.since = sl.since;
-          return out;
+          if (typeof sl.since === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(sl.since)) so.since = sl.since;
+          return so;
         })
       };
+
+      if (days) {
+        out.days = days;
+        if (typeof c.schedSince === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(c.schedSince)) {
+          out.schedSince = c.schedSince;
+        }
+      }
+      return out;
     });
 
     if (o.days && typeof o.days === 'object') {
@@ -639,7 +695,8 @@ main {
     categories: [
       { name: 'Push-ups', accent: 0, labels: ['AM ×15', 'Lunch ×15', 'PM ×15'] },
       { name: 'Pull-ups', accent: 1, labels: ['AM ×8', 'PM ×8'] },
-      { name: 'Garden',   accent: 2, labels: ['Water'] }
+      { name: 'Garden',   accent: 2, labels: ['Water'] },
+      { name: 'Groceries', accent: 3, labels: ['Delivery slot'], days: [6] }
     ]
   };
 
@@ -680,10 +737,63 @@ main {
   function dayTotals(dayKey) {
     var t = state.days[dayKey] || {};
     var done = 0, total = 0;
-    cats().forEach(function (c) {
+    catsOn(dayKey).forEach(function (c) {
       c.slots.forEach(function (s) { total++; if (t[s.id]) done++; });
     });
     return { done: done, total: total };
+  }
+
+  /* ---------- schedule ---------- */
+
+  /* Monday first, matching the editor's toggle row. Stored values use JS
+     getDay() numbering (0 = Sunday). */
+  var WEEK = [1, 2, 3, 4, 5, 6, 0];
+  var DAY_LETTER = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  var DAY_SHORT  = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  function weekdayOf(dayKey) {
+    var p = dayKey.split('-');
+    return new Date(+p[0], +p[1] - 1, +p[2]).getDay();
+  }
+
+  function isDaily(cat) {
+    return !cat.days || !cat.days.length || cat.days.length === 7;
+  }
+
+  function hasAnyTick(cat, dayKey) {
+    var t = state.days[dayKey];
+    if (!t) return false;
+    return cat.slots.some(function (s) { return !!t[s.id]; });
+  }
+
+  /* Does this category run on this day?
+
+     Before `schedSince` — the day the schedule was last edited — we do not know
+     what the schedule was, so we judge by behaviour instead: a day with ticks
+     was a day it applied, a day without is treated as not applicable. That way
+     changing a schedule never reaches back and breaks a streak, which is the
+     same trap as slot `since`. From `schedSince` onwards the schedule rules. */
+  function appliesOn(cat, dayKey) {
+    if (!cat) return false;
+    if (isDaily(cat)) return true;
+    if (cat.schedSince && dayKey < cat.schedSince) return hasAnyTick(cat, dayKey);
+    return cat.days.indexOf(weekdayOf(dayKey)) !== -1;
+  }
+
+  /* "SA", "WE SA", "MO WE FR" — and for five or six days the exclusions
+     instead, so the common weekdays-only case reads "NOT SA SU". */
+  function schedLabel(cat) {
+    if (isDaily(cat)) return '';
+    var on = WEEK.filter(function (d) { return cat.days.indexOf(d) !== -1; });
+    if (on.length <= 4) {
+      return on.map(function (d) { return DAY_SHORT[d]; }).join(' ');
+    }
+    var off = WEEK.filter(function (d) { return cat.days.indexOf(d) === -1; });
+    return 'Not ' + off.map(function (d) { return DAY_SHORT[d]; }).join(' ');
+  }
+
+  function catsOn(dayKey) {
+    return cats().filter(function (c) { return appliesOn(c, dayKey); });
   }
 
   /* ---------- streaks ---------- */
@@ -697,6 +807,7 @@ main {
      brand new category cannot inherit a streak from days before it existed. */
   function isComplete(cat, dayKey) {
     if (!cat || !cat.slots.length) return false;
+    if (!appliesOn(cat, dayKey)) return false;
     var t = state.days[dayKey];
 
     /* A slot counts for a day if it existed then — OR if it was ticked then.
@@ -719,8 +830,19 @@ main {
   function streakFor(cat) {
     var d = todayKey();
     if (!isComplete(cat, d)) d = shiftKey(d, -1);
+
+    /* Days the category does not run are stepped over, not counted and not
+       breaking: a Saturday-only category keeps its streak through the week.
+       Bounded by the retention window — without a bound, a schedule whose days
+       simply never match would walk backwards forever. */
     var n = 0;
-    while (isComplete(cat, d)) { n++; d = shiftKey(d, -1); }
+    for (var i = 0; i < KEEP_DAYS + 7; i++) {
+      if (appliesOn(cat, d)) {
+        if (!isComplete(cat, d)) break;
+        n++;
+      }
+      d = shiftKey(d, -1);
+    }
     return n;
   }
 
@@ -768,10 +890,12 @@ main {
 
     document.getElementById('useExample').addEventListener('click', function () {
       state.template.categories = EXAMPLE.categories.map(function (c) {
-        return {
+        var out = {
           id: uid('c'), name: c.name, accent: c.accent,
           slots: c.labels.map(function (l) { return { id: uid('s'), label: l }; })
         };
+        if (c.days) { out.days = c.days; out.schedSince = todayKey(); }
+        return out;
       });
       save(); render();
     });
@@ -797,14 +921,35 @@ main {
         '</button>' +
         '<div class="day-body"><div class="clip">' +
           '<div class="cols">' + colsHTML(key, isToday) + '</div>' +
+          restHTML(key, name) +
         '</div></div>' +
       '</section>';
+  }
+
+  /* Categories that do not run on this day get one dim line rather than a
+     ghost column: enough to know they still exist, without spending a column's
+     worth of screen on something you cannot tick. */
+  function restHTML(dayKey, dayName) {
+    var off = cats().filter(function (c) { return !appliesOn(c, dayKey); });
+    var on = catsOn(dayKey);
+    var out = '';
+
+    if (!on.length) {
+      out += '<p class="none">Nothing scheduled ' + dayName.toLowerCase() + '</p>';
+    }
+    if (off.length) {
+      out += '<p class="notday">Not ' + dayName.toLowerCase() + ' &mdash; ' +
+        off.map(function (c) {
+          return '<b>' + esc(c.name) + '</b> (' + esc(schedLabel(c)) + ')';
+        }).join(' &middot; ') + '</p>';
+    }
+    return out;
   }
 
   function colsHTML(dayKey, withStreaks) {
     var t = state.days[dayKey] || {};
 
-    return cats().map(function (c, i) {
+    return catsOn(dayKey).map(function (c, i) {
       var slots = c.slots.map(function (s) {
         var on = !!t[s.id];
         return '' +
@@ -820,8 +965,11 @@ main {
           ' style="--acc:var(--a' + c.accent + ');--i:' + i + '">' +
           '<div class="col-head">' +
             '<span class="col-title">' + esc(c.name) + '</span>' +
-            '<span class="col-rule"></span>' +
-            (withStreaks ? streakHTML(streakFor(c)) : '') +
+            '<span class="col-meta">' +
+              '<span class="col-rule"></span>' +
+              (withStreaks ? streakHTML(streakFor(c)) : '') +
+              (isDaily(c) ? '' : '<span class="sched">' + esc(schedLabel(c)) + '</span>') +
+            '</span>' +
           '</div>' +
           '<div class="col-slots">' + slots + '</div>' +
         '</div>';
@@ -963,6 +1111,12 @@ main {
             '</div>';
         }).join('');
 
+        var dayToggles = WEEK.map(function (d) {
+          var on = isDaily(c) || c.days.indexOf(d) !== -1;
+          return '<button class="dayt" data-act="day" data-c="' + ci + '" data-d="' + d + '"' +
+            ' aria-pressed="' + on + '" aria-label="' + DAY_SHORT[d] + '">' + DAY_LETTER[d] + '</button>';
+        }).join('');
+
         var swatches = ACCENT_LIST.map(function (a) {
           return '<button class="sw" data-act="accent" data-c="' + ci + '" data-a="' + a + '"' +
             ' aria-pressed="' + (c.accent === a ? 'true' : 'false') + '" aria-label="Accent ' + (a + 1) + '"' +
@@ -978,6 +1132,8 @@ main {
               '<button class="mini del" data-act="c-del" data-c="' + ci + '" aria-label="Delete">&#10005;</button>' +
             '</div>' +
             '<div class="swatches">' + swatches + '</div>' +
+            '<div class="days">' + dayToggles + '</div>' +
+            '<div class="days-note">' + (isDaily(c) ? 'Every day' : esc(schedLabel(c))) + '</div>' +
             slots +
             '<button class="add" data-act="s-add" data-c="' + ci + '">+ Checkbox</button>' +
           '</div>';
@@ -1015,6 +1171,18 @@ main {
     if (!cat && act !== 'c-add') return;
 
     if (act === 'accent')  { cat.accent = +btn.dataset.a; }
+    else if (act === 'day') {
+      var d = +btn.dataset.d;
+      var on = isDaily(cat) ? WEEK.slice() : cat.days.slice();
+      var at = on.indexOf(d);
+      if (at === -1) on.push(d);
+      else if (on.length > 1) on.splice(at, 1);
+      else return;                     /* never leave a category with no days */
+      on.sort(function (a, b) { return a - b; });
+      if (on.length === 7) delete cat.days;
+      else cat.days = on;
+      cat.schedSince = todayKey();     /* history before today is judged by behaviour */
+    }
     else if (act === 'c-up')   { if (!move(list, ci, -1)) return; }
     else if (act === 'c-down') { if (!move(list, ci, 1)) return; }
     else if (act === 'c-del')  {

@@ -355,6 +355,24 @@ header shrank from two rows to one.
    rather than 130px, so labels have space to spare and the narrow-screen special case that three
    columns needed is gone. The trade-off is height — three categories now take two rows.
 
+**Round 7 — weekday schedules**
+
+13. **A category can run on only some weekdays** — seven toggles in the editor, Monday first.
+    Default is every day, so nothing that exists changes.
+14. **Days it doesn't run, it is hidden**, with one dim line at the foot of the day listing what's
+    off: `Not today — Groceries (Sat)`. Not a greyed-out ghost column: a ghost costs a full column
+    of screen for something you can't tick, and the cost grows the more you use scheduling. The
+    list being shorter on a Tuesday and longer on a Saturday is the signal that today is different.
+15. **Streaks count consecutive *scheduled* days**, so a Saturday-only category holds its streak
+    through the week and breaks the moment a Saturday ends unfinished.
+16. **Editing a schedule never rewrites history** — days before the edit are judged by what you
+    actually ticked, not by the new schedule.
+17. The example template gains **Groceries → Delivery slot, Saturdays**, so the feature is visible
+    on first run.
+
+Decided against: any way to record an off-schedule tick. It would mean showing hidden categories
+again, which undoes 14.
+
 **Round 6 — streaks and more colours**
 
 11. **A streak counter per category**, under the column name beside its accent tick: a flame and a
