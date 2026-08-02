@@ -4,10 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-"Dailycheck" — a checklist for tasks you repeat several times a day (push-ups AM/lunch/PM, water
+"Day After Day" — a checklist for tasks you repeat several times a day (push-ups AM/lunch/PM, water
 the garden once). You define a daily template once; every day the app gives you a fresh empty copy
 to tick off. Single-file vanilla HTML/CSS/JS, no build tools, no dependencies, no back end. All
 state lives in `localStorage`.
+
+> **The folder is `dailycheck/` and must stay that way.** The app was called Dailycheck until
+> August 2026; the URL `labs.vossers.com/dailycheck/` has been shared with people and renaming the
+> folder would break their links and their home-screen shortcuts. The folder name is a legacy path,
+> not the brand. Everything user-facing says "Day After Day".
 
 `PLAN.md` is the reviewed design brief this was built from. Where the code deviates, this file wins
 — deviations are listed at the bottom.
@@ -19,7 +24,7 @@ Open `index.html` directly in a browser, or use any static file server:
 npx serve .
 ```
 
-Deployed via GitHub Pages at labs.vossers.com/dailycheck/
+Deployed via GitHub Pages at labs.vossers.com/dailycheck/ (legacy path — see above)
 
 ## Architecture
 
@@ -165,7 +170,7 @@ import and cross-tab sync. Ticking updates one `aria-pressed` plus the day count
 
 ## Storage
 
-One `localStorage` key, `dailycheck.v1`, holding the whole blob:
+One `localStorage` key, `dayafterday.v1`, holding the whole blob:
 
 ```jsonc
 {
@@ -178,6 +183,12 @@ One `localStorage` key, `dailycheck.v1`, holding the whole blob:
   "ui": {}
 }
 ```
+
+**Migration from the old key.** Data written before the rebrand lives under `dailycheck.v1`.
+`load()` copies it across on first run and then **deletes the old key** — that deletion is the
+important half. Leave the old key in place and "Delete everything" becomes undoable: it removes
+`dayafterday.v1`, the next load finds the legacy key still there, and cheerfully restores what the
+user just deleted. `wipe()` removes both keys for the same reason.
 
 `ui` is currently empty — it held `openCategory` while the columns were an accordion. Kept as a
 slot for future view state; `normalize()` drops anything it does not recognise.

@@ -1,8 +1,10 @@
-# DAILYCHECK — a daily repeating-task checklist
+# DAY AFTER DAY — a daily repeating-task checklist
 
-**Status:** built. Revised after review rounds 1–3; this describes what was implemented.
+**Status:** built. Revised after review rounds 1–7; this describes what was implemented.
 `CLAUDE.md` documents the code as it stands.
 **Location:** `/dailycheck/index.html` → deployed at `labs.vossers.com/dailycheck/`
+The folder keeps its old name deliberately: the app was called Dailycheck until August 2026 and
+that URL has already been shared. Renaming it would break other people's links.
 **Stack:** single-file vanilla HTML/CSS/JS. No build, no dependencies, no back end. All state in `localStorage`.
 
 ---
@@ -64,7 +66,7 @@ count so a collapsed Yesterday still tells you whether you finished.
 
 ```
 ┌────────────────────────────────────┐
-│  DAILYCHECK                   ⚙︎    │   ← thin top bar
+│  DAY AFTER DAY                ⚙︎    │   ← thin top bar
 ├────────────────────────────────────┤
 │  TODAY        Sat 1 Aug      4/6  ▾│   ← open
 │  ┌──────────────────────────────┐  │
@@ -154,7 +156,7 @@ Everything else:
 
 ## 5. Data model & storage
 
-Single `localStorage` key: `dailycheck.v1`, one JSON blob.
+Single `localStorage` key: `dayafterday.v1`, one JSON blob (migrated from `dailycheck.v1`).
 
 ```jsonc
 {
@@ -331,7 +333,8 @@ Listed so we agree on what we're *not* building yet, not as a promise to build t
 
 **Round 1**
 
-1. **Name / folder** — `dailycheck`, app title "DAILYCHECK".
+1. **Name / folder** — folder `dailycheck`; app was titled "DAILYCHECK", renamed to
+   "Day After Day" in round 8. The folder name stays for link stability.
 2. **Labels are only checkbox text** — no numeric rep field anywhere in the model or the editor.
    Reps are written into the label (`AM ×15`) and the app never parses them.
 3. **Checkboxes tickable only in an expanded column** — superseded by round 2, which expanded every

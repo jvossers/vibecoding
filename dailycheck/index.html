@@ -7,12 +7,12 @@
 <meta name="theme-color" content="#12100E">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Dailycheck">
+<meta name="apple-mobile-web-app-title" content="Day After Day">
 <meta name="description" content="A daily checklist for tasks you repeat several times a day.">
-<title>DAILYCHECK</title>
+<title>Day After Day</title>
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='10'%20fill='%2312100E'/%3E%3Cg%20stroke='%23E8A33D'%20stroke-width='5'%20stroke-linecap='round'%3E%3Cpath%20d='M16%2016v32M28%2016v32M40%2016v32M52%2016v32M10%2050L58%2014'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Dailycheck%22%2C%22short_name%22%3A%22Dailycheck%22%2C%22start_url%22%3A%22.%22%2C%22scope%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%2312100E%22%2C%22theme_color%22%3A%22%2312100E%22%7D">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Day%20After%20Day%22%2C%22short_name%22%3A%22Day%20After%20Day%22%2C%22start_url%22%3A%22.%22%2C%22scope%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%2312100E%22%2C%22theme_color%22%3A%22%2312100E%22%7D">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +20,7 @@
 
 <style>
 /* ============================================================
-   DAILYCHECK — daily repeating-task checklist
+   DAY AFTER DAY — a checklist for the things you repeat
    Aesthetic: analogue training ledger. Ink, brass, ruled lines.
    ============================================================ */
 
@@ -543,7 +543,7 @@ main {
         <path d="M3 2v10M8 2v10M13 2v10M18 2v10M1.5 11.5L20 2.5"/>
       </g>
     </svg>
-    <span class="wordmark">Dailycheck</span>
+    <span class="wordmark">Day after day</span>
     <button class="gear" id="gear" aria-label="Settings">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
         <circle cx="12" cy="12" r="3.2"/>
@@ -587,7 +587,8 @@ main {
 (function () {
   'use strict';
 
-  var KEY = 'dailycheck.v1';
+  var KEY = 'dayafterday.v1';
+  var OLD_KEY = 'dailycheck.v1';       /* the app was called Dailycheck until Aug 2026 */
   var ACCENTS = 8;
   /* Streaks are counted from this history, so the retention window is also the
      longest streak the app can show. Even 400 days of ticks is a few tens of KB. */
@@ -665,6 +666,19 @@ main {
   function load() {
     try {
       var raw = localStorage.getItem(KEY);
+
+      /* One-shot migration from the old brand. It has to be one-shot: if the
+         old key survived, "Delete everything" would remove the new key and the
+         next load would cheerfully resurrect everything from the old one. */
+      if (raw === null) {
+        var old = localStorage.getItem(OLD_KEY);
+        if (old !== null) {
+          localStorage.setItem(KEY, old);
+          localStorage.removeItem(OLD_KEY);
+          raw = old;
+        }
+      }
+
       if (!raw) return blank();
       return normalize(JSON.parse(raw));
     } catch (e) {
@@ -1263,7 +1277,7 @@ main {
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
-    a.download = 'dailycheck-' + todayKey() + '.json';
+    a.download = 'dayafterday-' + todayKey() + '.json';
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -1308,7 +1322,8 @@ main {
   document.getElementById('wipe').addEventListener('click', function () {
     if (!confirm('Delete the template and all history on this device? This cannot be undone.')) return;
     state = blank();
-    try { localStorage.removeItem(KEY); } catch (e) {}
+    /* the pre-rebrand key too, or the migration would restore what was deleted */
+    try { localStorage.removeItem(KEY); localStorage.removeItem(OLD_KEY); } catch (e) {}
     renderEditor();
     render();
     closeSheet();
