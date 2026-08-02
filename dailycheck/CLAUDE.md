@@ -84,14 +84,24 @@ A category can run on only some weekdays. `days` is an array in JS `getDay()` nu
 (0 = Sunday); absent, empty or all seven means daily, so everything that predates the feature and
 every import without the field is daily by default.
 
-- **`appliesOn(cat, day)`** answers only the schedule question — it deliberately does *not* care
-  whether the category has any checkboxes, or that would hide an empty category from the day view.
+- **Three separate questions, and conflating them is a bug factory:**
+  - `runsOn(cat, day)` — does the current schedule name this day? Nothing else. Deliberately does
+    not care whether the category has checkboxes, or an empty one would vanish from the day view.
+  - `showsOn(cat, day)` — render the column? `runsOn` **or** the day has ticks, so entries the user
+    made are never hidden. Drives `catsOn`, the not-today list and `dayTotals`, so the count always
+    matches the boxes on screen.
+  - `countsOn(cat, day)` — does this day count towards the streak? The only one that consults
+    `schedSince`.
 - **Editing a schedule must not rewrite history.** `schedSince` records the day the schedule was
-  last changed. For days *before* it we don't know what the schedule was, so we judge by behaviour:
-  a day with ticks counts as a day it applied, a day without is treated as not applicable. Without
-  this, adding Wednesday to a Saturday-only category would make every past Wednesday a missed
-  scheduled day and kill the streak instantly — the same trap as slot `since`. The bias is
-  deliberate: editing config never destroys history.
+  last changed. For days *before* it we don't know what the schedule was, so `countsOn` judges by
+  behaviour: a day with ticks counts as a day it applied, a day without is forgiven. Without this,
+  adding Wednesday to a Saturday-only category would make every past Wednesday a missed scheduled
+  day and kill the streak instantly — the same trap as slot `since`. Editing config never destroys
+  history.
+- **`schedSince` must never drive rendering.** It did, once (the round-7 bug): a category created
+  today and set to Saturdays has a `schedSince` of today, so yesterday fell into the
+  judge-by-behaviour branch, found no ticks, and hid the column from yesterday's panel — on a
+  Saturday. Rendering asks `showsOn`, which knows only the current schedule and the ticks.
 - **Non-applicable categories are hidden, not greyed out.** A ghost column costs a full column of
   screen for something you can't tick, and the cost scales with how much you use scheduling.
   Instead `restHTML()` emits one dim line — `Not today — Groceries (Sat)`. If *nothing* runs today

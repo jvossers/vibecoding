@@ -766,18 +766,35 @@ main {
     return cat.slots.some(function (s) { return !!t[s.id]; });
   }
 
-  /* Does this category run on this day?
+  /* Three different questions, and conflating them is a bug factory.
 
-     Before `schedSince` — the day the schedule was last edited — we do not know
-     what the schedule was, so we judge by behaviour instead: a day with ticks
-     was a day it applied, a day without is treated as not applicable. That way
-     changing a schedule never reaches back and breaks a streak, which is the
-     same trap as slot `since`. From `schedSince` onwards the schedule rules. */
-  function appliesOn(cat, dayKey) {
+     runsOn   — does the current schedule say this day? Nothing else.
+     showsOn  — should the column be on screen for this day? The schedule says
+                so, OR there are ticks on it: never hide entries the user made.
+     countsOn — does this day count towards the streak?
+
+     Only countsOn consults `schedSince`, the day the schedule was last edited.
+     For days before it we do not know what the schedule was, so we judge by
+     behaviour: a day with ticks applied, a day without is forgiven. That stops
+     a schedule edit reaching back and breaking a streak — the same trap as slot
+     `since`. It must NOT drive rendering: a category created today and set to
+     Saturdays has a `schedSince` of today, and letting that hide it from
+     yesterday's panel is precisely how it went wrong. */
+  function runsOn(cat, dayKey) {
+    if (!cat) return false;
+    if (isDaily(cat)) return true;
+    return cat.days.indexOf(weekdayOf(dayKey)) !== -1;
+  }
+
+  function showsOn(cat, dayKey) {
+    return runsOn(cat, dayKey) || hasAnyTick(cat, dayKey);
+  }
+
+  function countsOn(cat, dayKey) {
     if (!cat) return false;
     if (isDaily(cat)) return true;
     if (cat.schedSince && dayKey < cat.schedSince) return hasAnyTick(cat, dayKey);
-    return cat.days.indexOf(weekdayOf(dayKey)) !== -1;
+    return runsOn(cat, dayKey);
   }
 
   /* "SA", "WE SA", "MO WE FR" — and for five or six days the exclusions
@@ -793,7 +810,7 @@ main {
   }
 
   function catsOn(dayKey) {
-    return cats().filter(function (c) { return appliesOn(c, dayKey); });
+    return cats().filter(function (c) { return showsOn(c, dayKey); });
   }
 
   /* ---------- streaks ---------- */
@@ -807,7 +824,7 @@ main {
      brand new category cannot inherit a streak from days before it existed. */
   function isComplete(cat, dayKey) {
     if (!cat || !cat.slots.length) return false;
-    if (!appliesOn(cat, dayKey)) return false;
+    if (!countsOn(cat, dayKey)) return false;
     var t = state.days[dayKey];
 
     /* A slot counts for a day if it existed then — OR if it was ticked then.
@@ -837,7 +854,7 @@ main {
        simply never match would walk backwards forever. */
     var n = 0;
     for (var i = 0; i < KEEP_DAYS + 7; i++) {
-      if (appliesOn(cat, d)) {
+      if (countsOn(cat, d)) {
         if (!isComplete(cat, d)) break;
         n++;
       }
@@ -930,7 +947,7 @@ main {
      ghost column: enough to know they still exist, without spending a column's
      worth of screen on something you cannot tick. */
   function restHTML(dayKey, dayName) {
-    var off = cats().filter(function (c) { return !appliesOn(c, dayKey); });
+    var off = cats().filter(function (c) { return !showsOn(c, dayKey); });
     var on = catsOn(dayKey);
     var out = '';
 
