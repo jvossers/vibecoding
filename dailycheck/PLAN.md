@@ -1,4 +1,4 @@
-# DAY AFTER DAY — a daily repeating-task checklist
+# VINKER — a daily repeating-task checklist
 
 **Status:** built. Revised after review rounds 1–7; this describes what was implemented.
 `CLAUDE.md` documents the code as it stands.
@@ -66,7 +66,7 @@ count so a collapsed Yesterday still tells you whether you finished.
 
 ```
 ┌────────────────────────────────────┐
-│  DAY AFTER DAY                ⚙︎    │   ← thin top bar
+│  ✓ VINKER                     ⚙︎    │   ← thin top bar
 ├────────────────────────────────────┤
 │  TODAY        Sat 1 Aug      4/6  ▾│   ← open
 │  ┌──────────────────────────────┐  │
@@ -156,7 +156,8 @@ Everything else:
 
 ## 5. Data model & storage
 
-Single `localStorage` key: `dayafterday.v1`, one JSON blob (migrated from `dailycheck.v1`).
+Single `localStorage` key: `vinker.v1`, one JSON blob (migrated from `dayafterday.v1`,
+which was itself migrated from `dailycheck.v1`).
 
 ```jsonc
 {
@@ -333,8 +334,10 @@ Listed so we agree on what we're *not* building yet, not as a promise to build t
 
 **Round 1**
 
-1. **Name / folder** — folder `dailycheck`; app was titled "DAILYCHECK", renamed to
-   "Day After Day" in round 8. The folder name stays for link stability.
+1. **Name / folder** — folder `dailycheck`; the app was titled "DAILYCHECK", briefly
+   "Day After Day", and is now **Vinker** (Dutch: *vinkje zetten*, to tick a box). The folder name
+   stays for link stability. The tally-gate mark was replaced by a checkmark that doubles as a
+   finch — *vink* is both.
 2. **Labels are only checkbox text** — no numeric rep field anywhere in the model or the editor.
    Reps are written into the label (`AM ×15`) and the app never parses them.
 3. **Checkboxes tickable only in an expanded column** — superseded by round 2, which expanded every

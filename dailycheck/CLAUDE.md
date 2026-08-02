@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-"Day After Day" — a checklist for tasks you repeat several times a day (push-ups AM/lunch/PM, water
+"Vinker" — a checklist for tasks you repeat several times a day (push-ups AM/lunch/PM, water
 the garden once). You define a daily template once; every day the app gives you a fresh empty copy
 to tick off. Single-file vanilla HTML/CSS/JS, no build tools, no dependencies, no back end. All
 state lives in `localStorage`.
@@ -12,7 +12,7 @@ state lives in `localStorage`.
 > **The folder is `dailycheck/` and must stay that way.** The app was called Dailycheck until
 > August 2026; the URL `labs.vossers.com/dailycheck/` has been shared with people and renaming the
 > folder would break their links and their home-screen shortcuts. The folder name is a legacy path,
-> not the brand. Everything user-facing says "Day After Day".
+> not the brand. Everything user-facing says "Vinker".
 
 `PLAN.md` is the reviewed design brief this was built from. Where the code deviates, this file wins
 — deviations are listed at the bottom.
@@ -170,7 +170,7 @@ import and cross-tab sync. Ticking updates one `aria-pressed` plus the day count
 
 ## Storage
 
-One `localStorage` key, `dayafterday.v1`, holding the whole blob:
+One `localStorage` key, `vinker.v1`, holding the whole blob:
 
 ```jsonc
 {
@@ -184,11 +184,13 @@ One `localStorage` key, `dayafterday.v1`, holding the whole blob:
 }
 ```
 
-**Migration from the old key.** Data written before the rebrand lives under `dailycheck.v1`.
-`load()` copies it across on first run and then **deletes the old key** — that deletion is the
-important half. Leave the old key in place and "Delete everything" becomes undoable: it removes
-`dayafterday.v1`, the next load finds the legacy key still there, and cheerfully restores what the
-user just deleted. `wipe()` removes both keys for the same reason.
+**Migration from the old keys.** The app was renamed twice: `dailycheck.v1` → `dayafterday.v1` →
+`vinker.v1`. `OLD_KEYS` lists the legacy keys newest-first; `load()` takes the first one it finds,
+copies it across, and then **deletes them all** via `dropLegacyKeys()`. That deletion is the
+important half. Leave a legacy key in place and "Delete everything" becomes undoable: it removes
+`vinker.v1`, the next load finds the old key still there, and cheerfully restores what the user
+just deleted. `wipe()` calls `dropLegacyKeys()` for the same reason. All four paths are tested —
+migrating from either old key, from both at once, and wiping with a stale key present.
 
 `ui` is currently empty — it held `openCategory` while the columns were an accordion. Kept as a
 slot for future view state; `normalize()` drops anything it does not recognise.
@@ -218,6 +220,10 @@ a tab left open overnight rolls Today into Yesterday on its own. Verified with a
 
 - **Aesthetic**: an analogue training ledger. Ink, brass, ruled lines. The screen visibly warms as
   the day fills in — that is the emotional point of the app.
+- **The mark**: a filled, tapered checkmark that also reads as a bird in flight — *vink* is Dutch
+  for both the tick and a finch. It replaced a tally gate at the rename. It is drawn as a filled
+  path rather than a stroke because at 23×15px a stroked curve reads as a squiggle; the taper is
+  what makes it a bird rather than a check. Same path serves the top bar and the favicon.
 - **Fonts**: Fraunces (day headers, wordmark, intro) + DM Mono (everything else). Column names are
   uppercase mono with wide tracking, clamped to two lines.
 - **Palette**: warm near-black `--ink`, aged paper `--paper`, and eight accents — brass, copper,

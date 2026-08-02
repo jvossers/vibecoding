@@ -7,12 +7,12 @@
 <meta name="theme-color" content="#12100E">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Day After Day">
+<meta name="apple-mobile-web-app-title" content="Vinker">
 <meta name="description" content="A daily checklist for tasks you repeat several times a day.">
-<title>Day After Day</title>
+<title>Vinker</title>
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='10'%20fill='%2312100E'/%3E%3Cg%20stroke='%23E8A33D'%20stroke-width='5'%20stroke-linecap='round'%3E%3Cpath%20d='M16%2016v32M28%2016v32M40%2016v32M52%2016v32M10%2050L58%2014'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Day%20After%20Day%22%2C%22short_name%22%3A%22Day%20After%20Day%22%2C%22start_url%22%3A%22.%22%2C%22scope%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%2312100E%22%2C%22theme_color%22%3A%22%2312100E%22%7D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2710%27%20fill%3D%27%2312100E%27%2F%3E%3Cg%20transform%3D%27translate%285%2C14%29%20scale%282.25%29%27%3E%3Cpath%20d%3D%27M1%204.2C4.4%205.6%206.8%208.6%208.8%2013.8%2011%208.4%2015.8%204.2%2023%201.6%2017.4%206.4%2012.8%2011%209.6%2015.4%208.9%2015.9%208.3%2015.7%208%2015.1%206%2010.4%203.9%207%201%204.2Z%27%20fill%3D%27%23E8A33D%27%20stroke%3D%27%23E8A33D%27%20stroke-width%3D%27.8%27%20stroke-linejoin%3D%27round%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Vinker%22%2C%22short_name%22%3A%22Vinker%22%2C%22start_url%22%3A%22.%22%2C%22scope%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%2312100E%22%2C%22theme_color%22%3A%22%2312100E%22%7D">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +20,7 @@
 
 <style>
 /* ============================================================
-   DAY AFTER DAY — a checklist for the things you repeat
+   VINKER — a checklist for the things you repeat
    Aesthetic: analogue training ledger. Ink, brass, ruled lines.
    ============================================================ */
 
@@ -122,7 +122,7 @@ input  { font: inherit; color: inherit; }
   padding: 12px var(--pad) 11px;
   border-bottom: 1px solid var(--rule);
 }
-.mark { width: 22px; height: 14px; flex: none; overflow: visible; }
+.mark { width: 23px; height: 15px; flex: none; overflow: visible; }
 .wordmark {
   font-family: Fraunces, Georgia, serif;
   font-weight: 600; font-size: 15px;
@@ -538,12 +538,11 @@ main {
 
 <div class="app">
   <header class="topbar">
-    <svg class="mark" viewBox="0 0 22 14" aria-hidden="true">
-      <g stroke="var(--brass)" stroke-width="1.8" stroke-linecap="round" fill="none">
-        <path d="M3 2v10M8 2v10M13 2v10M18 2v10M1.5 11.5L20 2.5"/>
-      </g>
+    <svg class="mark" viewBox="0 0 24 16" aria-hidden="true">
+      <path d="M1 4.2C4.4 5.6 6.8 8.6 8.8 13.8 11 8.4 15.8 4.2 23 1.6 17.4 6.4 12.8 11 9.6 15.4 8.9 15.9 8.3 15.7 8 15.1 6 10.4 3.9 7 1 4.2Z" fill="var(--brass)" stroke="var(--brass)"
+        stroke-width=".8" stroke-linejoin="round"/>
     </svg>
-    <span class="wordmark">Day after day</span>
+    <span class="wordmark">Vinker</span>
     <button class="gear" id="gear" aria-label="Settings">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
         <circle cx="12" cy="12" r="3.2"/>
@@ -587,8 +586,10 @@ main {
 (function () {
   'use strict';
 
-  var KEY = 'dayafterday.v1';
-  var OLD_KEY = 'dailycheck.v1';       /* the app was called Dailycheck until Aug 2026 */
+  var KEY = 'vinker.v1';
+  /* Renamed twice in Aug 2026: Dailycheck -> Day After Day -> Vinker. Newest
+     first, so whichever version a user last opened, their data comes with. */
+  var OLD_KEYS = ['dayafterday.v1', 'dailycheck.v1'];
   var ACCENTS = 8;
   /* Streaks are counted from this history, so the retention window is also the
      longest streak the app can show. Even 400 days of ticks is a few tens of KB. */
@@ -667,23 +668,28 @@ main {
     try {
       var raw = localStorage.getItem(KEY);
 
-      /* One-shot migration from the old brand. It has to be one-shot: if the
-         old key survived, "Delete everything" would remove the new key and the
-         next load would cheerfully resurrect everything from the old one. */
+      /* One-shot migration from the older brands. It has to be one-shot: if a
+         legacy key survived, "Delete everything" would remove the new key and
+         the next load would cheerfully resurrect it all from the old one. */
       if (raw === null) {
-        var old = localStorage.getItem(OLD_KEY);
-        if (old !== null) {
-          localStorage.setItem(KEY, old);
-          localStorage.removeItem(OLD_KEY);
-          raw = old;
+        for (var i = 0; i < OLD_KEYS.length && raw === null; i++) {
+          raw = localStorage.getItem(OLD_KEYS[i]);
         }
+        if (raw !== null) localStorage.setItem(KEY, raw);
       }
+      dropLegacyKeys();
 
       if (!raw) return blank();
       return normalize(JSON.parse(raw));
     } catch (e) {
       return blank();
     }
+  }
+
+  function dropLegacyKeys() {
+    try {
+      OLD_KEYS.forEach(function (k) { localStorage.removeItem(k); });
+    } catch (e) {}
   }
 
   /* localStorage can throw (private mode, quota). Degrade to memory, never to a blank screen. */
@@ -1277,7 +1283,7 @@ main {
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
-    a.download = 'dayafterday-' + todayKey() + '.json';
+    a.download = 'vinker-' + todayKey() + '.json';
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -1322,8 +1328,9 @@ main {
   document.getElementById('wipe').addEventListener('click', function () {
     if (!confirm('Delete the template and all history on this device? This cannot be undone.')) return;
     state = blank();
-    /* the pre-rebrand key too, or the migration would restore what was deleted */
-    try { localStorage.removeItem(KEY); localStorage.removeItem(OLD_KEY); } catch (e) {}
+    /* the pre-rebrand keys too, or the migration would restore what was deleted */
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    dropLegacyKeys();
     renderEditor();
     render();
     closeSheet();
