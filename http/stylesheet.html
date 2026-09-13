@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>It is not only images</title>
+
+<!-- Page 5 of 10. 1 HTML + 1 external CSS file = 2 requests. -->
+
+<!-- The CSS below is written INSIDE this page, between <style> tags.
+     Because it is part of this file, the browser does NOT have to ask
+     the server for it, so it costs no extra HTTP request. -->
+<style>
+  body   { font-family: Georgia, "Times New Roman", serif; line-height: 1.55;
+           max-width: 40em; margin: 2em auto; padding: 0 1em;
+           color: #1c1c1c; background: #fbfbf7; }
+  h1     { font-size: 1.6em; margin-bottom: 0.2em; }
+  h2     { font-size: 1.15em; margin-top: 1.6em; }
+  code   { background: #ececec; padding: 0 0.25em; font-size: 0.95em; }
+  img    { border: 1px solid #999; max-width: 100%; height: auto; }
+  .count { border: 2px solid #24408e; background: #eef1fb; padding: 0.6em 0.9em;
+           margin: 1.2em 0; }
+  .count b { font-size: 1.1em; }
+  nav    { margin-top: 2.5em; border-top: 1px solid #c9c9c9; padding-top: 0.9em;
+           font-size: 0.95em; }
+  table  { border-collapse: collapse; }
+  td, th { border: 1px solid #bbb; padding: 0.3em 0.6em; text-align: left; }
+</style>
+<!-- THIS page is the odd one out: its extra styling lives in a separate
+     file, so the browser has to fetch it. That is the second request. -->
+<link rel="stylesheet" href="extra.css">
+</head>
+<body>
+
+<h1>It is not only images</h1>
+
+<p>Every other page here keeps its CSS inside the HTML file. This one links to
+a separate stylesheet:</p>
+
+<p><code>&lt;link rel="stylesheet" href="extra.css"&gt;</code></p>
+
+<p>So the browser must fetch <code>extra.css</code> as well. In the Network tab
+its <b>Type</b> is <code>stylesheet</code>, not <code>png</code>. The green bar
+down the left of this paragraph and the different heading colour come from that
+second file. If the request for it failed, the words would still be here &#8212;
+just plain.</p>
+
+<p class="fromcss">This paragraph is styled by the external file.</p>
+
+<p>Anything a page mentions gets its own request: images, stylesheets,
+JavaScript files, fonts, videos. One file, one request.</p>
+
+<div class="count">
+<b>This page: 2 requests.</b> 1 HTML + 1 CSS file.
+</div>
+
+<nav>
+<p><a href="index.html">&#8592; Contents</a> &#183;
+   <a href="big-image.html">Next: a big image &#8594;</a></p>
+</nav>
+
+</body>
+</html>

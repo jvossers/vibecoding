@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Words to know</title>
+
+<!-- Page 10 of 10. Plain HTML: 1 request. -->
+
+<!-- The CSS below is written INSIDE this page, between <style> tags.
+     Because it is part of this file, the browser does NOT have to ask
+     the server for it, so it costs no extra HTTP request. -->
+<style>
+  body   { font-family: Georgia, "Times New Roman", serif; line-height: 1.55;
+           max-width: 40em; margin: 2em auto; padding: 0 1em;
+           color: #1c1c1c; background: #fbfbf7; }
+  h1     { font-size: 1.6em; margin-bottom: 0.2em; }
+  h2     { font-size: 1.15em; margin-top: 1.6em; }
+  code   { background: #ececec; padding: 0 0.25em; font-size: 0.95em; }
+  img    { border: 1px solid #999; max-width: 100%; height: auto; }
+  .count { border: 2px solid #24408e; background: #eef1fb; padding: 0.6em 0.9em;
+           margin: 1.2em 0; }
+  .count b { font-size: 1.1em; }
+  nav    { margin-top: 2.5em; border-top: 1px solid #c9c9c9; padding-top: 0.9em;
+           font-size: 0.95em; }
+  table  { border-collapse: collapse; }
+  td, th { border: 1px solid #bbb; padding: 0.3em 0.6em; text-align: left; }
+</style>
+</head>
+<body>
+
+<h1>Words to know</h1>
+
+<p><b>Client</b> &#8212; the program doing the asking. Here, Chrome.</p>
+
+<p><b>Server</b> &#8212; the computer that stores the files and answers requests.</p>
+
+<p><b>HTTP</b> &#8212; HyperText Transfer Protocol. The agreed set of rules for
+how the client asks and the server answers. <b>HTTPS</b> is the same thing with
+the messages encrypted, which is why the padlock appears in the address bar.</p>
+
+<p><b>Request</b> &#8212; a message from client to server. It names a
+<b>method</b> (<code>GET</code> when you are just fetching something), the path
+of the file wanted, and some <b>headers</b>. A request for this page looks
+roughly like:</p>
+
+<pre><code>GET /http/glossary.html HTTP/1.1
+Host: labs.vossers.com
+User-Agent: Mozilla/5.0 (...) Chrome/...
+Accept: text/html</code></pre>
+
+<p><b>Response</b> &#8212; the server's reply: a status code, some headers, then
+the file itself (the <b>body</b>).</p>
+
+<pre><code>HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 2431
+
+&lt;!DOCTYPE html&gt; ...</code></pre>
+
+<p><b>Status code</b> &#8212; the three-digit verdict. 200 OK, 404 Not Found,
+and so on. The first digit groups them: 2xx worked, 3xx go elsewhere or use
+your cache, 4xx the client asked for something wrong, 5xx the server broke.</p>
+
+<p><b>Header</b> &#8212; a line of extra information attached to a request or
+response, such as <code>Content-Type: image/png</code>.</p>
+
+<p><b>Stateless</b> &#8212; HTTP does not remember. Each request stands alone,
+and the server has no memory of your last one. Anything that needs remembering
+(being logged in, a shopping basket) is carried along in the requests
+themselves, usually in cookies.</p>
+
+<p><b>URL</b> &#8212; the full address, e.g.
+<code>https://labs.vossers.com/http/glossary.html</code>. The
+<code>https</code> part is the protocol, <code>labs.vossers.com</code> the
+server, and <code>/http/glossary.html</code> the path to the file on it.</p>
+
+<h2>The whole idea in one sentence</h2>
+<p>A web page is not one thing that arrives &#8212; it is a text file that
+arrives first, and then one extra request for every other file that text file
+mentions.</p>
+
+<div class="count">
+<b>This page: 1 request.</b>
+</div>
+
+<nav>
+<p><a href="index.html">&#8592; Back to the contents page</a></p>
+</nav>
+
+</body>
+</html>

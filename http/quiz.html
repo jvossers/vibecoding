@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Count the requests</title>
+
+<!-- Page 9 of 10. 1 HTML + 1 image = 2 requests. The expanding answers are part of this file, so opening them fetches nothing. -->
+
+<!-- The CSS below is written INSIDE this page, between <style> tags.
+     Because it is part of this file, the browser does NOT have to ask
+     the server for it, so it costs no extra HTTP request. -->
+<style>
+  body   { font-family: Georgia, "Times New Roman", serif; line-height: 1.55;
+           max-width: 40em; margin: 2em auto; padding: 0 1em;
+           color: #1c1c1c; background: #fbfbf7; }
+  h1     { font-size: 1.6em; margin-bottom: 0.2em; }
+  h2     { font-size: 1.15em; margin-top: 1.6em; }
+  code   { background: #ececec; padding: 0 0.25em; font-size: 0.95em; }
+  img    { border: 1px solid #999; max-width: 100%; height: auto; }
+  .count { border: 2px solid #24408e; background: #eef1fb; padding: 0.6em 0.9em;
+           margin: 1.2em 0; }
+  .count b { font-size: 1.1em; }
+  nav    { margin-top: 2.5em; border-top: 1px solid #c9c9c9; padding-top: 0.9em;
+           font-size: 0.95em; }
+  table  { border-collapse: collapse; }
+  td, th { border: 1px solid #bbb; padding: 0.3em 0.6em; text-align: left; }
+</style>
+</head>
+<body>
+
+<h1>Count the requests</h1>
+
+<p>Predict the answer first, then click the link and check the Network tab.
+Clear the list with the &#128683; button before each one so it is easy to
+count.</p>
+
+<h2>1. How many requests does <a href="devtools.html">this page</a> make?</h2>
+<details><summary>Show the answer</summary>
+<p><b>1.</b> It is HTML only &#8212; no images, no external stylesheet.</p>
+</details>
+
+<h2>2. How many does <a href="three-images.html">this page</a> make?</h2>
+<details><summary>Show the answer</summary>
+<p><b>4.</b> The HTML, then one request for each of the three pictures.</p>
+</details>
+
+<h2>3. Two of the pages here make exactly 2 requests, but for different
+reasons. Which are they?</h2>
+<details><summary>Show the answer</summary>
+<p><a href="one-image.html">One image</a> (HTML + a picture) and
+<a href="stylesheet.html">An external stylesheet</a> (HTML + a CSS file).
+<a href="big-image.html">A big image</a> and
+<a href="not-found.html">Things that go wrong</a> also make 2 &#8212; so really
+there are four.</p>
+</details>
+
+<h2>4. This page shows one picture. Why does it still only make 2 requests?</h2>
+<p><img src="images/badge.png" width="96" height="96" alt="Rings badge"></p>
+<details><summary>Show the answer</summary>
+<p>The HTML plus one image. The <code>&lt;details&gt;</code> boxes and all the
+styling are built into the HTML file, so revealing an answer costs nothing:
+click one and watch &#8212; no new row appears, because nothing new is fetched.</p>
+</details>
+
+<h2>5. You reload a page you have just visited, with the cache switched on.
+Does the browser send any requests?</h2>
+<details><summary>Show the answer</summary>
+<p>Usually yes, but they are cheap. It may serve files straight from the cache
+(Size says <b>disk cache</b>), or ask the server and get <b>304 Not Modified</b>
+back. See <a href="cache.html">cached images</a>.</p>
+</details>
+
+<div class="count">
+<b>This page: 2 requests.</b> 1 HTML + 1 image.
+</div>
+
+<nav>
+<p><a href="index.html">&#8592; Contents</a> &#183;
+   <a href="glossary.html">Next: words to know &#8594;</a></p>
+</nav>
+
+</body>
+</html>

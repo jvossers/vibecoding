@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three images = three extra requests</title>
+
+<!-- Page 4 of 10. 1 HTML + 3 images = 4 requests. -->
+
+<!-- The CSS below is written INSIDE this page, between <style> tags.
+     Because it is part of this file, the browser does NOT have to ask
+     the server for it, so it costs no extra HTTP request. -->
+<style>
+  body   { font-family: Georgia, "Times New Roman", serif; line-height: 1.55;
+           max-width: 40em; margin: 2em auto; padding: 0 1em;
+           color: #1c1c1c; background: #fbfbf7; }
+  h1     { font-size: 1.6em; margin-bottom: 0.2em; }
+  h2     { font-size: 1.15em; margin-top: 1.6em; }
+  code   { background: #ececec; padding: 0 0.25em; font-size: 0.95em; }
+  img    { border: 1px solid #999; max-width: 100%; height: auto; }
+  .count { border: 2px solid #24408e; background: #eef1fb; padding: 0.6em 0.9em;
+           margin: 1.2em 0; }
+  .count b { font-size: 1.1em; }
+  nav    { margin-top: 2.5em; border-top: 1px solid #c9c9c9; padding-top: 0.9em;
+           font-size: 0.95em; }
+  table  { border-collapse: collapse; }
+  td, th { border: 1px solid #bbb; padding: 0.3em 0.6em; text-align: left; }
+</style>
+</head>
+<body>
+
+<h1>Three images = three extra requests</h1>
+
+<p>There is no bulk discount. Each picture is a separate file on the server, so
+each one needs its own request. Count the rows: you should get four.</p>
+
+<p><img src="images/waves.png" width="240" height="160" alt="Wave pattern"></p>
+<p><img src="images/blobs.png" width="240" height="180" alt="Orange blobs"></p>
+<p><img src="images/logo.svg" width="240" height="120" alt="HTTP logo drawn as vector shapes"></p>
+
+<p>Look at the <b>Type</b> column: two rows say <code>png</code> and one says
+<code>svg+xml</code>. The server tells the browser what kind of file it is
+sending using a response header called <code>Content-Type</code>.</p>
+
+<p>An SVG is not a photo &#8212; it is text describing shapes. Open
+<a href="images/logo.svg">images/logo.svg</a> directly and view its source: it
+is readable, just like the HTML.</p>
+
+<div class="count">
+<b>This page: 4 requests.</b> 1 HTML + 3 images.
+</div>
+
+<nav>
+<p><a href="index.html">&#8592; Contents</a> &#183;
+   <a href="stylesheet.html">Next: an external stylesheet &#8594;</a></p>
+</nav>
+
+</body>
+</html>

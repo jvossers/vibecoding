@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to read the Network panel</title>
+
+<!-- Page 2 of 10. Still no images: 1 request. -->
+
+<!-- The CSS below is written INSIDE this page, between <style> tags.
+     Because it is part of this file, the browser does NOT have to ask
+     the server for it, so it costs no extra HTTP request. -->
+<style>
+  body   { font-family: Georgia, "Times New Roman", serif; line-height: 1.55;
+           max-width: 40em; margin: 2em auto; padding: 0 1em;
+           color: #1c1c1c; background: #fbfbf7; }
+  h1     { font-size: 1.6em; margin-bottom: 0.2em; }
+  h2     { font-size: 1.15em; margin-top: 1.6em; }
+  code   { background: #ececec; padding: 0 0.25em; font-size: 0.95em; }
+  img    { border: 1px solid #999; max-width: 100%; height: auto; }
+  .count { border: 2px solid #24408e; background: #eef1fb; padding: 0.6em 0.9em;
+           margin: 1.2em 0; }
+  .count b { font-size: 1.1em; }
+  nav    { margin-top: 2.5em; border-top: 1px solid #c9c9c9; padding-top: 0.9em;
+           font-size: 0.95em; }
+  table  { border-collapse: collapse; }
+  td, th { border: 1px solid #bbb; padding: 0.3em 0.6em; text-align: left; }
+</style>
+</head>
+<body>
+
+<h1>How to read the Network panel</h1>
+
+<p>Each row in the Network tab is <b>one HTTP request and its response</b>.
+Load this page and you get exactly one row, because this page asks for nothing
+else.</p>
+
+<h2>The columns that matter</h2>
+
+<table>
+<tr><th>Column</th><th>What it tells you</th></tr>
+<tr><td>Name</td><td>Which file was asked for, e.g. <code>devtools.html</code></td></tr>
+<tr><td>Status</td><td>The response code. <b>200</b> = here it is.
+    <b>304</b> = you already have it. <b>404</b> = no such file.</td></tr>
+<tr><td>Type</td><td><code>document</code> for a page, <code>png</code> or
+    <code>svg+xml</code> for a picture, <code>stylesheet</code> for CSS.</td></tr>
+<tr><td>Size</td><td>How many bytes came back over the network.</td></tr>
+<tr><td>Time</td><td>How long the round trip took.</td></tr>
+</table>
+
+<h2>The order tells a story</h2>
+<p>The <b>HTML always arrives first</b>. The browser cannot know a page needs a
+picture until it has read the HTML and found the <code>&lt;img&gt;</code> tag.
+So it is always: ask for the page, read the page, then ask for whatever the
+page mentions.</p>
+
+<h2>Try this</h2>
+<p>Click a row to open it, then look at <b>Headers</b>. You will see the
+<b>request headers</b> your browser sent (including <code>Host</code> and
+<code>User-Agent</code>) and the <b>response headers</b> the server sent back
+(including <code>Content-Type</code>).</p>
+
+<div class="count">
+<b>This page: 1 request.</b>
+</div>
+
+<nav>
+<p><a href="index.html">&#8592; Contents</a> &#183;
+   <a href="one-image.html">Next: one image &#8594;</a></p>
+</nav>
+
+</body>
+</html>

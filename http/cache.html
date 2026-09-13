@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Requests the browser can skip</title>
+
+<!-- Page 7 of 10. 1 HTML + 2 images = 3 requests. Both images are used on earlier pages, so the cache can serve them. -->
+
+<!-- The CSS below is written INSIDE this page, between <style> tags.
+     Because it is part of this file, the browser does NOT have to ask
+     the server for it, so it costs no extra HTTP request. -->
+<style>
+  body   { font-family: Georgia, "Times New Roman", serif; line-height: 1.55;
+           max-width: 40em; margin: 2em auto; padding: 0 1em;
+           color: #1c1c1c; background: #fbfbf7; }
+  h1     { font-size: 1.6em; margin-bottom: 0.2em; }
+  h2     { font-size: 1.15em; margin-top: 1.6em; }
+  code   { background: #ececec; padding: 0 0.25em; font-size: 0.95em; }
+  img    { border: 1px solid #999; max-width: 100%; height: auto; }
+  .count { border: 2px solid #24408e; background: #eef1fb; padding: 0.6em 0.9em;
+           margin: 1.2em 0; }
+  .count b { font-size: 1.1em; }
+  nav    { margin-top: 2.5em; border-top: 1px solid #c9c9c9; padding-top: 0.9em;
+           font-size: 0.95em; }
+  table  { border-collapse: collapse; }
+  td, th { border: 1px solid #bbb; padding: 0.3em 0.6em; text-align: left; }
+</style>
+</head>
+<body>
+
+<h1>Requests the browser can skip</h1>
+
+<p>Both pictures below have already been used elsewhere on this site:
+<code>badge.png</code> came from the <a href="one-image.html">one image</a>
+page, and <code>waves.png</code> from the
+<a href="three-images.html">three images</a> page.</p>
+
+<p><img src="images/badge.png" width="96" height="96" alt="Rings badge">
+   <img src="images/waves.png" width="180" height="120" alt="Wave pattern"></p>
+
+<h2>The experiment</h2>
+<ol>
+  <li>With <b>Disable cache</b> ticked, reload. Both images are downloaded
+      again: the Size column shows real numbers.</li>
+  <li>Now <b>untick</b> Disable cache and reload.</li>
+  <li>The rows are still there &#8212; the browser still <i>decided</i> about each
+      file &#8212; but Size now says <b>(disk cache)</b> or
+      <b>(memory cache)</b>, and Time drops to almost nothing.</li>
+</ol>
+
+<p>A cached file is one the browser already has on your computer, so it does not
+need to ask the server for it again. Sometimes it asks anyway, just to check,
+and the server replies <b>304 Not Modified</b>, meaning "the copy you have is
+still fine". A 304 response is tiny because it contains no file, only that
+answer.</p>
+
+<p>This is why a site feels faster the second time you visit it.</p>
+
+<div class="count">
+<b>This page: 3 requests.</b> 1 HTML + 2 images &#8212; though with the cache
+switched on, two of them may cost nothing.
+</div>
+
+<nav>
+<p><a href="index.html">&#8592; Contents</a> &#183;
+   <a href="not-found.html">Next: things that go wrong &#8594;</a></p>
+</nav>
+
+</body>
+</html>

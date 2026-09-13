@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTTP Requests &#8212; a click-along demo</title>
+
+<!-- Page 1 of 10. Plain HTML, no images, no external files: exactly 1 request. -->
+
+<!-- The CSS below is written INSIDE this page, between <style> tags.
+     Because it is part of this file, the browser does NOT have to ask
+     the server for it, so it costs no extra HTTP request. -->
+<style>
+  body   { font-family: Georgia, "Times New Roman", serif; line-height: 1.55;
+           max-width: 40em; margin: 2em auto; padding: 0 1em;
+           color: #1c1c1c; background: #fbfbf7; }
+  h1     { font-size: 1.6em; margin-bottom: 0.2em; }
+  h2     { font-size: 1.15em; margin-top: 1.6em; }
+  code   { background: #ececec; padding: 0 0.25em; font-size: 0.95em; }
+  img    { border: 1px solid #999; max-width: 100%; height: auto; }
+  .count { border: 2px solid #24408e; background: #eef1fb; padding: 0.6em 0.9em;
+           margin: 1.2em 0; }
+  .count b { font-size: 1.1em; }
+  nav    { margin-top: 2.5em; border-top: 1px solid #c9c9c9; padding-top: 0.9em;
+           font-size: 0.95em; }
+  table  { border-collapse: collapse; }
+  td, th { border: 1px solid #bbb; padding: 0.3em 0.6em; text-align: left; }
+</style>
+</head>
+<body>
+
+<h1>HTTP requests: a click-along demo</h1>
+
+<p>Every time you click a link, your browser sends an <b>HTTP request</b> to a
+server, and the server sends back an <b>HTTP response</b>. Nothing here is
+hidden: this site is a handful of plain HTML files, and you can watch every
+single request happen.</p>
+
+<h2>Set up first (30 seconds)</h2>
+<ol>
+  <li>Press <code>F12</code> (or <code>Ctrl</code>+<code>Shift</code>+<code>I</code>)
+      to open Chrome DevTools.</li>
+  <li>Click the <b>Network</b> tab.</li>
+  <li>Tick <b>Disable cache</b>, so every request really goes to the server.</li>
+  <li>Leave DevTools open, then click the links below and watch the list grow.</li>
+</ol>
+
+<p>New to the Network tab? Start with
+<a href="devtools.html">How to read the Network panel</a>.</p>
+
+<h2>The pages</h2>
+
+<table>
+<tr><th>Page</th><th>What it shows</th><th>Requests</th></tr>
+<tr><td><a href="devtools.html">How to read the Network panel</a></td>
+    <td>The columns, and what they mean</td><td>1</td></tr>
+<tr><td><a href="one-image.html">One image</a></td>
+    <td>HTML first, then the picture</td><td>2</td></tr>
+<tr><td><a href="three-images.html">Three images</a></td>
+    <td>One request per picture</td><td>4</td></tr>
+<tr><td><a href="stylesheet.html">An external stylesheet</a></td>
+    <td>Not just images &#8212; CSS is fetched too</td><td>2</td></tr>
+<tr><td><a href="big-image.html">A big image</a></td>
+    <td>Size and time columns</td><td>2</td></tr>
+<tr><td><a href="cache.html">Cached images</a></td>
+    <td>Requests the browser can skip</td><td>3</td></tr>
+<tr><td><a href="not-found.html">Things that go wrong</a></td>
+    <td>Status code 404</td><td>2</td></tr>
+<tr><td><a href="quiz.html">Count the requests</a></td>
+    <td>Predict before you click</td><td>2</td></tr>
+<tr><td><a href="glossary.html">Words to know</a></td>
+    <td>Request, response, status, header</td><td>1</td></tr>
+</table>
+
+<div class="count">
+<b>This page: 1 request.</b> It is pure HTML with no pictures, so the browser
+asks for one file and is done.
+</div>
+
+<h2>Two things you might also spot</h2>
+<ul>
+  <li><code>favicon.ico</code> &#8212; the browser asking for the little icon
+      shown on the browser tab. It asks on its own; you never wrote a link to
+      it. If the server has no icon, this comes back <b>404</b>.</li>
+  <li>Right-click any page and choose <b>View page source</b>. What you see is
+      exactly what came back in the response &#8212; nothing more.</li>
+</ul>
+
+</body>
+</html>
