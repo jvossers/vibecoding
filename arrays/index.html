@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Array Lab &#8212; seeing 1D, 2D and 3D lists in Python</title>
+<meta name="description" content="An interactive tool for GCSE Computer Science: write a Python list of colours and watch it become a row, a grid or a cube you can spin, click and index.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0a0c10;
+  --panel:#11151b;
+  --panel-2:#161b23;
+  --raise:#1c222c;
+  --line:#242c38;
+  --line-soft:#1a212b;
+  --fg:#e9e7e2;
+  --dim:#8b96a6;
+  --dimmer:#5e6879;
+  --ax0:#ffb240;
+  --ax1:#45d7c6;
+  --ax2:#ff7fae;
+  --ok:#a3e26a;
+  --err:#ff6f6f;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --disp:"Bricolage Grotesque","Trebuchet MS",Verdana,sans-serif;
+  --pad:clamp(10px,1.6vw,18px);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 700px at 78% -10%, rgba(255,178,64,.07), transparent 60%),
+    radial-gradient(900px 600px at 5% 110%, rgba(69,215,198,.06), transparent 60%),
+    var(--ink);
+  color:var(--fg);
+  font-family:var(--mono);
+  font-size:14px;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:26px 26px;
+  mask-image:radial-gradient(120% 100% at 50% 0%,#000 30%,transparent 100%);
+}
+
+/* ---------- shell ---------- */
+.app{position:relative;z-index:1;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr)}
+
+header.bar{
+  display:flex;align-items:center;gap:var(--pad);flex-wrap:wrap;
+  padding:10px var(--pad);border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.028),transparent);
+}
+.wordmark{display:flex;align-items:baseline;gap:.55em;font-family:var(--disp);letter-spacing:-.02em}
+.wordmark b{font-weight:800;font-size:19px}
+.wordmark span{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+.logo{width:22px;height:22px;flex:none;align-self:center;margin-right:2px}
+
+.shape{
+  display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap;
+}
+.chip{
+  border:1px solid var(--line);background:var(--panel);border-radius:999px;
+  padding:4px 11px;font-size:12px;color:var(--dim);white-space:nowrap;
+}
+.chip b{color:var(--fg);font-weight:600}
+.chip.dimension{border-color:rgba(255,178,64,.38);color:var(--ax0);background:rgba(255,178,64,.07)}
+
+/* ---------- panels ---------- */
+main{display:grid;grid-template-columns:minmax(300px,.92fr) minmax(0,1.08fr);min-height:0}
+.pane{min-width:0;min-height:0;display:flex;flex-direction:column}
+.pane.left{border-right:1px solid var(--line)}
+.pane-head{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:9px var(--pad);border-bottom:1px solid var(--line-soft);
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dimmer);
+}
+.pane-head .file{color:var(--dim);letter-spacing:.04em;text-transform:none;font-size:12px}
+
+.presets{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+button.px{
+  font-family:var(--mono);font-size:11px;letter-spacing:.04em;
+  color:var(--dim);background:var(--panel-2);border:1px solid var(--line);
+  padding:4px 9px;border-radius:6px;cursor:pointer;transition:.16s;
+}
+button.px:hover{color:var(--fg);border-color:var(--dimmer);background:var(--raise)}
+button.px.on{color:var(--ink);background:var(--ax0);border-color:var(--ax0);font-weight:600}
+
+/* ---------- editor ---------- */
+.editor{position:relative;flex:1;min-height:0;overflow:hidden;background:var(--panel)}
+.editor pre,.editor textarea{
+  margin:0;position:absolute;inset:0;width:100%;height:100%;
+  padding:16px var(--pad) 40px var(--pad);
+  font:400 13.5px/1.62 var(--mono);
+  letter-spacing:0;tab-size:2;white-space:pre;overflow:auto;border:0;
+}
+.editor pre{color:var(--fg);pointer-events:none;z-index:1}
+.editor textarea{
+  z-index:2;background:transparent;color:transparent;caret-color:var(--ax0);
+  resize:none;outline:none;-webkit-text-fill-color:transparent;
+}
+.editor textarea::selection{background:rgba(255,178,64,.26);-webkit-text-fill-color:transparent}
+.editor pre::-webkit-scrollbar,.editor textarea::-webkit-scrollbar{width:10px;height:10px}
+.editor textarea::-webkit-scrollbar-thumb{background:var(--raise);border-radius:8px}
+.editor pre::-webkit-scrollbar-thumb{background:transparent}
+
+.t-var{color:#e9e7e2}
+.t-op{color:var(--dimmer)}
+.t-punc{color:#6f7c8d}
+.t-num{color:var(--ax1)}
+.t-com{color:#4d5668;font-style:italic}
+.t-str{color:#c3cad6}
+.hl-0,.hl-1,.hl-2{border-radius:3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.hl-0{background:rgba(255,178,64,.10);box-shadow:0 0 0 1px rgba(255,178,64,.20)}
+.hl-1{background:rgba(69,215,198,.12);box-shadow:0 0 0 1px rgba(69,215,198,.24)}
+.hl-2{background:rgba(255,127,174,.15);box-shadow:0 0 0 1px rgba(255,127,174,.30)}
+.hl-leaf{background:rgba(255,178,64,.34);box-shadow:0 0 0 1px rgba(255,178,64,.8);color:#fff}
+
+.status{
+  border-top:1px solid var(--line-soft);padding:8px var(--pad);font-size:12px;
+  color:var(--dim);display:flex;gap:9px;align-items:flex-start;min-height:37px;background:var(--panel-2)
+}
+.status .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);flex:none;margin-top:5px}
+.status.bad{color:var(--err)}
+.status.bad .dot{background:var(--err)}
+.status.warn{color:var(--ax0)}
+.status.warn .dot{background:var(--ax0)}
+
+/* ---------- stage ---------- */
+.stage{position:relative;flex:1;min-height:0;overflow:hidden;touch-action:none;cursor:grab}
+.stage.grabbing{cursor:grabbing}
+.stage canvas{display:block;width:100%;height:100%;outline:none}
+
+.legend{
+  position:absolute;top:12px;left:12px;pointer-events:none;
+  font-size:12.5px;background:rgba(10,12,16,.72);backdrop-filter:blur(7px);
+  border:1px solid var(--line);border-radius:9px;padding:8px 11px;line-height:1.75;
+}
+.legend .row{display:flex;gap:8px;align-items:center;color:var(--dim);font-size:11px}
+.legend .k{width:9px;height:9px;border-radius:2px;flex:none}
+.legend .expr{font-size:13px;color:var(--fg);margin-bottom:4px;letter-spacing:.01em}
+.i0{color:var(--ax0)}.i1{color:var(--ax1)}.i2{color:var(--ax2)}
+
+.hint{
+  position:absolute;left:50%;bottom:14px;transform:translateX(-50%);
+  font-size:11.5px;color:var(--dimmer);pointer-events:none;white-space:nowrap;
+  background:rgba(10,12,16,.6);padding:4px 10px;border-radius:999px;border:1px solid var(--line-soft);
+}
+.tip{
+  position:absolute;pointer-events:none;z-index:5;transform:translate(-50%,-150%);
+  background:var(--raise);border:1px solid var(--line);border-radius:7px;
+  padding:4px 8px;font-size:12px;white-space:nowrap;opacity:0;transition:opacity .12s;
+  box-shadow:0 8px 22px rgba(0,0,0,.5)
+}
+.tip.on{opacity:1}
+
+.controls{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:9px var(--pad);border-top:1px solid var(--line-soft);background:var(--panel-2);font-size:11.5px;color:var(--dim)
+}
+.controls label{display:flex;align-items:center;gap:7px;white-space:nowrap}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;height:3px;width:104px;border-radius:3px;
+  background:var(--line);outline:none;cursor:pointer
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--fg);
+  border:2px solid var(--panel-2);cursor:pointer
+}
+input[type=range]::-moz-range-thumb{width:11px;height:11px;border-radius:50%;background:var(--fg);border:2px solid var(--panel-2);cursor:pointer}
+.seg{display:flex;gap:4px;align-items:center}
+.seg button{
+  font-family:var(--mono);font-size:11px;color:var(--dim);background:var(--panel);
+  border:1px solid var(--line);border-radius:5px;padding:3px 7px;cursor:pointer;min-width:24px
+}
+.seg button.on{background:var(--ax0);color:var(--ink);border-color:var(--ax0);font-weight:600}
+.switch{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.switch input{accent-color:var(--ax0);width:13px;height:13px;cursor:pointer}
+
+/* ---------- readout ---------- */
+.readout{border-top:1px solid var(--line);background:var(--panel);padding:12px var(--pad) 14px}
+.readout .title{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dimmer);margin-bottom:9px}
+.steps{display:flex;flex-direction:column;gap:2px}
+.step{
+  display:grid;grid-template-columns:minmax(0,auto) 1fr auto;gap:12px;align-items:center;
+  padding:5px 9px;border-radius:7px;cursor:pointer;border:1px solid transparent;transition:.12s
+}
+.step:hover,.step.focus{background:var(--panel-2);border-color:var(--line)}
+.step .expr{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.step .what{font-size:11.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.step .val{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--fg)}
+.step .val .sw{width:15px;height:15px;border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.22) inset}
+.step.leaf{background:rgba(255,178,64,.08);border-color:rgba(255,178,64,.26)}
+.empty{color:var(--dimmer);font-size:12.5px;line-height:1.6}
+
+@media (max-width:900px){
+  body{overflow:auto}
+  .app{height:auto;min-height:100dvh}
+  main{grid-template-columns:1fr}
+  .pane.left{border-right:0;border-bottom:1px solid var(--line)}
+  .editor{height:min(38vh,320px);flex:none}
+  .stage{height:min(58vh,520px);flex:none}
+  .legend{font-size:11px;padding:6px 9px;line-height:1.6;background:rgba(10,12,16,.82)}
+  .legend .expr{font-size:12px}
+  .legend .row{font-size:10px}
+  .step{grid-template-columns:minmax(0,auto) 1fr;gap:8px}
+  .step .val{grid-column:1/-1}
+  .shape{margin-left:0;width:100%}
+  .hint{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="bar">
+    <svg class="logo" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 2.6 21 7v10l-9 4.4L3 17V7l9-4.4Z" stroke="#ffb240" stroke-width="1.4" stroke-linejoin="round"/>
+      <path d="M3 7l9 4.4L21 7M12 11.4V21.4" stroke="#45d7c6" stroke-width="1.1" stroke-linejoin="round" opacity=".85"/>
+      <circle cx="12" cy="11.4" r="1.7" fill="#ff7fae"/>
+    </svg>
+    <div class="wordmark"><b>Array&nbsp;Lab</b><span>1D &middot; 2D &middot; 3D lists in Python</span></div>
+    <div class="shape" id="shape"></div>
+  </header>
+
+  <main>
+    <!-- ============ code pane ============ -->
+    <section class="pane left">
+      <div class="pane-head">
+        <span class="file">colours.py</span>
+        <div class="presets" id="presets"></div>
+      </div>
+
+      <div class="editor" id="editor">
+        <pre aria-hidden="true"><code id="hl"></code></pre>
+        <textarea id="code" wrap="off" spellcheck="false" autocapitalize="off" autocorrect="off"
+                  aria-label="Python code: a list variable"></textarea>
+      </div>
+
+      <div class="status" id="status"><span class="dot"></span><span id="statusText">Ready.</span></div>
+    </section>
+
+    <!-- ============ view pane ============ -->
+    <section class="pane right">
+      <div class="pane-head">
+        <span>The picture of that list</span>
+        <div class="presets">
+          <button class="px" id="btnReset" title="Reset the camera">recentre</button>
+        </div>
+      </div>
+
+      <div class="stage" id="stage">
+        <canvas id="view" tabindex="0" aria-label="3D view of the array. Drag to rotate, click a cube to select it."></canvas>
+        <div class="legend" id="legend"></div>
+        <div class="tip" id="tip"></div>
+        <div class="hint">drag to spin &nbsp;&middot;&nbsp; scroll to zoom &nbsp;&middot;&nbsp; click a cube &nbsp;&middot;&nbsp; arrow keys to step</div>
+      </div>
+
+      <div class="controls">
+        <label>gap <input type="range" id="gap" min="0" max="100" value="18"></label>
+        <label class="switch"><input type="checkbox" id="labels" checked> index numbers</label>
+        <label class="switch"><input type="checkbox" id="xray"> see inside</label>
+        <span class="seg" id="layerSeg"></span>
+      </div>
+
+      <div class="readout">
+        <div class="title">How you would reach it in Python</div>
+        <div class="steps" id="steps"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+"use strict";
+/* =========================================================================
+   Array Lab
+   A tiny Python-list parser, a tiny software 3D renderer, and a two-way
+   link between the two: click a cube -> see the index path; click the code
+   -> see the cube.
+   ========================================================================= */
+
+const $ = s => document.querySelector(s);
+const clamp = (v,a,b) => v < a ? a : v > b ? b : v;
+
+/* ---------------------------------------------------------------- colours */
+const probe = document.createElement("canvas").getContext("2d", {willReadFrequently:false});
+
+/** Normalise any CSS colour string to rgb ints, or null if it is not a colour. */
+function cssColour(v){
+  if(typeof v !== "string" || !v.trim()) return null;
+  probe.fillStyle = "#000"; probe.fillStyle = v; const a = probe.fillStyle;
+  probe.fillStyle = "#fff"; probe.fillStyle = v; const b = probe.fillStyle;
+  if(a !== b) return null;                       // the browser rejected it twice
+  let m = /^#([0-9a-f]{6})$/i.exec(a);
+  if(m){ const n = parseInt(m[1],16); return [n>>16 & 255, n>>8 & 255, n & 255]; }
+  m = /rgba?\(([^)]+)\)/.exec(a);
+  if(m){ const p = m[1].split(",").map(Number); return [p[0]|0, p[1]|0, p[2]|0]; }
+  return null;
+}
+const shade = (c,k,alpha) =>
+  "rgba(" + clamp(Math.round(c[0]*k),0,255) + "," + clamp(Math.round(c[1]*k),0,255) +
+  "," + clamp(Math.round(c[2]*k),0,255) + "," + alpha + ")";
+const hex = c => "#" + c.map(n => n.toString(16).padStart(2,"0")).join("");
+const lum = c => (0.2126*c[0] + 0.7152*c[1] + 0.0722*c[2]) / 255;
+/** Lift dark colours towards white so the literal stays readable on the dark
+    editor - multiplying would leave #000000 invisible. */
+function readable(c){
+  const l = lum(c);
+  if(l >= 0.42) return "rgb(" + c.join(",") + ")";
+  const t = (0.42 - l) / (1 - l);
+  return "rgb(" + c.map(v => Math.round(v + (255-v)*t)).join(",") + ")";
+}
+const NUM_LO = [58,70,86], NUM_HI = [255,178,64];
+const ramp = t => [0,1,2].map(i => NUM_LO[i] + (NUM_HI[i]-NUM_LO[i]) * clamp(t,0,1));
+
+/* ----------------------------------------------------------------- parser */
+/* Tokeniser: strings, brackets, commas, '=', names, numbers, # comments.    */
+function tokenize(src){
+  const toks = [], trivia = [];
+  let i = 0;
+  while(i < src.length){
+    const c = src[i];
+    if(c === "#"){                                  // a Python comment
+      const s = i; while(i < src.length && src[i] !== "\n") i++;
+      trivia.push({s, e:i, cls:"t-com"}); continue;
+    }
+    if(c === " " || c === "\t" || c === "\n" || c === "\r"){ i++; continue; }
+    if(c === '"' || c === "'"){
+      const q = c, s = i; i++;
+      let val = "";
+      while(i < src.length && src[i] !== q){
+        if(src[i] === "\\" && i+1 < src.length){ val += src[i+1]; i += 2; }
+        else { val += src[i]; i++; }
+      }
+      if(i >= src.length) throw {msg:"a quote was opened but never closed", at:s};
+      i++;
+      toks.push({t:"str", v:val, s, e:i}); continue;
+    }
+    if("[](),=:".indexOf(c) >= 0){ toks.push({t:c, s:i, e:i+1}); i++; continue; }
+    if(/[A-Za-z_]/.test(c)){
+      const s = i; while(i < src.length && /[A-Za-z0-9_]/.test(src[i])) i++;
+      toks.push({t:"id", v:src.slice(s,i), s, e:i}); continue;
+    }
+    if(/[0-9]/.test(c) || (c === "-" && /[0-9.]/.test(src[i+1]||"")) || (c === "." && /[0-9]/.test(src[i+1]||""))){
+      const s = i; i++;
+      while(i < src.length && /[0-9._eE]/.test(src[i])) i++;
+      toks.push({t:"num", v:parseFloat(src.slice(s,i)), s, e:i}); continue;
+    }
+    throw {msg:"I do not understand the character " + JSON.stringify(c), at:i};
+  }
+  return {toks, trivia};
+}
+
+/* Recursive descent over  value := list | string | number | None/True/False  */
+function parseValue(toks, p){
+  const tk = toks[p.i];
+  if(!tk) throw {msg:"the list ends too early", at:p.end};
+  if(tk.t === "["){
+    const s = tk.s; p.i++;
+    const items = [];
+    for(;;){
+      const cur = toks[p.i];
+      if(!cur) throw {msg:"a [ was opened but never closed", at:s};
+      if(cur.t === "]"){ p.i++; return {kind:"list", items, s, e:cur.e}; }
+      items.push(parseValue(toks, p));
+      const nxt = toks[p.i];
+      if(!nxt) throw {msg:"a [ was opened but never closed", at:s};
+      if(nxt.t === ","){ p.i++; continue; }
+      if(nxt.t === "]"){ p.i++; return {kind:"list", items, s, e:nxt.e}; }
+      throw {msg:"expected a comma between items", at:nxt.s};
+    }
+  }
+  if(tk.t === "str"){ p.i++; return {kind:"leaf", value:tk.v, isText:true, s:tk.s, e:tk.e}; }
+  if(tk.t === "num"){ p.i++; return {kind:"leaf", value:tk.v, isText:false, s:tk.s, e:tk.e}; }
+  if(tk.t === "id" && ["None","True","False"].indexOf(tk.v) >= 0){
+    p.i++; return {kind:"leaf", value:tk.v, isText:false, keyword:true, s:tk.s, e:tk.e};
+  }
+  throw {msg:"expected a value (a \"#colour\", a number, or another [ list ])", at:tk.s};
+}
+
+/** Parse the first  name = [...]  assignment in the source. */
+function parseProgram(src){
+  const {toks, trivia} = tokenize(src);
+  let at = -1;
+  for(let i = 0; i < toks.length - 1; i++){
+    if(toks[i].t === "id" && toks[i+1].t === "=" && toks[i+2] && toks[i+2].t === "["){ at = i; break; }
+  }
+  if(at < 0) throw {msg:"no list yet — write something like  colours = [\"#ff0000\", \"#00ff00\"]", at:src.length};
+  const name = toks[at].v;
+  const p = {i:at+2, end:src.length};
+  const root = parseValue(toks, p);
+  let extra = false;
+  for(let i = p.i; i < toks.length - 1; i++){
+    if(toks[i].t === "id" && toks[i+1].t === "="){ extra = true; break; }
+  }
+  return {name, root, toks, trivia, nameTok:toks[at], extra};
+}
+
+/* --------------------------------------------------------------- analysis */
+function depthOf(node){
+  if(node.kind === "leaf") return 0;
+  if(!node.items.length) return 1;
+  let d = -1, mixed = false;
+  for(const it of node.items){
+    const di = depthOf(it);
+    if(d < 0) d = di; else if(di !== d) mixed = true;
+    if(it.mixed) mixed = true;
+  }
+  node.mixed = mixed;
+  return d + 1;
+}
+
+/** Walk the tree collecting every leaf together with its index path. */
+function collect(root, dims){
+  const cells = [], shape = new Array(dims).fill(0);
+  let ragged = false;
+  (function walk(node, path){
+    if(node.kind === "list"){
+      const d = path.length;
+      if(d < dims){
+        if(shape[d] === 0) shape[d] = node.items.length;
+        else if(shape[d] !== node.items.length){ ragged = true; shape[d] = Math.max(shape[d], node.items.length); }
+      }
+      node.items.forEach((it,i) => walk(it, path.concat(i)));
+    } else if(path.length === dims){
+      cells.push({path, node});
+    }
+  })(root, []);
+  return {cells, shape, ragged};
+}
+
+/** Find the node addressed by an index path (used for the drill-down rows). */
+function nodeAt(root, path){
+  let n = root;
+  for(const i of path){
+    if(!n || n.kind !== "list" || !n.items[i]) return null;
+    n = n.items[i];
+  }
+  return n;
+}
+
+/* ------------------------------------------------------------ the model */
+const model = {
+  ok:false, src:"", name:"data", root:null, dims:0, shape:[], cells:[],
+  map:new Map(), ragged:false, toks:[], trivia:[], error:null, extra:false
+};
+
+const EMPTY_RGB = [46,54,67];
+
+function buildModel(src){
+  const out = {ok:false, src, error:null};
+  let prog;
+  try { prog = parseProgram(src); }
+  catch(err){ out.error = err; return out; }
+
+  const dims = depthOf(prog.root);
+  if(dims < 1) { out.error = {msg:"that is a single value, not a list", at:prog.root.s}; return out; }
+  if(dims > 3) { out.error = {msg:"that list is " + dims + " deep — this tool draws 1, 2 or 3 dimensions", at:prog.root.s}; return out; }
+  if(prog.root.mixed){ out.error = {msg:"the lists are not nested evenly — every item at the same level needs the same depth", at:prog.root.s}; return out; }
+
+  const {cells, shape, ragged} = collect(prog.root, dims);
+  const total = shape.reduce((a,b) => a*b, 1);
+  if(total > 12000){ out.error = {msg:"that is " + total + " cubes — too many to draw (keep it under 12000)", at:prog.root.s}; return out; }
+
+  // numbers become a dark-to-amber ramp so number arrays are readable too
+  let lo = Infinity, hi = -Infinity;
+  for(const c of cells) if(typeof c.node.value === "number"){ lo = Math.min(lo,c.node.value); hi = Math.max(hi,c.node.value); }
+  const span = hi - lo;
+
+  for(const c of cells){
+    const v = c.node.value;
+    c.raw = c.node.isText ? JSON.stringify(v).replace(/"/g,"'") : String(v);
+    if(c.node.isText){
+      const rgb = cssColour(v);
+      c.rgb = rgb || EMPTY_RGB; c.isColour = !!rgb; c.empty = !rgb;
+    } else if(typeof v === "number"){
+      c.rgb = ramp(span > 0 ? (v - lo) / span : 0.65); c.isColour = false; c.empty = false; c.num = true;
+    } else if(v === "True"){ c.rgb = [163,226,106]; c.isColour = false; c.empty = false; }
+    else if(v === "False"){ c.rgb = [70,80,96]; c.isColour = false; c.empty = false; }
+    else { c.rgb = EMPTY_RGB; c.isColour = false; c.empty = true; }   // None
+  }
+
+  out.ok = true; out.name = prog.name; out.root = prog.root; out.dims = dims;
+  out.shape = shape; out.cells = cells; out.ragged = ragged; out.total = total;
+  out.toks = prog.toks; out.trivia = prog.trivia; out.nameTok = prog.nameTok; out.extra = prog.extra;
+  out.map = new Map(cells.map(c => [c.path.join(","), c]));
+  return out;
+}
+
+/* --------------------------------------------------- syntax highlighting */
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+/** Emit HTML for properly nested {s,e,cls,style} spans over the source. */
+function emitSpans(src, spans){
+  spans = spans.slice().sort((a,b) => a.s - b.s || b.e - a.e);
+  let html = "", cur = 0;
+  const stack = [];
+  for(const sp of spans){
+    while(stack.length && stack[stack.length-1].e <= sp.s){
+      const top = stack.pop();
+      html += esc(src.slice(cur, top.e)) + "</span>"; cur = top.e;
+    }
+    if(stack.length && sp.e > stack[stack.length-1].e) continue;   // overlapping: skip
+    html += esc(src.slice(cur, sp.s));
+    html += '<span class="' + sp.cls + '"' + (sp.style ? ' style="' + sp.style + '"' : "") + ">";
+    cur = sp.s; stack.push(sp);
+  }
+  while(stack.length){
+    const top = stack.pop();
+    html += esc(src.slice(cur, top.e)) + "</span>"; cur = top.e;
+  }
+  return html + esc(src.slice(cur));
+}
+
+function renderCode(){
+  const src = model.src;
+  const spans = [];
+  if(model.ok){
+    for(const t of model.trivia) spans.push({s:t.s, e:t.e, cls:t.cls});
+    for(const t of model.toks){
+      if(t.t === "str"){
+        const rgb = cssColour(t.v);
+        spans.push({s:t.s, e:t.e, cls:"t-str", style:rgb ? "color:" + readable(rgb) : ""});
+      }
+      else if(t.t === "num") spans.push({s:t.s, e:t.e, cls:"t-num"});
+      else if(t.t === "id")  spans.push({s:t.s, e:t.e, cls:t === model.nameTok ? "t-var" : "t-num"});
+      else if(t.t === "=")   spans.push({s:t.s, e:t.e, cls:"t-op"});
+      else                   spans.push({s:t.s, e:t.e, cls:"t-punc"});
+    }
+    // the selected path: one nested highlight per index, brightest at the leaf
+    const p = focusPath();
+    for(let i = 1; i <= p.length; i++){
+      const n = nodeAt(model.root, p.slice(0,i));
+      if(!n) break;
+      spans.push({s:n.s, e:n.e, cls:(n.kind === "leaf") ? "hl-leaf" : "hl-" + (i-1)});
+    }
+  }
+  hl.innerHTML = emitSpans(src, spans) + "\n";
+  hl.parentNode.scrollTop = code.scrollTop;
+  hl.parentNode.scrollLeft = code.scrollLeft;
+}
+
+/** Scroll the editor so the highlighted literal is on screen. */
+function revealSelection(){
+  const n = model.ok && selection ? nodeAt(model.root, selection) : null;
+  if(!n) return;
+  const before = model.src.slice(0, n.s);
+  const line = before.split("\n").length - 1;
+  const lh = parseFloat(getComputedStyle(code).lineHeight) || 21;
+  const top = line * lh, pad = 16;
+  const view = code.clientHeight - 56;
+  if(top < code.scrollTop || top > code.scrollTop + view){
+    code.scrollTop = Math.max(0, top - view/2 + pad);
+    hl.parentNode.scrollTop = code.scrollTop;
+  }
+}
+
+/* =======================================================================
+   The 3D view: an orthographic software renderer, painter's algorithm.
+   Every cube is axis aligned and sits on a grid, so sorting the cubes by
+   view depth is exact - no z-buffer needed.
+   ======================================================================= */
+const stage = $("#stage"), cv = $("#view"), tip = $("#tip");
+const ctx = cv.getContext("2d");
+
+const cam = {yaw:-0.62, pitch:0.40, zoom:1, panX:0, panY:0, scale:44};
+let gapVal = 0.18, showLabels = true, xray = false, layerFilter = null;
+let selection = null, focusLen = -1, hoverKey = null;
+let W = 0, H = 0, introAt = 0, needsDraw = true, rafId = 0;
+
+const AXIS = ["var(--ax0)","var(--ax1)","var(--ax2)"];
+const AXIS_RGB = ["#ffb240","#45d7c6","#ff7fae"];
+
+/** Which indices are "live" right now: the selection, cut to the focus depth. */
+function focusPath(){
+  if(!selection) return [];
+  return selection.slice(0, focusLen < 0 ? selection.length : focusLen);
+}
+
+/* axis roles, outermost index first */
+function axisNames(dims){
+  if(dims === 1) return ["item"];
+  if(dims === 2) return ["row","column"];
+  return ["layer","row","column"];
+}
+/* what goes inside the brackets in the legend */
+function axisShort(dims){
+  if(dims === 1) return ["i"];
+  if(dims === 2) return ["row","col"];
+  return ["layer","row","col"];
+}
+
+function cellPos(path){
+  const g = 1 + gapVal, s = model.shape, d = model.dims;
+  if(d === 1) return {x:(path[0]-(s[0]-1)/2)*g, y:0, z:0};
+  if(d === 2) return {x:(path[1]-(s[1]-1)/2)*g, y:-(path[0]-(s[0]-1)/2)*g, z:0};
+  return {x:(path[2]-(s[2]-1)/2)*g, y:-(path[1]-(s[1]-1)/2)*g, z:((s[0]-1)/2-path[0])*g};
+}
+
+function rotate(x,y,z){
+  const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
+  const x1 = x*cy + z*sy, z1 = -x*sy + z*cy;
+  const cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+  return {x:x1, y:y*cp - z1*sp, z:y*sp + z1*cp};
+}
+function project(x,y,z){
+  const r = rotate(x,y,z), S = cam.scale * cam.zoom;
+  return {x:W/2 + r.x*S + cam.panX, y:H/2 - r.y*S + cam.panY, z:r.z};
+}
+
+const FACES = [
+  {n:[0,1,0],  v:[[-1,1,1],[1,1,1],[1,1,-1],[-1,1,-1]]},
+  {n:[0,-1,0], v:[[-1,-1,-1],[1,-1,-1],[1,-1,1],[-1,-1,1]]},
+  {n:[1,0,0],  v:[[1,-1,1],[1,-1,-1],[1,1,-1],[1,1,1]]},
+  {n:[-1,0,0], v:[[-1,-1,-1],[-1,-1,1],[-1,1,1],[-1,1,-1]]},
+  {n:[0,0,1],  v:[[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]]},
+  {n:[0,0,-1], v:[[1,-1,-1],[-1,-1,-1],[-1,1,-1],[1,1,-1]]}
+];
+const LIGHT = (() => { const l = [-0.40,0.75,0.54], m = Math.hypot(l[0],l[1],l[2]); return l.map(v => v/m); })();
+
+function bounds(){
+  const g = 1 + gapVal, s = model.shape, d = model.dims;
+  const nx = d === 1 ? s[0] : d === 2 ? s[1] : s[2];
+  const ny = d === 1 ? 1 : d === 2 ? s[0] : s[1];
+  const nz = d === 3 ? s[0] : 1;
+  const hx = ((nx-1)/2)*g + 0.5, hy = ((ny-1)/2)*g + 0.5, hz = ((nz-1)/2)*g + 0.5;
+  return {hx, hy, hz, g};
+}
+
+/** 1D and 2D lists read best almost face on; a 3D block needs a corner view. */
+function homeCamera(){
+  const solid = model.ok && model.dims === 3;
+  cam.yaw = solid ? -0.62 : -0.30;
+  cam.pitch = solid ? 0.40 : 0.20;
+}
+
+function fitView(){
+  if(!model.ok || !model.cells.length) return;
+  const b = bounds();
+  let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+  for(const sx of [-1,1]) for(const sy of [-1,1]) for(const sz of [-1,1]){
+    const r = rotate(sx*(b.hx+0.9), sy*(b.hy+0.9), sz*(b.hz+0.9));
+    minX = Math.min(minX,r.x); maxX = Math.max(maxX,r.x);
+    minY = Math.min(minY,r.y); maxY = Math.max(maxY,r.y);
+  }
+  const w = Math.max(maxX-minX, 0.001), h = Math.max(maxY-minY, 0.001);
+  cam.scale = Math.min(W/w, H/h) * 0.86;
+  cam.zoom = 1; cam.panX = 0; cam.panY = 0;
+  draw();
+}
+
+function resize(){
+  const r = stage.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+  W = Math.max(1, r.width); H = Math.max(1, r.height);
+  cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  needsDraw = true;
+}
+
+const easeOut = t => 1 - Math.pow(1-t, 3);
+
+let picks = [];
+function draw(){
+  needsDraw = false;
+  ctx.clearRect(0,0,W,H);
+  picks = [];
+  if(!model.ok || !model.cells.length) return;
+
+  const t = introAt ? clamp((performance.now()-introAt)/820, 0, 1) : 1;
+  if(t < 1) needsDraw = true;
+
+  const fp = focusPath(), narrowed = fp.length > 0 && fp.length < model.dims;
+  const list = [];
+  for(let i = 0; i < model.cells.length; i++){
+    const c = model.cells[i];
+    if(layerFilter !== null && model.dims === 3 && c.path[0] !== layerFilter) continue;
+    const p = cellPos(c.path), r = rotate(p.x,p.y,p.z);
+    list.push({c, p, depth:r.z, i});
+  }
+  list.sort((a,b) => a.depth - b.depth);
+
+  const selKey = selection ? selection.join(",") : null;
+  const n = model.cells.length;
+  const faceText = [];      // numbers and True/False get their value written on them
+
+  for(const item of list){
+    const c = item.c, key = c.path.join(",");
+    const inFocus = fp.length === 0 || fp.every((v,i) => c.path[i] === v);
+    let alpha = xray ? 0.42 : 1;
+    if(narrowed) alpha = inFocus ? 1 : (xray ? 0.08 : 0.14);
+    else if(xray && key === selKey) alpha = 1;
+
+    // staggered drop-in
+    let scale = 1;
+    if(t < 1){
+      const d0 = (item.i/n)*0.45;
+      scale = easeOut(clamp((t - d0)/0.55, 0, 1));
+      if(scale <= 0.001) continue;
+      alpha *= clamp(scale*1.6, 0, 1);
+    }
+    const h = 0.5*scale;
+    const hovered = key === hoverKey;
+    const base = c.rgb;
+
+    for(const f of FACES){
+      const nv = rotate(f.n[0], f.n[1], f.n[2]);
+      if(nv.z <= 0.0001) continue;
+      const k0 = Math.max(0, nv.x*LIGHT[0] + nv.y*LIGHT[1] + nv.z*LIGHT[2]);
+      let k = 0.52 + 0.48*k0;
+      if(hovered) k *= 1.22;
+      if(key === selKey) k *= 1.12;
+      const poly = f.v.map(v => project(item.p.x + v[0]*h, item.p.y + v[1]*h, item.p.z + v[2]*h));
+      ctx.beginPath();
+      ctx.moveTo(poly[0].x, poly[0].y);
+      for(let q = 1; q < 4; q++) ctx.lineTo(poly[q].x, poly[q].y);
+      ctx.closePath();
+      ctx.fillStyle = shade(base, k, alpha);
+      ctx.fill();
+      if(c.empty){
+        ctx.strokeStyle = "rgba(160,175,195," + (0.5*alpha) + ")";
+        ctx.setLineDash([3,3]); ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
+      } else {
+        ctx.strokeStyle = shade(base, k*0.52, alpha*0.9);
+        ctx.lineWidth = 1; ctx.stroke();
+      }
+      picks.push({poly, key, cell:c});
+    }
+    if(model.dims < 3 && !c.isColour && !c.empty && alpha > 0.5 && scale > 0.9){
+      const a = project(item.p.x-h, item.p.y, item.p.z+h), bq = project(item.p.x+h, item.p.y, item.p.z+h);
+      const wpx = Math.hypot(bq.x-a.x, bq.y-a.y);
+      if(wpx > 24){
+        const v = c.node.value;
+        const txt = v === "True" ? "T" : v === "False" ? "F" : String(v);
+        faceText.push({x:(a.x+bq.x)/2, y:(a.y+bq.y)/2, txt,
+                       size:Math.min(wpx*0.40, 17),
+                       dark:lum(c.rgb)*0.72 > 0.52});  // the front face is shaded, so judge contrast against that
+      }
+    }
+  }
+
+  for(const f of faceText){
+    ctx.font = "600 " + f.size.toFixed(1) + 'px "IBM Plex Mono",monospace';
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillStyle = f.dark ? "rgba(12,15,20,.82)" : "rgba(255,255,255,.88)";
+    ctx.fillText(f.txt, f.x, f.y);
+  }
+
+  if(showLabels) drawRulers();
+  if(selection && (layerFilter === null || model.dims !== 3 || selection[0] === layerFilter)) drawSelectionCage();
+}
+
+/* Index numbers along each axis, coloured to match the bracket they mean.
+   Each ruler sits on an edge of the block's silhouette and is pushed outwards,
+   so the numbers never land on top of the cubes. */
+function drawRulers(){
+  const b = bounds(), g = b.g, s = model.shape, d = model.dims;
+  ctx.font = '600 11px "IBM Plex Mono",monospace';
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.lineJoin = "round";
+
+  const label = (x,y,z,text,colour) => {
+    const p = project(x,y,z);
+    ctx.lineWidth = 3.5; ctx.strokeStyle = "rgba(8,10,14,.85)";
+    ctx.strokeText(text, p.x, p.y);
+    ctx.fillStyle = colour; ctx.globalAlpha = .95; ctx.fillText(text, p.x, p.y); ctx.globalAlpha = 1;
+  };
+  const every = n => n > 16 ? Math.ceil(n/12) : 1;
+  const ctr = (i,n) => (i-(n-1)/2)*g;
+  const ruler = (n, colour, at) => {
+    const st = every(n);
+    for(let i = 0; i < n; i++) if(i % st === 0 || i === n-1){
+      const q = at(i); label(q[0], q[1], q[2], String(i), colour);
+    }
+  };
+
+  if(d === 1){
+    ruler(s[0], AXIS_RGB[0], i => [ctr(i,s[0]), -b.hy-0.55, 0]);
+  } else if(d === 2){
+    ruler(s[1], AXIS_RGB[1], i => [ctr(i,s[1]), b.hy+0.55, 0]);      // columns above
+    ruler(s[0], AXIS_RGB[0], i => [-b.hx-0.6, -ctr(i,s[0]), 0]);     // rows down the left
+  } else {
+    ruler(s[2], AXIS_RGB[2], i => [ctr(i,s[2]), b.hy+0.55, -b.hz-0.1]);   // columns along the top back edge
+    ruler(s[1], AXIS_RGB[1], i => [-b.hx-0.6, -ctr(i,s[1]), b.hz+0.1]);   // rows down the front left edge
+    ruler(s[0], AXIS_RGB[0], i => [b.hx+0.55, -b.hy-0.45, ((s[0]-1)/2-i)*g]); // layers along the bottom right edge
+  }
+}
+
+/* a bright wire cage around the selected cube, drawn over everything so it
+   can be found even when it is buried inside a solid block */
+function drawSelectionCage(){
+  const c = model.map.get(selection.join(","));
+  if(!c) return;
+  const p = cellPos(c.path), h = 0.54;
+  const V = [];
+  for(const sx of [-1,1]) for(const sy of [-1,1]) for(const sz of [-1,1])
+    V.push(project(p.x+sx*h, p.y+sy*h, p.z+sz*h));
+  const E = [[0,1],[0,2],[0,4],[1,3],[1,5],[2,3],[2,6],[3,7],[4,5],[4,6],[5,7],[6,7]];
+  ctx.lineJoin = "round"; ctx.lineCap = "round";
+  for(const pass of [0,1]){
+    ctx.strokeStyle = pass ? "#ffb240" : "rgba(8,10,14,.9)";
+    ctx.lineWidth = pass ? 1.8 : 4;
+    ctx.beginPath();
+    for(const e of E){ ctx.moveTo(V[e[0]].x, V[e[0]].y); ctx.lineTo(V[e[1]].x, V[e[1]].y); }
+    ctx.stroke();
+  }
+}
+
+function tick(){
+  rafId = 0;
+  if(needsDraw) draw();
+  if(needsDraw) schedule();
+}
+function schedule(){ if(!rafId) rafId = requestAnimationFrame(tick); }
+function invalidate(){ needsDraw = true; schedule(); }
+
+/* ------------------------------------------------------------- picking */
+function inPoly(px,py,poly){
+  let inside = false;
+  for(let i = 0, j = 3; i < 4; j = i++){
+    const xi = poly[i].x, yi = poly[i].y, xj = poly[j].x, yj = poly[j].y;
+    if((yi > py) !== (yj > py) && px < (xj-xi)*(py-yi)/(yj-yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+function pick(px,py){
+  for(let i = picks.length-1; i >= 0; i--) if(inPoly(px,py,picks[i].poly)) return picks[i];
+  return null;
+}
+
+/* =====================================================================
+   Panels, presets and the two-way link between code and cubes
+   ===================================================================== */
+const code = $("#code"), hl = $("#hl"), stepsEl = $("#steps"),
+      shapeEl = $("#shape"), legendEl = $("#legend"),
+      statusEl = $("#status"), statusText = $("#statusText"), layerSeg = $("#layerSeg");
+
+/* ---------------------------------------------------------- presets */
+function pysrc(name, arr, header){
+  const fmt = v => typeof v === "string" ? '"' + v + '"' : String(v);
+  function body(a, pad){
+    if(!Array.isArray(a[0])) return "[" + a.map(fmt).join(", ") + "]";
+    return "[\n" + a.map(x => pad + "    " + body(x, pad + "    ")).join(",\n") + "\n" + pad + "]";
+  }
+  return header + "\n\n" + name + " = " + body(arr, "") + "\n";
+}
+
+const HEART = [
+  [0,1,0,0,1,0],
+  [1,2,1,1,1,1],
+  [1,1,1,1,1,1],
+  [1,1,1,1,1,1],
+  [0,1,1,1,1,0],
+  [0,0,1,1,0,0]
+];
+const HEART_C = ["#161b23","#e63946","#ff8fa3"];
+
+function colourCube(n){
+  const out = [];
+  for(let l = 0; l < n; l++){
+    const layer = [];
+    for(let r = 0; r < n; r++){
+      const row = [];
+      for(let c = 0; c < n; c++){
+        const R = Math.round(255*c/(n-1)), G = Math.round(255*(n-1-r)/(n-1)), B = Math.round(255*l/(n-1));
+        row.push(hex([R,G,B]));
+      }
+      layer.push(row);
+    }
+    out.push(layer);
+  }
+  return out;
+}
+
+const PRESETS = [
+  {id:"1d", label:"1D row", src: pysrc("strip",
+    ["#e63946","#f3a712","#ffd166","#06d6a0","#3fa9f5","#7b5bd1"],
+    "# ONE dimension: a row of colours.\n# One number in the brackets:  strip[2]")},
+
+  {id:"2d", label:"2D grid", src: pysrc("picture",
+    HEART.map(r => r.map(v => HEART_C[v])),
+    "# TWO dimensions: a list of rows, each row a list of colours.\n# Two numbers:  picture[row][column]")},
+
+  {id:"nums", label:"2D numbers", src:
+    "# A 2D list does not have to hold colours.\n# Same shape, same brackets:  marks[row][column]\n\n" +
+    "marks = [\n    [8, 12, 9, 15],\n    [14, 11, 16, 10],\n    [7, 13, 12, 18]\n]\n"},
+
+  {id:"3d", label:"3D cube", src: pysrc("cube",
+    [
+      [["#ff5964","#ff8c42","#ffd166"],["#ff8c42","#ffd166","#ff5964"],["#ffd166","#ff5964","#ff8c42"]],
+      [["#2ec4b6","#3fa9f5","#4ea8de"],["#3fa9f5","#4ea8de","#2ec4b6"],["#4ea8de","#2ec4b6","#3fa9f5"]],
+      [["#9b5de5","#c77dff","#e0aaff"],["#c77dff","#e0aaff","#9b5de5"],["#e0aaff","#9b5de5","#c77dff"]]
+    ],
+    "# THREE dimensions: a list of layers, each layer a grid.\n# Three numbers:  cube[layer][row][column]\n# Layer 0 is the one nearest to you.")},
+
+  {id:"rgb", label:"3D colour mixer", src: pysrc("rgb", colourCube(5),
+    "# Every small cube holds one colour.\n# Across = more red, up = more green, back = more blue.\n# rgb[layer][row][column]")},
+
+  {id:"ragged", label:"ragged", src:
+    "# The rows do not have to be the same length.\n# Python allows this - most languages do not.\n\n" +
+    "staircase = [\n    [\"#ffb240\"],\n    [\"#ffb240\", \"#ff8c42\"],\n    [\"#ffb240\", \"#ff8c42\", \"#e63946\"],\n" +
+    "    [\"#ffb240\", \"#ff8c42\", \"#e63946\", \"#9b5de5\"]\n]\n"}
+];
+
+function renderPresets(){
+  const box = $("#presets");
+  box.innerHTML = "";
+  for(const p of PRESETS){
+    const b = document.createElement("button");
+    b.className = "px"; b.textContent = p.label; b.dataset.id = p.id;
+    b.onclick = () => {
+      code.value = p.src; selection = null; layerFilter = null;
+      apply(true); markPreset(p.id); code.blur(); cv.focus();
+    };
+    box.appendChild(b);
+  }
+}
+function markPreset(id){
+  document.querySelectorAll("#presets .px").forEach(b => b.classList.toggle("on", b.dataset.id === id));
+}
+
+/* ------------------------------------------------------------ panels */
+function renderShape(){
+  if(!model.ok){ shapeEl.innerHTML = ""; return; }
+  const s = model.shape, d = model.dims;
+  const bits = [
+    '<span class="chip dimension">' + d + 'D</span>',
+    '<span class="chip">shape <b>' + s.join(" × ") + "</b></span>",
+    '<span class="chip"><b>' + model.cells.length + "</b> item" + (model.cells.length === 1 ? "" : "s") + "</span>",
+    '<span class="chip">len(' + model.name + ") = <b>" + s[0] + "</b></span>"
+  ];
+  if(model.ragged) bits.push('<span class="chip" style="color:var(--ax0)">ragged</span>');
+  shapeEl.innerHTML = bits.join("");
+}
+
+function renderLegend(){
+  if(!model.ok){ legendEl.innerHTML = ""; return; }
+  const names = axisNames(model.dims), short = axisShort(model.dims);
+  let e = '<div class="expr">' + model.name;
+  for(let i = 0; i < model.dims; i++) e += '<span class="i' + i + '">[' + short[i] + "]</span>";
+  e += "</div>";
+  const dirs = model.dims === 1 ? ["left → right"]
+    : model.dims === 2 ? ["top ↓ bottom","left → right"]
+    : ["front → back","top ↓ bottom","left → right"];
+  for(let i = 0; i < model.dims; i++)
+    e += '<div class="row"><span class="k" style="background:' + AXIS_RGB[i] + '"></span>' +
+         names[i] + " &middot; " + dirs[i] + "</div>";
+  legendEl.innerHTML = e;
+}
+
+function renderLayerSeg(){
+  layerSeg.innerHTML = "";
+  if(!model.ok || model.dims !== 3) return;
+  const mk = (txt, val) => {
+    const b = document.createElement("button");
+    b.textContent = txt; b.className = layerFilter === val ? "on" : "";
+    b.onclick = () => { layerFilter = val; renderLayerSeg(); invalidate(); };
+    layerSeg.appendChild(b);
+  };
+  const lab = document.createElement("span");
+  lab.textContent = "layer"; lab.style.color = "var(--ax0)"; layerSeg.appendChild(lab);
+  mk("all", null);
+  for(let i = 0; i < model.shape[0]; i++) mk(String(i), i);
+}
+
+function exprHTML(path){
+  let s = '<span style="color:var(--fg)">' + model.name + "</span>";
+  path.forEach((v,i) => { s += '<span class="i' + i + '">[' + v + "]</span>"; });
+  return s;
+}
+const exprText = path => model.name + path.map(v => "[" + v + "]").join("");
+
+function whatIs(level){
+  const s = model.shape, rem = model.dims - level;
+  if(rem === 3) return "the whole 3D list — " + s[0] + " layers of " + s[1] + "×" + s[2];
+  if(rem === 2) return "a 2D list — " + s[model.dims-2] + " rows of " + s[model.dims-1];
+  if(rem === 1) return "a 1D list — " + s[model.dims-1] + " items";
+  return "";
+}
+
+function renderSteps(){
+  stepsEl.innerHTML = "";
+  if(!model.ok){
+    stepsEl.innerHTML = '<div class="empty">Fix the code above and the picture comes back.</div>';
+    return;
+  }
+  const depth = selection ? model.dims : 0;
+  for(let i = 0; i <= depth; i++){
+    const path = selection ? selection.slice(0,i) : [];
+    const row = document.createElement("div");
+    row.className = "step" + (i === model.dims ? " leaf" : "");
+    const leaf = i === model.dims;
+    let val = "";
+    if(leaf){
+      const c = model.map.get(selection.join(","));
+      if(c) val = '<span class="val"><span class="sw" style="background:' +
+        (c.empty ? "repeating-linear-gradient(45deg,#2e3643 0 4px,#1b212b 4px 8px)" : hex(c.rgb)) +
+        '"></span>' + esc(c.raw) + "</span>";
+    }
+    row.innerHTML = '<span class="expr">' + exprHTML(path) + "</span>" +
+                    '<span class="what">' + (leaf ? "one item — the value stored there" : whatIs(i)) + "</span>" +
+                    (val || '<span class="val"></span>');
+    row.title = "click to copy this line";
+    row.onmouseenter = () => { focusLen = i; renderCode(); invalidate(); };
+    row.onmouseleave = () => { focusLen = -1; renderCode(); invalidate(); };
+    row.onclick = () => {
+      navigator.clipboard && navigator.clipboard.writeText(exprText(path));
+      flash("copied  " + exprText(path));
+    };
+    stepsEl.appendChild(row);
+  }
+  if(!selection){
+    const h = document.createElement("div");
+    h.className = "empty";
+    h.style.marginTop = "8px";
+    h.innerHTML = "Click any cube in the picture to build the index path. " +
+                  "Or click a colour in the code to light up its cube.";
+    stepsEl.appendChild(h);
+  }
+}
+
+let flashTimer = 0;
+function flash(msg){
+  statusEl.className = "status";
+  statusText.textContent = msg;
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(setStatus, 1400);
+}
+
+function setStatus(){
+  if(model.error){
+    const at = clamp(model.error.at|0, 0, model.src.length);
+    const before = model.src.slice(0, at), line = before.split("\n").length;
+    const col = at - before.lastIndexOf("\n");
+    statusEl.className = "status bad";
+    statusText.textContent = "line " + line + ", character " + col + ": " + model.error.msg;
+    return;
+  }
+  if(!model.ok){ statusEl.className = "status"; statusText.textContent = "Ready."; return; }
+  const notes = [];
+  if(model.ragged) notes.push("the rows are different lengths (a ragged list)");
+  if(model.extra) notes.push("only the first list in the file is drawn");
+  const odd = model.cells.filter(c => c.node.isText && !c.isColour).length;
+  if(odd) notes.push(odd + " text value" + (odd === 1 ? " is" : "s are") + " not a colour — drawn hollow");
+  statusEl.className = notes.length ? "status warn" : "status";
+  statusText.textContent = model.name + " is a " + model.dims + "D list of " +
+    model.cells.length + " items" + (notes.length ? " — " + notes.join("; ") : ".");
+}
+
+/* ------------------------------------------------------- the pipeline */
+let userMoved = false;
+
+function apply(refit){
+  const m = buildModel(code.value);
+  if(m.ok){
+    const changed = !model.ok || m.dims !== model.dims || m.shape.join() !== model.shape.join();
+    for(const k in m) model[k] = m[k];
+    model.parsedSrc = m.src;
+    model.error = null;
+    if(selection && !model.map.has(selection.join(","))) selection = null;
+    if(layerFilter !== null && (model.dims !== 3 || layerFilter >= model.shape[0])) layerFilter = null;
+    if(refit || changed){ userMoved = false; homeCamera(); fitView(); introAt = performance.now(); }
+  } else {
+    model.src = code.value;
+    model.error = m.error;
+  }
+  try { localStorage.setItem("arraylab.src", code.value); } catch(e){}
+  renderCode(); renderShape(); renderLegend(); renderLayerSeg(); renderSteps(); setStatus(); invalidate();
+}
+
+function select(path){
+  selection = path ? path.slice() : null;
+  focusLen = -1;
+  if(selection && layerFilter !== null && model.dims === 3 && selection[0] !== layerFilter){
+    layerFilter = selection[0]; renderLayerSeg();
+  }
+  renderCode(); renderSteps(); revealSelection(); invalidate();
+}
+
+/* ----------------------------------------------------- code -> cubes */
+function caretToCube(){
+  if(!model.ok || model.parsedSrc !== model.src) return;
+  const pos = code.selectionStart;
+  for(const c of model.cells){
+    if(pos >= c.node.s && pos <= c.node.e){
+      if(!selection || selection.join(",") !== c.path.join(",")) {
+        selection = c.path.slice(); focusLen = -1;
+        renderCode(); renderSteps(); invalidate();
+      }
+      return;
+    }
+  }
+}
+
+let typing = 0;
+code.addEventListener("input", () => {
+  clearTimeout(typing);
+  typing = setTimeout(() => { apply(false); markPreset(null); }, 150);
+});
+code.addEventListener("scroll", () => {
+  hl.parentNode.scrollTop = code.scrollTop;
+  hl.parentNode.scrollLeft = code.scrollLeft;
+});
+code.addEventListener("click", caretToCube);
+code.addEventListener("keyup", e => { if(e.key.indexOf("Arrow") === 0 || e.key === "Home" || e.key === "End") caretToCube(); });
+code.addEventListener("keydown", e => {
+  if(e.key === "Tab"){                       // keep Tab inside the editor
+    e.preventDefault();
+    const s = code.selectionStart, t = code.value;
+    code.value = t.slice(0,s) + "    " + t.slice(code.selectionEnd);
+    code.selectionStart = code.selectionEnd = s + 4;
+    code.dispatchEvent(new Event("input"));
+  }
+});
+
+/* ----------------------------------------------------- cubes -> code */
+const pointers = new Map();
+let drag = null, pinch = null;
+
+function localPt(e){
+  const r = cv.getBoundingClientRect();
+  return {x:e.clientX - r.left, y:e.clientY - r.top};
+}
+
+stage.addEventListener("pointerdown", e => {
+  cv.focus({preventScroll:true});
+  stage.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, localPt(e));
+  if(pointers.size === 2){
+    const [a,b] = [...pointers.values()];
+    pinch = {d:Math.hypot(a.x-b.x, a.y-b.y), zoom:cam.zoom,
+             mx:(a.x+b.x)/2, my:(a.y+b.y)/2, panX:cam.panX, panY:cam.panY};
+    drag = null;
+    return;
+  }
+  const p = localPt(e);
+  drag = {x:p.x, y:p.y, yaw:cam.yaw, pitch:cam.pitch, panX:cam.panX, panY:cam.panY,
+          moved:false, pan:e.shiftKey || e.button === 1 || e.button === 2};
+  stage.classList.add("grabbing");
+});
+
+stage.addEventListener("pointermove", e => {
+  const p = localPt(e);
+  if(pointers.has(e.pointerId)) pointers.set(e.pointerId, p);
+
+  if(pinch && pointers.size >= 2){
+    const [a,b] = [...pointers.values()];
+    const d = Math.hypot(a.x-b.x, a.y-b.y), mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
+    cam.zoom = clamp(pinch.zoom * (d/pinch.d), 0.2, 8);
+    cam.panX = pinch.panX + (mx - pinch.mx);
+    cam.panY = pinch.panY + (my - pinch.my);
+    userMoved = true; invalidate();
+    return;
+  }
+  if(drag){
+    const dx = p.x - drag.x, dy = p.y - drag.y;
+    if(Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
+    if(drag.pan){ cam.panX = drag.panX + dx; cam.panY = drag.panY + dy; }
+    else {
+      cam.yaw = drag.yaw + dx*0.0085;
+      cam.pitch = clamp(drag.pitch + dy*0.0085, -1.45, 1.45);
+    }
+    userMoved = true; invalidate();
+    return;
+  }
+  // hover
+  const hit = pick(p.x, p.y);
+  const key = hit ? hit.key : null;
+  if(key !== hoverKey){
+    hoverKey = key; invalidate();
+    if(hit){
+      tip.textContent = exprText(hit.cell.path) + "  =  " + hit.cell.raw;
+      tip.style.left = p.x + "px"; tip.style.top = p.y + "px";
+      tip.classList.add("on");
+    } else tip.classList.remove("on");
+  } else if(hit){
+    tip.style.left = p.x + "px"; tip.style.top = p.y + "px";
+  }
+});
+
+function endPointer(e){
+  const was = drag;
+  pointers.delete(e.pointerId);
+  if(pointers.size < 2) pinch = null;
+  stage.classList.remove("grabbing");
+  drag = null;
+  if(was && !was.moved && !was.pan){
+    const p = localPt(e), hit = pick(p.x, p.y);
+    if(hit) select(hit.cell.path); else select(null);
+  }
+}
+stage.addEventListener("pointerup", endPointer);
+stage.addEventListener("pointercancel", e => { pointers.delete(e.pointerId); pinch = null; drag = null; stage.classList.remove("grabbing"); });
+stage.addEventListener("pointerleave", () => { hoverKey = null; tip.classList.remove("on"); invalidate(); });
+stage.addEventListener("contextmenu", e => e.preventDefault());
+
+stage.addEventListener("wheel", e => {
+  e.preventDefault();
+  cam.zoom = clamp(cam.zoom * Math.exp(-e.deltaY * 0.0014), 0.2, 8);
+  userMoved = true; invalidate();
+}, {passive:false});
+
+cv.addEventListener("keydown", e => {
+  if(!model.ok) return;
+  if(e.key === "Escape"){ select(null); return; }
+  if(!selection){
+    if(e.key.indexOf("Arrow") === 0 && model.cells.length){ select(model.cells[0].path); e.preventDefault(); }
+    return;
+  }
+  const d = model.dims;
+  let ax = -1, step = 0;
+  switch(e.key){
+    case "ArrowLeft":  ax = d-1; step = -1; break;
+    case "ArrowRight": ax = d-1; step =  1; break;
+    case "ArrowUp":    ax = d >= 2 ? d-2 : d-1; step = -1; break;
+    case "ArrowDown":  ax = d >= 2 ? d-2 : d-1; step =  1; break;
+    case "PageUp": case ",": ax = 0; step = -1; break;
+    case "PageDown": case ".": ax = 0; step = 1; break;
+    default: return;
+  }
+  e.preventDefault();
+  const p = selection.slice();
+  p[ax] = clamp(p[ax] + step, 0, model.shape[ax] - 1);
+  if(model.map.has(p.join(","))) select(p);
+});
+
+/* ------------------------------------------------------------ controls */
+$("#gap").addEventListener("input", e => {
+  gapVal = e.target.value / 100 * 1.2;
+  if(!userMoved) fitView(); else invalidate();
+});
+$("#labels").addEventListener("change", e => { showLabels = e.target.checked; invalidate(); });
+$("#xray").addEventListener("change", e => { xray = e.target.checked; invalidate(); });
+$("#btnReset").addEventListener("click", () => {
+  homeCamera(); userMoved = false; fitView(); cv.focus({preventScroll:true});
+});
+
+/* ---------------------------------------------------------------- boot */
+new ResizeObserver(() => { resize(); if(!userMoved) fitView(); else invalidate(); }).observe(stage);
+
+renderPresets();
+let start = PRESETS[3].src, startId = "3d";
+try {
+  const saved = localStorage.getItem("arraylab.src");
+  if(saved && saved.trim()){ start = saved; startId = (PRESETS.find(p => p.src === saved) || {}).id || null; }
+} catch(e){}
+code.value = start;
+markPreset(startId);
+resize();
+apply(true);
+</script>
+</body>
+</html>
