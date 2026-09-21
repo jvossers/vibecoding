@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cryptogram — how an EMV chip payment really works</title>
+<meta name="description" content="An interactive, mobile-first explainer: insert a chip card into a POS terminal and watch every cryptographic step, from the offline certificate chain to the ARQC the issuer recomputes in its HSM.">
+<meta name="theme-color" content="#06080d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Spline+Sans+Mono:wght@400;500;600&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────  TOKENS  ───────────────────────────── */
+:root{
+  --ink:#06080d;
+  --ink-2:#0a0e16;
+  --panel:#0e1421;
+  --panel-2:#131b2b;
+  --line:#1e293c;
+  --line-2:#2b3a53;
+
+  --gold:#e8b45c;          /* the chip itself */
+  --gold-deep:#7a5a20;
+  --mint:#4ee6b8;          /* verified / approved */
+  --cyan:#61d5ff;          /* terminal + data in flight */
+  --violet:#9e8cff;        /* scheme network */
+  --red:#ff5c7a;           /* declined / tampered */
+  --amber:#ffb45c;         /* issuer */
+
+  --text:#e9edf5;
+  --dim:#8d99ae;
+  --dimmer:#5d6880;
+
+  --r-sm:8px; --r:14px; --r-lg:22px;
+  --maxw:680px;
+  --shadow:0 24px 60px -24px rgba(0,0,0,.9);
+  --font-d:"Bricolage Grotesque",Georgia,serif;
+  --font-b:"Spline Sans",-apple-system,sans-serif;
+  --font-m:"Spline Sans Mono",ui-monospace,monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--ink);
+  color:var(--text);
+  font-family:var(--font-b);
+  font-size:16px;
+  line-height:1.6;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* atmosphere: circuit grid + vignette + grain */
+body::before{
+  content:"";position:fixed;inset:-10%;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(60% 40% at 78% 6%, rgba(232,180,92,.13), transparent 62%),
+    radial-gradient(52% 38% at 12% 34%, rgba(97,213,255,.10), transparent 64%),
+    radial-gradient(60% 46% at 60% 96%, rgba(158,140,255,.11), transparent 66%),
+    linear-gradient(180deg,#070a11 0%,#06080d 45%,#070a12 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:
+    linear-gradient(rgba(120,160,220,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120,160,220,.045) 1px, transparent 1px);
+  background-size:26px 26px;
+  mask-image:radial-gradient(120% 90% at 50% 0%, #000 10%, transparent 78%);
+  -webkit-mask-image:radial-gradient(120% 90% at 50% 0%, #000 10%, transparent 78%);
+}
+.grain{
+  position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.055;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ─────────────────────────────  TYPE  ───────────────────────────── */
+.wrap{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--font-d);font-weight:800;line-height:1.02;letter-spacing:-.025em;margin:0}
+h1{font-size:clamp(2.9rem,15vw,4.6rem)}
+h2{font-size:clamp(1.9rem,8.4vw,2.7rem);letter-spacing:-.03em}
+h3{font-size:1.06rem;font-weight:700;letter-spacing:-.01em;line-height:1.25}
+p{margin:0 0 1em}
+.lead{font-size:1.06rem;color:#c3ccdb}
+.dim{color:var(--dim)}
+.eyebrow{
+  font-family:var(--font-m);font-size:.66rem;font-weight:500;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px;
+}
+.eyebrow::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,var(--gold-deep),transparent)}
+.mono{font-family:var(--font-m)}
+mark{background:linear-gradient(transparent 62%, rgba(232,180,92,.28) 0);color:inherit;padding:0 .1em}
+b,strong{color:#fff;font-weight:600}
+a{color:var(--cyan)}
+
+/* ─────────────────────────────  HERO  ───────────────────────────── */
+.hero{padding:calc(env(safe-area-inset-top) + 46px) 0 26px;position:relative;overflow:hidden}
+.hero h1{margin:.28em 0 .1em}
+.hero h1 .l2{display:block;color:transparent;-webkit-text-stroke:1.4px var(--gold);text-stroke:1.4px var(--gold)}
+.hero .lead{max-width:34ch}
+.rise{opacity:0;transform:translateY(16px);animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* the chip module */
+.chipstage{margin:30px 0 8px;display:flex;justify-content:center;position:relative}
+.chipstage svg{width:min(100%,340px);height:auto;overflow:visible}
+.pad{fill:url(#goldgrad);stroke:#f3d193;stroke-width:.7;stroke-opacity:.55}
+.trace{fill:none;stroke:var(--cyan);stroke-width:1.4;stroke-linecap:round;
+  stroke-dasharray:6 90;opacity:.85;animation:flow 3.4s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-192}}
+.halo{transform-origin:center;animation:breathe 4.6s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.25;transform:scale(.97)}50%{opacity:.6;transform:scale(1.03)}}
+
+.statline{
+  display:flex;gap:18px;flex-wrap:wrap;margin-top:22px;padding-top:18px;
+  border-top:1px solid var(--line);font-family:var(--font-m);font-size:.7rem;
+  letter-spacing:.06em;color:var(--dimmer);text-transform:uppercase;
+}
+.statline b{display:block;font-family:var(--font-d);font-size:1.5rem;color:var(--text);letter-spacing:-.02em;line-height:1.1}
+
+/* ─────────────────────────────  SECTIONS  ───────────────────────────── */
+section{padding:52px 0 8px;position:relative}
+.sec-head{margin-bottom:24px}
+.sec-head h2{margin:.18em 0 .34em}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* cast cards */
+.cast{display:grid;gap:12px}
+.actor{
+  position:relative;border:1px solid var(--line);border-radius:var(--r);
+  background:linear-gradient(160deg,var(--panel),rgba(10,14,22,.6));
+  padding:16px 16px 14px 18px;overflow:hidden;
+}
+.actor::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c)}
+.actor .who{font-family:var(--font-m);font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--c)}
+.actor h3{margin:4px 0 6px}
+.actor p{font-size:.92rem;color:var(--dim);margin:0 0 10px}
+.holds{display:flex;flex-wrap:wrap;gap:6px}
+.holds span{
+  font-family:var(--font-m);font-size:.66rem;letter-spacing:.02em;padding:4px 8px;border-radius:99px;
+  border:1px solid color-mix(in srgb,var(--c) 40%, transparent);
+  background:color-mix(in srgb,var(--c) 11%, transparent);color:color-mix(in srgb,var(--c) 82%, white);
+}
+
+/* key systems */
+.keysys{display:grid;gap:12px}
+.keyrow{
+  display:grid;grid-template-columns:38px 1fr;gap:14px;align-items:start;
+  padding:15px 14px;border:1px solid var(--line);border-radius:var(--r);background:rgba(14,20,33,.7);
+}
+.keyrow>div{min-width:0}
+.keyrow .num{
+  font-family:var(--font-d);font-size:1.5rem;font-weight:800;color:var(--c);
+  line-height:1;opacity:.85;text-align:center;
+}
+.keyrow h3{margin-bottom:3px}
+.keyrow p{font-size:.9rem;color:var(--dim);margin:0}
+.keyrow .fx{display:block;margin-top:9px;font-family:var(--font-m);font-size:.72rem;color:var(--c);
+  background:rgba(0,0,0,.35);border:1px dashed color-mix(in srgb,var(--c) 34%,transparent);
+  border-radius:var(--r-sm);padding:7px 9px;overflow-x:auto;white-space:nowrap}
+
+/* ─────────────────────────────  SIMULATOR  ───────────────────────────── */
+.sim{
+  border:1px solid var(--line-2);border-radius:var(--r-lg);overflow:hidden;
+  background:linear-gradient(180deg,#0d1422,#080c14);box-shadow:var(--shadow);
+}
+.sim-top{
+  display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.02);font-family:var(--font-m);font-size:.64rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--dimmer);
+}
+.dotled{width:7px;height:7px;border-radius:99px;background:var(--mint);box-shadow:0 0 10px var(--mint);animation:blip 2.2s ease-in-out infinite}
+@keyframes blip{50%{opacity:.25}}
+.sim-top .spacer{flex:1}
+
+/* setup panel */
+.setup{padding:16px 14px 18px;display:grid;gap:16px}
+.field label{
+  display:block;font-family:var(--font-m);font-size:.63rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--dimmer);margin-bottom:8px;
+}
+.amount{display:flex;align-items:center;gap:12px}
+.amount .val{font-family:var(--font-d);font-size:2.6rem;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--gold)}
+.amount .cur{font-family:var(--font-m);font-size:.85rem;color:var(--dimmer);align-self:flex-end;padding-bottom:6px}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;margin:2px 0 0;
+}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:99px;
+  background:linear-gradient(90deg,var(--gold) var(--pct,30%),var(--line-2) var(--pct,30%))}
+input[type=range]::-moz-range-track{height:4px;border-radius:99px;background:var(--line-2)}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:26px;height:26px;margin-top:-11px;border-radius:99px;
+  background:radial-gradient(circle at 34% 30%,#fff,var(--gold) 55%,#a87a28);
+  border:1px solid #f0d19a;box-shadow:0 0 0 6px rgba(232,180,92,.13),0 4px 12px rgba(0,0,0,.6);cursor:grab}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:99px;border:1px solid #f0d19a;
+  background:radial-gradient(circle at 34% 30%,#fff,var(--gold) 55%,#a87a28)}
+.limits{display:flex;justify-content:space-between;font-family:var(--font-m);font-size:.64rem;color:var(--dimmer);margin-top:-2px}
+
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:rgba(0,0,0,.35);
+  border:1px solid var(--line);border-radius:12px;padding:5px}
+.seg.tri{grid-template-columns:1fr 1fr 1fr}
+.seg button{
+  appearance:none;border:0;background:transparent;color:var(--dim);font-family:var(--font-m);
+  font-size:.72rem;letter-spacing:.04em;padding:10px 6px;border-radius:9px;cursor:pointer;
+  transition:.25s;min-height:42px;
+}
+.seg button[aria-pressed=true]{background:rgba(232,180,92,.14);color:var(--gold);
+  box-shadow:inset 0 0 0 1px rgba(232,180,92,.42)}
+.seg button .sub{display:block;font-size:.58rem;color:var(--dimmer);letter-spacing:.1em;text-transform:uppercase}
+
+.btn{
+  appearance:none;width:100%;border:0;cursor:pointer;min-height:56px;border-radius:14px;
+  font-family:var(--font-d);font-weight:700;font-size:1.06rem;letter-spacing:-.01em;
+  color:#150f02;background:linear-gradient(170deg,#f7d79b,var(--gold) 45%,#c08f34);
+  box-shadow:0 10px 26px -10px rgba(232,180,92,.75),inset 0 1px 0 rgba(255,255,255,.55);
+  transition:transform .15s,filter .2s;position:relative;overflow:hidden;
+}
+.btn:active{transform:translateY(2px) scale(.994)}
+.btn::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.55) 48%,transparent 62%);
+  transform:translateX(-120%);animation:sheen 3.6s ease-in-out infinite}
+@keyframes sheen{40%,100%{transform:translateX(120%)}}
+.btn.ghost{background:transparent;color:var(--text);box-shadow:inset 0 0 0 1px var(--line-2);font-size:.92rem;min-height:48px}
+.btn.ghost::after{display:none}
+.btn[disabled]{opacity:.35;pointer-events:none}
+
+/* wire / actor rail */
+.rail{position:relative;padding:18px 14px 12px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:radial-gradient(90% 120% at 50% 0%,rgba(97,213,255,.07),transparent 70%)}
+.rail-track{position:relative;display:flex;justify-content:space-between;align-items:flex-start}
+.rail-line{position:absolute;left:8%;right:8%;top:19px;height:2px;background:
+  repeating-linear-gradient(90deg,var(--line-2) 0 5px,transparent 5px 11px)}
+.node{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:7px;width:24%}
+.node .bulb{
+  width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+  background:var(--ink-2);border:1px solid var(--line-2);transition:.4s;
+}
+.node .bulb svg{width:19px;height:19px;stroke:var(--dimmer);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:.4s}
+.node .nm{font-family:var(--font-m);font-size:.56rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--dimmer);text-align:center;transition:.4s;line-height:1.3}
+.node.on .bulb{border-color:var(--c);background:color-mix(in srgb,var(--c) 16%,var(--ink-2));
+  box-shadow:0 0 0 5px color-mix(in srgb,var(--c) 11%,transparent),0 0 22px -4px var(--c);transform:translateY(-2px)}
+.node.on .bulb svg{stroke:var(--c)}
+.node.on .nm{color:var(--c)}
+.packet{
+  position:absolute;top:13px;left:0;width:13px;height:13px;border-radius:99px;z-index:3;
+  background:var(--cyan);box-shadow:0 0 16px 3px var(--cyan);opacity:0;
+  transition:transform .85s cubic-bezier(.55,.05,.35,1),opacity .28s,background .3s,box-shadow .3s;
+}
+.packet.show{opacity:1}
+.packet.enc{background:var(--mint);box-shadow:0 0 16px 3px var(--mint)}
+.packet.bad{background:var(--red);box-shadow:0 0 16px 3px var(--red)}
+
+/* step screen */
+.screen{padding:18px 14px 6px;min-height:318px;position:relative}
+.stepmeta{display:flex;align-items:center;gap:9px;margin-bottom:11px;flex-wrap:wrap}
+.pill{font-family:var(--font-m);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 9px;border-radius:99px;border:1px solid color-mix(in srgb,var(--c) 42%,transparent);
+  color:var(--c);background:color-mix(in srgb,var(--c) 10%,transparent);white-space:nowrap}
+.stepno{font-family:var(--font-m);font-size:.62rem;color:var(--dimmer);letter-spacing:.14em;margin-left:auto}
+.screen h3{font-size:1.28rem;font-family:var(--font-d);letter-spacing:-.025em;margin-bottom:7px}
+.screen .say{font-size:.95rem;color:#c6cfdd;margin-bottom:12px}
+.screen .why{font-size:.88rem;color:var(--dim);border-left:2px solid var(--line-2);padding-left:11px;margin-bottom:14px}
+.screen .why b{color:var(--gold)}
+.stepin{animation:stepin .55s cubic-bezier(.2,.75,.2,1) both}
+@keyframes stepin{from{opacity:0;transform:translateY(12px)}}
+
+/* hex / data blocks */
+.data{border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.42);overflow:hidden;margin-bottom:12px}
+.data .dh{display:flex;align-items:center;gap:8px;padding:8px 11px;border-bottom:1px solid var(--line);
+  font-family:var(--font-m);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dimmer)}
+.data .dh .tagdot{width:6px;height:6px;border-radius:99px;background:var(--c)}
+.drow{display:grid;grid-template-columns:1fr;gap:3px;padding:8px 11px;
+  border-bottom:1px solid rgba(30,41,60,.55);font-family:var(--font-m);font-size:.72rem}
+.drow .t{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.drow:last-child{border-bottom:0}
+.drow .t{color:var(--violet);font-size:.66rem}
+.drow .n{color:var(--dimmer);font-size:.62rem;letter-spacing:.04em}
+.drow .v{color:var(--text);word-break:break-all;line-height:1.45}
+.drow .v.gold{color:var(--gold)} .drow .v.mint{color:var(--mint)} .drow .v.red{color:var(--red)}
+.hexflow{padding:10px 11px;font-family:var(--font-m);font-size:.71rem;line-height:1.85;word-break:break-all}
+.hexflow span{padding:2px 1px;border-radius:3px}
+.hexflow .h1c{color:#ffd79a;background:rgba(232,180,92,.1)}
+.hexflow .h2c{color:#9fe8ff;background:rgba(97,213,255,.1)}
+.hexflow .h3c{color:#c3b9ff;background:rgba(158,140,255,.1)}
+.hexflow .h4c{color:#8ff3d3;background:rgba(78,230,184,.1)}
+.hexflow .hred{color:#ffa8ba;background:rgba(255,92,122,.16);outline:1px dashed rgba(255,92,122,.6)}
+
+/* the cryptogram reveal */
+.crypto{
+  border-radius:14px;padding:14px;margin-bottom:12px;position:relative;overflow:hidden;
+  border:1px solid color-mix(in srgb,var(--c) 38%,transparent);
+  background:linear-gradient(150deg,color-mix(in srgb,var(--c) 13%,transparent),rgba(0,0,0,.34));
+}
+.crypto .lbl{font-family:var(--font-m);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--c);margin-bottom:6px}
+.crypto .big{font-family:var(--font-m);font-weight:600;font-size:clamp(1rem,5.3vw,1.5rem);
+  letter-spacing:.04em;color:#fff;word-break:break-all;line-height:1.25}
+.crypto .note{font-size:.76rem;color:var(--dim);margin-top:7px}
+.crypto::after{content:"";position:absolute;left:0;right:0;height:38%;top:-40%;
+  background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--c) 26%,transparent),transparent);
+  animation:scan 2.6s ease-in-out infinite}
+@keyframes scan{60%,100%{top:110%}}
+
+/* verdict */
+.verdict{border-radius:14px;padding:16px;text-align:center;margin-bottom:12px;
+  border:1px solid color-mix(in srgb,var(--c) 45%,transparent);
+  background:radial-gradient(120% 100% at 50% 0%,color-mix(in srgb,var(--c) 20%,transparent),rgba(0,0,0,.4))}
+.verdict .mk{font-family:var(--font-d);font-size:2.05rem;font-weight:800;letter-spacing:-.03em;color:var(--c);line-height:1.05}
+.verdict .sub{font-family:var(--font-m);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-top:5px}
+.shake{animation:shake .5s}
+@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+
+/* cert chain */
+.chain{display:grid;gap:8px;margin-bottom:12px}
+.cert{position:relative;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:rgba(0,0,0,.35);
+  opacity:.35;transition:.5s}
+.cert.ok{opacity:1;border-color:rgba(78,230,184,.5);background:linear-gradient(120deg,rgba(78,230,184,.09),rgba(0,0,0,.35))}
+.cert{padding-right:36px}
+.cert .ct{font-family:var(--font-m);font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dimmer)}
+.cert .cn{font-size:.9rem;font-weight:600;margin-top:2px}
+.cert .cv{font-family:var(--font-m);font-size:.66rem;color:var(--dim);margin-top:4px;word-break:break-all}
+.cert .tick{position:absolute;right:11px;top:11px;width:19px;height:19px;border-radius:99px;
+  display:grid;place-items:center;background:var(--mint);color:#04120d;font-size:.7rem;font-weight:700;
+  opacity:0;transform:scale(.4);transition:.4s .15s}
+.cert.ok .tick{opacity:1;transform:none}
+.cert.fail{opacity:1;border-color:rgba(255,92,122,.55);background:linear-gradient(120deg,rgba(255,92,122,.1),rgba(0,0,0,.35))}
+.cert.fail .tick{opacity:1;transform:none;background:var(--red);color:#1a0509}
+.chain .link{height:13px;margin:-3px 0 -3px 20px;border-left:2px dotted var(--line-2)}
+
+/* PIN pad */
+.pinpad{margin-bottom:12px}
+.pindisp{display:flex;justify-content:center;gap:12px;margin:4px 0 14px}
+.pindisp i{width:13px;height:13px;border-radius:99px;background:var(--line-2);transition:.25s}
+.pindisp i.f{background:var(--gold);box-shadow:0 0 12px var(--gold);transform:scale(1.15)}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.keys button{
+  appearance:none;min-height:54px;border-radius:12px;border:1px solid var(--line-2);
+  background:linear-gradient(180deg,var(--panel-2),var(--panel));color:var(--text);
+  font-family:var(--font-m);font-size:1.15rem;cursor:pointer;transition:.12s;
+}
+.keys button:active{transform:translateY(2px);background:var(--gold);color:#140e02;border-color:var(--gold)}
+.keys button.ok{color:var(--mint);font-size:.78rem;letter-spacing:.1em}
+.keys button.del{color:var(--red);font-size:.78rem;letter-spacing:.1em}
+.pinmsg{text-align:center;font-family:var(--font-m);font-size:.7rem;color:var(--dim);margin-top:10px;min-height:1.2em}
+.pinmsg.bad{color:var(--red)}
+
+/* controls */
+.ctrls{display:flex;gap:8px;padding:12px 14px calc(14px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--line);background:rgba(255,255,255,.015);align-items:center}
+.ctrls .prog{flex:1;font-family:var(--font-m);font-size:.62rem;color:var(--dimmer);letter-spacing:.1em}
+.ctrls .prog .bar{height:3px;border-radius:9px;background:var(--line);margin-top:6px;overflow:hidden}
+.ctrls .prog .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--mint));transition:width .5s}
+.iconbtn{appearance:none;min-width:48px;min-height:48px;border-radius:12px;border:1px solid var(--line-2);
+  background:var(--panel);color:var(--text);cursor:pointer;font-family:var(--font-m);font-size:.74rem;
+  display:grid;place-items:center;transition:.2s}
+.iconbtn.primary{background:linear-gradient(170deg,#f7d79b,var(--gold) 55%,#c08f34);color:#150f02;border-color:transparent;padding-inline:16px;font-weight:600}
+.iconbtn[disabled]{opacity:.3;pointer-events:none}
+
+/* APDU log */
+.logwrap{border-top:1px solid var(--line)}
+.logwrap summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;align-items:center;gap:8px;
+  font-family:var(--font-m);font-size:.63rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dimmer)}
+.logwrap summary::-webkit-details-marker{display:none}
+.logwrap summary::after{content:"▾";margin-left:auto;transition:.3s}
+.logwrap[open] summary::after{transform:rotate(180deg)}
+.log{max-height:230px;overflow:auto;padding:0 14px 14px;font-family:var(--font-m);font-size:.66rem;line-height:1.7}
+.log div{display:flex;gap:8px;padding:3px 0;border-bottom:1px solid rgba(30,41,60,.4);word-break:break-all}
+.log .dir{color:var(--dimmer);flex:0 0 26px}
+.log .c{color:var(--cyan)} .log .r{color:var(--mint)} .log .x{color:var(--red)}
+.log .empty{color:var(--dimmer);border:0}
+
+/* truth / glossary */
+.split{display:grid;gap:10px}
+.tcard{border:1px solid var(--line);border-radius:var(--r);padding:15px;background:rgba(14,20,33,.6)}
+.tcard .hd{display:flex;align-items:center;gap:8px;font-family:var(--font-m);font-size:.63rem;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--c);margin-bottom:9px}
+.tcard ul{margin:0;padding-left:17px}
+.tcard li{font-size:.9rem;color:var(--dim);margin-bottom:7px}
+.tcard li b{color:var(--text)}
+.gl{display:grid;gap:7px}
+.gl div{display:grid;grid-template-columns:74px 1fr;gap:10px;padding:9px 11px;border-radius:10px;
+  background:rgba(14,20,33,.55);border:1px solid var(--line);font-size:.85rem;color:var(--dim)}
+.gl div b{font-family:var(--font-m);font-size:.72rem;color:var(--gold);letter-spacing:.02em}
+footer{padding:44px 0 46px;text-align:center;color:var(--dimmer);font-family:var(--font-m);font-size:.66rem;letter-spacing:.1em}
+footer .rule{height:1px;background:linear-gradient(90deg,transparent,var(--line-2),transparent);margin-bottom:22px}
+
+@media (min-width:620px){
+  .cast{grid-template-columns:1fr 1fr}
+  .split{grid-template-columns:1fr 1fr}
+  .screen{min-height:340px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.12s !important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- ══════════════════════════ HERO ══════════════════════════ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow rise" style="animation-delay:.05s">EMV · ISO 7816 · ISO 14443</div>
+    <h1 class="rise" style="animation-delay:.14s">Cryptogram<span class="l2">&mdash;every tap</span></h1>
+    <p class="lead rise" style="animation-delay:.26s">Your card isn't a memory stick with a number on it. It's a tiny computer that refuses to repeat itself. Insert it below and watch the keys move.</p>
+
+    <div class="chipstage rise" style="animation-delay:.36s">
+      <svg viewBox="0 0 320 210" role="img" aria-label="An EMV chip contact plate with signal traces">
+        <defs>
+          <linearGradient id="goldgrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#fbe4b4"/><stop offset=".42" stop-color="#e8b45c"/>
+            <stop offset=".75" stop-color="#b98a35"/><stop offset="1" stop-color="#f2cd8c"/>
+          </linearGradient>
+          <radialGradient id="glow"><stop offset="0" stop-color="#e8b45c" stop-opacity=".55"/><stop offset="1" stop-color="#e8b45c" stop-opacity="0"/></radialGradient>
+        </defs>
+        <ellipse class="halo" cx="160" cy="105" rx="150" ry="98" fill="url(#glow)"/>
+        <!-- traces into the plate -->
+        <g class="traces">
+          <path class="trace" d="M2 34 H54 Q66 34 66 46 V64" style="animation-delay:0s"/>
+          <path class="trace" d="M318 34 H266 Q254 34 254 46 V64" style="animation-delay:.5s"/>
+          <path class="trace" d="M2 176 H54 Q66 176 66 164 V146" style="animation-delay:1.1s"/>
+          <path class="trace" d="M318 176 H266 Q254 176 254 164 V146" style="animation-delay:1.7s"/>
+          <path class="trace" d="M160 2 V40" style="animation-delay:.8s"/>
+          <path class="trace" d="M160 208 V170" style="animation-delay:2.2s"/>
+        </g>
+        <!-- plate -->
+        <rect x="66" y="40" width="188" height="130" rx="17" fill="#0d0f14" stroke="#2a3348"/>
+        <g>
+          <rect class="pad" x="76" y="50" width="72" height="30" rx="6"/>
+          <rect class="pad" x="172" y="50" width="72" height="30" rx="6"/>
+          <rect class="pad" x="76" y="88" width="72" height="34" rx="6"/>
+          <rect class="pad" x="172" y="88" width="72" height="34" rx="6"/>
+          <rect class="pad" x="76" y="130" width="72" height="30" rx="6"/>
+          <rect class="pad" x="172" y="130" width="72" height="30" rx="6"/>
+          <rect class="pad" x="152" y="84" width="16" height="42" rx="4" opacity=".45"/>
+        </g>
+        <g font-family="Spline Sans Mono" font-size="8.5" fill="#3d2a08" font-weight="600">
+          <text x="84" y="70">VCC</text><text x="180" y="70">GND</text>
+          <text x="84" y="110">RST</text><text x="180" y="110">I/O</text>
+          <text x="84" y="150">CLK</text><text x="180" y="150">VPP</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="statline rise" style="animation-delay:.5s">
+      <div><b>~8&nbsp;kB</b>RAM on the card</div>
+      <div><b>0</b>times a cryptogram repeats</div>
+      <div><b>3</b>keys in play</div>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ══════════════════════════ CAST ══════════════════════════ -->
+<section id="cast" class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Who holds what</div>
+    <h2>Four parties,<br>one secret each</h2>
+    <p class="dim">Nobody in this chain trusts anybody else's word. Trust comes from what each party can <em>prove</em> with key material the others can't read.</p>
+  </div>
+  <div class="cast">
+    <div class="actor reveal" style="--c:var(--gold)">
+      <div class="who">The card · ICC</div>
+      <h3>A sealed co‑processor</h3>
+      <p>A chip running a payment applet. Its keys were loaded at personalisation and can never be read back out — only <em>used</em>.</p>
+      <div class="holds"><span>MK<sub>AC</sub> symmetric</span><span>ICC RSA private key</span><span>offline PIN</span><span>ATC counter</span></div>
+    </div>
+    <div class="actor reveal" style="--c:var(--cyan)">
+      <div class="who">The terminal · POS</div>
+      <h3>A sceptical interviewer</h3>
+      <p>Holds no card secrets at all. It knows the scheme CA public keys, asks questions, measures risk, and passes signed answers upstream.</p>
+      <div class="holds"><span>Scheme CA public keys</span><span>floor &amp; CVM limits</span><span>terminal risk rules</span></div>
+    </div>
+    <div class="actor reveal" style="--c:var(--violet)">
+      <div class="who">Acquirer + scheme</div>
+      <h3>The postal service</h3>
+      <p>Routes the authorisation by BIN and carries the chip data in field 55. Normally it <em>cannot</em> check the cryptogram — it has no keys. Only in stand‑in does the scheme hold a copy.</p>
+      <div class="holds"><span>routing tables</span><span>DE55 passthrough</span><span>STIP keys (if enabled)</span></div>
+    </div>
+    <div class="actor reveal" style="--c:var(--amber)">
+      <div class="who">The issuer · HSM</div>
+      <h3>The only other key holder</h3>
+      <p>A tamper‑responsive box holding the Issuer Master Key. From it, it can re‑derive your exact card key and re‑compute your exact cryptogram.</p>
+      <div class="holds"><span>IMK<sub>AC</sub></span><span>ARPC generation</span><span>PIN verification</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ KEY SYSTEMS ══════════════════════════ -->
+<section id="keys" class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Three key systems</div>
+    <h2>Symmetric, asymmetric, and a PIN</h2>
+    <p class="dim">EMV runs two completely separate cryptosystems at once, for two different threats.</p>
+  </div>
+  <div class="keysys">
+    <div class="keyrow reveal" style="--c:var(--mint)">
+      <div class="num">01</div>
+      <div>
+        <h3>Symmetric — proves the card is present</h3>
+        <p>A three‑step key ladder ends in a MAC over the transaction data: the <b>ARQC</b>. Only a chip holding the right key can produce it, and it changes every single time because the counter moves.</p>
+        <code class="fx">IMK<sub>AC</sub> → MK<sub>card</sub> = f(IMK, PAN‖PSN) → SK = f(MK, ATC) → ARQC = MAC<sub>SK</sub>(data)</code>
+      </div>
+    </div>
+    <div class="keyrow reveal" style="--c:var(--cyan)">
+      <div class="num">02</div>
+      <div>
+        <h3>Asymmetric — proves it offline, instantly</h3>
+        <p>The terminal can't call anyone mid‑transaction on a plane or a bus. So it verifies an <b>RSA certificate chain</b> rooted in a scheme CA key baked into the terminal, then challenges the card to sign a fresh random number.</p>
+        <code class="fx">Scheme CA PK → Issuer PK cert (90) → ICC PK cert (9F46) → SDAD (9F4B)</code>
+      </div>
+    </div>
+    <div class="keyrow reveal" style="--c:var(--gold)">
+      <div class="num">03</div>
+      <div>
+        <h3>The PIN — proves it's you, not the card</h3>
+        <p>Offline PIN is enciphered with the card's own public key and checked <em>by the chip</em>; the terminal never learns it. Online PIN instead travels as a PIN block under acquirer working keys, re‑enciphered at every HSM hop.</p>
+        <code class="fx">PIN block ‖ random ‖ ICC data → RSA<sub>ICC‑PK</sub> → VERIFY (00 20 00 88)</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ SIMULATOR ══════════════════════════ -->
+<section id="sim" class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Live simulation</div>
+    <h2>Make a payment</h2>
+    <p class="dim">Twelve steps, end to end. The cryptograms below are <b>really computed</b> in your browser with AES‑128 CBC‑MAC over EMV‑shaped data — change the amount and they change; tamper with the message and the issuer's recomputation genuinely fails.</p>
+  </div>
+
+  <div class="sim reveal">
+    <div class="sim-top"><span class="dotled"></span><span>POS&nbsp;·&nbsp;TID 20041971</span><span class="spacer"></span><span id="topState">idle</span></div>
+
+    <!-- setup -->
+    <div class="setup" id="setup">
+      <div class="field">
+        <label for="amt">Amount</label>
+        <div class="amount"><span class="val" id="amtVal">£42.50</span><span class="cur">GBP · 826</span></div>
+        <input id="amt" type="range" min="50" max="30000" step="50" value="4250" aria-label="Transaction amount in pence">
+        <div class="limits"><span>£0.50</span><span>contactless limit £100</span><span>£300.00</span></div>
+      </div>
+      <div class="field">
+        <label>Interface</label>
+        <div class="seg" id="ifaceSeg">
+          <button data-v="contact" aria-pressed="true">Insert<span class="sub">contact 7816</span></button>
+          <button data-v="contactless" aria-pressed="false">Tap<span class="sub">NFC 14443</span></button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Scenario</label>
+        <div class="seg tri" id="scenSeg">
+          <button data-v="normal" aria-pressed="true">Honest<span class="sub">genuine card</span></button>
+          <button data-v="tamper" aria-pressed="false">Tampered<span class="sub">amount edited</span></button>
+          <button data-v="clone" aria-pressed="false">Cloned<span class="sub">magstripe copy</span></button>
+        </div>
+      </div>
+      <button class="btn" id="startBtn">Insert card</button>
+    </div>
+
+    <!-- actor rail -->
+    <div class="rail" id="rail" hidden>
+      <div class="rail-track">
+        <div class="rail-line"></div>
+        <div class="packet" id="packet"></div>
+        <div class="node" data-k="card" style="--c:var(--gold)">
+          <div class="bulb"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2.5"/><rect x="5.5" y="9" width="7" height="6" rx="1.4"/><path d="M9 9v6M5.5 12h7"/></svg></div>
+          <div class="nm">Card<br>ICC</div>
+        </div>
+        <div class="node" data-k="term" style="--c:var(--cyan)">
+          <div class="bulb"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2.5"/><rect x="7" y="5" width="10" height="6" rx="1"/><path d="M8 15h2M14 15h2M8 18h2M14 18h2"/></svg></div>
+          <div class="nm">Terminal<br>POS</div>
+        </div>
+        <div class="node" data-k="net" style="--c:var(--violet)">
+          <div class="bulb"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></div>
+          <div class="nm">Acquirer<br>Scheme</div>
+        </div>
+        <div class="node" data-k="iss" style="--c:var(--amber)">
+          <div class="bulb"><svg viewBox="0 0 24 24"><rect x="3" y="10" width="18" height="11" rx="2.2"/><path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3M12 14.5v2.5"/></svg></div>
+          <div class="nm">Issuer<br>HSM</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- step screen -->
+    <div class="screen" id="screen" hidden>
+      <div id="stepBody"></div>
+    </div>
+
+    <!-- controls -->
+    <div class="ctrls" id="ctrls" hidden>
+      <button class="iconbtn" id="prevBtn" aria-label="Previous step">←</button>
+      <div class="prog"><span id="progTxt">STEP 1 / 12</span><span class="bar"><i id="progBar"></i></span></div>
+      <button class="iconbtn" id="resetBtn" aria-label="Restart simulation">↺</button>
+      <button class="iconbtn primary" id="nextBtn">Next</button>
+    </div>
+
+    <!-- apdu log -->
+    <details class="logwrap" id="logWrap" hidden>
+      <summary>APDU &amp; message trace</summary>
+      <div class="log" id="log"><div class="empty">nothing yet</div></div>
+    </details>
+  </div>
+</section>
+
+<!-- ══════════════════════════ TRUTH ══════════════════════════ -->
+<section id="truth" class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Scope of the guarantee</div>
+    <h2>What a cryptogram<br>does and doesn't prove</h2>
+  </div>
+  <div class="split">
+    <div class="tcard reveal" style="--c:var(--mint)">
+      <div class="hd">✓ Proven</div>
+      <ul>
+        <li><b>The real chip was there.</b> Only it holds MK<sub>AC</sub>, and it never leaves the die.</li>
+        <li><b>This exact transaction.</b> Amount, currency, date, terminal country and the terminal's random number are all inside the MAC.</li>
+        <li><b>Freshness.</b> The ATC increments once per transaction; a replayed ARQC arrives with a stale counter and is rejected.</li>
+        <li><b>The issuer answered.</b> The ARPC comes back and the chip itself verifies it — a fake "approved" from the network doesn't fool the card.</li>
+      </ul>
+    </div>
+    <div class="tcard reveal" style="--c:var(--red)">
+      <div class="hd">✗ Not proven</div>
+      <ul>
+        <li><b>That your card number is secret.</b> The PAN and expiry are read in the clear — which is why skimmed data still fuels card‑not‑present fraud.</li>
+        <li><b>That the cardholder consented</b>, unless a CVM ran. "No CVM" contactless relies on limits, not proof.</li>
+        <li><b>That the terminal is honest.</b> A crooked terminal can lie about its own risk checks; the issuer sees the TVR but can't audit the shop.</li>
+        <li><b>Distance.</b> A relay attack forwards genuine APDUs over a network in real time — which is why timing bounds exist in newer contactless kernels.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ GLOSSARY ══════════════════════════ -->
+<section id="glossary" class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Decoder ring</div>
+    <h2>The acronyms</h2>
+  </div>
+  <div class="gl">
+    <div class="reveal"><b>ARQC</b><span>Authorisation Request Cryptogram — the card's MAC asking to go online.</span></div>
+    <div class="reveal"><b>TC</b><span>Transaction Certificate — the cryptogram of an <em>approved</em> transaction, kept for clearing.</span></div>
+    <div class="reveal"><b>AAC</b><span>Application Authentication Cryptogram — the cryptogram of a decline.</span></div>
+    <div class="reveal"><b>ARPC</b><span>Authorisation Response Cryptogram — the issuer's signed reply, checked by the chip.</span></div>
+    <div class="reveal"><b>ATC</b><span>Application Transaction Counter — increments every transaction; kills replay.</span></div>
+    <div class="reveal"><b>CDA</b><span>Combined Data Authentication — the card RSA‑signs the cryptogram <em>and</em> the transaction data together.</span></div>
+    <div class="reveal"><b>TVR</b><span>Terminal Verification Results — 5 bytes of "what went wrong" flags.</span></div>
+    <div class="reveal"><b>CDOL</b><span>Card Risk Management Data Object List — the card telling the terminal exactly what to feed it.</span></div>
+    <div class="reveal"><b>IAD</b><span>Issuer Application Data — the card's private note to its issuer, including the CVR.</span></div>
+    <div class="reveal"><b>DE55</b><span>The ISO 8583 field that carries all of this chip data across the network.</span></div>
+  </div>
+</section>
+</main>
+
+<footer class="wrap">
+  <div class="rule"></div>
+  <div>Simplified for teaching · real EMV uses 3DES/AES per issuer profile<br>and RSA key lengths from 1024 to 1984 bits.</div>
+</footer>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   1. AES-128 from scratch — so the cryptograms on this page are
+      genuinely computed, not decorative hex.
+   ════════════════════════════════════════════════════════════════ */
+const AES = (() => {
+  const S = new Uint8Array(256), Si = new Uint8Array(256);
+  const rot = (x, s) => ((x << s) | (x >> (8 - s))) & 0xff;
+  (() => {
+    let p = 1, q = 1;
+    do {
+      p = (p ^ ((p << 1) & 0xff) ^ ((p & 0x80) ? 0x1b : 0)) & 0xff;
+      q ^= q << 1; q ^= q << 2; q ^= q << 4; q &= 0xff; if (q & 0x80) q ^= 0x09;
+      const x = (q ^ rot(q, 1) ^ rot(q, 2) ^ rot(q, 3) ^ rot(q, 4) ^ 0x63) & 0xff;
+      S[p] = x; Si[x] = p;
+    } while (p !== 1);
+    S[0] = 0x63; Si[0x63] = 0;
+  })();
+  const xt = a => ((a << 1) ^ ((a & 0x80) ? 0x1b : 0)) & 0xff;
+  const RCON = [0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1b,0x36];
+
+  function expand(key){
+    const w = new Uint8Array(176); w.set(key);
+    for (let i = 16; i < 176; i += 4){
+      let a = w[i-4], b = w[i-3], c = w[i-2], d = w[i-1];
+      if (i % 16 === 0){
+        [a,b,c,d] = [S[b] ^ RCON[i/16 - 1], S[c], S[d], S[a]];
+      }
+      w[i]   = w[i-16] ^ a; w[i+1] = w[i-15] ^ b;
+      w[i+2] = w[i-14] ^ c; w[i+3] = w[i-13] ^ d;
+    }
+    return w;
+  }
+  function encryptBlock(rk, inp){
+    const s = Uint8Array.from(inp);
+    for (let i = 0; i < 16; i++) s[i] ^= rk[i];
+    for (let r = 1; r <= 10; r++){
+      for (let i = 0; i < 16; i++) s[i] = S[s[i]];
+      // ShiftRows (column-major state)
+      let t;
+      t = s[1]; s[1] = s[5]; s[5] = s[9]; s[9] = s[13]; s[13] = t;
+      t = s[2]; s[2] = s[10]; s[10] = t; t = s[6]; s[6] = s[14]; s[14] = t;
+      t = s[15]; s[15] = s[11]; s[11] = s[7]; s[7] = s[3]; s[3] = t;
+      if (r !== 10){
+        for (let c = 0; c < 16; c += 4){
+          const a0=s[c],a1=s[c+1],a2=s[c+2],a3=s[c+3], all=a0^a1^a2^a3;
+          s[c]  ^= all ^ xt(a0^a1); s[c+1]^= all ^ xt(a1^a2);
+          s[c+2]^= all ^ xt(a2^a3); s[c+3]^= all ^ xt(a3^a0);
+        }
+      }
+      for (let i = 0; i < 16; i++) s[i] ^= rk[r*16 + i];
+    }
+    return s;
+  }
+  return {
+    encrypt(key, block){ return encryptBlock(expand(key), block); },
+    /* EMV padding method 2 + CBC chaining; MAC is the final block */
+    cbcMac(key, data){
+      const p = Array.from(data); p.push(0x80);
+      while (p.length % 16) p.push(0x00);
+      const rk = expand(key);
+      let prev = new Uint8Array(16);
+      for (let i = 0; i < p.length; i += 16){
+        const blk = new Uint8Array(16);
+        for (let j = 0; j < 16; j++) blk[j] = p[i+j] ^ prev[j];
+        prev = encryptBlock(rk, blk);
+      }
+      return prev;
+    }
+  };
+})();
+
+/* ── hex helpers ───────────────────────────────────────────── */
+const h2b = h => { h = h.replace(/\s+/g,''); const o = new Uint8Array(h.length/2);
+  for (let i=0;i<o.length;i++) o[i]=parseInt(h.substr(i*2,2),16); return o; };
+const b2h = b => Array.from(b).map(x => x.toString(16).padStart(2,'0').toUpperCase()).join('');
+const rnd = n => b2h(crypto.getRandomValues(new Uint8Array(n)));
+const group = (h,n=2) => h.match(new RegExp('.{1,'+(n*2)+'}','g')).join(' ');
+
+/* ════════════════════════════════════════════════════════════════
+   2. EMV key ladder
+   ════════════════════════════════════════════════════════════════ */
+const EMV = {
+  /* MK = AES(IMK, PAN‖PSN right-16 digits)  — EMV Option A, AES flavour */
+  cardKey(imk, pan, psn){
+    const y = (pan + psn).slice(-16);
+    return AES.encrypt(h2b(imk), h2b(y + 'FFFFFFFFFFFFFFFF'.slice(0,32-16)));
+  },
+  /* SK = AES(MK, ATC ‖ F0 ‖ 00 …) — EMV Common Session Key derivation */
+  sessionKey(mk, atc){
+    return AES.encrypt(mk, h2b(atc + 'F000' + '00'.repeat(12)));
+  },
+  cryptogram(sk, dataHex){
+    return b2h(AES.cbcMac(sk, h2b(dataHex))).slice(0,16);
+  },
+  /* ARPC method 1: AES(SK, ARQC ⊕ (ARC ‖ 00…)) */
+  arpc(sk, arqc, arc){
+    const a = h2b(arqc + '00'.repeat(8)), b = h2b(arc + '00'.repeat(14));
+    const x = new Uint8Array(16); for (let i=0;i<16;i++) x[i] = a[i] ^ b[i];
+    return b2h(AES.encrypt(sk, x)).slice(0,16);
+  }
+};
+
+/* ════════════════════════════════════════════════════════════════
+   3. Transaction state
+   ════════════════════════════════════════════════════════════════ */
+const CFG = {
+  imk:       '0123456789ABCDEFFEDCBA9876543210',   // issuer master key (demo)
+  pan:       '4111111111111111',
+  psn:       '01',
+  expiry:    '2809',
+  aid:       'A0000000031010',
+  caIndex:   '09',
+  floorLimit: 5000,      // pence
+  clessCVM:  10000,      // pence — PIN required above this on a tap
+  pin:       '1234'
+};
+
+let S = {}, STEPS = [], idx = 0, pinBuf = '', gate = false;
+
+function newTxn(){
+  const d = new Date();
+  const amount = +$('#amt').value;
+  const iface  = segVal('#ifaceSeg');
+  const scen   = segVal('#scenSeg');
+  const atc    = (Math.floor(Math.random()*400) + 120).toString(16).padStart(4,'0').toUpperCase();
+  const un     = rnd(4);
+  const aip    = iface === 'contact' ? '3900' : '2000';
+  const online = amount > CFG.floorLimit || scen !== 'normal' || iface === 'contact';
+
+  const S2 = {
+    amount, iface, scen, atc, un, aip, online,
+    amtHex: String(amount).padStart(12,'0'),
+    date: [d.getFullYear()%100, d.getMonth()+1, d.getDate()].map(n=>String(n).padStart(2,'0')).join(''),
+    tvr: '0000000000',
+    iad: '06010A03A00000',
+    pinOK: null, pinTries: 3,
+    cvm: (iface === 'contact') ? 'pin' : (amount > CFG.clessCVM ? 'pin' : 'nocvm'),
+    odaOK: scen !== 'clone'
+  };
+  if (scen === 'clone') S2.tvr = '0400000000';                // CDA failed
+  S2.txnData = S2.amtHex + '000000000000' + '0826' + S2.tvr +
+               '0826' + S2.date + '00' + S2.un + S2.aip + S2.atc + S2.iad;
+
+  /* card side */
+  const genuineMK = EMV.cardKey(CFG.imk, CFG.pan, CFG.psn);
+  S2.cardMK = (scen === 'clone') ? h2b(rnd(16)) : genuineMK;   // a clone guessed the key
+  S2.cardSK = EMV.sessionKey(S2.cardMK, S2.atc);
+  S2.arqc   = EMV.cryptogram(S2.cardSK, S2.txnData);
+  S2.mkHex  = b2h(S2.cardMK); S2.skHex = b2h(S2.cardSK);
+
+  /* issuer side — recomputed independently from the IMK */
+  S2.issTxnData = (scen === 'tamper')
+      ? S2.txnData.replace(S2.amtHex, String(amount * 7).padStart(12,'0'))
+      : S2.txnData;
+  S2.issMK   = genuineMK;
+  S2.issSK   = EMV.sessionKey(S2.issMK, S2.atc);
+  S2.issARQC = EMV.cryptogram(S2.issSK, S2.issTxnData);
+  S2.match   = S2.issARQC === S2.arqc;
+  S2.arc     = S2.match ? '3030' : '3035';                     // '00' approve / '05' decline
+  S2.arpc    = EMV.arpc(S2.issSK, S2.issARQC, S2.arc);
+  S2.approved = S2.match;
+  S2.sdad    = EMV.cryptogram(S2.cardSK, S2.un + S2.txnData).slice(0,16);
+  return S2;
+}
+
+/* ── tiny DOM helpers ──────────────────────────────────────── */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const segVal = sel => $(sel + ' button[aria-pressed=true]').dataset.v;
+const money = p => '£' + (p/100).toFixed(2);
+
+/* ════════════════════════════════════════════════════════════════
+   4. The twelve steps
+   ════════════════════════════════════════════════════════════════ */
+function dataBlock(title, c, rows){
+  return '<div class="data" style="--c:'+c+'"><div class="dh"><span class="tagdot"></span>'+title+'</div>'+
+    rows.map(r => '<div class="drow">' +
+      ((r[0]||r[3]) ? '<span class="t">'+(r[0]||'')+'<span class="n">'+(r[3]||'')+'</span></span>' : '') +
+      '<span class="v '+(r[2]||'')+'">'+r[1]+'</span></div>').join('') + '</div>';
+}
+function cryptoBox(c, label, value, note){
+  return '<div class="crypto" style="--c:'+c+'"><div class="lbl">'+label+'</div>'+
+    '<div class="big">'+value+'</div><div class="note">'+note+'</div></div>';
+}
+
+function buildSteps(){
+  const clean = S.scen === 'normal', tap = S.iface === 'contactless';
+  const T2 = CFG.pan + 'D' + CFG.expiry + '2010000123456789';
+
+  return [
+  /* ── 0 ─────────────────────────────────────────────── */
+  {
+    on:['card','term'], from:'term', to:'card', pill:'Power',
+    title: tap ? 'The field wakes the chip' : 'Cold reset, then a hello',
+    say: tap
+      ? 'The terminal radiates a 13.56&nbsp;MHz field. The card has no battery — it harvests power from that field, boots its operating system and answers with an ATS.'
+      : 'Contacts mate, VCC rises, the clock starts. Within milliseconds the chip replies with its Answer To Reset: a byte string describing its voltage, protocol and timing.',
+    why: 'Nothing cryptographic yet — but note what just happened: <b>a processor booted inside the plastic.</b> Everything after this is a conversation between two computers, not a lookup of a number.',
+    html: dataBlock(tap ? 'ATS · ISO 14443-4' : 'ATR · ISO 7816-3', 'var(--gold)', [
+      ['','3B 6D 00 00 80 31 80 65 B0 85 03 00 EF 12 0F FF 82 90 00','gold'],
+      ['','T=1 protocol · 4 MHz · 5V class A','', 'decoded']
+    ]),
+    log:[['⇐', tap?'ATS 0A 78 80 82 02':'ATR 3B 6D 00 00 80 31 80 65 B0 85 03 00 EF','r']]
+  },
+  /* ── 1 ─────────────────────────────────────────────── */
+  {
+    on:['term','card'], from:'term', to:'card', pill:'Select',
+    title:'Which application are we running?',
+    say:'One chip can hold several payment applications. The terminal reads the directory — '+(tap?'the PPSE, <span class="mono">2PAY.SYS.DDF01</span>':'the PSE, <span class="mono">1PAY.SYS.DDF01</span>')+' — picks the highest-priority AID both sides support, and selects it.',
+    why:'The reply (the FCI) also carries the <b>PDOL</b>: the card listing exactly which terminal values it wants before it will even start. The card is already setting the agenda.',
+    html: dataBlock('SELECT response · FCI', 'var(--cyan)', [
+      ['4F','A0 00 00 00 03 10 10','gold','AID'],
+      ['50','VISA CREDIT','','label'],
+      ['9F38','9F66 04 · 9F02 06 · 9F03 06 · 9F1A 02 · 95 05 · 5F2A 02 · 9A 03 · 9C 01 · 9F37 04','','PDOL']
+    ]),
+    log:[['⇒','00 A4 04 00 0E '+(tap?'325041592E5359532E4444463031':'315041592E5359532E4444463031'),'c'],
+         ['⇐','6F 2F 84 0E …  90 00','r'],
+         ['⇒','00 A4 04 00 07 A0000000031010','c'],
+         ['⇐','6F 3B 84 07 A0000000031010 …  90 00','r']]
+  },
+  /* ── 2 ─────────────────────────────────────────────── */
+  {
+    on:['term','card'], from:'term', to:'card', pill:'GPO',
+    title:'Terminal shows its hand',
+    say:'GET PROCESSING OPTIONS hands the card everything the PDOL asked for — amount, country, currency, date, and a fresh <b>Unpredictable Number</b>. The card replies with its capabilities (AIP) and a map of which records to read (AFL).',
+    why:'That random number is the anti-replay seed for the whole transaction. <b>The terminal chooses it, so the card cannot pre-compute anything.</b>',
+    html: dataBlock('GPO exchange', 'var(--cyan)', [
+      ['9F02', group(S.amtHex), 'gold', 'amount authorised'],
+      ['9F37', group(S.un), 'mint', 'unpredictable number'],
+      ['9A', group(S.date), '', 'date'],
+      ['82', group(S.aip), '', 'AIP — '+(tap?'contactless, fDDA supported':'CDA + cardholder verification supported')],
+      ['94','08 01 01 00 10 01 03 00','','AFL — records to read']
+    ]),
+    log:[['⇒','80 A8 00 00 23 83 21 '+S.amtHex+'000000000000 0826 '+S.tvr,'c'],
+         ['⇐','77 12 82 02 '+S.aip+' 94 08 08010100 10010300 90 00','r']]
+  },
+  /* ── 3 ─────────────────────────────────────────────── */
+  {
+    on:['term','card'], from:'card', to:'term', pill:'Read',
+    title:'Reading the card out loud',
+    say:'The terminal walks the AFL and reads each record. Out comes the track‑2 equivalent data, the expiry, the CVM list, the CDOLs — and the two RSA certificates that make offline authentication possible.',
+    why:'Notice what is <b>not</b> secret: the PAN and expiry come out in clear text. Chip security was never about hiding the card number — it is about making a <b>copy of that number useless at a terminal</b>.',
+    html: dataBlock('Records read', 'var(--violet)', [
+      ['57', group(T2), 'gold', 'track-2 equivalent'],
+      ['5F34','01','','PAN sequence number'],
+      ['8E','42 03 44 03 41 03 1E 03 02 03','','CVM list'],
+      ['90','8C 41 9E 7F … (144 bytes)','','issuer public key certificate'],
+      ['9F46','5B 20 D1 A4 … (144 bytes)','','ICC public key certificate'],
+      ['8C','9F02 06 9F03 06 9F1A 02 95 05 5F2A 02 9A 03 9C 01 9F37 04','','CDOL1']
+    ]),
+    log:[['⇒','00 B2 01 0C 00','c'],['⇐','70 81 93 57 13 '+T2+' … 90 00','r'],
+         ['⇒','00 B2 01 14 00','c'],['⇐','70 81 B4 90 81 90 8C419E7F … 90 00','r']]
+  },
+  /* ── 4 ─────────────────────────────────────────────── */
+  {
+    on:['term','card'], from:'card', to:'term', pill:'Offline auth',
+    title:'A chain of signatures, checked offline',
+    say:'The terminal holds no card secrets — but it does hold the <b>scheme CA public keys</b>, burned in at deployment. It unwraps the chain: CA key verifies the issuer certificate, the issuer key verifies the ICC certificate, and the ICC key verifies a signature the card makes <em>right now</em> over the terminal\'s random number.',
+    why: S.odaOK
+      ? 'This is why a chip works on an aeroplane. <b>No network needed</b> — the maths alone proves the card is genuine and not a static copy.'
+      : 'A magstripe clone has the PAN, but it cannot forge an ICC private key. <b>The chain breaks at the last link</b> and the terminal sets a TVR bit that follows the transaction all the way to the issuer.',
+    html: '<div class="chain" id="chain">'+
+      '<div class="cert" data-i="0"><div class="ct">Root · in terminal memory</div><div class="cn">Scheme CA public key</div>'+
+        '<div class="cv">RID A000000003 · index '+CFG.caIndex+' · 1984-bit modulus, e=3</div><div class="tick">✓</div></div>'+
+      '<div class="link"></div>'+
+      '<div class="cert" data-i="1"><div class="ct">Tag 90 · signed by the CA</div><div class="cn">Issuer public key certificate</div>'+
+        '<div class="cv">recovered hash matches · PAN prefix 411111 · not expired</div><div class="tick">✓</div></div>'+
+      '<div class="link"></div>'+
+      '<div class="cert" data-i="2"><div class="ct">Tag 9F46 · signed by the issuer</div><div class="cn">ICC public key certificate</div>'+
+        '<div class="cv">recovered hash matches · bound to PAN '+CFG.pan.slice(0,6)+'••••••'+CFG.pan.slice(-4)+'</div><div class="tick">✓</div></div>'+
+      '<div class="link"></div>'+
+      '<div class="cert'+(S.odaOK?'':' fail')+'" data-i="3"><div class="ct">Tag 9F4B · signed by the card, just now</div>'+
+        '<div class="cn">Dynamic signature over UN '+group(S.un)+'</div>'+
+        '<div class="cv">'+(S.odaOK ? 'SDAD '+group(S.sdad)+' · verifies under the ICC public key' : 'signature absent / invalid — card cannot prove possession of the ICC private key')+'</div>'+
+        '<div class="tick">'+(S.odaOK?'✓':'✗')+'</div></div></div>'+
+      (S.odaOK ? '' : '<div class="verdict shake" style="--c:var(--red)"><div class="mk">CDA FAILED</div><div class="sub">TVR byte 1 bit 3 set · forced online</div></div>'),
+    log:[['⇒','00 88 00 00 04 '+S.un,'c'],
+         ['⇐', S.odaOK ? '80 81 90 '+S.sdad+' … 90 00' : '69 85 — conditions of use not satisfied', S.odaOK?'r':'x']]
+  },
+  /* ── 5 ─────────────────────────────────────────────── */
+  {
+    on:['card','term'], from:'term', to:'card', pill:'CVM',
+    title: S.cvm === 'pin' ? 'Prove you are the cardholder' : 'No CVM required',
+    say: S.cvm === 'pin'
+      ? 'The terminal walks the card\'s CVM list top-down and lands on <b>offline enciphered PIN</b>. Your digits are packed into a PIN block, padded with random bytes, and RSA-encrypted with the card\'s <em>own</em> public key.'
+      : 'Below the cardholder verification limit of '+money(CFG.clessCVM)+', the card\'s CVM list allows "no CVM required". Convenience is bought with liability: the issuer, not you, carries the risk.',
+    why: S.cvm === 'pin'
+      ? 'The PIN is checked <b>inside the chip</b>. The terminal never sees it, the shop never stores it, and the network never carries it. A wrong PIN decrements a counter on the card itself.'
+      : 'Nothing about this weakens the cryptogram — the card still signs the transaction. It only removes the proof that <b>you</b> were holding it.',
+    html: S.cvm === 'pin'
+      ? '<div class="pinpad"><div class="pindisp" id="pinDisp"><i></i><i></i><i></i><i></i></div>'+
+        '<div class="keys" id="pinKeys">'+[1,2,3,4,5,6,7,8,9].map(n=>'<button data-k="'+n+'">'+n+'</button>').join('')+
+        '<button class="del" data-k="del">DEL</button><button data-k="0">0</button><button class="ok" data-k="ok">ENTER</button>'+
+        '</div><div class="pinmsg" id="pinMsg">enter PIN &middot; this card\'s PIN is 1234</div></div>'
+      : dataBlock('CVM decision','var(--gold)',[
+          ['9F34','1F 03 02','gold','CVM results — no CVM, successful'],
+          ['','amount '+money(S.amount)+' ≤ limit '+money(CFG.clessCVM),'',''],
+        ]),
+    gate: S.cvm === 'pin',
+    log: S.cvm === 'pin' ? [['⇒','00 20 00 88 81 … RSA-enciphered PIN block','c']] : []
+  },
+  /* ── 6 ─────────────────────────────────────────────── */
+  {
+    on:['term'], from:null, to:null, pill:'Risk',
+    title:'The terminal makes up its own mind',
+    say:'Before asking the card for anything, the terminal runs its own risk management: is the amount over the floor limit of '+money(CFG.floorLimit)+'? Is the card on the exception file? Did random selection pick this one for an online check? Every answer is recorded as a bit in the <b>TVR</b>.',
+    why:'The TVR is fed <em>into</em> the cryptogram a moment later. So the terminal can lie to itself, but <b>it cannot lie about what it told the card</b> — its claims are sealed inside the card\'s MAC.',
+    html: dataBlock('Terminal verification results · tag 95','var(--cyan)',[
+      ['95', group(S.tvr), S.tvr==='0000000000'?'mint':'red', S.tvr==='0000000000'?'all checks passed':'offline data authentication failed'],
+      ['','amount '+money(S.amount)+(S.amount>CFG.floorLimit?' &gt; ':' ≤ ')+'floor limit '+money(CFG.floorLimit),'',''],
+      ['','decision: '+(S.online?'<b style="color:var(--amber)">go online</b>':'<b style="color:var(--mint)">could approve offline</b>'),'','']
+    ]),
+    log:[['·','terminal action analysis → '+(S.online?'ARQC requested':'TC requested'),'']]
+  },
+  /* ── 7 ─────────────────────────────────────────────── */
+  {
+    on:['card'], from:'term', to:'card', pill:'Generate AC', kind:'enc',
+    title:'The card signs the transaction',
+    say:'The terminal sends the CDOL1 data and asks for a cryptogram. Inside the chip, a three-stage key ladder runs, and then a MAC is computed over everything that defines this payment.',
+    why:'Change one penny, one date, one random byte, and the ARQC changes completely. This is the heart of EMV: <b>a per-transaction, unforgeable, unrepeatable signature of this exact purchase.</b>',
+    html:
+      '<div class="data" style="--c:var(--mint)"><div class="dh"><span class="tagdot"></span>Cryptogram input · CDOL1 data</div>'+
+      '<div class="hexflow">'+
+        '<span class="h1c">'+group(S.amtHex)+'</span> <span class="h1c">'+group('000000000000')+'</span> '+
+        '<span class="h2c">08 26</span> <span class="h2c">'+group(S.tvr)+'</span> <span class="h2c">08 26</span> '+
+        '<span class="h2c">'+group(S.date)+'</span> <span class="h2c">00</span> <span class="h4c">'+group(S.un)+'</span> '+
+        '<span class="h3c">'+group(S.aip)+'</span> <span class="h3c">'+group(S.atc)+'</span> <span class="h3c">'+group(S.iad)+'</span>'+
+      '</div></div>'+
+      dataBlock('Key ladder · inside the chip','var(--mint)',[
+        ['①','IMK<sub>AC</sub> — never leaves the issuer HSM','','step 1'],
+        ['②','MK = AES(IMK, PAN‖PSN) = '+group(S.mkHex.slice(0,16))+' …','gold','card master key'],
+        ['③','SK = AES(MK, ATC '+S.atc+' ‖ F0…) = '+group(S.skHex.slice(0,16))+' …','mint','session key, unique to this ATC']
+      ])+
+      cryptoBox('var(--mint)','ARQC · tag 9F26', '<span id="arqcOut">'+group(S.arqc)+'</span>',
+        'AES-128 CBC-MAC over '+(S.txnData.length/2)+' bytes, truncated to 8. ATC '+S.atc+' will never be used again.'),
+    log:[['⇒','80 AE 80 00 1D '+S.txnData.slice(0,40)+'…','c'],
+         ['⇐','77 1E 9F27 01 80 9F36 02 '+S.atc+' 9F26 08 '+S.arqc+' 90 00','r']]
+  },
+  /* ── 8 ─────────────────────────────────────────────── */
+  {
+    on:['term','net'], from:'term', to:'net', pill:'Network', kind:'enc',
+    title:'Out through the acquirer, across the scheme',
+    say:'The terminal wraps the chip data into an ISO 8583 authorisation request. The chip tags travel together in <b>field 55</b>. The acquirer forwards it; the scheme routes it purely on the BIN, '+CFG.pan.slice(0,6)+'.',
+    why:'The network is a <b>courier, not a verifier</b>. It has no copy of your card key and cannot check the ARQC. Its job is routing, format policing and settlement. The one exception is stand-in processing: if the issuer is unreachable, the scheme may hold a licensed copy of the keys and answer on its behalf, within issuer-set limits.',
+    html: dataBlock('ISO 8583 · 0100 authorisation request','var(--violet)',[
+      ['DE2', CFG.pan.slice(0,6)+'••••••'+CFG.pan.slice(-4),'gold','primary account number'],
+      ['DE4', S.amtHex,'','amount'],
+      ['DE55','9F26 '+S.arqc+' · 9F27 80 · 9F10 '+S.iad+' · 9F37 '+S.un+' · 9F36 '+S.atc+' · 95 '+S.tvr+' · 9A '+S.date+' · 82 '+S.aip,'mint','ICC data'],
+      ['','route: terminal → acquirer host → scheme → issuer','','']
+    ]),
+    log:[['⇒','0100 auth request · DE55 len 0x3E','c'],['·','scheme routing by BIN '+CFG.pan.slice(0,6),'']]
+  },
+  /* ── 9 ─────────────────────────────────────────────── */
+  {
+    on:['iss'], from:'net', to:'iss', pill:'Issuer HSM', kind: S.match?'enc':'bad',
+    title:'The only other place the key exists',
+    say:'Inside a tamper-responsive HSM, the issuer repeats the card\'s work from scratch: derive the card key from the master key and the PAN, derive the session key from the ATC that just arrived, then MAC the transaction data from field 55 — and compare.',
+    why: S.match
+      ? 'Two independent computations, one on a chip in your hand and one in a locked box in a data centre, produced <b>identical bytes</b>. Nothing else could have done that.'
+      : (S.scen === 'tamper'
+        ? 'The amount was altered in transit, so the issuer MACs <b>different data</b> and gets a different answer. The cryptogram is a seal over the whole transaction — <b>you cannot edit one field and keep the signature valid</b>.'
+        : 'The clone never had the real card key, so its session key was wrong and its MAC is wrong. <b>The PAN was never the secret.</b>'),
+    html:
+      dataBlock('HSM recomputation','var(--amber)',[
+        ['①','IMK '+group(CFG.imk.slice(0,12))+' … (inside HSM)','','master key'],
+        ['②','MK = '+group(b2h(S.issMK).slice(0,16))+' …','gold','re-derived from PAN'],
+        ['③','SK = '+group(b2h(S.issSK).slice(0,16))+' …','mint','re-derived from ATC '+S.atc],
+        ['data', S.scen==='tamper' ? '<span class="mono" style="color:var(--red)">'+group(S.issTxnData.slice(0,12))+'</span> '+group(S.issTxnData.slice(12,36))+' …' : group(S.issTxnData.slice(0,24))+' …', '', S.scen==='tamper'?'amount field does NOT match what the card signed':'as signed by the card']
+      ])+
+      '<div class="data" style="--c:var(--amber)"><div class="dh"><span class="tagdot"></span>Comparison</div>'+
+        '<div class="drow"><span class="t">CARD<span class="n">received</span></span><span class="v gold">'+group(S.arqc)+'</span></div>'+
+        '<div class="drow"><span class="t">HSM<span class="n">computed</span></span><span class="v '+(S.match?'mint':'red')+'">'+group(S.issARQC)+'</span></div></div>'+
+      '<div class="verdict'+(S.match?'':' shake')+'" style="--c:'+(S.match?'var(--mint)':'var(--red)')+'">'+
+        '<div class="mk">'+(S.match?'MATCH':'MISMATCH')+'</div>'+
+        '<div class="sub">'+(S.match?'card authenticated · ARC 00 approve':'cryptogram invalid · ARC 05 do not honour')+'</div></div>',
+    log:[['·','HSM: derive MK → derive SK → CBC-MAC → compare','' ],
+         ['⇐', S.match?'0110 response · DE39 00 approved':'0110 response · DE39 05 declined', S.match?'r':'x']]
+  },
+  /* ── 10 ─────────────────────────────────────────────── */
+  {
+    on:['card','iss'], from:'iss', to:'card', pill:'ARPC', kind: S.match?'enc':'bad',
+    title:'The card checks the answer',
+    say:'The issuer MACs its response code back into an <b>ARPC</b> and returns it. The terminal hands it to the chip in an EXTERNAL AUTHENTICATE / second GENERATE AC. The chip verifies it with the same session key.',
+    why:'This closes the loop in the other direction. <b>A terminal or network that simply shouts "approved" cannot fool the chip</b> — without the key it cannot produce a valid ARPC, and the card records the failure in its own issuer application data.',
+    html:
+      dataBlock('Issuer authentication · tag 91','var(--amber)',[
+        ['ARC', group(S.arc), S.match?'mint':'red', S.match?'"00" — approved':'"05" — do not honour'],
+        ['91', group(S.arpc)+' '+group(S.arc), '', 'ARPC ‖ ARC returned to the card'],
+        ['', 'card recomputes AES(SK, ARQC ⊕ ARC) → '+(S.match?'verified':'verified (a genuine decline)'), S.match?'mint':'', '']
+      ])+
+      dataBlock('Second GENERATE AC','var(--amber)',[
+        ['9F27', S.approved?'40':'00','', S.approved?'TC — transaction certificate':'AAC — application authentication cryptogram'],
+        ['9F26', group(S.approved ? EMV.cryptogram(S.cardSK, S.txnData+'40') : EMV.cryptogram(S.cardSK, S.txnData+'00')), S.approved?'mint':'red','final cryptogram'],
+        ['9F36', S.atc, '', 'counter now burned — this value can never authorise again']
+      ]),
+    log:[['⇒','00 82 00 00 0A '+S.arpc+' '+S.arc,'c'],['⇐','90 00','r'],
+         ['⇒','80 AE '+(S.approved?'40':'00')+' 00 …','c'],
+         ['⇐','77 … 9F27 01 '+(S.approved?'40':'00')+' 90 00', S.approved?'r':'x']]
+  },
+  /* ── 11 ─────────────────────────────────────────────── */
+  {
+    on:['term'], from:null, to:null, pill:'Done', kind:null,
+    title: S.approved ? 'Approved — and provable forever' : 'Declined — and provable forever',
+    say: S.approved
+      ? 'The terminal prints the receipt and stores the TC. That transaction certificate goes into the clearing message overnight, so the payment can still be proven months later in a chargeback dispute.'
+      : 'The chip returned an AAC. The terminal declines. The same evidence trail exists — the issuer can show exactly which check failed and why liability sits where it does.',
+    why:'Liability follows the evidence. A transaction with a valid chip cryptogram and a verified CVM is, in scheme rules, the merchant\'s safest possible position — which is exactly why the whole ceremony exists.',
+    html:
+      '<div class="verdict" style="--c:'+(S.approved?'var(--mint)':'var(--red)')+'">'+
+        '<div class="mk">'+(S.approved?'APPROVED':'DECLINED')+'</div>'+
+        '<div class="sub">'+money(S.amount)+' · '+(S.approved?'auth code 0A7F21':'response 05')+'</div></div>'+
+      dataBlock('Receipt data retained','var(--cyan)',[
+        ['AID', CFG.aid,'','application'],
+        ['9F26', group(S.approved ? EMV.cryptogram(S.cardSK, S.txnData+'40') : S.arqc), S.approved?'mint':'red', S.approved?'TC for clearing':'AAC'],
+        ['9F36', S.atc,'','ATC'],
+        ['9F34', S.cvm==='pin'?'04 03 02':'1F 03 02','', S.cvm==='pin'?'offline enciphered PIN, successful':'no CVM required'],
+        ['95', group(S.tvr), S.tvr==='0000000000'?'':'red','TVR']
+      ]),
+    log:[['·','clearing: 0220 advice with TC + IAD','']]
+  }];
+}
+
+/* ════════════════════════════════════════════════════════════════
+   5. Controller
+   ════════════════════════════════════════════════════════════════ */
+const el = {
+  setup:$('#setup'), rail:$('#rail'), screen:$('#screen'), body:$('#stepBody'),
+  ctrls:$('#ctrls'), log:$('#log'), logWrap:$('#logWrap'), packet:$('#packet'),
+  next:$('#nextBtn'), prev:$('#prevBtn'), reset:$('#resetBtn'),
+  progTxt:$('#progTxt'), progBar:$('#progBar'), top:$('#topState'), start:$('#startBtn')
+};
+
+/* amount slider */
+function syncAmount(){
+  const r = $('#amt');
+  $('#amtVal').textContent = money(+r.value);
+  r.style.setProperty('--pct', ((r.value - r.min)/(r.max - r.min)*100) + '%');
+}
+$('#amt').addEventListener('input', syncAmount); syncAmount();
+
+/* segmented controls */
+$$('.seg').forEach(seg => seg.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  if (seg.id === 'ifaceSeg') el.start.textContent = b.dataset.v === 'contact' ? 'Insert card' : 'Tap card';
+}));
+
+/* packet travel */
+function movePacket(from, to, kind){
+  if (!from || !to){ el.packet.className = 'packet'; return; }
+  const track = el.rail.querySelector('.rail-track');
+  const cx = k => {
+    const n = el.rail.querySelector('.node[data-k="'+k+'"] .bulb');
+    const a = n.getBoundingClientRect(), b = track.getBoundingClientRect();
+    return a.left - b.left + a.width/2 - 6.5;
+  };
+  el.packet.style.transition = 'none';
+  el.packet.style.transform = 'translateX(' + cx(from) + 'px)';
+  el.packet.className = 'packet show' + (kind ? ' ' + kind : '');
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    el.packet.style.transition = '';
+    el.packet.style.transform = 'translateX(' + cx(to) + 'px)';
+  }));
+}
+
+/* APDU log rebuilt up to the current step */
+function paintLog(){
+  const rows = [];
+  for (let i = 0; i <= idx; i++) (STEPS[i].log || []).forEach(l => rows.push(l));
+  el.log.innerHTML = rows.length
+    ? rows.map(l => '<div><span class="dir">'+l[0]+'</span><span class="'+(l[2]||'')+'">'+l[1]+'</span></div>').join('')
+    : '<div class="empty">nothing yet</div>';
+  el.log.scrollTop = el.log.scrollHeight;
+}
+
+/* PIN entry */
+function wirePin(){
+  const disp = $('#pinDisp'), msg = $('#pinMsg'), keys = $("#pinKeys");
+  if (!keys) return;
+  const paint = () => disp.querySelectorAll('i').forEach((d,i) => d.classList.toggle('f', i < pinBuf.length));
+  keys.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const k = b.dataset.k;
+    if (k === 'del'){ pinBuf = pinBuf.slice(0,-1); msg.className='pinmsg'; }
+    else if (k === 'ok'){
+      if (pinBuf.length !== 4) return;
+      if (pinBuf === CFG.pin){
+        S.pinOK = true; gate = false;
+        msg.className = 'pinmsg'; msg.style.color = 'var(--mint)';
+        msg.textContent = '✓ verified by the chip · 9F34 = 04 03 02';
+        el.next.disabled = false; el.top.textContent = 'pin ok';
+        disp.querySelectorAll('i').forEach(d => d.style.background = 'var(--mint)');
+      } else {
+        S.pinTries--; pinBuf = '';
+        msg.className = 'pinmsg bad';
+        msg.textContent = S.pinTries > 0
+          ? '✗ wrong PIN · PIN try counter now ' + S.pinTries
+          : '✗ PIN try counter exhausted — the chip has blocked offline PIN';
+        if (S.pinTries <= 0){ gate = false; el.next.disabled = false; S.pinOK = false; }
+      }
+      paint(); return;
+    }
+    else if (pinBuf.length < 4) pinBuf += k;
+    paint();
+  });
+  paint();
+}
+
+/* render a step */
+function render(){
+  const s = STEPS[idx];
+  const c = {card:'var(--gold)', term:'var(--cyan)', net:'var(--violet)', iss:'var(--amber)'}[s.on[0]];
+  el.body.innerHTML =
+    '<div class="stepin">' +
+      '<div class="stepmeta"><span class="pill" style="--c:'+c+'">'+s.pill+'</span>' +
+        '<span class="stepno">'+String(idx+1).padStart(2,'0')+' / '+String(STEPS.length).padStart(2,'0')+'</span></div>' +
+      '<h3>'+s.title+'</h3>' +
+      '<p class="say">'+s.say+'</p>' +
+      '<p class="why">'+s.why+'</p>' +
+      (s.html || '') +
+    '</div>';
+
+  $$('.node').forEach(n => n.classList.toggle('on', s.on.includes(n.dataset.k)));
+  setTimeout(() => movePacket(s.from, s.to, s.kind), 240);
+
+  gate = !!s.gate && S.pinOK === null;
+  if (s.gate) { pinBuf = ''; wirePin(); }
+  el.next.disabled = gate;
+  el.next.textContent = idx === STEPS.length - 1 ? 'Again' : 'Next';
+  el.prev.disabled = idx === 0;
+  el.progTxt.textContent = 'STEP ' + (idx+1) + ' / ' + STEPS.length + ' · ' + s.pill.toUpperCase();
+  el.progBar.style.width = ((idx+1)/STEPS.length*100) + '%';
+  el.top.textContent = gate ? 'awaiting pin' : (idx === STEPS.length-1 ? (S.approved ? 'approved' : 'declined') : 'processing');
+  paintLog();
+
+  /* certificate chain animates link by link */
+  const chain = $('#chain');
+  if (chain) chain.querySelectorAll('.cert').forEach((cert, i) => {
+    if (cert.classList.contains('fail')) return;
+    setTimeout(() => cert.classList.add('ok'), 240 + i*420);
+  });
+}
+
+function go(n){
+  if (n < 0 || n >= STEPS.length) return;
+  idx = n; render();
+  el.rail.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+el.next.addEventListener('click', () => {
+  if (idx === STEPS.length - 1) return restart();
+  go(idx + 1);
+});
+el.prev.addEventListener('click', () => go(idx - 1));
+el.reset.addEventListener('click', restart);
+
+function restart(){
+  el.setup.hidden = false;
+  el.rail.hidden = el.screen.hidden = el.ctrls.hidden = el.logWrap.hidden = true;
+  el.packet.className = 'packet';
+  el.top.textContent = 'idle';
+  $('#sim').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+el.start.addEventListener('click', () => {
+  S = newTxn();
+  STEPS = buildSteps();
+  idx = 0; pinBuf = '';
+  el.setup.hidden = true;
+  el.rail.hidden = el.screen.hidden = el.ctrls.hidden = el.logWrap.hidden = false;
+  render();
+  el.rail.scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+/* scroll reveals */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), {rootMargin:'0px 0px -12% 0px', threshold:.12});
+$$('.reveal').forEach((n,i) => { n.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(n); });
+</script>
+</body>
+</html>
