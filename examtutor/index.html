@@ -287,6 +287,7 @@
     display: grid; place-items: center; transition: transform .15s;
   }
   .dot-btn.most, .dot-btn.fewest { border: 1.5px solid var(--print); background: var(--print); }
+  .dot-btn svg { width: .85rem; height: .85rem; }
   .dot-btn.marked { border: 1.5px solid var(--print-muted); background: #fff; color: var(--print); }
   .dot-btn.marked.right { border-color: var(--green); background: var(--green); color: #fff; }
   .dot-btn.marked.wrong { border-color: var(--red); background: var(--red); color: #fff; }
@@ -477,6 +478,15 @@
     return a;
   };
   const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+  // Mark-meter icon: full bars = most marks, a single bar = fewest marks.
+  const meter = full => {
+    const bar = (x, y, h, on) => on
+      ? `<rect x="${x}" y="${y}" width="3" height="${h}" rx=".5" fill="currentColor"/>`
+      : `<rect x="${x + .5}" y="${y + .5}" width="2" height="${h - 1}" rx=".5" fill="none" stroke="currentColor" stroke-width="1" opacity=".45"/>`;
+    const span = el('span', { 'aria-hidden': 'true', style: 'display:inline-flex' });
+    span.innerHTML = `<svg viewBox="0 0 16 16">${bar(1, 10, 5, true)}${bar(6.5, 6, 9, full)}${bar(12, 2, 13, full)}</svg>`;
+    return span;
+  };
   const clean = nodes => nodes.filter(n => n != null && n !== false);
   // New screen: start at the top.
   const render = (...nodes) => { appEl.replaceChildren(...clean(nodes)); window.scrollTo({ top: 0, behavior: 'smooth' }); };
@@ -727,15 +737,6 @@
     // --- candidate responses
     const cards = order.map((ansIdx, pos) => {
       const a = q.answers[ansIdx];
-      // Mark-meter icons: full bars = most marks, a single bar = fewest marks.
-      const meter = full => {
-        const bar = (x, y, h, on) => on
-          ? `<rect x="${x}" y="${y}" width="3" height="${h}" rx=".5" fill="currentColor"/>`
-          : `<rect x="${x + .5}" y="${y + .5}" width="2" height="${h - 1}" rx=".5" fill="none" stroke="currentColor" stroke-width="1" opacity=".45"/>`;
-        const span = el('span', { 'aria-hidden': 'true', style: 'display:inline-flex' });
-        span.innerHTML = `<svg viewBox="0 0 16 16">${bar(1, 10, 5, true)}${bar(6.5, 6, 9, full)}${bar(12, 2, 13, full)}</svg>`;
-        return span;
-      };
       const pickBtn = (kind, label) => el('button', {
         class: `pick-btn ${kind}`,
         'aria-pressed': 'false',
@@ -804,10 +805,10 @@
         const kind = picks.most === idx ? 'most' : picks.fewest === idx ? 'fewest' : '';
         return el('button', {
           class: `dot-btn${submitted ? ` marked ${c._verdict || ''}` : kind ? ` ${kind}` : ''}${i === current ? ' current' : ''}`,
-          'aria-label': `Go to answer ${i + 1}`,
+          'aria-label': `Go to answer ${i + 1}${kind ? ` (your ${kind} marks pick)` : ''}`,
           'aria-current': i === current ? 'true' : null,
           onclick: () => goTo(i)
-        }, submitted ? String(q.answers[idx].marks) : kind === 'most' ? '▲' : kind === 'fewest' ? '▼' : '');
+        }, submitted ? String(q.answers[idx].marks) : kind ? meter(kind === 'most') : '');
       }));
     }
     let navFrame = 0;
