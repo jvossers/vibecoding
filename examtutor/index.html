@@ -209,10 +209,17 @@
   .instructions b { font-weight: 700; }
 
   /* ---------- Candidate responses ---------- */
-  .responses { display: grid; gap: 14px; }
+  .responses {
+    position: relative; display: flex; align-items: flex-start; gap: 14px;
+    overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; scroll-padding-inline: 4px;
+    padding: 4px 4px 12px;
+    scrollbar-width: thin; scrollbar-color: #b9b4a6 transparent;
+  }
   .response {
-    position: relative; display: grid; grid-template-columns: 3.8rem 1fr; gap: .7rem;
-    text-align: left; width: 100%; cursor: pointer;
+    position: relative; display: grid; grid-template-columns: 3rem 1fr; gap: .7rem;
+    flex: 0 0 88%; scroll-snap-align: start;
+    text-align: left; cursor: pointer;
     background:
       repeating-linear-gradient(to bottom, transparent 0, transparent calc(1.75em - 1px), var(--paper-line) calc(1.75em - 1px), var(--paper-line) 1.75em);
     background-color: #fff;
@@ -228,9 +235,27 @@
   .rank-slot {
     display: flex; flex-direction: column; align-items: center; gap: .3rem;
   }
-  .cand {
-    font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--print-muted); white-space: nowrap;
+  .carousel-nav {
+    display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-bottom: .6rem;
   }
+  .nav-btn {
+    width: 2.4rem; height: 2.4rem; border-radius: 50%; flex: none; cursor: pointer;
+    border: 1.5px solid var(--print); background: #fff; color: var(--print); font-size: 1.1rem; font-weight: 700;
+    display: grid; place-items: center;
+  }
+  .nav-btn:hover:not(:disabled) { background: var(--print); color: #fff; }
+  .nav-btn:disabled { opacity: .3; cursor: default; }
+  .nav-mid { display: flex; flex-direction: column; align-items: center; gap: .35rem; }
+  .nav-count { font-size: .8rem; font-weight: 700; color: var(--print-muted); }
+  .dots { display: flex; gap: .45rem; }
+  .dot-btn {
+    width: 1.5rem; height: 1.5rem; border-radius: 50%; cursor: pointer; padding: 0;
+    border: 1.5px dashed #b9b4a6; background: #fff; color: #fff; font-size: .72rem; font-weight: 700;
+    display: grid; place-items: center; transition: transform .15s;
+  }
+  .dot-btn.ranked { border: 1.5px solid var(--print); background: var(--print); }
+  .dot-btn.marked { border: 1.5px solid var(--red); background: #fff; color: var(--red); }
+  .dot-btn.current { transform: scale(1.25); box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--biro); }
   .rank-badge {
     width: 2.4rem; height: 2.4rem; border-radius: 50%;
     border: 2px dashed #b9b4a6; display: grid; place-items: center;
@@ -425,7 +450,6 @@
     return a;
   };
   const ordinal = n => n + (['th','st','nd','rd'][(n % 100 - 20) % 10] || ['th','st','nd','rd'][n % 100] || 'th');
-  const letter = i => String.fromCharCode(65 + i);
   const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
   const render = (...nodes) => { appEl.replaceChildren(...nodes.filter(n => n != null && n !== false)); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
@@ -684,9 +708,14 @@
       const card = el('button', {
         class: 'response',
         'data-idx': ansIdx,
-        onclick: () => toggleRank(ansIdx)
+        onclick: () => {
+          // Tapping the half-visible next/previous answer brings it into view rather than ranking it.
+          const i = trackCards().indexOf(card);
+          if (i !== current) goTo(i);
+          else toggleRank(ansIdx);
+        }
       },
-        el('div', { class: 'rank-slot' }, el('span', { class: 'cand', text: `Cand. ${letter(pos)}` }), badge),
+        el('div', { class: 'rank-slot' }, badge),
         el('p', { class: 'script', text: a.text })
       );
       card._badge = badge;
@@ -694,7 +723,57 @@
       card._pos = pos;
       return card;
     });
-    const responses = el('div', { class: 'responses' }, cards);
+    const responses = el('div', { class: 'responses', tabindex: '0', 'aria-label': 'Student answers: scroll sideways to see them all' }, cards);
+
+    // --- sideways navigation (arrows + dots) for the answers track
+    let current = 0;
+    const trackCards = () => [...responses.children];
+    const prevBtn = el('button', { class: 'nav-btn', 'aria-label': 'Previous answer', onclick: () => goTo(current - 1) }, '←');
+    const nextNavBtn = el('button', { class: 'nav-btn', 'aria-label': 'Next answer', onclick: () => goTo(current + 1) }, '→');
+    const countEl = el('span', { class: 'nav-count' });
+    const dotsEl = el('div', { class: 'dots' });
+    const nav = el('div', { class: 'carousel-nav' }, prevBtn, el('div', { class: 'nav-mid' }, dotsEl, countEl), nextNavBtn);
+
+    function goTo(i, smooth = true) {
+      const list = trackCards();
+      i = Math.max(0, Math.min(list.length - 1, i));
+      responses.scrollTo({ left: list[i].offsetLeft - 4, behavior: smooth ? 'smooth' : 'auto' });
+    }
+    function updateNav() {
+      const list = trackCards();
+      const max = responses.scrollWidth - responses.clientWidth;
+      if (responses.scrollLeft >= max - 2) current = list.length - 1;
+      else {
+        let best = Infinity;
+        list.forEach((c, i) => {
+          const d = Math.abs(c.offsetLeft - 4 - responses.scrollLeft);
+          if (d < best) { best = d; current = i; }
+        });
+      }
+      prevBtn.disabled = current === 0;
+      nextNavBtn.disabled = current === list.length - 1;
+      countEl.textContent = `Answer ${current + 1} of ${list.length}`;
+      dotsEl.replaceChildren(...list.map((c, i) => {
+        const idx = +c.dataset.idx;
+        const r = ranking.indexOf(idx);
+        return el('button', {
+          class: `dot-btn${submitted ? ' marked' : r >= 0 ? ' ranked' : ''}${i === current ? ' current' : ''}`,
+          'aria-label': `Go to answer ${i + 1}`,
+          'aria-current': i === current ? 'true' : null,
+          onclick: () => goTo(i)
+        }, submitted ? String(q.answers[idx].marks) : r >= 0 ? String(r + 1) : '');
+      }));
+    }
+    let navFrame = 0;
+    responses.addEventListener('scroll', () => {
+      cancelAnimationFrame(navFrame);
+      navFrame = requestAnimationFrame(updateNav);
+    });
+    responses.addEventListener('keydown', e => {
+      if (e.target !== responses) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); goTo(current + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+    });
 
     const hintEl = el('span', { class: 'hint' });
     const clearBtn = el('button', { class: 'btn ghost', onclick: () => { ranking.length = 0; refresh(); } }, 'Clear');
@@ -713,6 +792,13 @@
         ranking.push(order.find(i => !ranking.includes(i)));
       }
       refresh();
+      // After ranking one, slide along to the next answer still to rank.
+      if (at < 0 && ranking.length < order.length) {
+        const list = trackCards();
+        const after = list.findIndex((c, i) => i > current && !ranking.includes(+c.dataset.idx));
+        const target = after >= 0 ? after : list.findIndex(c => !ranking.includes(+c.dataset.idx));
+        if (target >= 0) goTo(target);
+      }
     }
 
     function refresh() {
@@ -722,7 +808,7 @@
         card.classList.toggle('ranked', r >= 0);
         card._badge.replaceChildren(r >= 0 ? document.createTextNode(r + 1) : document.createTextNode('?'));
         card.setAttribute('aria-label',
-          `Candidate ${letter(card._pos)}. ${r >= 0 ? `Ranked ${ordinal(r + 1)}. Click to remove.` : 'Not ranked yet. Click to rank next.'}`);
+          `Answer ${card._pos + 1} of ${cards.length}. ${r >= 0 ? `Ranked ${ordinal(r + 1)}. Click to remove.` : 'Not ranked yet. Click to rank next.'}`);
       });
       const remaining = order.length - ranking.length;
       hintEl.textContent = ranking.length === 0
@@ -732,6 +818,7 @@
           : 'Ranking complete: happy with it?';
       submitBtn.disabled = remaining > 0;
       clearBtn.disabled = ranking.length === 0;
+      updateNav();
     }
 
     function submit() {
@@ -767,6 +854,8 @@
       // Put the cards in the examiner's order so the progression is easy to read.
       const sorted = cards.slice().sort((x, y) => q.answers[+y.dataset.idx].marks - q.answers[+x.dataset.idx].marks);
       responses.replaceChildren(...sorted);
+      goTo(0, false);
+      updateNav();
 
       const pct = Math.round(result.accuracy * 100);
       const isLast = s.index === s.questions.length - 1;
@@ -787,7 +876,7 @@
         q.tip && el('div', { class: 'tip' }, el('b', { text: "Examiner's tip" }), q.tip),
         el('div', { class: 'rank-actions' }, el('span'), nextBtn)
       );
-      responses.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
       nextBtn.focus({ preventScroll: true });
     }
 
@@ -808,7 +897,8 @@
         el('div', { class: 'instructions' },
           el('b', { text: 'Rank these answers. ' }),
           'All are creditworthy. Click them in order, from the one that earns ', el('b', { text: 'the most marks' }),
-          ' to the one that earns ', el('b', { text: 'the fewest' }), '. Click a ranked answer again to un-rank it.'),
+          ' to the one that earns ', el('b', { text: 'the fewest' }), '. Swipe or use the arrows to read them all. Click a ranked answer again to un-rank it.'),
+        nav,
         responses,
         actionsEl,
         afterEl
