@@ -1,6 +1,6 @@
 # Full Marks: GCSE exam technique trainer
 
-Students see an exam-style question with several candidate answers. **Every answer is creditworthy, but each earns a different number of marks.** The student ranks the answers from most to fewest marks, then sees the marks, the examiner's reasoning for each one, and a technique tip.
+Students see an exam-style question with several candidate answers. **Every answer is creditworthy, but each earns a different number of marks.** The student picks the answer that earns **the most marks** and the one that earns **the fewest**, then sees the marks, the examiner's reasoning for each one, and a technique tip.
 
 The app is all about exam *technique* (command words, levels, showing working, using the source), not about subject content.
 
@@ -82,7 +82,7 @@ Add an entry to `data/subjects.json` and create the file it points to. The keys 
 
 Guidelines for writing questions:
 
-- Give each answer **different marks** so there is one correct ranking. Ties are allowed; either order then counts as correct.
+- Give the best and the weakest answer **unique marks** so there is one right pick for each. Ties are allowed; any tied answer then counts as correct.
 - Answers are shuffled and relabelled (Candidate A, B, …) every time, so **don't mention letters** in explanations.
 - Every answer should be *relevant and creditworthy*. The lesson is in why good answers score differently.
 - In each explanation, name the level or mark-scheme points, and say what the answer would need to score higher.

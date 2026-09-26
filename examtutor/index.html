@@ -217,9 +217,9 @@
     scrollbar-width: thin; scrollbar-color: #b9b4a6 transparent;
   }
   .response {
-    position: relative; display: grid; grid-template-columns: 3rem 1fr; gap: .7rem;
+    position: relative; display: flex; flex-direction: column; gap: .8rem;
     flex: 0 0 88%; scroll-snap-align: start;
-    text-align: left; cursor: pointer;
+    text-align: left;
     background:
       repeating-linear-gradient(to bottom, transparent 0, transparent calc(1.75em - 1px), var(--paper-line) calc(1.75em - 1px), var(--paper-line) 1.75em);
     background-color: #fff;
@@ -227,14 +227,20 @@
     padding: .9rem 1rem .9rem .8rem;
     transition: border-color .15s, box-shadow .15s, transform .15s;
   }
-  .response:hover:not(:disabled) { border-color: var(--print); }
-  .response:focus-visible { outline: 3px solid var(--biro); outline-offset: 2px; }
-  .response.ranked { border-color: var(--print); box-shadow: 3px 3px 0 var(--print); }
-  .response:disabled { cursor: default; }
+  .response.pick-most { border-color: var(--green); box-shadow: 3px 3px 0 var(--green); }
+  .response.pick-fewest { border-color: var(--amber); box-shadow: 3px 3px 0 var(--amber); }
 
-  .rank-slot {
-    display: flex; flex-direction: column; align-items: center; gap: .3rem;
+  .pick-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pick-btn {
+    flex: 1 1 9rem; cursor: pointer; padding: .55rem .8rem; border-radius: 999px;
+    font-weight: 700; font-size: .9rem; background: #fff; transition: background .15s, color .15s;
   }
+  .pick-btn.most { border: 2px solid var(--green); color: var(--green); }
+  .pick-btn.fewest { border: 2px solid var(--amber); color: var(--amber); }
+  .pick-btn.most[aria-pressed="true"] { background: var(--green); color: #fff; }
+  .pick-btn.fewest[aria-pressed="true"] { background: var(--amber); color: #fff; }
+  .pick-btn:focus-visible { outline: 3px solid var(--biro); outline-offset: 2px; }
+
   .carousel-nav {
     display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-bottom: .6rem;
   }
@@ -253,20 +259,10 @@
     border: 1.5px dashed #b9b4a6; background: #fff; color: #fff; font-size: .72rem; font-weight: 700;
     display: grid; place-items: center; transition: transform .15s;
   }
-  .dot-btn.ranked { border: 1.5px solid var(--print); background: var(--print); }
+  .dot-btn.most { border: 1.5px solid var(--green); background: var(--green); }
+  .dot-btn.fewest { border: 1.5px solid var(--amber); background: var(--amber); }
   .dot-btn.marked { border: 1.5px solid var(--red); background: #fff; color: var(--red); }
   .dot-btn.current { transform: scale(1.25); box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--biro); }
-  .rank-badge {
-    width: 2.4rem; height: 2.4rem; border-radius: 50%;
-    border: 2px dashed #b9b4a6; display: grid; place-items: center;
-    font-weight: 700; font-size: 1.1rem; color: #b9b4a6;
-    transition: all .2s ease;
-  }
-  .response.ranked .rank-badge {
-    border: 2px solid var(--print); background: var(--print); color: #fff;
-    animation: pop .25s ease;
-  }
-  @keyframes pop { 50% { transform: scale(1.2); } }
 
   .script {
     font-family: "Kalam", "Comic Sans MS", cursive; color: var(--biro);
@@ -276,7 +272,7 @@
 
   /* Marked state */
   .mark-stamp {
-    margin-top: .4rem; white-space: nowrap;
+    display: inline-block; white-space: nowrap;
     font-family: "Caveat", cursive; font-weight: 700; color: var(--red);
     font-size: 1.45rem; line-height: 1.1; transform: rotate(-7deg);
     background: #fff; padding: 0 .3rem; border: 2px solid var(--red); border-radius: 50% 45% 50% 48%;
@@ -286,7 +282,7 @@
   .response.top { border-color: var(--red); box-shadow: 3px 3px 0 var(--red); }
 
   .feedback {
-    grid-column: 1 / -1; margin-top: .6rem; padding: .8rem .9rem;
+    padding: .8rem .9rem;
     background: var(--red-soft); border-left: 3px solid var(--red);
     font-family: "Arimo", sans-serif; color: #3a1512; font-size: .93rem; line-height: 1.55;
     animation: fadeUp .35s ease both;
@@ -380,6 +376,7 @@
   .review-list .mk { font-weight: 700; font-size: 1.1rem; }
   .review-list .mk.yes { color: var(--green); }
   .review-list .mk.no { color: var(--red); }
+  .review-list .mk.part { color: var(--amber); }
   .review-list small { display: block; color: var(--print-muted); font-size: .85rem; }
   .review-list .pct { font-size: .85rem; font-weight: 700; white-space: nowrap; }
 
@@ -449,7 +446,6 @@
     }
     return a;
   };
-  const ordinal = n => n + (['th','st','nd','rd'][(n % 100 - 20) % 10] || ['th','st','nd','rd'][n % 100] || 'th');
   const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
   const render = (...nodes) => { appEl.replaceChildren(...nodes.filter(n => n != null && n !== false)); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
@@ -602,7 +598,7 @@
     render(
       el('section', { class: 'intro' },
         el('h2', {}, 'Every answer is right. Only one gets ', el('em', { text: 'full marks.' })),
-        el('p', {}, 'Each question comes with several real-style student answers. They are all correct, but they earn different marks. Rank them from most to fewest marks, then see how an examiner would mark them.')
+        el('p', {}, 'Each question comes with several real-style student answers. They are all correct, but they earn different marks. Pick the one that earns the most and the one that earns the fewest, then see how an examiner would mark them.')
       ),
       el('p', { class: 'step-label', text: '1 · Choose a subject' }),
       subjectGrid,
@@ -626,37 +622,21 @@
     renderQuestion();
   }
 
-  // Scoring helpers. `ranking` is an array of answer indices, best first.
-  function scoreRanking(q, ranking) {
-    const marks = ranking.map(i => q.answers[i].marks);
-    const max = Math.max(...q.answers.map(a => a.marks));
-    let pairs = 0, correct = 0;
-    for (let i = 0; i < marks.length; i++) {
-      for (let j = i + 1; j < marks.length; j++) {
-        if (marks[i] === marks[j]) continue; // ties can go either way
-        pairs++;
-        if (marks[i] > marks[j]) correct++;
-      }
-    }
-    return {
-      bestSpotted: marks[0] === max,
-      pairs, correct,
-      accuracy: pairs ? correct / pairs : 1
-    };
-  }
-  // Acceptable rank positions (1-based) for an answer, allowing for ties.
-  function trueRankRange(q, idx) {
-    const m = q.answers[idx].marks;
-    const higher = q.answers.filter(a => a.marks > m).length;
-    const same = q.answers.filter(a => a.marks === m).length;
-    return [higher + 1, higher + same];
+  // Scoring. The student picks the answer they think earns the most marks and the one that earns the fewest.
+  // Ties are fine: any answer sharing the top (or bottom) mark counts as correct.
+  function scorePicks(q, most, fewest) {
+    const marks = q.answers.map(a => a.marks);
+    const max = Math.max(...marks), min = Math.min(...marks);
+    const mostRight = q.answers[most].marks === max;
+    const fewestRight = q.answers[fewest].marks === min;
+    return { mostRight, fewestRight, correct: (mostRight ? 1 : 0) + (fewestRight ? 1 : 0) };
   }
 
   function renderQuestion() {
     const s = state.session;
     const { q, order, board } = s.questions[s.index];
     const subj = subjectById(q.subjectId) || {};
-    const ranking = [];           // answer indices in the order the student picked
+    const picks = { most: null, fewest: null };  // answer indices
     let submitted = false;
 
     // --- paper header
@@ -704,23 +684,26 @@
     // --- candidate responses
     const cards = order.map((ansIdx, pos) => {
       const a = q.answers[ansIdx];
-      const badge = el('div', { class: 'rank-badge', 'aria-hidden': 'true', text: '?' });
-      const card = el('button', {
+      const pickBtn = (kind, label) => el('button', {
+        class: `pick-btn ${kind}`,
+        'aria-pressed': 'false',
+        onclick: e => { e.stopPropagation(); pick(kind, ansIdx); }
+      }, label);
+      const mostBtn = pickBtn('most', '▲ Most marks');
+      const fewestBtn = pickBtn('fewest', '▼ Fewest marks');
+      const pickRow = el('div', { class: 'pick-row' }, mostBtn, fewestBtn);
+      const card = el('div', {
         class: 'response',
+        role: 'group',
+        'aria-label': `Answer ${pos + 1} of ${order.length}`,
         'data-idx': ansIdx,
-        onclick: () => {
-          // Tapping the half-visible next/previous answer brings it into view rather than ranking it.
-          const i = trackCards().indexOf(card);
-          if (i !== current) goTo(i);
-          else toggleRank(ansIdx);
-        }
+        // Tapping the half-visible next/previous answer brings it into view.
+        onclick: () => { const i = trackCards().indexOf(card); if (i !== current) goTo(i); }
       },
-        el('div', { class: 'rank-slot' }, badge),
-        el('p', { class: 'script', text: a.text })
+        el('p', { class: 'script', text: a.text }),
+        pickRow
       );
-      card._badge = badge;
-      card._slot = badge.parentNode;
-      card._pos = pos;
+      Object.assign(card, { _most: mostBtn, _fewest: fewestBtn, _pickRow: pickRow });
       return card;
     });
     const responses = el('div', { class: 'responses', tabindex: '0', 'aria-label': 'Student answers: scroll sideways to see them all' }, cards);
@@ -755,13 +738,13 @@
       countEl.textContent = `Answer ${current + 1} of ${list.length}`;
       dotsEl.replaceChildren(...list.map((c, i) => {
         const idx = +c.dataset.idx;
-        const r = ranking.indexOf(idx);
+        const kind = picks.most === idx ? 'most' : picks.fewest === idx ? 'fewest' : '';
         return el('button', {
-          class: `dot-btn${submitted ? ' marked' : r >= 0 ? ' ranked' : ''}${i === current ? ' current' : ''}`,
+          class: `dot-btn${submitted ? ' marked' : kind ? ` ${kind}` : ''}${i === current ? ' current' : ''}`,
           'aria-label': `Go to answer ${i + 1}`,
           'aria-current': i === current ? 'true' : null,
           onclick: () => goTo(i)
-        }, submitted ? String(q.answers[idx].marks) : r >= 0 ? String(r + 1) : '');
+        }, submitted ? String(q.answers[idx].marks) : kind === 'most' ? '▲' : kind === 'fewest' ? '▼' : '');
       }));
     }
     let navFrame = 0;
@@ -776,80 +759,72 @@
     });
 
     const hintEl = el('span', { class: 'hint' });
-    const clearBtn = el('button', { class: 'btn ghost', onclick: () => { ranking.length = 0; refresh(); } }, 'Clear');
+    const clearBtn = el('button', { class: 'btn ghost', onclick: () => { picks.most = picks.fewest = null; refresh(); } }, 'Clear');
     const submitBtn = el('button', { class: 'btn red', onclick: submit }, 'Hand to the examiner');
     const actionsEl = el('div', { class: 'rank-actions' }, hintEl, el('div', { class: 'actions' }, clearBtn, submitBtn));
 
     const afterEl = el('div');
 
-    function toggleRank(idx) {
+    // Choosing an answer for one role takes it away from whichever answer had it,
+    // and an answer can't be both "most" and "fewest". Clicking a pressed button un-picks it.
+    function pick(kind, idx) {
       if (submitted) return;
-      const at = ranking.indexOf(idx);
-      if (at >= 0) ranking.splice(at, 1);
-      else ranking.push(idx);
-      // Auto-place the last remaining answer.
-      if (ranking.length === order.length - 1) {
-        ranking.push(order.find(i => !ranking.includes(i)));
-      }
+      const other = kind === 'most' ? 'fewest' : 'most';
+      picks[kind] = picks[kind] === idx ? null : idx;
+      if (picks[other] === idx) picks[other] = null;
       refresh();
-      // After ranking one, slide along to the next answer still to rank.
-      if (at < 0 && ranking.length < order.length) {
-        const list = trackCards();
-        const after = list.findIndex((c, i) => i > current && !ranking.includes(+c.dataset.idx));
-        const target = after >= 0 ? after : list.findIndex(c => !ranking.includes(+c.dataset.idx));
-        if (target >= 0) goTo(target);
-      }
     }
 
     function refresh() {
       cards.forEach(card => {
         const idx = +card.dataset.idx;
-        const r = ranking.indexOf(idx);
-        card.classList.toggle('ranked', r >= 0);
-        card._badge.replaceChildren(r >= 0 ? document.createTextNode(r + 1) : document.createTextNode('?'));
-        card.setAttribute('aria-label',
-          `Answer ${card._pos + 1} of ${cards.length}. ${r >= 0 ? `Ranked ${ordinal(r + 1)}. Click to remove.` : 'Not ranked yet. Click to rank next.'}`);
+        const isMost = picks.most === idx, isFewest = picks.fewest === idx;
+        card.classList.toggle('pick-most', isMost);
+        card.classList.toggle('pick-fewest', isFewest);
+        card._most.setAttribute('aria-pressed', String(isMost));
+        card._fewest.setAttribute('aria-pressed', String(isFewest));
       });
-      const remaining = order.length - ranking.length;
-      hintEl.textContent = ranking.length === 0
-        ? 'Click the answer you think earns the most marks first.'
-        : remaining > 0
-          ? `Now click your ${ordinal(ranking.length + 1)} choice. (${remaining} left.)`
-          : 'Ranking complete: happy with it?';
-      submitBtn.disabled = remaining > 0;
-      clearBtn.disabled = ranking.length === 0;
+      const hasMost = picks.most !== null, hasFewest = picks.fewest !== null;
+      hintEl.textContent = hasMost && hasFewest
+        ? 'Both picked: happy with your choices?'
+        : hasMost ? 'Now pick the answer that earns the fewest marks.'
+        : hasFewest ? 'Now pick the answer that earns the most marks.'
+        : 'Read every answer, then pick the one with the most marks and the one with the fewest.';
+      submitBtn.disabled = !(hasMost && hasFewest);
+      clearBtn.disabled = !(hasMost || hasFewest);
       updateNav();
     }
 
     function submit() {
-      if (ranking.length !== order.length) return;
+      if (picks.most === null || picks.fewest === null) return;
       submitted = true;
-      const result = scoreRanking(q, ranking);
-      s.results.push({ q, board, ranking: ranking.slice(), ...result });
+      const result = scorePicks(q, picks.most, picks.fewest);
+      s.results.push({ q, board, most: picks.most, fewest: picks.fewest, ...result });
 
-      const max = Math.max(...q.answers.map(a => a.marks));
+      const marks = q.answers.map(a => a.marks);
+      const max = Math.max(...marks), min = Math.min(...marks);
       cards.forEach(card => {
         const idx = +card.dataset.idx;
         const a = q.answers[idx];
-        const userRank = ranking.indexOf(idx) + 1;
-        const [lo, hi] = trueRankRange(q, idx);
-        const inPlace = userRank >= lo && userRank <= hi;
-        const trueLabel = lo === hi ? ordinal(lo) : `joint ${ordinal(lo)}`;
-        card.disabled = true;
+        const tags = [];
+        if (picks.most === idx) tags.push(el('span', {
+          class: `placing ${result.mostRight ? 'ok' : 'off'}`,
+          text: result.mostRight ? 'Your "most marks" pick ✓' : 'Your "most marks" pick ✗'
+        }));
+        if (picks.fewest === idx) tags.push(el('span', {
+          class: `placing ${result.fewestRight ? 'ok' : 'off'}`,
+          text: result.fewestRight ? 'Your "fewest marks" pick ✓' : 'Your "fewest marks" pick ✗'
+        }));
+        const label = a.marks === max ? `${plural(a.marks, 'mark')}: the best answer`
+          : a.marks === min ? `${plural(a.marks, 'mark')}: the weakest answer`
+          : plural(a.marks, 'mark');
         card.classList.toggle('top', a.marks === max);
-        card._slot.append(el('span', { class: 'mark-stamp', 'aria-label': `${a.marks} out of ${q.marks} marks` }, `${a.marks}/${q.marks}`));
-        card.append(
-          el('div', { class: 'feedback' },
-            el('div', { class: 'verdict' },
-              `${plural(a.marks, 'mark')}${a.marks === max ? ': the best answer' : ''}`,
-              el('span', {
-                class: `placing ${inPlace ? 'ok' : 'off'}`,
-                text: inPlace ? `You ranked it ${ordinal(userRank)} ✓` : `You ranked it ${ordinal(userRank)} · actually ${trueLabel}`
-              })
-            ),
-            a.explanation
-          )
-        );
+        card._pickRow.replaceWith(el('div', { class: 'feedback' },
+          el('div', { class: 'verdict' },
+            el('span', { class: 'mark-stamp', 'aria-label': `${a.marks} out of ${q.marks} marks` }, `${a.marks}/${q.marks}`),
+            label, ...tags),
+          a.explanation
+        ));
       });
       // Put the cards in the examiner's order so the progression is easy to read.
       const sorted = cards.slice().sort((x, y) => q.answers[+y.dataset.idx].marks - q.answers[+x.dataset.idx].marks);
@@ -857,7 +832,6 @@
       goTo(0, false);
       updateNav();
 
-      const pct = Math.round(result.accuracy * 100);
       const isLast = s.index === s.questions.length - 1;
       const nextBtn = el('button', { class: 'btn red', onclick: isLast ? renderSummary : () => { s.index++; renderQuestion(); } },
         isLast ? 'See your results →' : 'Next question →');
@@ -865,12 +839,12 @@
       actionsEl.replaceWith(el('div'));
       afterEl.replaceChildren(
         el('div', { class: 'result', role: 'status' },
-          el('div', { class: 'score', text: result.bestSpotted && pct === 100 ? 'Spot on!' : result.bestSpotted ? 'Good eye' : 'Not quite' }),
+          el('div', { class: 'score', text: result.correct === 2 ? 'Spot on!' : result.correct === 1 ? 'Half right' : 'Not quite' }),
           el('ul', {},
-            el('li', { class: result.bestSpotted ? 'yes' : 'no',
-              text: result.bestSpotted ? 'You picked the full-marks answer.' : 'You did not pick the highest-scoring answer first.' }),
-            el('li', { class: pct === 100 ? 'yes' : pct >= 50 ? 'part' : 'no',
-              text: `Ranking: ${result.correct} of ${result.pairs} comparisons in the right order (${pct}%).` })
+            el('li', { class: result.mostRight ? 'yes' : 'no',
+              text: result.mostRight ? 'You found the answer with the most marks.' : 'Your "most marks" pick was not the top-scoring answer.' }),
+            el('li', { class: result.fewestRight ? 'yes' : 'no',
+              text: result.fewestRight ? 'You found the answer with the fewest marks.' : 'Your "fewest marks" pick was not the lowest-scoring answer.' })
           )
         ),
         q.tip && el('div', { class: 'tip' }, el('b', { text: "Examiner's tip" }), q.tip),
@@ -895,9 +869,9 @@
         qLine,
         el('div', { class: 'divider', text: 'Candidate responses' }),
         el('div', { class: 'instructions' },
-          el('b', { text: 'Rank these answers. ' }),
-          'All are creditworthy. Click them in order, from the one that earns ', el('b', { text: 'the most marks' }),
-          ' to the one that earns ', el('b', { text: 'the fewest' }), '. Swipe or use the arrows to read them all. Click a ranked answer again to un-rank it.'),
+          el('b', { text: 'Spot the best and the weakest. ' }),
+          'All of these answers are creditworthy. Swipe or use the arrows to read them all, then mark the one that earns ',
+          el('b', { text: 'the most marks' }), ' and the one that earns ', el('b', { text: 'the fewest' }), '.'),
         nav,
         responses,
         actionsEl,
@@ -911,18 +885,15 @@
   function renderSummary() {
     const s = state.session;
     const n = s.results.length;
-    const best = s.results.filter(r => r.bestSpotted).length;
-    const pairs = s.results.reduce((t, r) => t + r.pairs, 0);
-    const correct = s.results.reduce((t, r) => t + r.correct, 0);
-    const accuracy = pairs ? Math.round(correct / pairs * 100) : 100;
-    const perfect = s.results.filter(r => r.bestSpotted && r.correct === r.pairs).length;
+    const mostRight = s.results.filter(r => r.mostRight).length;
+    const fewestRight = s.results.filter(r => r.fewestRight).length;
+    const both = s.results.filter(r => r.correct === 2).length;
+    const score = Math.round((mostRight + fewestRight) / (2 * n) * 100);
 
-    const verdict = accuracy >= 90 ? 'Examiner material.'
-      : accuracy >= 70 ? 'A sharp eye for marks.'
-      : accuracy >= 50 ? 'Getting there.'
+    const verdict = score >= 90 ? 'Examiner material.'
+      : score >= 70 ? 'A sharp eye for marks.'
+      : score >= 50 ? 'Getting there.'
       : 'Worth another go.';
-
-    const toReview = s.results.filter(r => !r.bestSpotted || r.accuracy < 1);
 
     render(
       el('article', { class: 'paper' },
@@ -931,31 +902,32 @@
           el('span', { text: plural(n, 'question') })
         ),
         el('div', { class: 'summary-hero' },
-          el('div', { class: 'grade-ring', 'aria-label': `Ranking accuracy ${accuracy} percent` },
-            el('div', {}, el('big', { text: `${accuracy}%` }), el('span', { text: 'ranking accuracy' }))),
+          el('div', { class: 'grade-ring', 'aria-label': `${score} percent of picks correct` },
+            el('div', {}, el('big', { text: `${score}%` }), el('span', { text: 'picks correct' }))),
           el('div', {},
             el('h2', { text: verdict }),
-            el('p', { text: toReview.length
+            el('p', { text: both < n
               ? 'The techniques below tripped you up. Each one is worth practising before the real thing.'
-              : 'You ranked every answer correctly. Try another subject or a mixed paper.' })
+              : 'You found the best and weakest answer every time. Try another subject or a mixed paper.' })
           )
         ),
         el('div', { class: 'stats' },
-          el('div', { class: 'stat' }, el('b', { text: `${best}/${n}` }), el('span', { text: 'Full-mark answers spotted' })),
-          el('div', { class: 'stat' }, el('b', { text: `${perfect}/${n}` }), el('span', { text: 'Perfect rankings' })),
-          el('div', { class: 'stat' }, el('b', { text: `${correct}/${pairs}` }), el('span', { text: 'Comparisons correct' }))
+          el('div', { class: 'stat' }, el('b', { text: `${mostRight}/${n}` }), el('span', { text: 'Best answers spotted' })),
+          el('div', { class: 'stat' }, el('b', { text: `${fewestRight}/${n}` }), el('span', { text: 'Weakest answers spotted' })),
+          el('div', { class: 'stat' }, el('b', { text: `${both}/${n}` }), el('span', { text: 'Both right' }))
         ),
         el('p', { class: 'step-label', text: 'Question by question' }),
         el('ol', { class: 'review-list' },
           s.results.map(r => {
             const subj = subjectById(r.q.subjectId) || {};
+            const cls = r.correct === 2 ? 'yes' : r.correct === 1 ? 'part' : 'no';
             return el('li', {},
-              el('span', { class: `mk ${r.bestSpotted ? 'yes' : 'no'}`, text: r.bestSpotted ? '✓' : '✗' }),
+              el('span', { class: `mk ${cls}`, text: r.correct === 2 ? '✓' : r.correct === 1 ? '~' : '✗' }),
               el('div', {},
                 el('strong', { text: `${subj.name} (${boardById(r.board).name}): ${r.q.topic}` }),
                 el('small', { text: r.q.skill || '' })
               ),
-              el('span', { class: 'pct', text: `${Math.round(r.accuracy * 100)}%` })
+              el('span', { class: 'pct', text: `${r.correct}/2` })
             );
           })
         ),
