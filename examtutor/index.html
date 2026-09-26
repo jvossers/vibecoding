@@ -27,6 +27,8 @@
     --shadow: 0 1px 1px rgba(0,0,0,.06), 0 8px 24px -8px rgba(40,30,10,.35);
     --radius: 3px;
     --accent: #1f5f8b;
+    --line: 28px;     /* ruled-line spacing on the answer sheets = handwriting line height */
+    --rule-y: 21px;   /* where the rule sits in each line; recalibrated to the font's baseline in JS */
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -210,7 +212,7 @@
 
   /* ---------- Candidate responses ---------- */
   .responses {
-    position: relative; display: flex; align-items: flex-start; gap: 14px;
+    position: relative; display: flex; align-items: stretch; gap: 14px;
     overflow-x: auto; overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory; scroll-padding-inline: 4px;
     padding: 4px 4px 12px;
@@ -220,9 +222,13 @@
     position: relative; display: flex; flex-direction: column; gap: .8rem;
     flex: 0 0 88%; scroll-snap-align: start;
     text-align: left;
-    background:
-      repeating-linear-gradient(to bottom, transparent 0, transparent calc(1.75em - 1px), var(--paper-line) calc(1.75em - 1px), var(--paper-line) 1.75em);
+    /* One ruled line per --line, tiled from the top of the text so writing sits on the rules. */
     background-color: #fff;
+    background-image: linear-gradient(to bottom,
+      transparent var(--rule-y), var(--paper-line) var(--rule-y),
+      var(--paper-line) calc(var(--rule-y) + 1px), transparent calc(var(--rule-y) + 1px));
+    background-size: 100% var(--line);
+    background-origin: content-box;
     border: 1.5px solid #bdb8aa; border-radius: 2px;
     padding: .9rem 1rem .9rem .8rem;
     transition: border-color .15s, box-shadow .15s, transform .15s;
@@ -233,7 +239,7 @@
   .response.right { border-color: var(--green); box-shadow: 3px 3px 0 var(--green); }
   .response.wrong { border-color: var(--red); box-shadow: 3px 3px 0 var(--red); }
 
-  .pick-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pick-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
   .pick-btn {
     flex: 1 1 9rem; cursor: pointer; padding: .55rem .8rem; border-radius: 999px;
     font-weight: 700; font-size: .9rem; background: #fff; transition: background .15s, color .15s;
@@ -268,7 +274,7 @@
 
   .script {
     font-family: "Kalam", "Comic Sans MS", cursive; color: var(--biro);
-    font-size: 1.02rem; line-height: 1.75em; white-space: pre-wrap; margin: 0;
+    font-size: 1.02rem; line-height: var(--line); white-space: pre-wrap; margin: 0;
     overflow-wrap: anywhere;
   }
 
@@ -283,7 +289,7 @@
   @keyframes stamp { from { opacity: 0; transform: rotate(-20deg) scale(1.8); } to { opacity: 1; transform: rotate(-7deg) scale(1); } }
 
   .feedback {
-    padding: .8rem .9rem;
+    margin-top: auto; padding: .8rem .9rem;
     background: #f5f3ec; border-left: 3px solid #9a9486;
     font-family: "Arimo", sans-serif; color: #2b2a26; font-size: .93rem; line-height: 1.55;
     animation: fadeUp .35s ease both;
@@ -949,6 +955,21 @@
   }
 
   // ---------- boot ----------
+  // Put the ruled lines just under the handwriting's baseline. Baselines differ between fonts
+  // (and the fallback font if Kalam fails to load), so measure rather than guess.
+  function calibrateRules() {
+    const marker = el('span', { style: 'display:inline-block;width:1px;height:0;vertical-align:baseline' });
+    const probe = el('p', { class: 'script', 'aria-hidden': 'true',
+      style: 'position:absolute;visibility:hidden;left:-9999px;top:0;width:10rem' }, 'Hg', marker);
+    document.body.append(probe);
+    const line = parseFloat(getComputedStyle(probe).lineHeight);
+    const ruleY = Math.min(Math.round(marker.offsetTop + 3), Math.round(line) - 2);
+    probe.remove();
+    if (ruleY > 0) document.documentElement.style.setProperty('--rule-y', `${ruleY}px`);
+  }
+  calibrateRules();
+  if (document.fonts && document.fonts.load) document.fonts.load('400 16px Kalam').then(calibrateRules, () => {});
+
   document.getElementById('homeBtn').addEventListener('click', () => {
     if (state.subjects.length) renderSetup();
   });
