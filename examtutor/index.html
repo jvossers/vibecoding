@@ -116,6 +116,7 @@
   }
   .subject.mixed { background: repeating-linear-gradient(-45deg, var(--paper), var(--paper) 10px, #f5f2ea 10px, #f5f2ea 20px); }
 
+  [data-step] { scroll-margin: 24px 0; }
   .count-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 2rem; }
   .chip {
     border: 2px solid var(--desk-ink); background: transparent; border-radius: 999px;
@@ -476,7 +477,11 @@
     return a;
   };
   const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
-  const render = (...nodes) => { appEl.replaceChildren(...nodes.filter(n => n != null && n !== false)); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const clean = nodes => nodes.filter(n => n != null && n !== false);
+  // New screen: start at the top.
+  const render = (...nodes) => { appEl.replaceChildren(...clean(nodes)); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  // Same screen redrawn after a choice: keep the reader's place.
+  const rerender = (...nodes) => { const y = window.scrollY; appEl.replaceChildren(...clean(nodes)); window.scrollTo(0, y); };
 
   async function fetchJSON(path) {
     const res = await fetch(DATA_DIR + path, { cache: 'no-cache' });
@@ -529,7 +534,7 @@
   function setBoard(subjectId, board) {
     state.boardFor[subjectId] = board;
     saveBoardPrefs();
-    renderSetup();
+    renderSetup('count');
   }
 
   function questionsFor(subjectId) {
@@ -539,14 +544,17 @@
   }
 
   // ---------- setup screen ----------
-  function renderSetup() {
+  // `next` is the step to bring into view after a choice ('board', 'count' or 'start').
+  // Without it (first load, Home, Change subject) the screen is drawn fresh at the top.
+  function renderSetup(next) {
+    if (typeof next !== 'string') next = null;
     const available = state.selectedSubject ? questionsFor(state.selectedSubject).length : 0;
 
     const subjectBtn = (id, name, sub, colour, extraClass = '') => el('button', {
       class: `subject ${extraClass}`,
       style: colour ? `--c:${colour}` : null,
       'aria-pressed': String(state.selectedSubject === id),
-      onclick: () => { state.selectedSubject = id; renderSetup(); }
+      onclick: () => { state.selectedSubject = id; renderSetup('board'); }
     }, el('strong', { text: name }), el('small', { text: sub }));
 
     const subjectGrid = el('div', { class: 'subject-grid', role: 'group', 'aria-label': 'Subject' },
@@ -610,7 +618,7 @@
           class: 'chip',
           'aria-pressed': String(state.count === opt),
           disabled: !state.selectedSubject || tooMany || n === 0,
-          onclick: () => { state.count = opt; renderSetup(); }
+          onclick: () => { state.count = opt; renderSetup('start'); }
         }, opt === 'All' && state.selectedSubject ? `All (${available})` : String(opt));
       })
     );
@@ -624,19 +632,25 @@
       onclick: startSession
     }, 'Turn over your paper →');
 
-    render(
+    (next ? rerender : render)(
       el('section', { class: 'intro' },
         el('h2', {}, 'Every answer is right. Only one gets ', el('em', { text: 'full marks.' })),
         el('p', {}, 'Each question comes with several real-style student answers. They are all correct, but they earn different marks. Pick the one that earns the most and the one that earns the fewest, then see how an examiner would mark them.')
       ),
       el('p', { class: 'step-label', text: '1 · Choose a subject' }),
       subjectGrid,
-      state.selectedSubject && el('p', { class: 'step-label', text: state.selectedSubject === 'mixed' ? '2 · Your exam board for each subject' : '2 · Your exam board' }),
-      boardStep,
-      el('p', { class: 'step-label', text: `${state.selectedSubject ? 3 : 2} · How many questions?` }),
-      countRow,
-      el('div', { class: 'actions' }, startBtn)
+      state.selectedSubject && el('div', { 'data-step': 'board' },
+        el('p', { class: 'step-label', text: state.selectedSubject === 'mixed' ? '2 · Your exam board for each subject' : '2 · Your exam board' }),
+        boardStep),
+      el('div', { 'data-step': 'count' },
+        el('p', { class: 'step-label', text: `${state.selectedSubject ? 3 : 2} · How many questions?` }),
+        countRow),
+      el('div', { class: 'actions', 'data-step': 'start' }, startBtn)
     );
+
+    // Bring the next step into view (only scrolls if it isn't already visible).
+    const target = next && appEl.querySelector(`[data-step="${next}"]`);
+    if (target) requestAnimationFrame(() => target.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
   }
 
   // ---------- session ----------
