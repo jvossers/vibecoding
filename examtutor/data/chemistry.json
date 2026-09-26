@@ -3,7 +3,12 @@
   "questions": [
     {
       "id": "chem-001",
-      "paper": "Paper 1",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
       "number": "1",
       "topic": "Bonding and structure",
       "skill": "Use precise scientific vocabulary: name the structure, the particles and the forces",
@@ -35,7 +40,12 @@
     },
     {
       "id": "chem-002",
-      "paper": "Paper 1",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
       "number": "2",
       "topic": "Quantitative chemistry: reacting masses",
       "skill": "Set out a moles calculation step by step so each step earns a mark",
@@ -67,9 +77,14 @@
     },
     {
       "id": "chem-003",
-      "paper": "Paper 1",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
       "number": "3",
-      "topic": "Required practical: making salts",
+      "topic": "Practical skills: making salts",
       "skill": "Give a complete, sequenced method that ends with the product the question asks for",
       "marks": 6,
       "prompt": "Describe how you would make pure, dry crystals of copper sulfate from copper oxide and dilute sulfuric acid.",
@@ -99,7 +114,12 @@
     },
     {
       "id": "chem-004",
-      "paper": "Paper 2",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
       "number": "4",
       "topic": "Rates of reaction",
       "skill": "Use collision theory precisely: 'more frequent' collisions and 'activation energy'",

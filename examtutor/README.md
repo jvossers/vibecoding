@@ -10,7 +10,8 @@ The app is all about exam *technique* (command words, levels, showing working, u
 examtutor/
 ├── index.html            ← the engine (no build step, no dependencies)
 └── data/
-    ├── subjects.json     ← list of subjects and which file holds each one's questions
+    ├── boards.json       ← exam boards (AQA, Pearson Edexcel, OCR)
+    ├── subjects.json     ← subjects, their spec codes per board, and their question files
     ├── maths.json
     ├── english-language.json
     └── …
@@ -24,13 +25,26 @@ Run it through a web server (browsers block `fetch` from `file://`):
 cd examtutor && python3 -m http.server   # then open http://localhost:8000
 ```
 
+## Exam boards
+
+Students pick their exam board **per subject**, because schools often mix boards, e.g. AQA English with Edexcel Maths. The choice is remembered in the browser. A mixed paper uses each subject's chosen board.
+
+Each question has a `boards` list saying which boards it suits:
+
+- **Technique that is the same on every board** (show your working, convert units, 'describe' versus 'explain') lists every board, e.g. `["AQA", "Edexcel", "OCR"]`. It shows an *All boards* tag.
+- **Board-specific formats** (question numbering, mark totals, level descriptors, set texts, History topics) list only that board, e.g. `["AQA"]`. It shows an *AQA format* tag.
+- If a question differs between boards, write a separate question for each board rather than one question with exceptions.
+- If `boards` is left out, the question counts for every board its subject lists.
+
+To add a board, add it to `data/boards.json` and add its spec code to each subject's `specs`.
+
 ## Adding a subject
 
-Add an entry to `data/subjects.json` and create the file it points to:
+Add an entry to `data/subjects.json` and create the file it points to. The keys of `specs` are the boards this subject is offered for:
 
 ```json
-{ "id": "computer-science", "name": "Computer Science", "board": "AQA-style",
-  "file": "computer-science.json", "colour": "#44546a" }
+{ "id": "computer-science", "name": "Computer Science", "file": "computer-science.json",
+  "colour": "#44546a", "specs": { "AQA": "8525", "OCR": "J277" } }
 ```
 
 ## Question format
@@ -41,7 +55,8 @@ Add an entry to `data/subjects.json` and create the file it points to:
   "questions": [
     {
       "id": "maths-005",                     // unique, stable
-      "paper": "Paper 1 (Non-calculator)",   // shown in the paper header
+      "boards": ["AQA", "Edexcel", "OCR"],   // boards this question suits
+      "paper": "Non-calculator paper",       // shown in the paper header; keep it board-neutral for all-board questions
       "number": "5",                         // printed question number (optional)
       "topic": "Estimation",
       "skill": "Round to 1 s.f. and show it", // the exam technique being tested

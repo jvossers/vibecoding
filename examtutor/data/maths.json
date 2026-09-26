@@ -3,7 +3,12 @@
   "questions": [
     {
       "id": "maths-001",
-      "paper": "Paper 2 (Calculator): Foundation and Higher",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Calculator paper · Foundation and Higher",
       "number": "1",
       "topic": "Compound interest",
       "skill": "When the question says 'You must show your working', an answer on its own scores nothing",
@@ -35,7 +40,12 @@
     },
     {
       "id": "maths-002",
-      "paper": "Paper 1 (Non-calculator): Higher",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Non-calculator paper · Higher",
       "number": "2",
       "topic": "Algebraic proof",
       "skill": "'Show that' requires every step, starting from the left-hand side and arriving at the right",
@@ -67,7 +77,12 @@
     },
     {
       "id": "maths-003",
-      "paper": "Paper 1 (Non-calculator): Foundation and Higher",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Non-calculator paper · Foundation and Higher",
       "number": "3",
       "topic": "Estimation",
       "skill": "'Estimate' means round each number to 1 significant figure first, and show it",
@@ -99,7 +114,12 @@
     },
     {
       "id": "maths-004",
-      "paper": "Paper 3 (Calculator): Foundation",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Calculator paper · Foundation",
       "number": "4",
       "topic": "Multi-step problem solving",
       "skill": "Show every step so that each one earns a method mark, and answer in the context of the question",

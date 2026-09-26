@@ -3,7 +3,12 @@
   "questions": [
     {
       "id": "phys-001",
-      "paper": "Paper 1",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
       "number": "1",
       "topic": "Energy and power",
       "skill": "Convert to SI units (W, s) before substituting",
@@ -35,7 +40,12 @@
     },
     {
       "id": "phys-002",
-      "paper": "Paper 2",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
       "number": "2",
       "topic": "Forces and terminal velocity",
       "skill": "Explain a changing situation as a sequence of stages, using 'resultant force'",
@@ -67,7 +77,12 @@
     },
     {
       "id": "phys-003",
-      "paper": "Paper 1",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
       "number": "3",
       "topic": "Electricity: resistance",
       "skill": "Recall and rearrange the equation, and follow the instruction on significant figures",
@@ -99,9 +114,14 @@
     },
     {
       "id": "phys-004",
-      "paper": "Paper 1",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
       "number": "4",
-      "topic": "Required practical: density",
+      "topic": "Practical skills: density",
       "skill": "Name the equipment and exactly what is measured at each step",
       "marks": 6,
       "prompt": "Describe how a student could determine the density of a small, irregularly shaped stone.",

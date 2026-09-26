@@ -307,6 +307,26 @@
     display: grid; place-items: center; font-weight: 700;
   }
   .tip b { display: block; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; margin-bottom: .2rem; }
+  .board-picker { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: .7rem; }
+  .board-chip { display: inline-flex; align-items: center; gap: .5rem; }
+  .board-chip .dot { width: .65rem; height: .65rem; border-radius: 50%; background: var(--b, currentColor); }
+  .board-chip small { font-weight: 400; opacity: .75; }
+  .board-note { font-size: .88rem; color: var(--desk-muted); margin: 0 0 2rem; max-width: 60ch; }
+  .board-table { display: grid; gap: 8px; margin-bottom: .7rem; max-width: 520px; }
+  .board-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1rem; padding: .35rem 0; border-bottom: 1px solid var(--desk-dark); }
+  .board-row select {
+    font: inherit; font-weight: 700; color: var(--desk-ink); background: transparent;
+    border: 2px solid var(--desk-ink); border-radius: 999px; padding: .3rem .8rem; cursor: pointer;
+    width: 13.5rem; max-width: 55vw;
+  }
+  .board-row select option { color: #111; background: #fff; }
+  .board-badge {
+    border: 1.5px solid var(--print); padding: .05rem .5rem; font-weight: 700; color: var(--print); white-space: nowrap;
+  }
+  .q-meta { display: flex; flex-wrap: wrap; gap: .4rem .8rem; align-items: center; margin: 0 0 .8rem; font-size: .85rem; color: var(--print-muted); }
+  .scope { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; padding: .15rem .55rem; border-radius: 999px; }
+  .scope.all { background: var(--green-soft); color: var(--green); }
+  .scope.one { background: #efe9f7; color: #4d2a78; }
   .skill-tag {
     display: inline-block; margin: 0 0 1.2rem; font-size: .82rem; padding: .25rem .7rem;
     background: #f1efe8; border-radius: 999px; color: #333;
@@ -356,7 +376,7 @@
 
   <main id="app"><div class="loading">Fetching question papers…</div></main>
 
-  <footer>Questions are written in the style of AQA GCSE papers for practice only. Mark allocations illustrate typical mark-scheme levels.</footer>
+  <footer>Practice questions written in the style of GCSE papers from AQA, Pearson Edexcel and OCR. Not official exam board material; mark allocations illustrate typical mark-scheme levels.</footer>
 </div>
 
 <script>
@@ -367,7 +387,11 @@
   const COUNT_OPTIONS = [3, 5, 10, 'All'];
   const appEl = document.getElementById('app');
 
+  const BOARD_KEY = 'fullmarks-boards';
+
   const state = {
+    boards: [],            // from boards.json
+    boardFor: loadBoardPrefs(), // subjectId -> chosen board id (remembered per subject)
     subjects: [],          // from subjects.json
     bank: {},              // subjectId -> questions[]
     selectedSubject: null, // subject id or 'mixed'
@@ -413,7 +437,8 @@
 
   // ---------- data loading ----------
   async function loadData() {
-    const manifest = await fetchJSON('subjects.json');
+    const [boards, manifest] = await Promise.all([fetchJSON('boards.json'), fetchJSON('subjects.json')]);
+    state.boards = boards.boards;
     state.subjects = manifest.subjects;
     const results = await Promise.allSettled(state.subjects.map(s => fetchJSON(s.file)));
     results.forEach((r, i) => {
@@ -427,11 +452,42 @@
     });
   }
 
-  function questionsFor(subjectId) {
-    if (subjectId === 'mixed') return Object.values(state.bank).flat();
-    return state.bank[subjectId] || [];
-  }
   const subjectById = id => state.subjects.find(s => s.id === id);
+  const boardById = id => state.boards.find(b => b.id === id) || { id, name: id };
+
+  function loadBoardPrefs() {
+    try { return JSON.parse(localStorage.getItem(BOARD_KEY)) || {}; } catch { return {}; }
+  }
+  function saveBoardPrefs() {
+    try { localStorage.setItem(BOARD_KEY, JSON.stringify(state.boardFor)); } catch { /* storage unavailable */ }
+  }
+
+  // Boards a subject is offered for: the keys of its `specs`, or every board if none are listed.
+  const subjectBoards = subj => (subj && subj.specs ? Object.keys(subj.specs) : state.boards.map(b => b.id));
+  // Boards a question applies to. Omitting `boards` means "every board the subject lists".
+  const questionBoards = q => q.boards || subjectBoards(subjectById(q.subjectId));
+  const isAllBoards = q => subjectBoards(subjectById(q.subjectId)).every(b => questionBoards(q).includes(b));
+  const countFor = (subjectId, board) => (state.bank[subjectId] || []).filter(q => questionBoards(q).includes(board)).length;
+
+  // The board used for a subject: the remembered choice if still valid,
+  // otherwise the first board that has questions.
+  function boardFor(subjectId) {
+    const options = subjectBoards(subjectById(subjectId));
+    const saved = state.boardFor[subjectId];
+    if (options.includes(saved)) return saved;
+    return options.find(b => countFor(subjectId, b) > 0) || options[0];
+  }
+  function setBoard(subjectId, board) {
+    state.boardFor[subjectId] = board;
+    saveBoardPrefs();
+    renderSetup();
+  }
+
+  function questionsFor(subjectId) {
+    if (subjectId === 'mixed') return state.subjects.flatMap(s => questionsFor(s.id));
+    const board = boardFor(subjectId);
+    return (state.bank[subjectId] || []).filter(q => questionBoards(q).includes(board));
+  }
 
   // ---------- setup screen ----------
   function renderSetup() {
@@ -446,11 +502,56 @@
 
     const subjectGrid = el('div', { class: 'subject-grid', role: 'group', 'aria-label': 'Subject' },
       state.subjects.map(s => {
-        const n = (state.bank[s.id] || []).length;
-        return subjectBtn(s.id, s.name, n ? `${plural(n, 'question')} · ${s.board}` : 'No questions yet', s.colour);
+        const n = questionsFor(s.id).length;
+        const board = boardById(boardFor(s.id)).name;
+        return subjectBtn(s.id, s.name, n ? `${plural(n, 'question')} · ${board}` : `No ${board} questions yet`, s.colour);
       }),
       subjectBtn('mixed', 'Mixed paper', `${plural(questionsFor('mixed').length, 'question')} · every subject`, '#222', 'mixed')
     );
+
+    const boardOption = (subjectId, b) => {
+      const n = countFor(subjectId, b);
+      const spec = (subjectById(subjectId).specs || {})[b];
+      return { id: b, name: boardById(b).name, n, spec };
+    };
+
+    let boardStep = null;
+    if (state.selectedSubject === 'mixed') {
+      boardStep = el('div', {},
+        el('div', { class: 'board-table' },
+          state.subjects.map(subj => el('label', { class: 'board-row' },
+            el('span', { text: subj.name }),
+            el('select', {
+              'aria-label': `Exam board for ${subj.name}`,
+              onchange: e => setBoard(subj.id, e.target.value)
+            }, subjectBoards(subj).map(b => {
+              const o = boardOption(subj.id, b);
+              return el('option', { value: b, selected: b === boardFor(subj.id) },
+                `${o.name} (${o.n ? o.n : 'none yet'})`);
+            }))
+          ))
+        ),
+        el('p', { class: 'board-note', text: 'Schools often use different boards for different subjects, so you can choose one per subject. Your choices are remembered on this device.' })
+      );
+    } else if (state.selectedSubject) {
+      const sid = state.selectedSubject;
+      const current = boardFor(sid);
+      boardStep = el('div', {},
+        el('div', { class: 'board-picker', role: 'group', 'aria-label': 'Exam board' },
+          subjectBoards(subjectById(sid)).map(b => {
+            const o = boardOption(sid, b);
+            return el('button', {
+              class: 'chip board-chip',
+              style: `--b:${boardById(b).colour || 'currentColor'}`,
+              'aria-pressed': String(b === current),
+              title: o.spec ? `Specification ${o.spec}` : null,
+              onclick: () => setBoard(sid, b)
+            }, el('span', { class: 'dot' }), o.name, el('small', { text: o.n ? `${o.n}` : 'none yet' }));
+          })
+        ),
+        el('p', { class: 'board-note', text: 'Questions tagged "All boards" test technique that is the same whichever board you sit. The others follow the chosen board\'s question format.' })
+      );
+    }
 
     const countRow = el('div', { class: 'count-row', role: 'group', 'aria-label': 'Number of questions' },
       COUNT_OPTIONS.map(opt => {
@@ -481,7 +582,9 @@
       ),
       el('p', { class: 'step-label', text: '1 · Choose a subject' }),
       subjectGrid,
-      el('p', { class: 'step-label', text: '2 · How many questions?' }),
+      state.selectedSubject && el('p', { class: 'step-label', text: state.selectedSubject === 'mixed' ? '2 · Your exam board for each subject' : '2 · Your exam board' }),
+      boardStep,
+      el('p', { class: 'step-label', text: `${state.selectedSubject ? 3 : 2} · How many questions?` }),
       countRow,
       el('div', { class: 'actions' }, startBtn)
     );
@@ -492,7 +595,7 @@
     const pool = shuffle(questionsFor(state.selectedSubject));
     const n = state.count === 'All' ? pool.length : Math.min(state.count, pool.length);
     state.session = {
-      questions: pool.slice(0, n).map(q => ({ q, order: shuffle(q.answers.map((_, i) => i)) })),
+      questions: pool.slice(0, n).map(q => ({ q, board: boardFor(q.subjectId), order: shuffle(q.answers.map((_, i) => i)) })),
       index: 0,
       results: []
     };
@@ -527,15 +630,23 @@
 
   function renderQuestion() {
     const s = state.session;
-    const { q, order } = s.questions[s.index];
+    const { q, order, board } = s.questions[s.index];
     const subj = subjectById(q.subjectId) || {};
     const ranking = [];           // answer indices in the order the student picked
     let submitted = false;
 
     // --- paper header
+    const boardName = boardById(board).name;
+    const spec = (subj.specs || {})[board];
     const head = el('div', { class: 'paper-head' },
       el('span', {}, el('b', { text: subj.name || '' }), ' · ', q.paper || ''),
-      el('span', { text: q.topic || '' })
+      el('span', { class: 'board-badge', text: spec ? `${boardName} ${spec}` : boardName })
+    );
+    const meta = el('div', { class: 'q-meta' },
+      q.topic && el('span', { text: q.topic }),
+      isAllBoards(q)
+        ? el('span', { class: 'scope all', text: 'All boards' })
+        : el('span', { class: 'scope one', text: `${questionBoards(q).map(b => boardById(b).name).join(' / ')} format` })
     );
 
     // --- stimulus
@@ -627,7 +738,7 @@
       if (ranking.length !== order.length) return;
       submitted = true;
       const result = scoreRanking(q, ranking);
-      s.results.push({ q, ranking: ranking.slice(), ...result });
+      s.results.push({ q, board, ranking: ranking.slice(), ...result });
 
       const max = Math.max(...q.answers.map(a => a.marks));
       cards.forEach(card => {
@@ -689,6 +800,7 @@
       progress,
       el('article', { class: 'paper' },
         head,
+        meta,
         q.skill && el('p', { class: 'skill-tag' }, el('b', { text: 'Technique' }), q.skill),
         source,
         qLine,
@@ -750,7 +862,7 @@
             return el('li', {},
               el('span', { class: `mk ${r.bestSpotted ? 'yes' : 'no'}`, text: r.bestSpotted ? '✓' : '✗' }),
               el('div', {},
-                el('strong', { text: `${subj.name}: ${r.q.topic}` }),
+                el('strong', { text: `${subj.name} (${boardById(r.board).name}): ${r.q.topic}` }),
                 el('small', { text: r.q.skill || '' })
               ),
               el('span', { class: 'pct', text: `${Math.round(r.accuracy * 100)}%` })

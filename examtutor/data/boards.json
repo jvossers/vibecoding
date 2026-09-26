@@ -1,0 +1,7 @@
+{
+  "boards": [
+    { "id": "AQA",     "name": "AQA",             "colour": "#b0152a" },
+    { "id": "Edexcel", "name": "Pearson Edexcel", "colour": "#1b5aa8" },
+    { "id": "OCR",     "name": "OCR",             "colour": "#6a2c91" }
+  ]
+}

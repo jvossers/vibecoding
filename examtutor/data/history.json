@@ -3,6 +3,9 @@
   "questions": [
     {
       "id": "hist-001",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 1 Section B: Germany, 1890–1945",
       "number": "1",
       "topic": "Weimar Germany",
@@ -35,6 +38,9 @@
     },
     {
       "id": "hist-002",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 1 Section B: Germany, 1890–1945",
       "number": "2",
       "topic": "Life in Nazi Germany",
@@ -67,6 +73,9 @@
     },
     {
       "id": "hist-003",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 1 Section B: Germany, 1890–1945",
       "number": "3",
       "topic": "Source utility",
@@ -103,6 +112,9 @@
     },
     {
       "id": "hist-004",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 1 Section B: Germany, 1890–1945",
       "number": "4",
       "topic": "Hitler's rise to power",

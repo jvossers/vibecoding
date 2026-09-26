@@ -3,6 +3,9 @@
   "questions": [
     {
       "id": "eng-lang-001",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 1: Explorations in Creative Reading and Writing",
       "number": "1",
       "topic": "Retrieving information",
@@ -40,6 +43,9 @@
     },
     {
       "id": "eng-lang-002",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 1: Explorations in Creative Reading and Writing",
       "number": "2",
       "topic": "Language analysis",
@@ -83,6 +89,9 @@
     },
     {
       "id": "eng-lang-003",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 1: Explorations in Creative Reading and Writing",
       "number": "3",
       "topic": "Structure",
@@ -126,6 +135,9 @@
     },
     {
       "id": "eng-lang-004",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 1: Explorations in Creative Reading and Writing",
       "number": "4",
       "topic": "Critical evaluation",

@@ -3,9 +3,14 @@
   "questions": [
     {
       "id": "bio-001",
-      "paper": "Paper 1",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
       "number": "1",
-      "topic": "Required practical: magnification",
+      "topic": "Microscopy: magnification",
       "skill": "Convert units before you calculate, and show the substitution",
       "marks": 3,
       "prompt": "A student draws a cheek cell seen through a microscope.\nThe drawing of the cell is 24 mm wide.\nThe real width of the cell is 8 µm.\n\nCalculate the magnification of the drawing.\n\n1 mm = 1000 µm",
@@ -35,7 +40,12 @@
     },
     {
       "id": "bio-002",
-      "paper": "Paper 1",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
       "number": "2",
       "topic": "Enzymes",
       "skill": "'Describe' means say what the data shows, using numbers from it. Don't explain why.",
@@ -44,14 +54,35 @@
         "label": "Table 1",
         "caption": "A student measured the rate of an enzyme-controlled reaction at different temperatures.",
         "table": {
-          "headers": ["Temperature in °C", "Rate of reaction in mg of product per minute"],
+          "headers": [
+            "Temperature in °C",
+            "Rate of reaction in mg of product per minute"
+          ],
           "rows": [
-            ["10", "2"],
-            ["20", "4"],
-            ["30", "7"],
-            ["40", "9"],
-            ["50", "3"],
-            ["60", "0"]
+            [
+              "10",
+              "2"
+            ],
+            [
+              "20",
+              "4"
+            ],
+            [
+              "30",
+              "7"
+            ],
+            [
+              "40",
+              "9"
+            ],
+            [
+              "50",
+              "3"
+            ],
+            [
+              "60",
+              "0"
+            ]
           ]
         }
       },
@@ -82,9 +113,14 @@
     },
     {
       "id": "bio-003",
-      "paper": "Paper 1",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
       "number": "3",
-      "topic": "Required practical: photosynthesis",
+      "topic": "Practical skills: photosynthesis",
       "skill": "Write a method as clear, logical steps that someone else could follow, including variables and measurements",
       "marks": 6,
       "prompt": "Describe how a student could investigate the effect of light intensity on the rate of photosynthesis in pondweed.",
@@ -114,7 +150,12 @@
     },
     {
       "id": "bio-004",
-      "paper": "Paper 1",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
       "number": "4",
       "topic": "Treating coronary heart disease",
       "skill": "'Evaluate' needs advantages and disadvantages of both options, then a justified conclusion",

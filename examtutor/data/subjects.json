@@ -1,12 +1,20 @@
 {
   "subjects": [
-    { "id": "english-language",   "name": "English Language",   "board": "AQA-style", "file": "english-language.json",   "colour": "#b5452b" },
-    { "id": "english-literature", "name": "English Literature", "board": "AQA-style", "file": "english-literature.json", "colour": "#7a3b69" },
-    { "id": "maths",              "name": "Mathematics",        "board": "AQA-style", "file": "maths.json",              "colour": "#1f5f8b" },
-    { "id": "biology",            "name": "Biology",            "board": "AQA-style", "file": "biology.json",            "colour": "#2f7d4a" },
-    { "id": "chemistry",          "name": "Chemistry",          "board": "AQA-style", "file": "chemistry.json",          "colour": "#a0621c" },
-    { "id": "physics",            "name": "Physics",            "board": "AQA-style", "file": "physics.json",            "colour": "#3d4f9c" },
-    { "id": "history",            "name": "History",            "board": "AQA-style", "file": "history.json",            "colour": "#6b5a2e" },
-    { "id": "geography",          "name": "Geography",          "board": "AQA-style", "file": "geography.json",          "colour": "#1c7a78" }
+    { "id": "english-language",   "name": "English Language",   "file": "english-language.json",   "colour": "#b5452b",
+      "specs": { "AQA": "8700", "Edexcel": "1EN0", "OCR": "J351" } },
+    { "id": "english-literature", "name": "English Literature", "file": "english-literature.json", "colour": "#7a3b69",
+      "specs": { "AQA": "8702", "Edexcel": "1ET0", "OCR": "J352" } },
+    { "id": "maths",              "name": "Mathematics",        "file": "maths.json",              "colour": "#1f5f8b",
+      "specs": { "AQA": "8300", "Edexcel": "1MA1", "OCR": "J560" } },
+    { "id": "biology",            "name": "Biology",            "file": "biology.json",            "colour": "#2f7d4a",
+      "specs": { "AQA": "8461", "Edexcel": "1BI0", "OCR": "J247" } },
+    { "id": "chemistry",          "name": "Chemistry",          "file": "chemistry.json",          "colour": "#a0621c",
+      "specs": { "AQA": "8462", "Edexcel": "1CH0", "OCR": "J248" } },
+    { "id": "physics",            "name": "Physics",            "file": "physics.json",            "colour": "#3d4f9c",
+      "specs": { "AQA": "8463", "Edexcel": "1PH0", "OCR": "J249" } },
+    { "id": "history",            "name": "History",            "file": "history.json",            "colour": "#6b5a2e",
+      "specs": { "AQA": "8145", "Edexcel": "1HI0", "OCR": "J410" } },
+    { "id": "geography",          "name": "Geography",          "file": "geography.json",          "colour": "#1c7a78",
+      "specs": { "AQA": "8035", "Edexcel": "1GA0 / 1GB0", "OCR": "J383 / J384" } }
   ]
 }

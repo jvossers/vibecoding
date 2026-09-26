@@ -3,7 +3,12 @@
   "questions": [
     {
       "id": "geog-001",
-      "paper": "Paper 1: Living with the physical environment",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Physical geography",
       "number": "1",
       "topic": "Tropical storms: using a map",
       "skill": "Describe a distribution using the resource: general pattern, specific evidence, anomaly",
@@ -39,6 +44,9 @@
     },
     {
       "id": "geog-002",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 1: Living with the physical environment",
       "number": "2",
       "topic": "Tectonic hazards",
@@ -71,6 +79,9 @@
     },
     {
       "id": "geog-003",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 1: Living with the physical environment",
       "number": "3",
       "topic": "River management: 9-mark evaluation",
@@ -103,7 +114,12 @@
     },
     {
       "id": "geog-004",
-      "paper": "Paper 3: Geographical applications",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Geographical skills",
       "number": "4",
       "topic": "Geographical skills: percentage change",
       "skill": "Percentage change = change ÷ original × 100, with working shown",
@@ -112,10 +128,19 @@
         "label": "Figure 2",
         "caption": "Estimated population of Lagos, Nigeria.",
         "table": {
-          "headers": ["Year", "Population (millions)"],
+          "headers": [
+            "Year",
+            "Population (millions)"
+          ],
           "rows": [
-            ["1990", "4.8"],
-            ["2020", "14.4"]
+            [
+              "1990",
+              "4.8"
+            ],
+            [
+              "2020",
+              "14.4"
+            ]
           ]
         }
       },

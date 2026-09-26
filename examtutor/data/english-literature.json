@@ -3,6 +3,9 @@
   "questions": [
     {
       "id": "eng-lit-001",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 1: Shakespeare and the 19th-century novel",
       "number": "1",
       "topic": "Macbeth: extract to whole text",
@@ -45,6 +48,9 @@
     },
     {
       "id": "eng-lit-002",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 1: Shakespeare and the 19th-century novel",
       "number": "2",
       "topic": "A Christmas Carol: extract to whole text",
@@ -87,6 +93,9 @@
     },
     {
       "id": "eng-lit-003",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 2: Modern texts and poetry",
       "number": "3",
       "topic": "An Inspector Calls: whole text",
@@ -124,6 +133,9 @@
     },
     {
       "id": "eng-lit-004",
+      "boards": [
+        "AQA"
+      ],
       "paper": "Paper 2: Modern texts and poetry",
       "number": "4",
       "topic": "Poetry comparison: Power and Conflict",
