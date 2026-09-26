@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Full Marks: GCSE Exam Technique</title>
+<meta name="description" content="Practise GCSE exam technique: rank real-style candidate answers by the marks they would earn, then see the examiner's reasoning.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;700&family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --desk: #d9d4c7;
+    --desk-dark: #c9c2b2;
+    --desk-ink: #2b2a26;
+    --desk-muted: #5f5a4e;
+    --paper: #fffefa;
+    --paper-line: #e3e0d6;
+    --print: #111;
+    --print-muted: #555;
+    --biro: #1f3a8f;
+    --red: #c8261c;
+    --red-soft: #fbeae8;
+    --green: #1f7a3d;
+    --green-soft: #e6f3ea;
+    --amber: #a86500;
+    --shadow: 0 1px 1px rgba(0,0,0,.06), 0 8px 24px -8px rgba(40,30,10,.35);
+    --radius: 3px;
+    --accent: #1f5f8b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --desk: #1d1f1c;
+      --desk-dark: #151714;
+      --desk-ink: #ece8dc;
+      --desk-muted: #a8a392;
+      --shadow: 0 1px 1px rgba(0,0,0,.4), 0 14px 30px -10px rgba(0,0,0,.8);
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--desk-ink);
+    background-color: var(--desk);
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(255,255,255,.18), transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    font-family: "Arimo", "Helvetica Neue", Helvetica, sans-serif;
+    line-height: 1.5;
+  }
+  button { font: inherit; color: inherit; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+    padding: 1.4rem 0 1rem;
+    border-bottom: 2px solid var(--desk-ink);
+    margin-bottom: 1.5rem;
+  }
+  .brand {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 900; font-size: clamp(1.6rem, 5vw, 2.2rem);
+    letter-spacing: -.02em; line-height: 1;
+    margin: 0; cursor: pointer; background: none; border: 0; padding: 0;
+  }
+  .brand span { color: var(--red); font-family: "Caveat", cursive; font-weight: 700; font-size: 1.15em; margin-left: .15em; }
+  .masthead small { font-size: .8rem; color: var(--desk-muted); text-transform: uppercase; letter-spacing: .12em; text-align: right; }
+
+  /* ---------- Setup ---------- */
+  .intro { display: grid; gap: 1.5rem; grid-template-columns: 1fr; margin-bottom: 2rem; }
+  @media (min-width: 720px) { .intro { grid-template-columns: 1.3fr 1fr; align-items: end; } }
+  .intro h2 {
+    font-family: "Fraunces", Georgia, serif; font-weight: 700;
+    font-size: clamp(1.9rem, 6vw, 3rem); line-height: 1.02; letter-spacing: -.025em; margin: 0;
+  }
+  .intro h2 em { font-style: normal; color: var(--red); font-family: "Caveat", cursive; font-size: 1.15em; }
+  .intro p { margin: 0; color: var(--desk-muted); font-size: 1.02rem; }
+
+  .step-label {
+    font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .14em;
+    color: var(--desk-muted); margin: 0 0 .7rem;
+  }
+  .subject-grid {
+    display: grid; gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    margin-bottom: 2rem;
+  }
+  .subject {
+    position: relative; text-align: left; cursor: pointer;
+    background: var(--paper); color: var(--print);
+    border: 0; border-radius: var(--radius);
+    padding: 1rem 1rem .9rem 1.2rem; min-height: 96px;
+    box-shadow: var(--shadow);
+    transition: transform .15s ease, box-shadow .15s ease;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .subject::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+    background: var(--c, var(--accent)); border-radius: var(--radius) 0 0 var(--radius);
+  }
+  .subject:hover { transform: translateY(-2px) rotate(-.4deg); }
+  .subject:focus-visible { outline: 3px solid var(--biro); outline-offset: 2px; }
+  .subject strong { font-size: 1.05rem; line-height: 1.2; }
+  .subject small { color: var(--print-muted); font-size: .8rem; }
+  .subject[aria-pressed="true"] { outline: 3px solid var(--c, var(--accent)); outline-offset: 2px; transform: translateY(-2px); }
+  .subject[aria-pressed="true"]::after {
+    content: "✓"; position: absolute; right: .7rem; top: .35rem;
+    font-family: "Caveat", cursive; font-weight: 700; font-size: 1.9rem; color: var(--red);
+  }
+  .subject.mixed { background: repeating-linear-gradient(-45deg, var(--paper), var(--paper) 10px, #f5f2ea 10px, #f5f2ea 20px); }
+
+  .count-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 2rem; }
+  .chip {
+    border: 2px solid var(--desk-ink); background: transparent; border-radius: 999px;
+    padding: .45rem 1.1rem; font-weight: 700; cursor: pointer; min-width: 3.2rem;
+  }
+  .chip[aria-pressed="true"] { background: var(--desk-ink); color: var(--desk); }
+  .chip:disabled { opacity: .35; cursor: not-allowed; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: .5rem;
+    border: 0; border-radius: 999px; cursor: pointer;
+    padding: .85rem 1.6rem; font-weight: 700; font-size: 1rem;
+    background: var(--desk-ink); color: var(--desk);
+    transition: transform .1s ease, opacity .15s;
+  }
+  .btn:hover:not(:disabled) { transform: translateY(-1px); }
+  .btn:disabled { opacity: .35; cursor: not-allowed; }
+  .btn.red { background: var(--red); color: #fff; }
+  .btn.ghost { background: transparent; color: var(--desk-ink); border: 2px solid var(--desk-ink); }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+  .notice {
+    background: var(--paper); color: var(--print); padding: 1.2rem 1.4rem;
+    border-left: 6px solid var(--red); box-shadow: var(--shadow); margin: 1rem 0 2rem;
+  }
+  .notice code { background: #f0ede4; padding: .1em .35em; border-radius: 3px; }
+
+  /* ---------- Progress bar ---------- */
+  .progress { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: .9rem; color: var(--desk-muted); }
+  .progress .bar { flex: 1; height: 6px; background: var(--desk-dark); border-radius: 3px; overflow: hidden; }
+  .progress .bar i { display: block; height: 100%; background: var(--desk-ink); transition: width .4s ease; }
+
+  /* ---------- Exam paper ---------- */
+  .paper {
+    position: relative; background: var(--paper); color: var(--print);
+    box-shadow: var(--shadow); border-radius: 2px;
+    padding: 1.6rem 1.2rem 1.8rem;
+    margin-bottom: 2rem;
+    animation: slideIn .45s cubic-bezier(.2,.8,.2,1);
+  }
+  @media (min-width: 640px) {
+    .paper { padding: 2.2rem 4.2rem 2.4rem 2.6rem; }
+    .paper::after {
+      content: "Do not write outside the box";
+      position: absolute; right: 0; top: 0; bottom: 0; width: 2.6rem;
+      border-left: 1.5px solid var(--print);
+      writing-mode: vertical-rl; text-orientation: mixed;
+      display: flex; align-items: center; justify-content: flex-start;
+      padding-top: 1.5rem; font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    }
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(18px) rotate(.4deg); } to { opacity: 1; transform: none; } }
+
+  .paper-head {
+    display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--print-muted);
+    border-bottom: 1.5px solid var(--print); padding-bottom: .5rem; margin-bottom: 1.3rem;
+  }
+  .paper-head b { color: var(--print); }
+
+  .source {
+    border: 1.5px solid var(--print); padding: 1rem 1.1rem; margin: 0 0 1.4rem;
+  }
+  .source h3 { margin: 0 0 .15rem; font-size: 1rem; }
+  .source .caption { margin: 0 0 .8rem; font-style: italic; font-size: .92rem; color: #333; }
+  .source .caption:last-child { margin-bottom: 0; }
+  .source .body { white-space: pre-wrap; font-size: .98rem; line-height: 1.65; }
+  .source table { border-collapse: collapse; width: 100%; max-width: 480px; font-size: .95rem; }
+  .source th, .source td { border: 1.5px solid var(--print); padding: .4rem .7rem; text-align: center; }
+  .source th { background: #f1efe8; font-weight: 700; }
+  .table-scroll { overflow-x: auto; }
+
+  .q-line { display: grid; grid-template-columns: 2.4rem 1fr; gap: .3rem; }
+  .q-num {
+    font-weight: 700; font-size: 1.05rem;
+    border: 1.5px solid var(--print); height: 2rem; width: 2rem;
+    display: grid; place-items: center;
+  }
+  .q-text { white-space: pre-wrap; font-size: 1.02rem; }
+  .q-text p { margin: 0 0 .6rem; }
+  .q-bullets { margin: .2rem 0 .6rem; padding-left: 1.3rem; }
+  .q-bullets li { margin-bottom: .15rem; }
+  .q-marks { text-align: right; font-weight: 700; margin: .6rem 0 0; }
+
+  .divider {
+    display: flex; align-items: center; gap: .8rem; margin: 2rem 0 1rem;
+    font-size: .75rem; text-transform: uppercase; letter-spacing: .14em; font-weight: 700; color: var(--print-muted);
+  }
+  .divider::before, .divider::after { content: ""; flex: 1; border-top: 1px dashed #b9b4a6; }
+
+  .instructions {
+    background: #f4f1e7; border-left: 4px solid var(--print); padding: .7rem 1rem; font-size: .92rem; margin-bottom: 1.1rem;
+  }
+  .instructions b { font-weight: 700; }
+
+  /* ---------- Candidate responses ---------- */
+  .responses { display: grid; gap: 14px; }
+  .response {
+    position: relative; display: grid; grid-template-columns: 3.8rem 1fr; gap: .7rem;
+    text-align: left; width: 100%; cursor: pointer;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0, transparent calc(1.75em - 1px), var(--paper-line) calc(1.75em - 1px), var(--paper-line) 1.75em);
+    background-color: #fff;
+    border: 1.5px solid #bdb8aa; border-radius: 2px;
+    padding: .9rem 1rem .9rem .8rem;
+    transition: border-color .15s, box-shadow .15s, transform .15s;
+  }
+  .response:hover:not(:disabled) { border-color: var(--print); }
+  .response:focus-visible { outline: 3px solid var(--biro); outline-offset: 2px; }
+  .response.ranked { border-color: var(--print); box-shadow: 3px 3px 0 var(--print); }
+  .response:disabled { cursor: default; }
+
+  .rank-slot {
+    display: flex; flex-direction: column; align-items: center; gap: .3rem;
+  }
+  .cand {
+    font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--print-muted); white-space: nowrap;
+  }
+  .rank-badge {
+    width: 2.4rem; height: 2.4rem; border-radius: 50%;
+    border: 2px dashed #b9b4a6; display: grid; place-items: center;
+    font-weight: 700; font-size: 1.1rem; color: #b9b4a6;
+    transition: all .2s ease;
+  }
+  .response.ranked .rank-badge {
+    border: 2px solid var(--print); background: var(--print); color: #fff;
+    animation: pop .25s ease;
+  }
+  @keyframes pop { 50% { transform: scale(1.2); } }
+
+  .script {
+    font-family: "Kalam", "Comic Sans MS", cursive; color: var(--biro);
+    font-size: 1.02rem; line-height: 1.75em; white-space: pre-wrap; margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* Marked state */
+  .mark-stamp {
+    margin-top: .4rem; white-space: nowrap;
+    font-family: "Caveat", cursive; font-weight: 700; color: var(--red);
+    font-size: 1.45rem; line-height: 1.1; transform: rotate(-7deg);
+    background: #fff; padding: 0 .3rem; border: 2px solid var(--red); border-radius: 50% 45% 50% 48%;
+    animation: stamp .4s cubic-bezier(.3,1.6,.5,1) both;
+  }
+  @keyframes stamp { from { opacity: 0; transform: rotate(-20deg) scale(1.8); } to { opacity: 1; transform: rotate(-7deg) scale(1); } }
+  .response.top { border-color: var(--red); box-shadow: 3px 3px 0 var(--red); }
+
+  .feedback {
+    grid-column: 1 / -1; margin-top: .6rem; padding: .8rem .9rem;
+    background: var(--red-soft); border-left: 3px solid var(--red);
+    font-family: "Arimo", sans-serif; color: #3a1512; font-size: .93rem; line-height: 1.55;
+    animation: fadeUp .35s ease both;
+  }
+  .feedback .verdict {
+    display: flex; flex-wrap: wrap; gap: .4rem 1rem; align-items: baseline; margin-bottom: .35rem;
+    font-family: "Caveat", cursive; font-size: 1.35rem; font-weight: 700; color: var(--red); line-height: 1.1;
+  }
+  .feedback .placing { font-family: "Arimo", sans-serif; font-size: .8rem; font-weight: 700; padding: .1rem .5rem; border-radius: 999px; }
+  .placing.ok { background: var(--green-soft); color: var(--green); }
+  .placing.off { background: #fff; color: var(--amber); border: 1px solid currentColor; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .rank-actions { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 1.4rem; }
+  .rank-actions .hint { font-size: .9rem; color: var(--print-muted); }
+  .paper .btn { background: var(--print); color: #fff; }
+  .paper .btn.red { background: var(--red); }
+  .paper .btn.ghost { background: transparent; color: var(--print); border-color: var(--print); }
+
+  /* Result banner + tip */
+  .result {
+    margin: 1.6rem 0 0; padding: 1.1rem 1.2rem; border: 2px solid var(--print);
+    display: grid; gap: .9rem; animation: fadeUp .4s ease both;
+  }
+  @media (min-width: 640px) { .result { grid-template-columns: auto 1fr; align-items: center; } }
+  .result .score {
+    font-family: "Caveat", cursive; font-weight: 700; font-size: 2.6rem; line-height: 1; color: var(--red);
+  }
+  .result ul { margin: 0; padding: 0; list-style: none; font-size: .95rem; }
+  .result li { padding-left: 1.6rem; position: relative; margin: .15rem 0; }
+  .result li::before { position: absolute; left: 0; font-weight: 700; }
+  .result li.yes::before { content: "✓"; color: var(--green); }
+  .result li.no::before { content: "✗"; color: var(--red); }
+  .result li.part::before { content: "~"; color: var(--amber); }
+
+  .tip {
+    margin-top: 1rem; padding: 1rem 1.1rem 1rem 3.3rem; position: relative;
+    background: #fff8d6; border: 1px solid #e8d77a; font-size: .95rem;
+  }
+  .tip::before {
+    content: "!"; position: absolute; left: 1rem; top: .95rem;
+    width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--print); color: #fff;
+    display: grid; place-items: center; font-weight: 700;
+  }
+  .tip b { display: block; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; margin-bottom: .2rem; }
+  .skill-tag {
+    display: inline-block; margin: 0 0 1.2rem; font-size: .82rem; padding: .25rem .7rem;
+    background: #f1efe8; border-radius: 999px; color: #333;
+  }
+  .skill-tag b { text-transform: uppercase; font-size: .7rem; letter-spacing: .1em; margin-right: .3rem; }
+
+  /* ---------- Summary ---------- */
+  .summary-hero { display: grid; gap: 1.2rem; margin-bottom: 1.6rem; }
+  @media (min-width: 640px) { .summary-hero { grid-template-columns: auto 1fr; align-items: center; gap: 2rem; } }
+  .grade-ring {
+    width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--red);
+    display: grid; place-items: center; text-align: center; transform: rotate(-6deg);
+    font-family: "Caveat", cursive; color: var(--red); font-weight: 700; line-height: .9;
+    animation: stamp .5s cubic-bezier(.3,1.6,.5,1) both;
+  }
+  .grade-ring big { font-size: 3.4rem; display: block; }
+  .grade-ring span { font-size: 1.2rem; }
+  .summary-hero h2 { font-family: "Fraunces", Georgia, serif; margin: 0 0 .4rem; font-size: 1.8rem; line-height: 1.1; }
+  .summary-hero p { margin: 0; color: var(--print-muted); }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 0 0 1.6rem; }
+  .stat { border: 1.5px solid var(--print); padding: .8rem 1rem; }
+  .stat b { display: block; font-size: 1.7rem; font-family: "Fraunces", Georgia, serif; }
+  .stat span { font-size: .8rem; color: var(--print-muted); text-transform: uppercase; letter-spacing: .08em; }
+  .review-list { list-style: none; margin: 0 0 1.6rem; padding: 0; border-top: 1.5px solid var(--print); }
+  .review-list li { display: grid; grid-template-columns: 1.6rem 1fr auto; gap: .6rem; padding: .7rem 0; border-bottom: 1px solid var(--paper-line); align-items: start; }
+  .review-list .mk { font-weight: 700; font-size: 1.1rem; }
+  .review-list .mk.yes { color: var(--green); }
+  .review-list .mk.no { color: var(--red); }
+  .review-list small { display: block; color: var(--print-muted); font-size: .85rem; }
+  .review-list .pct { font-size: .85rem; font-weight: 700; white-space: nowrap; }
+
+  footer { text-align: center; font-size: .8rem; color: var(--desk-muted); padding: 1rem 0 2.5rem; }
+
+  .loading { text-align: center; padding: 4rem 0; font-family: "Caveat", cursive; font-size: 1.6rem; color: var(--desk-muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <button class="brand" id="homeBtn" aria-label="Full Marks: back to start">Full Marks<span>✓</span></button>
+    <small>GCSE exam technique<br>trainer</small>
+  </header>
+
+  <main id="app"><div class="loading">Fetching question papers…</div></main>
+
+  <footer>Questions are written in the style of AQA GCSE papers for practice only. Mark allocations illustrate typical mark-scheme levels.</footer>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const DATA_DIR = 'data/';
+  const COUNT_OPTIONS = [3, 5, 10, 'All'];
+  const appEl = document.getElementById('app');
+
+  const state = {
+    subjects: [],          // from subjects.json
+    bank: {},              // subjectId -> questions[]
+    selectedSubject: null, // subject id or 'mixed'
+    count: 5,
+    session: null
+  };
+
+  // ---------- helpers ----------
+  const el = (tag, attrs = {}, ...children) => {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v == null || v === false) continue;
+      if (k === 'class') node.className = v;
+      else if (k === 'text') node.textContent = v;
+      else if (k === 'style') node.style.cssText = v;
+      else if (k.startsWith('on')) node.addEventListener(k.slice(2), v);
+      else node.setAttribute(k, v === true ? '' : v);
+    }
+    for (const c of children.flat()) {
+      if (c == null || c === false) continue;
+      node.append(c instanceof Node ? c : document.createTextNode(String(c)));
+    }
+    return node;
+  };
+  const shuffle = arr => {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+  const ordinal = n => n + (['th','st','nd','rd'][(n % 100 - 20) % 10] || ['th','st','nd','rd'][n % 100] || 'th');
+  const letter = i => String.fromCharCode(65 + i);
+  const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+  const render = (...nodes) => { appEl.replaceChildren(...nodes); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+  async function fetchJSON(path) {
+    const res = await fetch(DATA_DIR + path, { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`${path}: HTTP ${res.status}`);
+    return res.json();
+  }
+
+  // ---------- data loading ----------
+  async function loadData() {
+    const manifest = await fetchJSON('subjects.json');
+    state.subjects = manifest.subjects;
+    const results = await Promise.allSettled(state.subjects.map(s => fetchJSON(s.file)));
+    results.forEach((r, i) => {
+      const subj = state.subjects[i];
+      if (r.status === 'fulfilled') {
+        state.bank[subj.id] = (r.value.questions || []).map(q => ({ ...q, subjectId: subj.id }));
+      } else {
+        console.warn('Could not load', subj.file, r.reason);
+        state.bank[subj.id] = [];
+      }
+    });
+  }
+
+  function questionsFor(subjectId) {
+    if (subjectId === 'mixed') return Object.values(state.bank).flat();
+    return state.bank[subjectId] || [];
+  }
+  const subjectById = id => state.subjects.find(s => s.id === id);
+
+  // ---------- setup screen ----------
+  function renderSetup() {
+    const available = state.selectedSubject ? questionsFor(state.selectedSubject).length : 0;
+
+    const subjectBtn = (id, name, sub, colour, extraClass = '') => el('button', {
+      class: `subject ${extraClass}`,
+      style: colour ? `--c:${colour}` : null,
+      'aria-pressed': String(state.selectedSubject === id),
+      onclick: () => { state.selectedSubject = id; renderSetup(); }
+    }, el('strong', { text: name }), el('small', { text: sub }));
+
+    const subjectGrid = el('div', { class: 'subject-grid', role: 'group', 'aria-label': 'Subject' },
+      state.subjects.map(s => {
+        const n = (state.bank[s.id] || []).length;
+        return subjectBtn(s.id, s.name, n ? `${plural(n, 'question')} · ${s.board}` : 'No questions yet', s.colour);
+      }),
+      subjectBtn('mixed', 'Mixed paper', `${plural(questionsFor('mixed').length, 'question')} · every subject`, '#222', 'mixed')
+    );
+
+    const countRow = el('div', { class: 'count-row', role: 'group', 'aria-label': 'Number of questions' },
+      COUNT_OPTIONS.map(opt => {
+        const n = opt === 'All' ? available : opt;
+        const tooMany = opt !== 'All' && state.selectedSubject && opt > available;
+        return el('button', {
+          class: 'chip',
+          'aria-pressed': String(state.count === opt),
+          disabled: !state.selectedSubject || tooMany || n === 0,
+          onclick: () => { state.count = opt; renderSetup(); }
+        }, opt === 'All' && state.selectedSubject ? `All (${available})` : String(opt));
+      })
+    );
+
+    // If the chosen count exceeds what's available, fall back to "All".
+    if (state.selectedSubject && state.count !== 'All' && state.count > available) state.count = 'All';
+
+    const startBtn = el('button', {
+      class: 'btn red',
+      disabled: !state.selectedSubject || available === 0,
+      onclick: startSession
+    }, 'Turn over your paper →');
+
+    render(
+      el('section', { class: 'intro' },
+        el('h2', {}, 'Every answer is right. Only one gets ', el('em', { text: 'full marks.' })),
+        el('p', {}, 'Each question comes with several real-style student answers. They are all correct, but they earn different marks. Rank them from most to fewest marks, then see how an examiner would mark them.')
+      ),
+      el('p', { class: 'step-label', text: '1 · Choose a subject' }),
+      subjectGrid,
+      el('p', { class: 'step-label', text: '2 · How many questions?' }),
+      countRow,
+      el('div', { class: 'actions' }, startBtn)
+    );
+  }
+
+  // ---------- session ----------
+  function startSession() {
+    const pool = shuffle(questionsFor(state.selectedSubject));
+    const n = state.count === 'All' ? pool.length : Math.min(state.count, pool.length);
+    state.session = {
+      questions: pool.slice(0, n).map(q => ({ q, order: shuffle(q.answers.map((_, i) => i)) })),
+      index: 0,
+      results: []
+    };
+    renderQuestion();
+  }
+
+  // Scoring helpers. `ranking` is an array of answer indices, best first.
+  function scoreRanking(q, ranking) {
+    const marks = ranking.map(i => q.answers[i].marks);
+    const max = Math.max(...q.answers.map(a => a.marks));
+    let pairs = 0, correct = 0;
+    for (let i = 0; i < marks.length; i++) {
+      for (let j = i + 1; j < marks.length; j++) {
+        if (marks[i] === marks[j]) continue; // ties can go either way
+        pairs++;
+        if (marks[i] > marks[j]) correct++;
+      }
+    }
+    return {
+      bestSpotted: marks[0] === max,
+      pairs, correct,
+      accuracy: pairs ? correct / pairs : 1
+    };
+  }
+  // Acceptable rank positions (1-based) for an answer, allowing for ties.
+  function trueRankRange(q, idx) {
+    const m = q.answers[idx].marks;
+    const higher = q.answers.filter(a => a.marks > m).length;
+    const same = q.answers.filter(a => a.marks === m).length;
+    return [higher + 1, higher + same];
+  }
+
+  function renderQuestion() {
+    const s = state.session;
+    const { q, order } = s.questions[s.index];
+    const subj = subjectById(q.subjectId) || {};
+    const ranking = [];           // answer indices in the order the student picked
+    let submitted = false;
+
+    // --- paper header
+    const head = el('div', { class: 'paper-head' },
+      el('span', {}, el('b', { text: subj.name || '' }), ' · ', q.paper || ''),
+      el('span', { text: q.topic || '' })
+    );
+
+    // --- stimulus
+    let source = null;
+    if (q.stimulus) {
+      const st = q.stimulus;
+      source = el('div', { class: 'source' },
+        st.label && el('h3', { text: st.label }),
+        st.caption && el('p', { class: 'caption', text: st.caption }),
+        st.text && el('div', { class: 'body', text: st.text }),
+        st.table && el('div', { class: 'table-scroll' },
+          el('table', {},
+            el('thead', {}, el('tr', {}, st.table.headers.map(h => el('th', { text: h })))),
+            el('tbody', {}, st.table.rows.map(r => el('tr', {}, r.map(c => el('td', { text: c })))))
+          )
+        )
+      );
+    }
+
+    // --- question text
+    const qText = el('div', { class: 'q-text' },
+      el('p', { text: q.prompt }),
+      q.promptLead && el('p', { text: q.promptLead, style: 'margin-bottom:0' }),
+      q.bullets && el('ul', { class: 'q-bullets' }, q.bullets.map(b => el('li', { text: b })))
+    );
+    const qLine = el('div', { class: 'q-line' },
+      el('div', { class: 'q-num', text: q.number || String(s.index + 1) }),
+      el('div', {}, qText, el('p', { class: 'q-marks', text: `[${plural(q.marks, 'mark')}]` }))
+    );
+
+    // --- candidate responses
+    const cards = order.map((ansIdx, pos) => {
+      const a = q.answers[ansIdx];
+      const badge = el('div', { class: 'rank-badge', 'aria-hidden': 'true', text: '?' });
+      const card = el('button', {
+        class: 'response',
+        'data-idx': ansIdx,
+        onclick: () => toggleRank(ansIdx)
+      },
+        el('div', { class: 'rank-slot' }, el('span', { class: 'cand', text: `Cand. ${letter(pos)}` }), badge),
+        el('p', { class: 'script', text: a.text })
+      );
+      card._badge = badge;
+      card._slot = badge.parentNode;
+      card._pos = pos;
+      return card;
+    });
+    const responses = el('div', { class: 'responses' }, cards);
+
+    const hintEl = el('span', { class: 'hint' });
+    const clearBtn = el('button', { class: 'btn ghost', onclick: () => { ranking.length = 0; refresh(); } }, 'Clear');
+    const submitBtn = el('button', { class: 'btn red', onclick: submit }, 'Hand to the examiner');
+    const actionsEl = el('div', { class: 'rank-actions' }, hintEl, el('div', { class: 'actions' }, clearBtn, submitBtn));
+
+    const afterEl = el('div');
+
+    function toggleRank(idx) {
+      if (submitted) return;
+      const at = ranking.indexOf(idx);
+      if (at >= 0) ranking.splice(at, 1);
+      else ranking.push(idx);
+      // Auto-place the last remaining answer.
+      if (ranking.length === order.length - 1) {
+        ranking.push(order.find(i => !ranking.includes(i)));
+      }
+      refresh();
+    }
+
+    function refresh() {
+      cards.forEach(card => {
+        const idx = +card.dataset.idx;
+        const r = ranking.indexOf(idx);
+        card.classList.toggle('ranked', r >= 0);
+        card._badge.replaceChildren(r >= 0 ? document.createTextNode(r + 1) : document.createTextNode('?'));
+        card.setAttribute('aria-label',
+          `Candidate ${letter(card._pos)}. ${r >= 0 ? `Ranked ${ordinal(r + 1)}. Click to remove.` : 'Not ranked yet. Click to rank next.'}`);
+      });
+      const remaining = order.length - ranking.length;
+      hintEl.textContent = ranking.length === 0
+        ? 'Click the answer you think earns the most marks first.'
+        : remaining > 0
+          ? `Now click your ${ordinal(ranking.length + 1)} choice. (${remaining} left.)`
+          : 'Ranking complete: happy with it?';
+      submitBtn.disabled = remaining > 0;
+      clearBtn.disabled = ranking.length === 0;
+    }
+
+    function submit() {
+      if (ranking.length !== order.length) return;
+      submitted = true;
+      const result = scoreRanking(q, ranking);
+      s.results.push({ q, ranking: ranking.slice(), ...result });
+
+      const max = Math.max(...q.answers.map(a => a.marks));
+      cards.forEach(card => {
+        const idx = +card.dataset.idx;
+        const a = q.answers[idx];
+        const userRank = ranking.indexOf(idx) + 1;
+        const [lo, hi] = trueRankRange(q, idx);
+        const inPlace = userRank >= lo && userRank <= hi;
+        const trueLabel = lo === hi ? ordinal(lo) : `joint ${ordinal(lo)}`;
+        card.disabled = true;
+        card.classList.toggle('top', a.marks === max);
+        card._slot.append(el('span', { class: 'mark-stamp', 'aria-label': `${a.marks} out of ${q.marks} marks` }, `${a.marks}/${q.marks}`));
+        card.append(
+          el('div', { class: 'feedback' },
+            el('div', { class: 'verdict' },
+              `${plural(a.marks, 'mark')}${a.marks === max ? ': the best answer' : ''}`,
+              el('span', {
+                class: `placing ${inPlace ? 'ok' : 'off'}`,
+                text: inPlace ? `You ranked it ${ordinal(userRank)} ✓` : `You ranked it ${ordinal(userRank)} · actually ${trueLabel}`
+              })
+            ),
+            a.explanation
+          )
+        );
+      });
+      // Put the cards in the examiner's order so the progression is easy to read.
+      const sorted = cards.slice().sort((x, y) => q.answers[+y.dataset.idx].marks - q.answers[+x.dataset.idx].marks);
+      responses.replaceChildren(...sorted);
+
+      const pct = Math.round(result.accuracy * 100);
+      const isLast = s.index === s.questions.length - 1;
+      const nextBtn = el('button', { class: 'btn red', onclick: isLast ? renderSummary : () => { s.index++; renderQuestion(); } },
+        isLast ? 'See your results →' : 'Next question →');
+
+      actionsEl.replaceWith(el('div'));
+      afterEl.replaceChildren(
+        el('div', { class: 'result', role: 'status' },
+          el('div', { class: 'score', text: result.bestSpotted && pct === 100 ? 'Spot on!' : result.bestSpotted ? 'Good eye' : 'Not quite' }),
+          el('ul', {},
+            el('li', { class: result.bestSpotted ? 'yes' : 'no',
+              text: result.bestSpotted ? 'You picked the full-marks answer.' : 'You did not pick the highest-scoring answer first.' }),
+            el('li', { class: pct === 100 ? 'yes' : pct >= 50 ? 'part' : 'no',
+              text: `Ranking: ${result.correct} of ${result.pairs} comparisons in the right order (${pct}%).` })
+          )
+        ),
+        q.tip && el('div', { class: 'tip' }, el('b', { text: "Examiner's tip" }), q.tip),
+        el('div', { class: 'rank-actions' }, el('span'), nextBtn)
+      );
+      responses.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      nextBtn.focus({ preventScroll: true });
+    }
+
+    const progress = el('div', { class: 'progress' },
+      el('span', { text: `Question ${s.index + 1} of ${s.questions.length}` }),
+      el('div', { class: 'bar' }, el('i', { style: `width:${(s.index / s.questions.length) * 100}%` }))
+    );
+
+    render(
+      progress,
+      el('article', { class: 'paper' },
+        head,
+        q.skill && el('p', { class: 'skill-tag' }, el('b', { text: 'Technique' }), q.skill),
+        source,
+        qLine,
+        el('div', { class: 'divider', text: 'Candidate responses' }),
+        el('div', { class: 'instructions' },
+          el('b', { text: 'Rank these answers. ' }),
+          'All are creditworthy. Click them in order, from the one that earns ', el('b', { text: 'the most marks' }),
+          ' to the one that earns ', el('b', { text: 'the fewest' }), '. Click a ranked answer again to un-rank it.'),
+        responses,
+        actionsEl,
+        afterEl
+      )
+    );
+    refresh();
+  }
+
+  // ---------- summary ----------
+  function renderSummary() {
+    const s = state.session;
+    const n = s.results.length;
+    const best = s.results.filter(r => r.bestSpotted).length;
+    const pairs = s.results.reduce((t, r) => t + r.pairs, 0);
+    const correct = s.results.reduce((t, r) => t + r.correct, 0);
+    const accuracy = pairs ? Math.round(correct / pairs * 100) : 100;
+    const perfect = s.results.filter(r => r.bestSpotted && r.correct === r.pairs).length;
+
+    const verdict = accuracy >= 90 ? 'Examiner material.'
+      : accuracy >= 70 ? 'A sharp eye for marks.'
+      : accuracy >= 50 ? 'Getting there.'
+      : 'Worth another go.';
+
+    const toReview = s.results.filter(r => !r.bestSpotted || r.accuracy < 1);
+
+    render(
+      el('article', { class: 'paper' },
+        el('div', { class: 'paper-head' },
+          el('span', {}, el('b', { text: 'Results' }), ' · ', state.selectedSubject === 'mixed' ? 'Mixed paper' : (subjectById(state.selectedSubject) || {}).name),
+          el('span', { text: plural(n, 'question') })
+        ),
+        el('div', { class: 'summary-hero' },
+          el('div', { class: 'grade-ring', 'aria-label': `Ranking accuracy ${accuracy} percent` },
+            el('div', {}, el('big', { text: `${accuracy}%` }), el('span', { text: 'ranking accuracy' }))),
+          el('div', {},
+            el('h2', { text: verdict }),
+            el('p', { text: toReview.length
+              ? 'The techniques below tripped you up. Each one is worth practising before the real thing.'
+              : 'You ranked every answer correctly. Try another subject or a mixed paper.' })
+          )
+        ),
+        el('div', { class: 'stats' },
+          el('div', { class: 'stat' }, el('b', { text: `${best}/${n}` }), el('span', { text: 'Full-mark answers spotted' })),
+          el('div', { class: 'stat' }, el('b', { text: `${perfect}/${n}` }), el('span', { text: 'Perfect rankings' })),
+          el('div', { class: 'stat' }, el('b', { text: `${correct}/${pairs}` }), el('span', { text: 'Comparisons correct' }))
+        ),
+        el('p', { class: 'step-label', text: 'Question by question' }),
+        el('ol', { class: 'review-list' },
+          s.results.map(r => {
+            const subj = subjectById(r.q.subjectId) || {};
+            return el('li', {},
+              el('span', { class: `mk ${r.bestSpotted ? 'yes' : 'no'}`, text: r.bestSpotted ? '✓' : '✗' }),
+              el('div', {},
+                el('strong', { text: `${subj.name}: ${r.q.topic}` }),
+                el('small', { text: r.q.skill || '' })
+              ),
+              el('span', { class: 'pct', text: `${Math.round(r.accuracy * 100)}%` })
+            );
+          })
+        ),
+        el('div', { class: 'actions' },
+          el('button', { class: 'btn red', onclick: startSession }, 'New paper, same subject'),
+          el('button', { class: 'btn ghost', onclick: renderSetup }, 'Change subject')
+        )
+      )
+    );
+  }
+
+  // ---------- boot ----------
+  document.getElementById('homeBtn').addEventListener('click', () => {
+    if (state.subjects.length) renderSetup();
+  });
+
+  loadData().then(renderSetup).catch(err => {
+    console.error(err);
+    render(el('div', { class: 'notice' },
+      el('strong', { text: 'The question bank could not be loaded.' }),
+      el('p', {}, 'Browsers block loading data files when a page is opened straight from disk. Serve the folder instead, for example with ',
+        el('code', { text: 'npx serve .' }), ' or ', el('code', { text: 'python3 -m http.server' }), ', then open the page from that address.'),
+      el('p', { style: 'margin-bottom:0' }, el('small', { text: String(err) }))
+    ));
+  });
+})();
+</script>
+</body>
+</html>

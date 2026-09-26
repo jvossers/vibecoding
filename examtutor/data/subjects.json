@@ -1,0 +1,12 @@
+{
+  "subjects": [
+    { "id": "english-language",   "name": "English Language",   "board": "AQA-style", "file": "english-language.json",   "colour": "#b5452b" },
+    { "id": "english-literature", "name": "English Literature", "board": "AQA-style", "file": "english-literature.json", "colour": "#7a3b69" },
+    { "id": "maths",              "name": "Mathematics",        "board": "AQA-style", "file": "maths.json",              "colour": "#1f5f8b" },
+    { "id": "biology",            "name": "Biology",            "board": "AQA-style", "file": "biology.json",            "colour": "#2f7d4a" },
+    { "id": "chemistry",          "name": "Chemistry",          "board": "AQA-style", "file": "chemistry.json",          "colour": "#a0621c" },
+    { "id": "physics",            "name": "Physics",            "board": "AQA-style", "file": "physics.json",            "colour": "#3d4f9c" },
+    { "id": "history",            "name": "History",            "board": "AQA-style", "file": "history.json",            "colour": "#6b5a2e" },
+    { "id": "geography",          "name": "Geography",          "board": "AQA-style", "file": "geography.json",          "colour": "#1c7a78" }
+  ]
+}

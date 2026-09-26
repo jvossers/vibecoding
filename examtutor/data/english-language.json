@@ -1,0 +1,171 @@
+{
+  "subject": "English Language",
+  "questions": [
+    {
+      "id": "eng-lang-001",
+      "paper": "Paper 1: Explorations in Creative Reading and Writing",
+      "number": "1",
+      "topic": "Retrieving information",
+      "skill": "Take information only from the lines you are given, and keep it short",
+      "marks": 4,
+      "stimulus": {
+        "label": "Source A",
+        "caption": "This extract is from the opening of a short story. It is set in a small fishing town.",
+        "text": "The storm arrived before the fishermen did. By four o'clock the sky above Harrow Point had turned the colour of an old bruise, and the gulls, usually so loud and certain, had vanished from the harbour wall. Mrs Pender stood at the window of the café with a cloth forgotten in her hand, watching the grey water heave and fold against the boats that were still tied up.\n\nThen the wind came. It did not blow so much as shove, shouldering its way down the high street, rattling the signs above the shops and flinging rain sideways like handfuls of gravel. The sea hurled itself at the harbour wall, again and again, as if it had a grudge to settle. Somewhere a door slammed. Somewhere a child was crying.\n\nMrs Pender did not move. Out there, beyond the point, was the Morwenna, and on the Morwenna was her son."
+      },
+      "prompt": "Read again the first paragraph of the source.\n\nList four things about the weather or the harbour from this part of the source.",
+      "answers": [
+        {
+          "text": "1. The sky was the colour of an old bruise.\n2. The gulls had vanished from the harbour wall.\n3. The water was grey.\n4. Some boats were still tied up.",
+          "marks": 4,
+          "explanation": "Four separate, true points, all taken from the first paragraph. Short quotations or paraphrases are both fine. This took about a minute to write, which is exactly the right amount of time for a 4-mark question."
+        },
+        {
+          "text": "1. The sky was dark like a bruise.\n2. The gulls had gone.\n3. It was night time.\n4. The water was heaving.",
+          "marks": 3,
+          "explanation": "Three correct points. 'It was night time' is not in the source: it is four o'clock in the afternoon. The question asks you to list what the source tells you, not to guess. Stick to what is actually written."
+        },
+        {
+          "text": "1. The sky was the colour of an old bruise.\n2. The gulls had vanished.\n3. The wind was rattling the signs above the shops.\n4. The rain was like handfuls of gravel.",
+          "marks": 2,
+          "explanation": "Points 1 and 2 are correct, but points 3 and 4 come from the second paragraph. The question limits you to the first paragraph, so they score nothing, even though they are true. Always draw a box around the lines you are allowed to use."
+        },
+        {
+          "text": "The writer describes the sky as 'the colour of an old bruise'. This metaphor suggests that the sky is hurt and in pain, which foreshadows that something violent is going to happen to the town. It also makes the reader feel uneasy because bruises are ugly and dark.",
+          "marks": 1,
+          "explanation": "Only one piece of information is given, so only one mark. Question 1 does not reward analysis. This student has spent time on something the question never asked for, and has lost time they need for the 8-mark questions."
+        }
+      ],
+      "tip": "Question 1 tests retrieval only. Spend about 5 minutes on it, give four separate points from the lines named, and move on. Analysis here earns nothing."
+    },
+    {
+      "id": "eng-lang-002",
+      "paper": "Paper 1: Explorations in Creative Reading and Writing",
+      "number": "2",
+      "topic": "Language analysis",
+      "skill": "Zoom in on individual words and explain their effect in relation to the focus of the question",
+      "marks": 8,
+      "stimulus": {
+        "label": "Source A",
+        "caption": "This extract is from the opening of a short story. It is set in a small fishing town.",
+        "text": "Then the wind came. It did not blow so much as shove, shouldering its way down the high street, rattling the signs above the shops and flinging rain sideways like handfuls of gravel. The sea hurled itself at the harbour wall, again and again, as if it had a grudge to settle. Somewhere a door slammed. Somewhere a child was crying."
+      },
+      "prompt": "Look in detail at this extract from the second paragraph of the source.\n\nHow does the writer use language to describe the storm?",
+      "bullets": [
+        "words and phrases",
+        "language features and techniques",
+        "sentence forms."
+      ],
+      "promptLead": "You could include the writer's choice of:",
+      "answers": [
+        {
+          "text": "The writer presents the storm as deliberately violent rather than simply natural. The wind does not 'blow' but 'shove[s]': the writer even corrects the ordinary verb, as if 'blow' is too gentle for what is happening. 'Shouldering' continues this personification, suggesting a bully forcing through a crowd, so the storm seems to have intent. This is developed with the sea, which 'hurled itself' at the wall 'as if it had a grudge to settle'. 'Grudge' is interesting because it implies a long-held, personal anger, so the town seems to be being punished rather than just caught in bad weather.\n\nThe simile 'like handfuls of gravel' makes the rain feel painful and physical, as if it is being thrown at people. Finally, the repeated short sentences starting with 'Somewhere' shift from the storm to its effects. Because we cannot see where the door or the child is, the storm feels everywhere at once and the reader shares a sense of chaos and helplessness.",
+          "marks": 8,
+          "explanation": "Level 4 (7–8 marks): detailed, perceptive analysis. It zooms in on single words ('shove', 'grudge'), explores more than one possible meaning, uses judicious short quotations, and uses subject terminology (personification, simile, sentence forms) to support points rather than as a label. Every point comes back to how the storm is described."
+        },
+        {
+          "text": "The writer uses personification to show that the storm is powerful. The wind is 'shouldering its way down the high street', which makes it sound like a person pushing through a crowd. This shows the wind is strong and rough. The sea 'hurled itself' at the harbour wall 'as if it had a grudge to settle'. This suggests the sea is angry and wants revenge on the town.\n\nThe writer also uses a simile, 'like handfuls of gravel', to describe the rain. This shows the rain is hard and hurts. The short sentences at the end, 'Somewhere a door slammed', create tension because they are quick and sudden.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): clear, relevant explanation with accurate terminology and well-chosen quotations. To reach Level 4 it needs to zoom in on individual words (why 'shouldering' rather than 'pushing'? why 'grudge'?) and explore effects in more depth, rather than stating one effect per quotation."
+        },
+        {
+          "text": "The writer uses personification in 'shouldering its way down the high street'. This makes the reader imagine the wind. The simile 'like handfuls of gravel' shows the rain is bad. There are also short sentences like 'Somewhere a door slammed.' This creates tension and makes the reader want to read on.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): some understanding, correct terminology and relevant quotations, but the comments on effect are general. 'Makes the reader imagine' and 'makes the reader want to read on' could be written about any text. Say specifically what the words make us think or feel about this storm."
+        },
+        {
+          "text": "The writer uses lots of language techniques to describe the storm such as similes, personification, alliteration and short sentences. For example 'like handfuls of gravel' is a simile. This makes it interesting for the reader and helps them picture what is happening. The storm is very scary.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): 'feature spotting'. Techniques are named, but they are not explained, and one quotation is not enough. Naming a technique on its own earns almost nothing. The marks come from explaining what the words do."
+        }
+      ],
+      "tip": "Aim for three or four well-developed points. For each one: short quotation, then zoom in on a word, then its effect on how we see the storm. Terminology helps only when you use it to explain something."
+    },
+    {
+      "id": "eng-lang-003",
+      "paper": "Paper 1: Explorations in Creative Reading and Writing",
+      "number": "3",
+      "topic": "Structure",
+      "skill": "Write about the whole text's shape and shifts in focus, not about language",
+      "marks": 8,
+      "stimulus": {
+        "label": "Source A",
+        "caption": "This question is about the whole of the source.",
+        "text": "The storm arrived before the fishermen did. By four o'clock the sky above Harrow Point had turned the colour of an old bruise, and the gulls, usually so loud and certain, had vanished from the harbour wall. Mrs Pender stood at the window of the café with a cloth forgotten in her hand, watching the grey water heave and fold against the boats that were still tied up.\n\nThen the wind came. It did not blow so much as shove, shouldering its way down the high street, rattling the signs above the shops and flinging rain sideways like handfuls of gravel. The sea hurled itself at the harbour wall, again and again, as if it had a grudge to settle. Somewhere a door slammed. Somewhere a child was crying.\n\nMrs Pender did not move. Out there, beyond the point, was the Morwenna, and on the Morwenna was her son."
+      },
+      "prompt": "You now need to think about the whole of the source.\n\nHow has the writer structured the text to interest you as a reader?",
+      "bullets": [
+        "what the writer focuses your attention on at the beginning of the source",
+        "how and why the writer changes this focus as the source develops",
+        "any other structural features that interest you."
+      ],
+      "promptLead": "You could write about:",
+      "answers": [
+        {
+          "text": "The writer opens with a short, ominous sentence, 'The storm arrived before the fishermen did', which immediately tells us the danger has already begun and hints that the boats are still at sea, planting a question the reader wants answered. The focus then narrows from the wide view of the sky and harbour to Mrs Pender at the café window, so we see the storm through her eyes.\n\nIn the second paragraph the focus shifts outward again to the storm itself, moving down the high street and to the harbour wall. The paragraph ends by moving to sounds we cannot locate ('Somewhere…'), which builds tension by withholding detail.\n\nThe final paragraph returns abruptly to Mrs Pender, now completely still, which contrasts with the violent movement before. The writer saves the key information, that her son is on the Morwenna, for the very last words. This delayed revelation explains her stillness, recasts the opening sentence, and turns a description of weather into a personal crisis.",
+          "marks": 8,
+          "explanation": "Level 4 (7–8 marks): perceptive analysis of how focus shifts across the whole text (wide, narrow, wide, narrow), of the contrast between stillness and movement, and of withholding information until the end. It explains why each structural choice interests the reader. Structural terms are used precisely and it never drifts into word-level language analysis."
+        },
+        {
+          "text": "At the beginning the writer focuses on the weather and the harbour to set the scene. Then the focus shifts to Mrs Pender looking out of the window, which introduces the main character. In the second paragraph the focus moves back to the storm, which builds up tension because it is getting worse.\n\nAt the end the writer uses a short paragraph to reveal that Mrs Pender's son is on a boat. This is a cliffhanger which makes the reader want to know if he survives.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): clear explanation of shifts in focus across the beginning, middle and end, with relevant structural terms. To reach Level 4 it would need to explore why these choices work: the contrast between stillness and movement, or how the ending changes the meaning of the opening sentence."
+        },
+        {
+          "text": "At the beginning the storm arrives and Mrs Pender watches from the café. In the middle the wind comes and rattles the signs, and the sea hits the harbour wall. A door slams and a child cries. At the end Mrs Pender doesn't move because her son is on the Morwenna.",
+          "marks": 3,
+          "explanation": "Level 2, low (3 marks): this shows it knows the order of events, but it retells the story. Structure marks come from explaining why the writer chose that order, and what effect each shift has on the reader. 'At the beginning / middle / end' is a good framework, but you need to analyse, not summarise."
+        },
+        {
+          "text": "The writer uses the metaphor 'the colour of an old bruise' which makes the sky seem injured. Then the writer uses personification like 'shouldering' and a simile 'like handfuls of gravel' to show the storm is violent. The word 'grudge' suggests the sea is angry.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): this is a language answer to a structure question. Similes, metaphors and word choices belong in Question 2. Very little here is about how the text is organised, so almost none of it can be credited."
+        }
+      ],
+      "tip": "Question 3 is about the camera, not the paintbrush. Track where the writer points your attention (beginning, shifts, ending) and explain why. Keep word-level language analysis for Question 2."
+    },
+    {
+      "id": "eng-lang-004",
+      "paper": "Paper 1: Explorations in Creative Reading and Writing",
+      "number": "4",
+      "topic": "Critical evaluation",
+      "skill": "Engage with the statement, evaluate how the writer creates the effect, and support it with evidence",
+      "marks": 20,
+      "stimulus": {
+        "label": "Source A",
+        "caption": "Focus this part of your answer on the whole source.",
+        "text": "The storm arrived before the fishermen did. By four o'clock the sky above Harrow Point had turned the colour of an old bruise, and the gulls, usually so loud and certain, had vanished from the harbour wall. Mrs Pender stood at the window of the café with a cloth forgotten in her hand, watching the grey water heave and fold against the boats that were still tied up.\n\nThen the wind came. It did not blow so much as shove, shouldering its way down the high street, rattling the signs above the shops and flinging rain sideways like handfuls of gravel. The sea hurled itself at the harbour wall, again and again, as if it had a grudge to settle. Somewhere a door slammed. Somewhere a child was crying.\n\nMrs Pender did not move. Out there, beyond the point, was the Morwenna, and on the Morwenna was her son."
+      },
+      "prompt": "A student said, 'This part of the story, where the storm arrives, is really tense. It makes you feel as worried as Mrs Pender.'\n\nTo what extent do you agree?",
+      "bullets": [
+        "consider your own impressions of the storm and of Mrs Pender",
+        "evaluate how the writer creates tension",
+        "support your response with references to the text."
+      ],
+      "promptLead": "In your response, you could:",
+      "answers": [
+        {
+          "text": "I largely agree, although I think the writer cleverly makes us feel the tension before we understand it, so our worry arrives at the same moment as Mrs Pender's is explained. At first the tension is quiet and uneasy: the gulls, 'usually so loud and certain', have 'vanished'. Their absence is unsettling because even nature seems to know something bad is coming. Mrs Pender's 'cloth forgotten in her hand' is a small but effective detail. It shows her mind is elsewhere, but the writer does not yet tell us why, so we sense her anxiety without sharing its cause.\n\nThe second paragraph raises the tension into violence, and the storm's personification ('as if it had a grudge to settle') makes it feel like an enemy. However, I would argue that the moment we truly feel 'as worried as Mrs Pender' is the final sentence. The writer withholds 'her son' until the last two words, so the opening line, 'The storm arrived before the fishermen did', suddenly becomes frightening in hindsight...",
+          "marks": 19,
+          "explanation": "Level 4 (16–20 marks): perceptive, detailed evaluation that engages critically with the statement. It agrees 'to an extent' and refines the student's view (the worry is delayed on purpose). It evaluates methods and their effects, with judicious references throughout, and keeps returning to the statement."
+        },
+        {
+          "text": "I agree that this part of the story is tense. The writer shows the storm is dangerous by describing the sky as 'the colour of an old bruise', which suggests violence and pain. This makes the reader nervous about what will happen.\n\nThe writer also makes the storm seem powerful with personification: the wind is 'shouldering its way down the high street'. This builds tension because the storm is like an attacker. I also agree that we feel as worried as Mrs Pender, because at the end we find out her son is on the Morwenna. The short sentence 'Mrs Pender did not move' shows she is frozen with fear, and we feel worried too because we don't know if he is safe...",
+          "marks": 14,
+          "explanation": "Level 3 (11–15 marks): clear evaluation with relevant references, explaining how methods create tension and linking back to the statement. It agrees throughout without testing the statement. Considering how and when the worry is created, as the top answer does, would push it into Level 4."
+        },
+        {
+          "text": "I agree with the student because the storm is really scary. The sky goes dark and the gulls go away. Then the wind comes and it rattles the signs and it rains a lot. The sea hits the harbour wall. You can hear a door slam and a child crying, which is sad. At the end Mrs Pender's son is on the boat in the storm so she is worried and I am worried too because he might drown.",
+          "marks": 9,
+          "explanation": "Level 2 (6–10 marks): some evaluative comment ('I agree', 'I am worried too') and a clear grasp of the story, but it mostly retells events. Evaluation means judging how well the writer creates an effect, so you must comment on methods and their impact, not just what happens."
+        },
+        {
+          "text": "I agree. The story is tense. There is a storm and it is bad weather. Storms are scary and dangerous because people can die at sea. My uncle is a fisherman and once he got caught in a storm. Mrs Pender is worried.",
+          "marks": 4,
+          "explanation": "Level 1 (1–5 marks): a simple opinion with very little reference to the text and no comment on methods. Personal anecdotes do not earn marks. Your 'impressions' must come from the writing itself."
+        }
+      ],
+      "tip": "This is the highest-mark reading question. Spend about 20 minutes on it. Keep the statement in view, agree 'to an extent', and for each point evaluate how the writer creates the effect, with a quotation."
+    }
+  ]
+}

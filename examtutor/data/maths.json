@@ -1,0 +1,133 @@
+{
+  "subject": "Mathematics",
+  "questions": [
+    {
+      "id": "maths-001",
+      "paper": "Paper 2 (Calculator): Foundation and Higher",
+      "number": "1",
+      "topic": "Compound interest",
+      "skill": "When the question says 'You must show your working', an answer on its own scores nothing",
+      "marks": 3,
+      "prompt": "Sam invests £2000 in a savings account.\nThe account pays 3% compound interest per year.\n\nWork out the value of Sam's investment after 2 years.\nYou must show your working.",
+      "answers": [
+        {
+          "text": "2000 × 1.03 = 2060\n2060 × 1.03 = 2121.80\n\nAnswer: £2121.80",
+          "marks": 3,
+          "explanation": "Full marks: M1 for using the multiplier 1.03, M1 for applying it twice (or 1.03²), and A1 for the correct answer, written as money to 2 decimal places. The working is clear and in order."
+        },
+        {
+          "text": "2000 × 1.03 = 2060\n2060 × 1.03 = 2121.8\n\nAnswer: £2121.08",
+          "marks": 2,
+          "explanation": "M1 M1 A0. The method is completely right, but the final answer has been copied down wrongly (2121.8 became 2121.08). Because the working is shown, the method marks are safe. Always check your answer line against your working."
+        },
+        {
+          "text": "3% of 2000 = 60\n60 × 2 = 120\n2000 + 120 = 2120\n\nAnswer: £2120",
+          "marks": 1,
+          "explanation": "M1 only, for correctly finding 3% of £2000. This is simple interest: the second year's interest should be calculated on £2060, not £2000. Read the question carefully: 'compound' means the interest earns interest."
+        },
+        {
+          "text": "Answer: £2121.80",
+          "marks": 0,
+          "explanation": "The right number, but zero marks. The question says 'You must show your working', so an answer with no method cannot be credited, because the examiner cannot tell whether it came from a correct method."
+        }
+      ],
+      "tip": "'You must show your working' means exactly that. Even when it isn't stated, write each step down: a correct method can earn most of the marks even if you slip at the end."
+    },
+    {
+      "id": "maths-002",
+      "paper": "Paper 1 (Non-calculator): Higher",
+      "number": "2",
+      "topic": "Algebraic proof",
+      "skill": "'Show that' requires every step, starting from the left-hand side and arriving at the right",
+      "marks": 3,
+      "prompt": "Show that\n\n(2x + 3)(x − 1) − x(x + 1) ≡ x² − 3",
+      "answers": [
+        {
+          "text": "(2x + 3)(x − 1) = 2x² − 2x + 3x − 3\n                        = 2x² + x − 3\n\nx(x + 1) = x² + x\n\n(2x² + x − 3) − (x² + x)\n= 2x² + x − 3 − x² − x\n= x² − 3",
+          "marks": 3,
+          "explanation": "Full marks. Both brackets are expanded correctly (M1 each), the subtraction is done inside brackets so the signs are handled properly, and the working ends at exactly the expression required (A1). Nothing is skipped."
+        },
+        {
+          "text": "(2x + 3)(x − 1) = 2x² + x − 3\nx(x + 1) = x² + x\n\n2x² + x − 3 − x² + x\n= x² + 2x − 3\n= x² − 3",
+          "marks": 2,
+          "explanation": "M1 M1 A0. Both expansions are correct, but the subtraction of x² + x was done without brackets, so +x should have been −x. The student then 'fudged' the last line to match the answer. Examiners look for this: a jump that doesn't follow from the previous line loses the final mark."
+        },
+        {
+          "text": "(2x + 3)(x − 1) = 2x² + x − 3\n\nSo the answer is x² − 3",
+          "marks": 1,
+          "explanation": "M1 for the first expansion only. In a 'show that' question you already know the answer, so the marks are entirely for the steps that get you there. Skipping steps throws them away."
+        },
+        {
+          "text": "Try x = 2:\nLHS = (7)(1) − 2(3) = 7 − 6 = 1\nRHS = 2² − 3 = 1\n\nLHS = RHS so it is true.",
+          "marks": 0,
+          "explanation": "Zero. The ≡ sign means 'true for all values of x'. Checking one value does not prove this. It could be a coincidence. An identity must be proved algebraically. (Substituting a value is a good way to check your algebra, though.)"
+        }
+      ],
+      "tip": "In 'show that' questions the answer is given, so all the marks are for the method. Show every line, use brackets when subtracting, and finish with exactly the required expression."
+    },
+    {
+      "id": "maths-003",
+      "paper": "Paper 1 (Non-calculator): Foundation and Higher",
+      "number": "3",
+      "topic": "Estimation",
+      "skill": "'Estimate' means round each number to 1 significant figure first, and show it",
+      "marks": 3,
+      "prompt": "Work out an estimate for the value of\n\n(48.7 × 3.1) ÷ 0.49",
+      "answers": [
+        {
+          "text": "48.7 ≈ 50   3.1 ≈ 3   0.49 ≈ 0.5\n\n(50 × 3) ÷ 0.5 = 150 ÷ 0.5\n                     = 300\n\nAnswer: 300",
+          "marks": 3,
+          "explanation": "Full marks. B1 (or M1) for rounding each value to 1 significant figure, M1 for correctly working with the rounded values, and A1 for 300. The roundings are shown explicitly, which is what the examiner is looking for."
+        },
+        {
+          "text": "50 × 3 = 150\n150 ÷ 0.5 = 75\n\nAnswer: 75",
+          "marks": 1,
+          "explanation": "One mark for the correct roundings. Dividing by 0.5 is the same as multiplying by 2, so the answer should be 300, not 75. A quick sense check helps: dividing by a number less than 1 makes the answer bigger."
+        },
+        {
+          "text": "50 × 3 = 150\n150 ÷ 0.5 = 300\n\nAnswer: 30",
+          "marks": 2,
+          "explanation": "M1 M1 A0. The method is correct and the right value appears in the working, but the final answer is copied down wrongly. This is an easy mark to lose under time pressure, so re-read your answer line."
+        },
+        {
+          "text": "48.7 × 3.1 = 150.97\n150.97 ÷ 0.49 = 308.1\n\nAnswer: 308.1",
+          "marks": 0,
+          "explanation": "Zero. This is the exact answer, but the question asks for an estimate. With no rounding shown there is no estimation method to credit. (On the non-calculator paper, working this out exactly also wastes a lot of time.)"
+        }
+      ],
+      "tip": "For estimation, write each rounded number down before you calculate. Round to 1 significant figure unless told otherwise. Examiners are marking the rounding, not the exact answer."
+    },
+    {
+      "id": "maths-004",
+      "paper": "Paper 3 (Calculator): Foundation",
+      "number": "4",
+      "topic": "Multi-step problem solving",
+      "skill": "Show every step so that each one earns a method mark, and answer in the context of the question",
+      "marks": 4,
+      "prompt": "Priya wants to paint one wall of her bedroom.\nThe wall is a rectangle 4.5 m long and 2.4 m high.\nShe needs to give the wall two coats of paint.\n\nOne tin of paint covers 5 m².\nEach tin costs £12.\n\nWork out the total cost of the paint Priya needs to buy.",
+      "answers": [
+        {
+          "text": "Area = 4.5 × 2.4 = 10.8 m²\nTwo coats: 10.8 × 2 = 21.6 m²\nTins: 21.6 ÷ 5 = 4.32, so she needs 5 tins\nCost: 5 × £12 = £60\n\nAnswer: £60",
+          "marks": 4,
+          "explanation": "Full marks. Each step is labelled, so every method mark is visible: area, two coats, tins (rounded up, because you can't buy 0.32 of a tin) and cost. The answer is given in the context of the question."
+        },
+        {
+          "text": "4.5 × 2.4 = 10.8\n10.8 × 2 = 21.6\n21.6 ÷ 5 = 4.32\n4.32 × 12 = 51.84\n\nAnswer: £51.84",
+          "marks": 3,
+          "explanation": "M1 M1 M1 A0. Correct area, two coats and division, but she can't buy 4.32 tins. In real-life problems, think about whether your answer makes sense: tins, buses and people must be whole numbers, and here you must round up."
+        },
+        {
+          "text": "4.5 × 2.4 = 10.8\n10.8 ÷ 5 = 2.16 → 3 tins\n3 × 12 = £36\n\nAnswer: £36",
+          "marks": 2,
+          "explanation": "Two method marks, for the area and for rounding up the number of tins correctly, but the second coat has been forgotten. In multi-step problems, tick off each piece of information in the question as you use it."
+        },
+        {
+          "text": "4.5 × 2.4 = 10.8 m²",
+          "marks": 1,
+          "explanation": "One mark for the correct area, then the student stopped. Even if you are unsure how to finish, keep going and write down any sensible next step, because each correct step can earn a mark."
+        }
+      ],
+      "tip": "Multi-step questions are marked step by step. Label your working ('Area =', 'Tins ='), use every piece of information given, and check your final answer makes sense in real life."
+    }
+  ]
+}

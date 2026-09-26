@@ -1,0 +1,137 @@
+{
+  "subject": "History",
+  "questions": [
+    {
+      "id": "hist-001",
+      "paper": "Paper 1 Section B: Germany, 1890–1945",
+      "number": "1",
+      "topic": "Weimar Germany",
+      "skill": "'Describe two' means two separate features, each with a supporting detail",
+      "marks": 4,
+      "prompt": "Describe two problems faced by the Weimar Republic in 1923.",
+      "answers": [
+        {
+          "text": "One problem was the occupation of the Ruhr. In January 1923 French and Belgian troops occupied the Ruhr, Germany's main industrial area, because Germany had failed to pay reparations. Workers went on strike (passive resistance), which damaged the economy.\n\nAnother problem was hyperinflation. The government printed money to pay the striking workers, so prices rose out of control. By November 1923 a loaf of bread cost around 200 billion marks and people's savings became worthless.",
+          "marks": 4,
+          "explanation": "Full marks: two problems (1 each), each supported with accurate, specific detail (1 each). The two paragraphs make it obvious to the examiner where each mark comes from."
+        },
+        {
+          "text": "Hyperinflation was a problem because prices rose so fast that money became worthless. By November 1923 bread cost 200 billion marks.\n\nThere was also the Munich Putsch.",
+          "marks": 3,
+          "explanation": "Three marks. The first problem is identified and supported (2); the second is identified but not described (1). One sentence of detail about the Putsch (Hitler's attempt to seize power in Munich in November 1923) would have earned the fourth mark."
+        },
+        {
+          "text": "There was hyperinflation, the Ruhr was invaded, there was the Munich Putsch and the Spartacist uprising.",
+          "marks": 2,
+          "explanation": "Two marks, one for each of the first two problems identified. Listing more problems doesn't earn more marks, because only two are credited. (The Spartacist uprising was in 1919, not 1923.) Two problems in depth beats four in a list."
+        },
+        {
+          "text": "Germany had lots of problems in 1923 because people were angry about the Treaty of Versailles and things were very bad.",
+          "marks": 1,
+          "explanation": "One mark at most for a vague reference to discontent. No specific problem is named or described. History marks reward precise knowledge: names, dates, figures."
+        }
+      ],
+      "tip": "About 5 minutes. Write two short paragraphs: name the problem, then add a specific fact (date, number or event) that describes it. No need for explanation or judgement."
+    },
+    {
+      "id": "hist-002",
+      "paper": "Paper 1 Section B: Germany, 1890–1945",
+      "number": "2",
+      "topic": "Life in Nazi Germany",
+      "skill": "Explain how each change affected people, rather than just describing Nazi policies",
+      "marks": 8,
+      "prompt": "In what ways were the lives of women affected by Nazi policies?\n\nExplain your answer.",
+      "answers": [
+        {
+          "text": "One way women's lives were affected was in employment. The Nazis believed women's role was 'Kinder, Küche, Kirche' (children, kitchen, church), so women doctors, teachers and civil servants were dismissed from 1933. This affected women by limiting their independence and income, forcing many back into the home. However, from 1937 labour shortages meant women were encouraged back into work, showing that Nazi ideology gave way to economic need.\n\nAnother way was through family life. Marriage loans of 1000 marks were offered, with a quarter written off for each child, and the Mother's Cross rewarded large families. This affected women by making motherhood their main source of status. Some women gained recognition, but their choices were narrowed by state pressure...",
+          "marks": 8,
+          "explanation": "Level 4 (7–8 marks): complex explanation of more than one way (employment, family), each supported with precise knowledge. It explains the effect on women's lives and shows change over time and different experiences. That is what lifts it to the top level."
+        },
+        {
+          "text": "The Nazis wanted women to stay at home and have children. They gave marriage loans and the Mother's Cross to encourage women to have lots of children. This meant women's lives changed because they were expected to be mothers instead of having careers.\n\nWomen were also forced out of jobs like doctors and teachers. This meant they lost their independence and had to rely on their husbands.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): two developed explanations with supporting knowledge, each linked to how women's lives were affected. To reach Level 4, add more precise detail (dates, figures) and a complexity, for example the policy reversal after 1937."
+        },
+        {
+          "text": "Women were given marriage loans. There was the Mother's Cross for having children: bronze for 4, silver for 6 and gold for 8. Women were not allowed to wear make-up or trousers. Women had to leave their jobs.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): good, accurate knowledge, but it describes policies without explaining how they affected women. Add 'This meant that…' after each point to turn description into explanation."
+        },
+        {
+          "text": "Women's lives were affected a lot by the Nazis because they had to do what Hitler said and they didn't have many rights.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): a simple, general statement with no specific knowledge. It could apply to anyone in Nazi Germany."
+        }
+      ],
+      "tip": "About 10 minutes. Write two or three paragraphs, each starting with a 'way' (work, family, appearance). Support it with a fact, then explain the effect with 'This meant that…'."
+    },
+    {
+      "id": "hist-003",
+      "paper": "Paper 1 Section B: Germany, 1890–1945",
+      "number": "3",
+      "topic": "Source utility",
+      "skill": "Judge usefulness through content, provenance and your own knowledge, all in relation to the enquiry",
+      "marks": 8,
+      "stimulus": {
+        "label": "Source A",
+        "caption": "A poster published by the Nazi Party in 1934. The caption reads 'The whole people says yes!' It shows a large crowd of cheering men, women and children raising their arms in the Nazi salute beneath a swastika flag."
+      },
+      "prompt": "How useful is Source A to a historian studying support for the Nazis in Germany?\n\nExplain your answer using Source A and your contextual knowledge.",
+      "answers": [
+        {
+          "text": "Source A is useful for showing how the Nazis wanted support to appear. Its content shows a united crowd of all ages saluting, which reflects the Nazi idea of the Volksgemeinschaft (people's community). Its provenance makes it more useful for studying propaganda than genuine opinion: it was made by the Nazi Party in 1934, the year Hitler became Führer after Hindenburg's death, and the slogan 'The whole people says yes!' was probably linked to the plebiscite that approved this. The Nazis had every reason to exaggerate unity.\n\nMy own knowledge shows this was not the whole picture. By 1934 opposition parties were banned, and the Gestapo and concentration camps made dissent dangerous, so apparent support could reflect fear. However, many Germans did genuinely support Hitler because of falling unemployment. So the source is useful, but only as evidence of the image the Nazis created, not of how united Germans really were.",
+          "marks": 8,
+          "explanation": "Level 4 (7–8 marks): complex evaluation of content and provenance together, using precise contextual knowledge to test the source and reach a substantiated judgement about how the source is useful, not simply whether it is."
+        },
+        {
+          "text": "Source A is useful because it shows lots of people supporting the Nazis. They are all doing the salute, which shows they are loyal. However, it is less useful because it is propaganda made by the Nazi Party, so they would want to make it look like everyone supported them. In 1934 Hitler also used terror through the SS and Gestapo, so some people may only have pretended to support him.",
+          "marks": 5,
+          "explanation": "Level 3 (5–6 marks): developed evaluation of content and provenance, with relevant context. It treats 'propaganda' as a reason the source is less useful. At the top level, you'd explain that propaganda is very useful for showing what the Nazis wanted people to believe."
+        },
+        {
+          "text": "Source A is not useful because it is biased. It was made by the Nazis so it is propaganda and it only shows one side.",
+          "marks": 3,
+          "explanation": "Level 2, low (3–4 marks): a simple judgement based on provenance, but 'biased so not useful' is a common trap. All sources are useful for something. It also ignores what the source shows and uses no contextual knowledge."
+        },
+        {
+          "text": "The source shows lots of people doing the Nazi salute. There are men, women and children and there is a big swastika flag. The caption says 'The whole people says yes!'",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): describes the source but never judges its usefulness or brings in knowledge. Describing what you can see is only the first step."
+        }
+      ],
+      "tip": "Use content, provenance (who, when, why), and your knowledge. Avoid 'it's biased so it's useless': explain what a biased source is useful for."
+    },
+    {
+      "id": "hist-004",
+      "paper": "Paper 1 Section B: Germany, 1890–1945",
+      "number": "4",
+      "topic": "Hitler's rise to power",
+      "skill": "Argue both sides, then reach a sustained, justified judgement",
+      "marks": 16,
+      "prompt": "'The main reason Hitler became Chancellor in January 1933 was the Great Depression.'\n\nHow far do you agree with this statement?\n\nExplain your answer.",
+      "answers": [
+        {
+          "text": "I largely agree: the Depression was the main reason, because it created the conditions that made the other factors matter. After the Wall Street Crash, US loans were recalled and unemployment in Germany rose to around 6 million by 1932. Desperate voters turned to extremists, and Nazi seats in the Reichstag rose from 12 in 1928 to 230 in July 1932, making them the largest party.\n\nHowever, the Depression alone did not make Hitler Chancellor. The Nazis never won a majority, and their vote fell in November 1932. Hitler was appointed through a political deal: von Papen persuaded Hindenburg that Hitler could be controlled as Chancellor with von Papen as Vice-Chancellor. This backstairs intrigue was the immediate cause.\n\nOverall, the intrigue was the trigger, but it only happened because the Depression had made the Nazis too big to ignore. Without the Depression, Hitler would have remained on the fringes, as he was in 1928...",
+          "marks": 15,
+          "explanation": "Level 4 (13–16 marks): a complex explanation of the stated factor and at least one other, with precise supporting evidence, and a sustained judgement that shows how the factors link (the Depression made intrigue possible). The judgement is argued from the first line, not just added at the end."
+        },
+        {
+          "text": "The Depression was an important reason. After the Wall Street Crash in 1929, unemployment rose to 6 million. People were desperate and voted for the Nazis because Hitler promised 'work and bread'.\n\nAnother reason was Nazi propaganda. Goebbels used rallies, posters and radio to spread their message, and Hitler flew around Germany giving speeches.\n\nA third reason was the political deal made by von Papen, who persuaded Hindenburg to appoint Hitler as Chancellor in January 1933.",
+          "marks": 10,
+          "explanation": "Level 3 (9–12 marks): developed explanations of three factors with good knowledge, but no judgement about how far the Depression was the main reason. Without comparing the factors, it can't reach Level 4. Finish with a conclusion that weighs them."
+        },
+        {
+          "text": "I agree. The Depression was the main reason because after the Wall Street Crash unemployment went up to 6 million. People were starving and they lost their jobs and their homes. They blamed the Weimar government and wanted a strong leader, so they voted for Hitler. The Nazis promised to give people jobs. This is why Hitler became Chancellor.",
+          "marks": 6,
+          "explanation": "Level 2 (5–8 marks): a developed explanation of one factor with some support, but it is one-sided. 'How far' requires you to consider other factors (propaganda, the weakness of Weimar, the political deal) before deciding."
+        },
+        {
+          "text": "Hitler was born in Austria in 1889. He fought in the First World War and was gassed. After the war he joined the German Workers' Party, which became the Nazi Party. In 1923 he tried the Munich Putsch but it failed and he went to prison, where he wrote Mein Kampf. Then in 1933 he became Chancellor.",
+          "marks": 3,
+          "explanation": "Level 1 (1–4 marks): a narrative of Hitler's life. It is accurate, but it doesn't address the Depression or explain why he became Chancellor. Storytelling is the biggest trap in 16-mark questions."
+        }
+      ],
+      "tip": "About 20 minutes. Plan: the given factor, then one or two other factors, then a conclusion. State your judgement in the introduction, and in the conclusion explain why one factor mattered most or how the factors linked. Up to 4 extra marks for spelling, punctuation and grammar."
+    }
+  ]
+}

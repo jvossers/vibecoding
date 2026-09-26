@@ -1,0 +1,148 @@
+{
+  "subject": "Biology",
+  "questions": [
+    {
+      "id": "bio-001",
+      "paper": "Paper 1",
+      "number": "1",
+      "topic": "Required practical: magnification",
+      "skill": "Convert units before you calculate, and show the substitution",
+      "marks": 3,
+      "prompt": "A student draws a cheek cell seen through a microscope.\nThe drawing of the cell is 24 mm wide.\nThe real width of the cell is 8 µm.\n\nCalculate the magnification of the drawing.\n\n1 mm = 1000 µm",
+      "answers": [
+        {
+          "text": "24 mm = 24 000 µm\n\nmagnification = size of image ÷ size of real object\n= 24 000 ÷ 8\n= × 3000",
+          "marks": 3,
+          "explanation": "Full marks: conversion to the same units (1), correct substitution (1), correct answer (1). A correct final answer on its own would also get 3 marks, but showing working protects you if you slip."
+        },
+        {
+          "text": "24 × 1000 = 24 000 µm\n24 000 ÷ 8 = 300\n\nmagnification = × 300",
+          "marks": 2,
+          "explanation": "Two marks, for the conversion and the correct substitution. The final division is wrong (24 000 ÷ 8 = 3000). Because the working is shown, the method marks are still awarded. With just '× 300' written, this would score 0."
+        },
+        {
+          "text": "magnification = image ÷ real\n= 24 ÷ 8\n= × 3",
+          "marks": 1,
+          "explanation": "One mark for using the correct equation the right way round, but the units were not converted. mm and µm must be the same before dividing. The clue is in the question: it gives you the conversion for a reason."
+        },
+        {
+          "text": "8 ÷ 24 = 0.33\n\nmagnification = 0.33",
+          "marks": 0,
+          "explanation": "Zero: the equation is upside down and the units are not converted. A quick sense check would help: a drawing of a microscopic cell must be magnified many times, so the answer must be much bigger than 1."
+        }
+      ],
+      "tip": "Learn the equation (magnification = image size ÷ real size), write it down, convert units first, and sense-check the answer."
+    },
+    {
+      "id": "bio-002",
+      "paper": "Paper 1",
+      "number": "2",
+      "topic": "Enzymes",
+      "skill": "'Describe' means say what the data shows, using numbers from it. Don't explain why.",
+      "marks": 3,
+      "stimulus": {
+        "label": "Table 1",
+        "caption": "A student measured the rate of an enzyme-controlled reaction at different temperatures.",
+        "table": {
+          "headers": ["Temperature in °C", "Rate of reaction in mg of product per minute"],
+          "rows": [
+            ["10", "2"],
+            ["20", "4"],
+            ["30", "7"],
+            ["40", "9"],
+            ["50", "3"],
+            ["60", "0"]
+          ]
+        }
+      },
+      "prompt": "Describe the effect of temperature on the rate of the reaction.\n\nUse data from Table 1 in your answer.",
+      "answers": [
+        {
+          "text": "As temperature increases from 10 °C to 40 °C the rate increases from 2 to 9 mg per minute. The rate is highest (the optimum) at 40 °C. Above 40 °C the rate decreases quickly, reaching 0 mg per minute at 60 °C.",
+          "marks": 3,
+          "explanation": "Full marks: the increase (1), the optimum (1) and the decrease after the optimum (1), all supported with data from the table as the question demands. Nothing is wasted on explanation."
+        },
+        {
+          "text": "The rate goes up as the temperature increases until 40 °C, then it goes down because the enzyme is denatured.",
+          "marks": 2,
+          "explanation": "Two marks for the pattern (increase, then decrease after 40 °C). But it only quotes one value, and the question says 'use data'. The explanation about denaturing earns nothing because the command word is 'describe'."
+        },
+        {
+          "text": "It goes up and then it goes down.",
+          "marks": 1,
+          "explanation": "One mark for the general shape, but it is vague: what goes up, and when does it change? A description needs specific values and the point where the trend changes."
+        },
+        {
+          "text": "At high temperatures the enzyme's active site changes shape so the substrate can no longer fit. This means the enzyme is denatured and the reaction stops.",
+          "marks": 0,
+          "explanation": "Zero. This is good biology, but it answers 'Explain', not 'Describe'. It never says what the data shows. Answering the wrong command word is one of the most common ways to lose easy marks."
+        }
+      ],
+      "tip": "Circle the command word. 'Describe' means say what happens, with numbers. 'Explain' means say why. For data questions, quote values with units, including the point where the trend changes."
+    },
+    {
+      "id": "bio-003",
+      "paper": "Paper 1",
+      "number": "3",
+      "topic": "Required practical: photosynthesis",
+      "skill": "Write a method as clear, logical steps that someone else could follow, including variables and measurements",
+      "marks": 6,
+      "prompt": "Describe how a student could investigate the effect of light intensity on the rate of photosynthesis in pondweed.",
+      "answers": [
+        {
+          "text": "1. Place a piece of pondweed in a boiling tube of sodium hydrogencarbonate solution, so carbon dioxide is not limiting.\n2. Put the boiling tube in a beaker of water to keep the temperature constant.\n3. Place an LED lamp 10 cm from the pondweed, measured with a metre ruler.\n4. Leave for 5 minutes to acclimatise.\n5. Count the number of oxygen bubbles produced in 1 minute (or collect the gas in a measuring cylinder).\n6. Repeat at 20, 30, 40 and 50 cm.\n7. Repeat each distance three times and calculate a mean.\n\nLight intensity is the independent variable; the rate of bubbles is the dependent variable.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): a coherent, logically ordered method that could be followed to get valid results. It says how light intensity is changed (distance), what is measured and for how long, which variables are controlled (CO₂, temperature), and how to improve reliability (repeats, mean)."
+        },
+        {
+          "text": "Put pondweed in a test tube of water. Put a lamp next to it and count the bubbles for one minute. Then move the lamp further away and count the bubbles again. Keep the temperature the same. Do it again to make it a fair test.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): the key steps are here in a sensible order, but they are imprecise: no distances, no range, no way of measuring distance, and no explanation of how temperature is kept constant. Top-band methods include quantities and equipment."
+        },
+        {
+          "text": "The closer the lamp is to the pondweed, the more bubbles there will be because it has more light for photosynthesis. The bubbles are oxygen. This is because light is a limiting factor.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): some relevant science (bubbles are oxygen, light is a limiting factor), but it is a prediction and explanation, not a method. 'Describe how…' is asking for what the student would do, step by step."
+        },
+        {
+          "text": "Photosynthesis is when plants make glucose. The equation is carbon dioxide + water → glucose + oxygen. It happens in the chloroplasts. Plants need light to photosynthesise.",
+          "marks": 1,
+          "explanation": "Level 1, low: correct facts about photosynthesis, but none of it describes an investigation. Using the words of the question ('light intensity', 'rate') would have kept this answer on track."
+        }
+      ],
+      "tip": "For 6-mark method questions, use numbered steps. Include the equipment, what you change and how, what you measure and how, what you keep the same, and repeats. Imagine someone following your instructions exactly."
+    },
+    {
+      "id": "bio-004",
+      "paper": "Paper 1",
+      "number": "4",
+      "topic": "Treating coronary heart disease",
+      "skill": "'Evaluate' needs advantages and disadvantages of both options, then a justified conclusion",
+      "marks": 6,
+      "prompt": "Coronary heart disease can be treated with stents or with statins.\n\nEvaluate the use of stents compared with statins to treat coronary heart disease.",
+      "answers": [
+        {
+          "text": "Stents are inserted into a narrowed coronary artery to hold it open. An advantage is that they work immediately to restore blood flow and last a long time. A disadvantage is that they need surgery, which carries a risk of infection or blood clots.\n\nStatins are drugs that reduce blood cholesterol, which slows the build-up of fatty material in the arteries. An advantage is that no surgery is needed. Disadvantages are that they must be taken every day for life, take time to work, and can have side effects such as muscle pain.\n\nOverall, stents are better for a patient whose artery is already badly blocked because they act immediately, but statins are better for prevention in someone at lower risk, as they avoid the risks of surgery.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): advantages and disadvantages of both treatments, a direct comparison, and a justified conclusion. The conclusion doesn't just pick one. It says when each is better and why, which is exactly what 'evaluate' asks for."
+        },
+        {
+          "text": "Stents keep the artery open so blood can flow to the heart muscle. They work straight away. But you need an operation, which is risky.\n\nStatins lower cholesterol so less fatty material builds up in the arteries. They don't need an operation, but you have to take them every day and they can have side effects.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): balanced advantages and disadvantages of both treatments with accurate science, but there is no conclusion. Without a judgement it is a comparison, not an evaluation, and that caps the mark."
+        },
+        {
+          "text": "Stents are better because they work straight away and they last a long time. They open up the blocked artery so more oxygen gets to the heart.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): a one-sided answer. It gives only advantages of stents and never discusses statins, even though the question asks you to compare them. An unsupported conclusion is not an evaluation."
+        },
+        {
+          "text": "Coronary heart disease is when fatty material builds up in the coronary arteries. This means less oxygen gets to the heart muscle and it can cause a heart attack. It is caused by smoking, a bad diet and not doing exercise.",
+          "marks": 1,
+          "explanation": "Level 1, low: accurate but irrelevant. It describes the disease, not the treatments. Only a small amount of credit is given for relevant understanding of coronary arteries."
+        }
+      ],
+      "tip": "For 'evaluate': give pros and cons of each option, compare them directly, and finish with a conclusion that says which is better and why, or in which situations."
+    }
+  ]
+}

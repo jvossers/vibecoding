@@ -1,0 +1,143 @@
+{
+  "subject": "Geography",
+  "questions": [
+    {
+      "id": "geog-001",
+      "paper": "Paper 1: Living with the physical environment",
+      "number": "1",
+      "topic": "Tropical storms: using a map",
+      "skill": "Describe a distribution using the resource: general pattern, specific evidence, anomaly",
+      "marks": 4,
+      "stimulus": {
+        "label": "Figure 1",
+        "caption": "A world map showing the tracks of tropical storms over a 20-year period. Storm tracks are concentrated between about 5° and 30° north and south of the Equator. They start over oceans and move westwards, often curving away from the Equator. Many tracks are shown in the western Pacific, the Caribbean and the Bay of Bengal. There are no tracks in the South Atlantic or directly on the Equator."
+      },
+      "prompt": "Using Figure 1, describe the distribution of tropical storms.",
+      "answers": [
+        {
+          "text": "Tropical storms are found in the tropics, mostly between 5° and 30° north and south of the Equator. They form over oceans, for example the western Pacific and the Caribbean Sea, and generally move westwards. There are very few storms directly on the Equator, and none in the South Atlantic Ocean.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): a clear description of the overall pattern (tropics), specific evidence from the map (latitudes, named oceans), the direction of movement, and anomalies (none on the Equator or in the South Atlantic). It describes and never explains."
+        },
+        {
+          "text": "Tropical storms are found near the Equator in hot areas, such as the Caribbean. They are found over the sea.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): a basic pattern with one named example. It needs more precise use of the map: latitudes, more named areas, and where storms are absent."
+        },
+        {
+          "text": "Tropical storms form over warm oceans above 27 °C. They need the Coriolis effect to spin, which is why they don't form on the Equator. They lose energy when they reach land.",
+          "marks": 1,
+          "explanation": "Mostly explanation, which the command word 'describe' does not ask for. Only the general idea that storms form over oceans (the pattern) can be credited. Save causes for an 'explain' or 'suggest why' question."
+        },
+        {
+          "text": "Tropical storms are very dangerous. They cause lots of damage and kill many people, like Typhoon Haiyan in the Philippines in 2013.",
+          "marks": 0,
+          "explanation": "Zero. This is about the effects of storms, not their distribution (where they are found). It doesn't use Figure 1 at all."
+        }
+      ],
+      "tip": "For 'describe the distribution', use the acronym G-E-A: General pattern, Evidence (latitudes, places, numbers from the resource), and Anomalies (exceptions)."
+    },
+    {
+      "id": "geog-002",
+      "paper": "Paper 1: Living with the physical environment",
+      "number": "2",
+      "topic": "Tectonic hazards",
+      "skill": "Develop each point into a chain of reasoning ('this means that…')",
+      "marks": 4,
+      "prompt": "Explain why the effects of earthquakes are often greater in low-income countries (LICs) than in high-income countries (HICs).",
+      "answers": [
+        {
+          "text": "In LICs many buildings are not built to earthquake-resistant designs because of the cost, so they are more likely to collapse, which leads to more deaths and injuries. Also, LICs often have fewer emergency services and hospitals, which means injured people may not be rescued or treated quickly, so more people die after the earthquake.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): two points, each developed into a clear chain of reasoning (cause, then consequence, then effect on deaths or damage). The connectives 'so', 'which leads to' and 'which means' show the development examiners reward."
+        },
+        {
+          "text": "LICs have poorer quality buildings, which are more likely to collapse in an earthquake and kill people. They also have fewer hospitals.",
+          "marks": 3,
+          "explanation": "Level 2, low (3 marks): the first point is developed well, but the second is left undeveloped. Add a 'which means…' to every point: fewer hospitals, which means injured people aren't treated and more die."
+        },
+        {
+          "text": "They are poorer, they have worse buildings, fewer hospitals, less money for aid and less education about earthquakes.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): a list of relevant ideas, but none is explained. In a 4-mark 'explain' question, two developed points beat five undeveloped ones."
+        },
+        {
+          "text": "Because LICs are poor.",
+          "marks": 1,
+          "explanation": "Level 1, low: a valid basic idea, but it doesn't explain how being poor makes the effects greater. One mark at most."
+        }
+      ],
+      "tip": "Use 'point, then develop': make a point, then add 'this means that…' and a consequence. Two well-developed points are enough for 4 marks."
+    },
+    {
+      "id": "geog-003",
+      "paper": "Paper 1: Living with the physical environment",
+      "number": "3",
+      "topic": "River management: 9-mark evaluation",
+      "skill": "Use a named example with place-specific detail and reach a justified conclusion",
+      "marks": 9,
+      "prompt": "'The benefits of flood management schemes outweigh the costs.'\n\nUsing an example of a flood management scheme in the UK, to what extent do you agree with this statement?",
+      "answers": [
+        {
+          "text": "I largely agree, using the example of the Banbury flood scheme on the River Cherwell, completed in 2012. It cost around £18.5 million, but it protects over 400 homes and 70 businesses that had flooded badly in 1998 and 2007. A 2.9 km earth embankment created a flood storage area that holds back water and releases it slowly, and the main A361 road was raised so it stays open during floods. The scheme also created a new wetland habitat, an environmental benefit.\n\nHowever, there were costs. The scheme was expensive, and the storage area floods farmland, affecting farmers. The embankment also changed the look of the floodplain.\n\nOverall, the benefits outweigh the costs, because a single major flood can cause damage costing more than the scheme itself (the 1998 flood alone caused around £12.5 million of damage in Banbury), and it also reduces stress and insurance costs for residents.",
+          "marks": 9,
+          "explanation": "Level 3 (7–9 marks): a thorough evaluation using a named UK scheme with place-specific detail (cost, dates, homes protected, features). It weighs social, economic and environmental benefits against costs and reaches a justified conclusion that directly answers 'to what extent'."
+        },
+        {
+          "text": "The Banbury flood scheme cost £18.5 million. It protects hundreds of homes and businesses from flooding. It includes an embankment to create a flood storage area, and the A361 road was raised. There is also a new wildlife habitat.\n\nHowever, it was very expensive and farmland is used to store flood water.",
+          "marks": 6,
+          "explanation": "Level 2, top (4–6 marks): a named example with good specific detail and both benefits and costs, but no conclusion. Without a judgement it can't reach Level 3, however good the detail."
+        },
+        {
+          "text": "I agree that the benefits outweigh the costs. Flood management schemes like dams, embankments and flood walls stop houses from flooding, which saves money and stops people getting hurt. They can be expensive and look ugly, but they are worth it because floods can be very destructive.",
+          "marks": 4,
+          "explanation": "Level 2, low: it has a judgement and some balance, but no named example, even though the question asks for one. Generic answers cap your mark. Learn three or four facts about your case study."
+        },
+        {
+          "text": "Flooding happens when a river bursts its banks. It is caused by heavy rainfall, snowmelt and urbanisation, as impermeable surfaces mean water runs off quickly into the river.",
+          "marks": 1,
+          "explanation": "Level 1 (1–3 marks): accurate but irrelevant. It explains the causes of flooding, not whether management schemes are worth it. Only a small amount of credit is given for relevant understanding."
+        }
+      ],
+      "tip": "About 12 minutes. Name your example in the first line, use at least three specific facts, cover both sides, and finish with 'Overall, I agree to a large extent because…'. Up to 3 extra marks for spelling, punctuation and grammar."
+    },
+    {
+      "id": "geog-004",
+      "paper": "Paper 3: Geographical applications",
+      "number": "4",
+      "topic": "Geographical skills: percentage change",
+      "skill": "Percentage change = change ÷ original × 100, with working shown",
+      "marks": 2,
+      "stimulus": {
+        "label": "Figure 2",
+        "caption": "Estimated population of Lagos, Nigeria.",
+        "table": {
+          "headers": ["Year", "Population (millions)"],
+          "rows": [
+            ["1990", "4.8"],
+            ["2020", "14.4"]
+          ]
+        }
+      },
+      "prompt": "Using Figure 2, calculate the percentage increase in the population of Lagos between 1990 and 2020.\n\nShow your working.",
+      "answers": [
+        {
+          "text": "Increase = 14.4 − 4.8 = 9.6 million\n\n9.6 ÷ 4.8 × 100 = 200%",
+          "marks": 2,
+          "explanation": "Full marks: correct method (change ÷ original × 100) and the correct answer with a % sign."
+        },
+        {
+          "text": "14.4 − 4.8 = 9.6\n9.6 ÷ 14.4 × 100 = 66.7%",
+          "marks": 1,
+          "explanation": "One mark for finding the change correctly, but it was divided by the new value instead of the original. Percentage change is always compared with the starting value."
+        },
+        {
+          "text": "14.4 ÷ 4.8 × 100 = 300%",
+          "marks": 0,
+          "explanation": "Zero. This shows the 2020 population as a percentage of the 1990 population, not the increase. A population that triples has increased by 200%, not 300%."
+        }
+      ],
+      "tip": "Skills questions appear on every paper and are quick marks. Learn: % change = (new − original) ÷ original × 100. Show each step and include the unit."
+    }
+  ]
+}

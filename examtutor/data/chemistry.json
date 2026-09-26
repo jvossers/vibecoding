@@ -1,0 +1,133 @@
+{
+  "subject": "Chemistry",
+  "questions": [
+    {
+      "id": "chem-001",
+      "paper": "Paper 1",
+      "number": "1",
+      "topic": "Bonding and structure",
+      "skill": "Use precise scientific vocabulary: name the structure, the particles and the forces",
+      "marks": 3,
+      "prompt": "Sodium chloride has a melting point of 801 °C.\n\nExplain why sodium chloride has a high melting point.\n\nAnswer in terms of structure and bonding.",
+      "answers": [
+        {
+          "text": "Sodium chloride has a giant ionic lattice. There are strong electrostatic forces of attraction between the oppositely charged ions (Na⁺ and Cl⁻). A lot of energy is needed to overcome these forces.",
+          "marks": 3,
+          "explanation": "Full marks: giant lattice (1), strong electrostatic attraction between oppositely charged ions (1), lots of energy needed to overcome them (1). Every key term from the mark scheme is used precisely."
+        },
+        {
+          "text": "It has a giant structure with lots of strong bonds. These need a lot of energy to break.",
+          "marks": 2,
+          "explanation": "Two marks, for 'giant structure' and 'a lot of energy'. It never says what the bonds are, so it misses the mark for strong electrostatic forces between oppositely charged ions. 'Answer in terms of structure and bonding' is a hint to use those exact ideas."
+        },
+        {
+          "text": "Because it is ionic so the bonds are really strong.",
+          "marks": 1,
+          "explanation": "One mark for identifying ionic bonding. It is too brief for a 3-mark question: one mark usually means one point. Three marks need three distinct ideas."
+        },
+        {
+          "text": "Sodium chloride has strong covalent bonds and strong intermolecular forces between the molecules, so it needs lots of energy to melt.",
+          "marks": 0,
+          "explanation": "Zero. Sodium chloride is ionic, not covalent, and it has no molecules or intermolecular forces. Using the wrong type of bonding contradicts the correct idea, so even 'lots of energy' is not credited."
+        }
+      ],
+      "tip": "Match your points to the marks. For 'Explain in terms of structure and bonding', name the structure, the particles, the forces between them, and the energy needed."
+    },
+    {
+      "id": "chem-002",
+      "paper": "Paper 1",
+      "number": "2",
+      "topic": "Quantitative chemistry: reacting masses",
+      "skill": "Set out a moles calculation step by step so each step earns a mark",
+      "marks": 3,
+      "prompt": "Magnesium reacts with oxygen to produce magnesium oxide.\n\n2Mg + O₂ → 2MgO\n\nCalculate the mass of magnesium oxide produced when 6.0 g of magnesium reacts completely.\n\nRelative atomic masses (Aᵣ): Mg = 24   O = 16",
+      "answers": [
+        {
+          "text": "Moles of Mg = 6.0 ÷ 24 = 0.25 mol\nRatio Mg : MgO = 2 : 2 = 1 : 1, so 0.25 mol MgO\nMᵣ MgO = 24 + 16 = 40\nMass = 0.25 × 40 = 10 g",
+          "marks": 3,
+          "explanation": "Full marks. Moles of Mg (1), correct use of the ratio with the Mᵣ of MgO (1), final mass with units (1). Each step is labelled, which makes it easy for the examiner to award marks."
+        },
+        {
+          "text": "Moles of Mg = 6.0 ÷ 24 = 0.25\nMoles of MgO = 0.25 ÷ 2 = 0.125\nMass = 0.125 × 40 = 5 g",
+          "marks": 2,
+          "explanation": "Two marks: moles of Mg is correct, and the final step is correct for the number of moles used (error carried forward). The ratio is wrong: 2Mg : 2MgO is 1 : 1, so nothing needs halving. Read the balancing numbers carefully."
+        },
+        {
+          "text": "Mᵣ of MgO = 24 + 16 = 40\n6.0 ÷ 40 = 0.15 g",
+          "marks": 1,
+          "explanation": "One mark for the correct Mᵣ of MgO. The mass of magnesium has been divided by the Mᵣ of the wrong substance. Moles of a substance = its own mass ÷ its own Mᵣ."
+        },
+        {
+          "text": "6.0 + 16 = 22 g",
+          "marks": 0,
+          "explanation": "Zero. Adding the mass to a relative atomic mass has no chemical meaning. Use the method: mass → moles → ratio → moles → mass."
+        }
+      ],
+      "tip": "Use the same four steps every time: moles = mass ÷ Mᵣ; use the ratio from the equation; find the new Mᵣ; mass = moles × Mᵣ. Write units on your final answer."
+    },
+    {
+      "id": "chem-003",
+      "paper": "Paper 1",
+      "number": "3",
+      "topic": "Required practical: making salts",
+      "skill": "Give a complete, sequenced method that ends with the product the question asks for",
+      "marks": 6,
+      "prompt": "Describe how you would make pure, dry crystals of copper sulfate from copper oxide and dilute sulfuric acid.",
+      "answers": [
+        {
+          "text": "1. Measure 50 cm³ of dilute sulfuric acid into a beaker and warm it gently.\n2. Add copper oxide a spatula at a time, stirring, until no more dissolves (it is in excess). This makes sure all the acid has reacted.\n3. Filter the mixture to remove the excess copper oxide.\n4. Heat the blue filtrate in an evaporating basin until about half the water has evaporated / crystals start to form.\n5. Leave it to cool so crystals form.\n6. Pat the crystals dry with filter paper or leave them in a warm place to dry.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): complete, logically sequenced and detailed. It uses copper oxide in excess (and says why), filters to remove the excess, crystallises correctly (not boiling to dryness), and ends with pure, dry crystals, exactly what the question asked."
+        },
+        {
+          "text": "Add copper oxide to sulfuric acid until it stops dissolving. Filter it. Then heat the solution until crystals form and leave it to cool.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): the main steps are there in the right order, but it has no detail (warming the acid, excess and why, what is filtered off) and it never dries the crystals. The question says 'pure, dry', so a step for each is expected."
+        },
+        {
+          "text": "Mix copper oxide and sulfuric acid in a beaker. Heat it until all the water has gone. Then you will have copper sulfate.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): it reacts the two substances, but it misses filtering, so the product would be contaminated with unreacted copper oxide. Heating to dryness also would not give crystals."
+        },
+        {
+          "text": "Copper oxide + sulfuric acid → copper sulfate + water. This is a neutralisation reaction because copper oxide is a base.",
+          "marks": 1,
+          "explanation": "Level 1, low: a correct word equation and good knowledge, but no method at all. 'Describe how you would make…' means give practical steps."
+        }
+      ],
+      "tip": "For making salts, remember: excess (warm, stir), filter, evaporate, crystallise, dry. Always explain why the insoluble reactant is added in excess."
+    },
+    {
+      "id": "chem-004",
+      "paper": "Paper 2",
+      "number": "4",
+      "topic": "Rates of reaction",
+      "skill": "Use collision theory precisely: 'more frequent' collisions and 'activation energy'",
+      "marks": 3,
+      "prompt": "Explain why increasing the temperature increases the rate of a reaction.\n\nAnswer in terms of particles.",
+      "answers": [
+        {
+          "text": "At a higher temperature the particles have more kinetic energy and move faster. They collide more frequently. A greater proportion of the collisions have energy equal to or greater than the activation energy, so there are more successful collisions per second.",
+          "marks": 3,
+          "explanation": "Full marks: more energy / faster (1), more frequent collisions (1), more collisions with at least the activation energy (1). The words 'frequent' and 'activation energy' are exactly what examiners look for."
+        },
+        {
+          "text": "The particles gain more energy so they move faster. This means they collide more frequently, so the reaction is faster.",
+          "marks": 2,
+          "explanation": "Two marks, for more energy / faster movement and more frequent collisions. It misses the key idea for temperature: more collisions have enough energy to react (at least the activation energy)."
+        },
+        {
+          "text": "The particles move faster so there are more collisions.",
+          "marks": 1,
+          "explanation": "One mark, for 'move faster'. 'More collisions' is not credited on its own, because examiners want 'more frequent collisions' or 'more collisions per second'. More collisions over a longer time doesn't mean a faster rate."
+        },
+        {
+          "text": "Heat makes reactions go faster because the reaction is exothermic so it likes being hot.",
+          "marks": 0,
+          "explanation": "Zero. It makes no reference to particles (the question asks for it) and the chemistry is incorrect. Temperature increases the rate of both exothermic and endothermic reactions."
+        }
+      ],
+      "tip": "Rate answers are marked on precise phrases. Learn them: 'more frequent collisions', 'more collisions per second', 'energy greater than or equal to the activation energy'."
+    }
+  ]
+}

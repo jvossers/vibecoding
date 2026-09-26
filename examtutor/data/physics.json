@@ -1,0 +1,133 @@
+{
+  "subject": "Physics",
+  "questions": [
+    {
+      "id": "phys-001",
+      "paper": "Paper 1",
+      "number": "1",
+      "topic": "Energy and power",
+      "skill": "Convert to SI units (W, s) before substituting",
+      "marks": 3,
+      "prompt": "An electric kettle has a power of 2.2 kW.\nThe kettle is switched on for 3 minutes.\n\nCalculate the energy transferred by the kettle.\n\nUse the equation:\nenergy transferred = power × time\n\nGive your answer in joules.",
+      "answers": [
+        {
+          "text": "P = 2.2 kW = 2200 W\nt = 3 min = 180 s\n\nE = P × t\nE = 2200 × 180\nE = 396 000 J",
+          "marks": 3,
+          "explanation": "Full marks: both conversions to SI units, correct substitution, and the answer in joules as asked. Writing the conversions on separate lines makes them easy to check."
+        },
+        {
+          "text": "E = P × t\nE = 2200 × 3\nE = 6600 J",
+          "marks": 2,
+          "explanation": "Two marks: correct substitution with power converted to watts, but minutes were not converted into seconds. Time in physics equations is almost always in seconds."
+        },
+        {
+          "text": "E = P × t\nE = 2.2 × 3\nE = 6.6 J",
+          "marks": 1,
+          "explanation": "One mark for correct substitution of the given values into the equation, but neither unit has been converted, so the answer is not in joules. When a question says 'give your answer in joules', check your units."
+        },
+        {
+          "text": "P = E ÷ t\nso E = t ÷ P\nE = 180 ÷ 2200 = 0.08 J",
+          "marks": 0,
+          "explanation": "Zero. The equation was given but has been rearranged wrongly. This question needed no rearranging. If an equation is given, use it exactly as printed."
+        }
+      ],
+      "tip": "Before substituting, write every quantity in SI units: kW → W (× 1000), minutes → seconds (× 60). Then substitute, calculate, and add the unit."
+    },
+    {
+      "id": "phys-002",
+      "paper": "Paper 2",
+      "number": "2",
+      "topic": "Forces and terminal velocity",
+      "skill": "Explain a changing situation as a sequence of stages, using 'resultant force'",
+      "marks": 4,
+      "prompt": "A skydiver jumps from an aeroplane.\nAfter some time she falls at a constant speed called terminal velocity.\n\nExplain why the skydiver reaches terminal velocity.",
+      "answers": [
+        {
+          "text": "At first, her weight is much bigger than the air resistance, so there is a resultant force downwards and she accelerates. As her speed increases, the air resistance increases. Eventually the air resistance equals her weight. The resultant force is now zero, so she stops accelerating and falls at a constant speed: terminal velocity.",
+          "marks": 4,
+          "explanation": "Full marks: weight > air resistance so she accelerates (1), air resistance increases with speed (1), air resistance becomes equal to weight (1), resultant force is zero so velocity is constant (1). It walks through each stage in order."
+        },
+        {
+          "text": "As she falls, air resistance increases until it is equal to her weight. The forces are balanced so the resultant force is zero and she moves at a constant speed.",
+          "marks": 3,
+          "explanation": "Three marks. It explains the end state well, but misses the start: why does she speed up in the first place? For a 4-mark 'explain', cover the beginning, the change and the end."
+        },
+        {
+          "text": "As she speeds up, the air resistance gets bigger and bigger until it is the same as her weight.",
+          "marks": 2,
+          "explanation": "Two marks, for air resistance increasing and becoming equal to weight. It never says what happens as a result: zero resultant force, so constant velocity. The final link is often the mark students forget."
+        },
+        {
+          "text": "Gravity stops pulling her down as much because she is falling so fast.",
+          "marks": 0,
+          "explanation": "Zero. Gravity (her weight) stays the same throughout. It's the air resistance that changes. A common misconception scores nothing, even in a longer answer."
+        }
+      ],
+      "tip": "Count the marks and plan that many steps. For terminal velocity: start → speed increases → air resistance increases → forces balance → zero resultant force → constant velocity."
+    },
+    {
+      "id": "phys-003",
+      "paper": "Paper 1",
+      "number": "3",
+      "topic": "Electricity: resistance",
+      "skill": "Recall and rearrange the equation, and follow the instruction on significant figures",
+      "marks": 3,
+      "prompt": "The potential difference across a resistor is 12 V.\nThe current in the resistor is 0.35 A.\n\nCalculate the resistance of the resistor.\n\nGive your answer to 2 significant figures.",
+      "answers": [
+        {
+          "text": "V = I × R\nR = V ÷ I\nR = 12 ÷ 0.35\nR = 34.29 Ω\nR = 34 Ω (2 s.f.)",
+          "marks": 3,
+          "explanation": "Full marks: correct substitution (1), correct rearrangement and calculation (1), and the answer to 2 significant figures as instructed (1). Writing the unrounded value first makes the rounding easy to check."
+        },
+        {
+          "text": "R = 12 ÷ 0.35 = 34.2857 Ω",
+          "marks": 2,
+          "explanation": "Two marks: the calculation is correct, but the question asked for 2 significant figures and this answer has six. When a question specifies rounding, there is a mark for doing it."
+        },
+        {
+          "text": "V = I × R\n12 = 0.35 × R",
+          "marks": 1,
+          "explanation": "One mark for correct substitution into the correct equation, then the student stopped. Even if you are unsure how to rearrange, the substitution alone is worth a mark, so always write it down."
+        },
+        {
+          "text": "R = I ÷ V\nR = 0.35 ÷ 12\nR = 0.029 Ω",
+          "marks": 0,
+          "explanation": "Zero: the equation has been rearranged incorrectly. Use a formula triangle or rearrange V = IR step by step (divide both sides by I). Resistances of a few ohms or more are much more common than 0.029 Ω."
+        }
+      ],
+      "tip": "Write the equation, substitute, rearrange, calculate, then apply the rounding instruction. Always include the unit (Ω)."
+    },
+    {
+      "id": "phys-004",
+      "paper": "Paper 1",
+      "number": "4",
+      "topic": "Required practical: density",
+      "skill": "Name the equipment and exactly what is measured at each step",
+      "marks": 6,
+      "prompt": "Describe how a student could determine the density of a small, irregularly shaped stone.",
+      "answers": [
+        {
+          "text": "1. Measure the mass of the stone using a top-pan balance (in g).\n2. Fill a displacement (eureka) can with water until it overflows from the spout, then wait until it stops dripping.\n3. Place an empty measuring cylinder under the spout.\n4. Gently lower the stone into the can using thread.\n5. Measure the volume of water collected in the measuring cylinder. This equals the volume of the stone (in cm³).\n6. Calculate density using density = mass ÷ volume (g/cm³).\n7. Repeat and take a mean to improve accuracy.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): a clear, logical and complete method. It names the equipment, says what is measured and how, explains why the displaced water gives the volume, uses the density equation with units, and improves accuracy with repeats."
+        },
+        {
+          "text": "Weigh the stone on a balance to find its mass. Put water in a measuring cylinder and read the volume. Drop the stone in and read the new volume. Take away the first reading from the second to get the volume of the stone. Then do mass ÷ volume.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): a valid method in a sensible order. To reach Level 3 it needs more precision (units, lowering the stone gently so no water splashes out, repeats) and a link to density = mass ÷ volume."
+        },
+        {
+          "text": "Find the mass and the volume of the stone and then use density = mass ÷ volume.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): the right idea, but it does not describe how to measure either quantity. The difficult part of this practical is finding the volume of an irregular shape, and this answer skips it."
+        },
+        {
+          "text": "Measure the length, width and height of the stone with a ruler and multiply them together to get the volume. Then weigh it and divide.",
+          "marks": 1,
+          "explanation": "Level 1, low. Measuring length × width × height only works for a regular cuboid. The question says 'irregularly shaped', so it needs a displacement method. Always look for words in the question that change the method."
+        }
+      ],
+      "tip": "For practical method questions, write numbered steps: equipment, what to measure, how to measure it, the equation, and repeats. Look for clue words like 'irregular' that point to a specific method."
+    }
+  ]
+}

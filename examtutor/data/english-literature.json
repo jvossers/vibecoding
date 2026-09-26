@@ -1,0 +1,163 @@
+{
+  "subject": "English Literature",
+  "questions": [
+    {
+      "id": "eng-lit-001",
+      "paper": "Paper 1: Shakespeare and the 19th-century novel",
+      "number": "1",
+      "topic": "Macbeth: extract to whole text",
+      "skill": "Start with the extract, then move out to the whole play, with analysis of Shakespeare's methods",
+      "marks": 30,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "Read the following extract from Act 1 Scene 5 of Macbeth. Lady Macbeth has just heard that King Duncan will stay at her castle.",
+        "text": "The raven himself is hoarse\nThat croaks the fatal entrance of Duncan\nUnder my battlements. Come, you spirits\nThat tend on mortal thoughts, unsex me here,\nAnd fill me from the crown to the toe top-full\nOf direst cruelty! Make thick my blood;\nStop up th' access and passage to remorse,\nThat no compunctious visitings of nature\nShake my fell purpose, nor keep peace between\nTh' effect and it!"
+      },
+      "prompt": "Starting with this speech, explain how far you think Shakespeare presents Lady Macbeth as a powerful woman.",
+      "bullets": [
+        "how Shakespeare presents Lady Macbeth in this speech",
+        "how Shakespeare presents Lady Macbeth in the play as a whole."
+      ],
+      "promptLead": "Write about:",
+      "answers": [
+        {
+          "text": "In this speech Shakespeare presents Lady Macbeth's power as something she must summon rather than something she naturally has. The imperative 'Come, you spirits' makes her sound commanding, yet she is asking for help, which hints that her strength is borrowed. Her demand to be 'unsex[ed]' suggests that, to a Jacobean audience, cruelty and power were seen as masculine. By rejecting her gender she challenges the Great Chain of Being, which would have made her deeply unsettling to an audience who had recently seen King James's writing on witchcraft. The plea to 'stop up th' access and passage to remorse' implies she knows guilt will come, which foreshadows her collapse.\n\nThis is why, across the play, her power is ultimately fragile. In Act 1 she dominates Macbeth, but by Act 5 the woman who wanted to be filled 'top-full / Of direst cruelty' cannot stop washing imaginary blood from her hands. Shakespeare suggests that power gained by suppressing 'nature' will not last...",
+          "marks": 27,
+          "explanation": "Level 6 (26–30 marks): a critical, exploratory, conceptualised response. It has an overarching argument (her power is borrowed and fragile), analyses words closely ('Come', 'unsex', 'stop up'), weaves context into the argument rather than bolting it on, and links the extract to the whole play. It also engages with 'how far'."
+        },
+        {
+          "text": "In this extract Lady Macbeth is presented as powerful because she calls on evil spirits to help her. She says 'Come, you spirits', which is an imperative, so she sounds in control. She also says 'unsex me here', which shows she wants to lose her femininity so she can be cruel. In Jacobean times women were expected to be obedient to men, so the audience would be shocked by this.\n\nLater in the play she persuades Macbeth to kill Duncan by questioning his masculinity, which shows she has power over him. However, by the end of the play she sleepwalks and says 'Out, damned spot!', showing that her guilt has destroyed her, so she is not powerful anymore.",
+          "marks": 20,
+          "explanation": "Level 4 (16–20 marks): a clear, consistent response with relevant quotations, explained methods, and context that is linked to the point. It covers both the extract and the whole play. To move higher it needs more precise analysis of individual words and a developed argument about how far she is powerful, not just 'powerful, then not'."
+        },
+        {
+          "text": "Lady Macbeth is powerful. In this speech she says 'unsex me here' which means she wants to be like a man. This shows she is powerful. In the play she tells Macbeth to kill the king. She also plans the murder and puts the daggers back when Macbeth forgets. Then later she goes mad and sleepwalks and then she dies.\n\nIn Jacobean times people believed in witches and King James wrote a book about them called Daemonologie. Women had no power.",
+          "marks": 12,
+          "explanation": "Level 3 (11–15 marks), low: some relevant knowledge and one quotation, but it mostly retells the plot. The context paragraph is 'bolted on': true, but it is not connected to any point about Lady Macbeth. Examiners reward context only when it helps explain the character."
+        },
+        {
+          "text": "Macbeth is a play by William Shakespeare. It is about a man called Macbeth who meets three witches who tell him he will be king. He tells his wife Lady Macbeth and she wants him to kill King Duncan. He kills Duncan and becomes king but then he has to kill Banquo as well. In the end Macduff kills Macbeth. Lady Macbeth is a powerful woman.",
+          "marks": 4,
+          "explanation": "Level 1 (1–5 marks): a plot summary of the play that barely mentions Lady Macbeth and ignores the extract. There is no analysis, no quotation and no context. Retelling the story is the most common way to lose marks in Literature."
+        }
+      ],
+      "tip": "About 50 minutes. Build an argument that answers the question, not the story. Analyse words from the extract, then link to two or three key moments elsewhere, with context woven into your points. Up to 4 extra marks are available for spelling, punctuation and grammar on the Shakespeare question."
+    },
+    {
+      "id": "eng-lit-002",
+      "paper": "Paper 1: Shakespeare and the 19th-century novel",
+      "number": "2",
+      "topic": "A Christmas Carol: extract to whole text",
+      "skill": "Track the change across the novel, using the extract as the starting point",
+      "marks": 30,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "Read the following extract from Stave One of A Christmas Carol, in which the narrator introduces Scrooge.",
+        "text": "Oh! But he was a tight-fisted hand at the grindstone, Scrooge! a squeezing, wrenching, grasping, scraping, clutching, covetous, old sinner! Hard and sharp as flint, from which no steel had ever struck out generous fire; secret, and self-contained, and solitary as an oyster. The cold within him froze his old features, nipped his pointed nose, shrivelled his cheek, stiffened his gait; made his eyes red, his thin lips blue; and spoke out shrewdly in his grating voice."
+      },
+      "prompt": "Starting with this extract, explore how Dickens presents Scrooge as a character who changes.",
+      "bullets": [
+        "how Dickens presents Scrooge in this extract",
+        "how Dickens presents Scrooge as changing in the novel as a whole."
+      ],
+      "promptLead": "Write about:",
+      "answers": [
+        {
+          "text": "Dickens introduces Scrooge as almost inhuman so that his transformation later feels miraculous, and so that Victorian readers who shared his attitudes might recognise themselves. The list of present participles, 'squeezing, wrenching, grasping, scraping, clutching', piles verb upon verb, suggesting his greed is constant and physical. The simile 'solitary as an oyster' is revealing: an oyster is hard and closed, but it may contain a pearl, so Dickens hints from the start that there is something of value locked inside Scrooge.\n\nThe imagery of cold, 'the cold within him froze his old features', makes his meanness seem to come from within rather than from the weather. This pattern is reversed in Stave Five, where Scrooge is 'as light as a feather' and 'as merry as a schoolboy'. The cold, closed oyster has opened. Through this change, Dickens argues that even the most hardened members of the wealthy classes can, and must, take responsibility for the poor...",
+          "marks": 28,
+          "explanation": "Level 6 (26–30 marks): conceptualised and exploratory. It has a clear thesis about why Dickens presents the change, analyses the effects of specific methods (the list, the oyster simile, cold imagery), and traces a pattern across the whole novel. Context (Dickens's purpose and his readers) is part of the argument."
+        },
+        {
+          "text": "At the start Scrooge is presented as a mean and cold character. Dickens uses a list, 'squeezing, wrenching, grasping, scraping, clutching', to show how greedy he is. The simile 'solitary as an oyster' shows that he is lonely and keeps to himself. Dickens also uses the imagery of cold to show that he is unkind.\n\nBy the end of the novel Scrooge has changed. He says 'I will honour Christmas in my heart, and try to keep it all the year'. He buys a turkey for the Cratchits and raises Bob's salary. Dickens wanted to show Victorian readers that the rich should help the poor.",
+          "marks": 19,
+          "explanation": "Level 4 (16–20 marks): clear and relevant, with methods identified and explained, well-chosen quotations from both the extract and the ending, and context linked to Dickens's message. Moving higher means analysing words more closely and explaining how Dickens shows the change happening, not just before and after."
+        },
+        {
+          "text": "Scrooge is a mean old man who doesn't like Christmas. He says 'Bah! Humbug!' In the extract it says he is 'solitary as an oyster'. Then he is visited by Marley's ghost and three spirits: the Ghost of Christmas Past, Present and Yet to Come. They show him his past and Tiny Tim and his own grave. At the end he is nice and gives money to the charity men.",
+          "marks": 10,
+          "explanation": "Level 2 (6–10 marks): relevant quotations and good knowledge of the plot, but it is a narrative. There is no analysis of methods and no explanation of Dickens's purpose. To go higher, choose three or four moments and ask, 'How does Dickens show the change here, and why?'"
+        },
+        {
+          "text": "The extract uses lots of techniques. There is a list, a simile, alliteration ('secret, and self-contained, and solitary') and personification. These make it interesting to read. Dickens was born in 1812 and he had a hard childhood because his father went to prison for debt. He wrote lots of other books like Oliver Twist.",
+          "marks": 5,
+          "explanation": "Level 1 (1–5 marks): techniques are spotted but never explained, and the biography is irrelevant because it is not linked to Scrooge or the question. It also never addresses change, which is the focus of the question."
+        }
+      ],
+      "tip": "About 50 minutes. Underline the key focus in the question ('changes') and make every paragraph answer it. Use the extract for close analysis and the whole novel to show development."
+    },
+    {
+      "id": "eng-lit-003",
+      "paper": "Paper 2: Modern texts and poetry",
+      "number": "3",
+      "topic": "An Inspector Calls: whole text",
+      "skill": "Write about the character as a construct used by the writer to present ideas",
+      "marks": 30,
+      "prompt": "How does Priestley use the character of Mr Birling to explore ideas about responsibility in An Inspector Calls?",
+      "promptLead": "Write about:",
+      "bullets": [
+        "what Mr Birling says and does",
+        "how Priestley presents Mr Birling by the ways he writes."
+      ],
+      "answers": [
+        {
+          "text": "Priestley constructs Mr Birling as a mouthpiece for the capitalist, individualist values he wanted his 1945 audience to reject. Birling's self-description as a 'hard-headed, practical man of business' is immediately undermined by dramatic irony: he calls the Titanic 'unsinkable, absolutely unsinkable' and dismisses the idea of war. Because the audience knows he is wrong, Priestley teaches them to distrust everything else he says, including his claim that 'a man has to mind his own business and look after himself and his own'.\n\nThe Inspector's arrival interrupts this speech, a structural choice that suggests Birling's philosophy is about to be tested. Crucially, Birling never changes. Even at the end, when the phone rings, he is concerned with scandal rather than Eva's death. Through this lack of development, Priestley suggests that the older generation may be too fixed in their ways, placing his hope in the young...",
+          "marks": 29,
+          "explanation": "Level 6 (26–30 marks): treats Birling as a construct ('Priestley constructs…', 'a mouthpiece'). Methods such as dramatic irony, structure and the character's lack of development are analysed for their purpose. Context (the 1945 audience, capitalism versus socialism) drives the argument."
+        },
+        {
+          "text": "Mr Birling is presented as someone who does not believe in responsibility for others. He says 'a man has to mind his own business and look after himself and his own', which shows he only cares about himself and his family. Priestley uses dramatic irony when Birling says the Titanic is 'unsinkable', which makes the audience see him as foolish.\n\nPriestley was a socialist and wanted people to look after each other. At the end, Mr Birling has not learned his lesson, unlike Sheila and Eric, which shows that the older generation refuse to change.",
+          "marks": 20,
+          "explanation": "Level 4 (16–20 marks): clear understanding, relevant quotations, dramatic irony explained, and context connected to the point. It would score higher if it explored why Priestley makes Birling look foolish (to discredit his views) and analysed his language in more depth."
+        },
+        {
+          "text": "Mr Birling is a rich factory owner. He sacked Eva Smith because she asked for more money. When the Inspector comes he says it has nothing to do with him. He is worried about getting his knighthood. He says 'community and all that nonsense'. At the end he is happy when he finds out the Inspector wasn't real.\n\nPriestley wrote the play in 1945 after the Second World War.",
+          "marks": 11,
+          "explanation": "Level 3, low (11–15 marks): accurate knowledge and a relevant quotation, but it describes what Birling does rather than how Priestley uses him. The context sentence is not connected to anything. Change 'Birling does…' to 'Priestley uses Birling to show…' and explain why."
+        },
+        {
+          "text": "The play starts with the Birling family having a dinner party to celebrate Sheila's engagement to Gerald. Then an Inspector arrives and tells them a girl called Eva Smith has died. He questions each member of the family. Mr Birling sacked her, Sheila got her fired from Milwards, Gerald had an affair with her...",
+          "marks": 6,
+          "explanation": "Level 2, low (6–10 marks): a plot summary of the whole play. It shows knowledge of the text but does not focus on Mr Birling or on responsibility, and makes no comment on Priestley's methods."
+        }
+      ],
+      "tip": "There is no extract for this question. Learn short quotations for each character. Always write about characters as the writer's creations: 'Priestley uses Birling to…'. Up to 4 extra marks are available for spelling, punctuation and grammar on this question."
+    },
+    {
+      "id": "eng-lit-004",
+      "paper": "Paper 2: Modern texts and poetry",
+      "number": "4",
+      "topic": "Poetry comparison: Power and Conflict",
+      "skill": "Compare the poems throughout, rather than writing about each one separately",
+      "marks": 30,
+      "stimulus": {
+        "label": "Exposure (first stanza)",
+        "caption": "Wilfred Owen",
+        "text": "Our brains ache, in the merciless iced east winds that knive us . . .\nWearied we keep awake because the night is silent . . .\nLow, drooping flares confuse our memory of the salient . . .\nWorried by silence, sentries whisper, curious, nervous,\n        But nothing happens."
+      },
+      "prompt": "Compare how poets present the effects of war in 'Exposure' and in one other poem from 'Power and conflict'.",
+      "answers": [
+        {
+          "text": "Both Owen and Tennyson present the effects of war on ordinary soldiers, but where Tennyson ultimately glorifies their sacrifice, Owen strips war of any glory. In 'Exposure' the true enemy is the weather: the 'merciless iced east winds that knive us' turn nature into a weapon, and the present tense traps the reader in the soldiers' endless suffering. The half-rhymes ('silent'/'salient') feel unresolved, mirroring a war with no progress. The refrain 'But nothing happens' makes the soldiers' deaths seem pointless.\n\nIn contrast, 'The Charge of the Light Brigade' is driven by a galloping dactylic rhythm that makes the charge feel heroic even as it leads 'into the valley of Death'. Tennyson admits 'someone had blunder'd', yet the poem ends with the imperative 'Honour the Light Brigade', turning failure into glory. Owen, writing from the trenches, rejects exactly this kind of patriotic tribute...",
+          "marks": 28,
+          "explanation": "Level 6 (26–30 marks): comparison runs throughout ('where Tennyson…', 'in contrast', 'exactly this kind of'). Both poems' methods, including form, rhythm, rhyme and language, are analysed and linked to meaning. Context (Owen's first-hand experience versus a poet laureate's public tribute) is part of the comparison."
+        },
+        {
+          "text": "Both poems show the effects of war on soldiers. In 'Exposure' Owen personifies the wind as 'merciless', which shows that the weather is attacking the soldiers like an enemy. The repeated line 'But nothing happens' shows that the soldiers are bored and hopeless.\n\nSimilarly, in 'The Charge of the Light Brigade', soldiers suffer: they ride 'into the valley of Death'. However, Tennyson presents them as heroes, saying 'Honour the Light Brigade', whereas Owen shows war as pointless. This may be because Owen fought in the First World War, while Tennyson read about the charge in a newspaper.",
+          "marks": 20,
+          "explanation": "Level 4 (16–20 marks): clear comparison using connectives, relevant quotations with explained effects, and useful contextual contrast. For higher marks, analyse form and structure (rhythm, rhyme, tense) and develop the comparison in more depth rather than one point per poem."
+        },
+        {
+          "text": "In 'Exposure' the soldiers are very cold. Owen says the wind 'knive[s] us', which is personification and shows it is painful. The soldiers are waiting and 'nothing happens'. Owen was a soldier in World War One and died a week before the war ended.\n\n'The Charge of the Light Brigade' is about a battle in the Crimean War. The soldiers ride into the valley and lots of them are killed by cannons. Tennyson says 'Honour the Light Brigade'.",
+          "marks": 12,
+          "explanation": "Level 3, low (11–15 marks): some sound points about each poem, but it never compares them. They are written about in two separate halves. Because the question says 'Compare', missing comparison caps the mark, however good each half is."
+        },
+        {
+          "text": "Exposure is about soldiers in the trenches and it is really sad. It has lots of ellipsis and it rhymes. I think it shows that war is bad. In the other poem war is also bad.",
+          "marks": 3,
+          "explanation": "Level 1 (1–5 marks): very limited. The 'other poem' isn't named, there are no quotations, and the one technique mentioned ('it rhymes') is not accurate or explained."
+        }
+      ],
+      "tip": "Choose your second poem quickly, ideally one you've paired before. Use a comparative connective in every paragraph ('whereas', 'similarly', 'in contrast'), and compare methods, not just meanings."
+    }
+  ]
+}
