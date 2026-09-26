@@ -256,12 +256,14 @@
   .response.right { border-color: var(--green); box-shadow: 3px 3px 0 var(--green); }
   .response.wrong { border-color: var(--red); box-shadow: 3px 3px 0 var(--red); }
 
-  .pick-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+  .pick-row { display: flex; justify-content: flex-end; gap: 6px; margin-top: auto; }
   .pick-btn {
-    flex: 1 1 9rem; cursor: pointer; padding: .55rem .8rem; border-radius: 999px;
-    font-weight: 700; font-size: .9rem; background: #fff; transition: background .15s, color .15s;
+    display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; white-space: nowrap;
+    padding: .35rem .6rem .35rem .5rem; border-radius: 8px;
+    font-weight: 700; font-size: .8rem; background: #fff; transition: background .15s, color .15s;
+    border: 1.5px solid var(--print); color: var(--print);
   }
-  .pick-btn { border: 2px solid var(--print); color: var(--print); }
+  .pick-btn svg { width: 1.1em; height: 1.1em; flex: none; }
   .pick-btn[aria-pressed="true"] { background: var(--print); color: #fff; }
   .pick-btn:focus-visible { outline: 3px solid var(--biro); outline-offset: 2px; }
 
@@ -711,13 +713,22 @@
     // --- candidate responses
     const cards = order.map((ansIdx, pos) => {
       const a = q.answers[ansIdx];
+      // Mark-meter icons: full bars = most marks, a single bar = fewest marks.
+      const meter = full => {
+        const bar = (x, y, h, on) => on
+          ? `<rect x="${x}" y="${y}" width="3" height="${h}" rx=".5" fill="currentColor"/>`
+          : `<rect x="${x + .5}" y="${y + .5}" width="2" height="${h - 1}" rx=".5" fill="none" stroke="currentColor" stroke-width="1" opacity=".45"/>`;
+        const span = el('span', { 'aria-hidden': 'true', style: 'display:inline-flex' });
+        span.innerHTML = `<svg viewBox="0 0 16 16">${bar(1, 10, 5, true)}${bar(6.5, 6, 9, full)}${bar(12, 2, 13, full)}</svg>`;
+        return span;
+      };
       const pickBtn = (kind, label) => el('button', {
         class: `pick-btn ${kind}`,
         'aria-pressed': 'false',
         onclick: e => { e.stopPropagation(); pick(kind, ansIdx); }
-      }, label);
-      const mostBtn = pickBtn('most', '▲ Most marks');
-      const fewestBtn = pickBtn('fewest', '▼ Fewest marks');
+      }, meter(kind === 'most'), label);
+      const mostBtn = pickBtn('most', 'Most marks');
+      const fewestBtn = pickBtn('fewest', 'Fewest marks');
       const pickRow = el('div', { class: 'pick-row' }, mostBtn, fewestBtn);
       const card = el('div', {
         class: 'response',
