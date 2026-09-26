@@ -284,14 +284,15 @@
   .dot-btn {
     width: 1.5rem; height: 1.5rem; border-radius: 50%; cursor: pointer; padding: 0;
     border: 1.5px dashed #b9b4a6; background: #fff; color: #fff; font-size: .72rem; font-weight: 700;
-    display: grid; place-items: center; transition: transform .15s;
+    display: grid; place-items: center; transition: box-shadow .15s;
   }
   .dot-btn.most, .dot-btn.fewest { border: 1.5px solid var(--print); background: var(--print); }
   .dot-btn svg { width: .85rem; height: .85rem; }
   .dot-btn.marked { border: 1.5px solid var(--print-muted); background: #fff; color: var(--print); }
   .dot-btn.marked.right { border-color: var(--green); background: var(--green); color: #fff; }
   .dot-btn.marked.wrong { border-color: var(--red); background: var(--red); color: #fff; }
-  .dot-btn.current { transform: scale(1.25); box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--biro); }
+  /* The current answer gets a ring only — no scaling, so the dots stay a fixed size. */
+  .dot-btn.current { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--biro); }
 
   .script {
     font-family: "Kalam", "Comic Sans MS", cursive; color: var(--biro);
