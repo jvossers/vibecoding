@@ -427,7 +427,7 @@
   const ordinal = n => n + (['th','st','nd','rd'][(n % 100 - 20) % 10] || ['th','st','nd','rd'][n % 100] || 'th');
   const letter = i => String.fromCharCode(65 + i);
   const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
-  const render = (...nodes) => { appEl.replaceChildren(...nodes); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const render = (...nodes) => { appEl.replaceChildren(...nodes.filter(n => n != null && n !== false)); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
   async function fetchJSON(path) {
     const res = await fetch(DATA_DIR + path, { cache: 'no-cache' });
