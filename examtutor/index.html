@@ -350,7 +350,8 @@
   .paper .btn.ghost, .review .btn.ghost { background: transparent; color: var(--print); border-color: var(--print); }
 
   /* ---------- Review overlay: bottom sheet on phones, side panel on wide screens ---------- */
-  .paper.q-paper { margin-bottom: 110px; }
+  /* Leave room under the footer so the fixed dock never covers it. */
+  body:has(.dock) footer { padding-bottom: calc(var(--dock-room, 120px) + env(safe-area-inset-bottom)); }
   .dock {
     position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 20;
     width: min(560px, calc(100% - 24px));
