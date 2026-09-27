@@ -1,6 +1,6 @@
 # Full Marks: GCSE exam technique trainer
 
-Students see an exam-style question with several candidate answers. **Every answer is creditworthy, but each earns a different number of marks.** The student picks the answer that earns **the most marks** and the one that earns **the fewest**, then sees the marks, the examiner's reasoning for each one, and a technique tip.
+Students see an exam-style question with several candidate answers. **Every answer is creditworthy, but each earns a different number of marks.** The student picks the answer that earns **the fewest marks** and the one that earns **the most**, then sees the marks, the examiner's reasoning for each one, and a technique tip.
 
 The app is all about exam *technique* (command words, levels, showing working, using the source), not about subject content.
 

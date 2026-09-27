@@ -223,9 +223,8 @@
   /* Spacers at both ends let the first and last answers sit centred too, so the answer in view
      always has the same space on both sides, with its neighbours peeking in equally. */
   @media (max-width: 640px) { .responses { --card-w: 84%; --gap: 10px; } }
-  /* On narrow phones the buttons say just "Most" / "Fewest" (the bar icons carry the meaning),
-     so the answer can be narrow enough for its neighbours to show on both sides. */
-  @media (max-width: 440px) { .pick-word { display: none; } }
+  /* On very narrow phones the buttons say just "Fewest" / "Most" (the bar icons carry the meaning). */
+  @media (max-width: 340px) { .pick-word { display: none; } }
   .responses::before, .responses::after {
     content: ""; flex: 0 0 calc((100% - var(--card-w)) / 2 - var(--gap));
   }
@@ -266,16 +265,26 @@
   .response.right { border-color: var(--green); box-shadow: 2px 2px 0 var(--green); }
   .response.wrong { border-color: var(--red); box-shadow: 2px 2px 0 var(--red); }
 
-  .pick-row { display: flex; justify-content: flex-end; gap: 6px; margin-top: auto; }
-  .pick-btn {
-    display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; white-space: nowrap;
-    padding: .35rem .6rem .35rem .5rem; border-radius: 8px;
-    font-weight: 700; font-size: .8rem; background: #fff; transition: background .15s, color .15s;
-    border: 1.5px solid var(--print); color: var(--print);
+  /* Pick strip: two equal halves built into the bottom edge of the sheet (flush with its sides),
+     fewest on the left, most on the right. */
+  .pick-row {
+    display: grid; grid-template-columns: 1fr 1fr; margin: auto -1rem -.9rem -.8rem;
+    border-top: 1.5px solid #bdb8aa; transition: border-color .15s;
   }
+  .pick-btn {
+    display: flex; align-items: center; justify-content: center; gap: .4rem; min-width: 0;
+    cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    padding: .75rem .3rem; border: 0; border-radius: 0;
+    font: inherit; font-weight: 700; font-size: .85rem; background: #fff; color: var(--print);
+    transition: background .15s, color .15s;
+  }
+  .pick-btn + .pick-btn { border-left: 1.5px solid #bdb8aa; }
+  .response.pick-most .pick-row, .response.pick-fewest .pick-row,
+  .response.pick-most .pick-btn + .pick-btn, .response.pick-fewest .pick-btn + .pick-btn { border-color: var(--print); }
   .pick-btn svg { width: 1.1em; height: 1.1em; flex: none; }
+  .pick-btn:hover { background: #f5f3ec; }
   .pick-btn[aria-pressed="true"] { background: var(--print); color: #fff; }
-  .pick-btn:focus-visible { outline: 3px solid var(--biro); outline-offset: 2px; }
+  .pick-btn:focus-visible { outline: 3px solid var(--biro); outline-offset: -3px; }
 
   .carousel-nav {
     display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-bottom: .6rem;
@@ -810,7 +819,7 @@
     (next ? rerender : render)(
       el('section', { class: 'intro' },
         el('h2', {}, 'Every answer is right. Only one gets ', el('em', { text: 'full marks.' })),
-        el('p', {}, 'Each question comes with several real-style student answers. They are all correct, but they earn different marks. Pick the one that earns the most and the one that earns the fewest, then see how an examiner would mark them.')
+        el('p', {}, 'Each question comes with several real-style student answers. They are all correct, but they earn different marks. Pick the one that earns the fewest and the one that earns the most, then see how an examiner would mark them.')
       ),
       el('p', { class: 'step-label', text: '1 · Choose a subject' }),
       subjectGrid,
@@ -907,10 +916,10 @@
         'aria-label': `${label} marks`,
         'aria-pressed': 'false',
         onclick: e => { e.stopPropagation(); pick(kind, ansIdx); }
-      }, meter(kind === 'most'), label, el('span', { class: 'pick-word', text: ' marks' }));
+      }, meter(kind === 'most'), el('span', {}, label, el('span', { class: 'pick-word', text: ' marks' })));
       const mostBtn = pickBtn('most', 'Most');
       const fewestBtn = pickBtn('fewest', 'Fewest');
-      const pickRow = el('div', { class: 'pick-row' }, mostBtn, fewestBtn);
+      const pickRow = el('div', { class: 'pick-row' }, fewestBtn, mostBtn);
       const card = el('div', {
         class: 'response',
         role: 'group',
@@ -991,7 +1000,7 @@
     // --- the review overlay (bottom sheet on phones, side panel on wide screens)
     const wide = () => window.matchMedia('(min-width: 900px)').matches;
     const firstLine = q.prompt.split('\n').find(l => l.trim()) || '';
-    const reviewSub = el('small', { text: 'All creditworthy: pick the most and the fewest marks' });
+    const reviewSub = el('small', { text: 'All creditworthy: pick the fewest and the most marks' });
     const closeBtn = el('button', { class: 'x-btn', 'aria-label': 'Close and go back to the question', onclick: () => closeReview() }, '✕');
     const sheetHead = el('div', { class: 'review-head' },
       el('div', { class: 'handle', 'aria-hidden': 'true' }),
@@ -1006,7 +1015,7 @@
     const review = el('div', { class: 'review' }, el('div', { class: 'review-backdrop', onclick: () => closeReview() }), panel);
 
     const dockTitle = el('b', { text: `Review ${order.length} student answers` });
-    const dockSub = el('small', { text: 'Pick the most and the fewest marks' });
+    const dockSub = el('small', { text: 'Pick the fewest and the most marks' });
     const dock = el('button', { class: 'dock', 'aria-haspopup': 'dialog', onclick: () => openReview() },
       el('span', {}, dockTitle, dockSub), el('span', { class: 'pile', 'aria-hidden': 'true' }, el('i'), el('i'), el('i')));
 
@@ -1154,7 +1163,7 @@
       submitBtn.disabled = !(hasMost && hasFewest);
       clearBtn.disabled = !(hasMost || hasFewest);
       const made = (hasMost ? 1 : 0) + (hasFewest ? 1 : 0);
-      dockSub.textContent = made === 0 ? 'Pick the most and the fewest marks'
+      dockSub.textContent = made === 0 ? 'Pick the fewest and the most marks'
         : made === 1 ? '1 of 2 picks made' : 'Both picked: ready to hand in';
       updateNav();
     }
