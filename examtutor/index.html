@@ -392,7 +392,20 @@
     font-size: .8rem; background: #f4f1e7; border-left: 3px solid var(--print);
   }
   .recall span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .review-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 4px 16px 14px; }
+  /* The answers fill whatever height is left between the dots and the footer, so a whole sheet,
+     buttons included, is always visible; long answers scroll inside the sheet instead. */
+  .review-body {
+    flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 4px 16px 12px;
+    display: flex; flex-direction: column;
+  }
+  .review-body > .carousel-nav { flex: none; }
+  .review-body > .responses { flex: 1 1 auto; min-height: 230px; max-height: 600px; }
+  .review-body > div:last-child { flex: none; max-height: 45%; overflow-y: auto; }
+  /* After marking the sheets carry no buttons, so they can shrink further to make room for the examiner's panel. */
+  .review-body.marked > .responses { flex: 1 1 0; min-height: 140px; }
+  .review-body.marked > div:last-child { flex: none; }
+  .review .sheet { max-height: none; }
+  .review-foot .hint { font-size: .85rem; }
   .review-intro { font-size: .85rem; color: var(--print-muted); margin: .2rem 0 .8rem; }
   .review-foot { border-top: 1px solid var(--paper-line); padding: 10px 16px calc(12px + env(safe-area-inset-bottom)); background: var(--paper); }
   .review-foot .rank-actions { margin-top: 0; }
@@ -417,7 +430,7 @@
   /* After marking: stamp row on each sheet, one examiner's panel, result chip, tip button */
   .mark-row { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: .4rem .5rem; margin-top: auto; min-height: 2.1rem; }
   .mark-row .placing { font-size: .72rem; font-weight: 700; padding: .1rem .5rem; border-radius: 999px; }
-  .exam-panel { margin-top: .9rem; animation: none; }
+  .exam-panel { margin-top: .6rem; animation: none; }
   .result-chip {
     display: inline-flex; align-items: baseline; gap: .35rem; margin-top: .25rem;
     font-size: .8rem; font-weight: 700; padding: .12rem .65rem; border-radius: 999px; color: var(--outcome);
@@ -934,7 +947,7 @@
     // --- the review overlay (bottom sheet on phones, side panel on wide screens)
     const wide = () => window.matchMedia('(min-width: 900px)').matches;
     const firstLine = q.prompt.split('\n').find(l => l.trim()) || '';
-    const reviewSub = el('small', { text: 'Swipe or use the arrows to read them all' });
+    const reviewSub = el('small', { text: 'All creditworthy: pick the most and the fewest marks' });
     const closeBtn = el('button', { class: 'x-btn', 'aria-label': 'Close and go back to the question', onclick: () => closeReview() }, '✕');
     const sheetHead = el('div', { class: 'review-head' },
       el('div', { class: 'handle', 'aria-hidden': 'true' }),
@@ -994,9 +1007,7 @@
 
     const afterEl = el('div');
     const paperAfter = el('div', { class: 'paper-after' });
-    const reviewIntro = el('p', { class: 'review-intro' }, 'All of these answers are creditworthy. Pick the one that earns ',
-        el('b', { text: 'the most marks' }), ' and the one that earns ', el('b', { text: 'the fewest' }), '.');
-    reviewBody.append(reviewIntro, nav, responses, afterEl);
+    reviewBody.append(nav, responses, afterEl);
     // After marking: one examiner's panel that explains whichever answer is in view.
     const examPanel = el('div', { class: 'feedback exam-panel', 'aria-live': 'polite' });
     function showExamPanel() {
@@ -1033,10 +1044,10 @@
       });
       const hasMost = picks.most !== null, hasFewest = picks.fewest !== null;
       hintEl.textContent = hasMost && hasFewest
-        ? 'Both picked: happy with your choices?'
-        : hasMost ? 'Now pick the answer that earns the fewest marks.'
-        : hasFewest ? 'Now pick the answer that earns the most marks.'
-        : 'Read every answer, then pick the one with the most marks and the one with the fewest.';
+        ? 'Both picked: ready to hand in?'
+        : hasMost ? 'Now pick the fewest marks.'
+        : hasFewest ? 'Now pick the most marks.'
+        : `Swipe to read all ${order.length} answers.`;
       submitBtn.disabled = !(hasMost && hasFewest);
       clearBtn.disabled = !(hasMost || hasFewest);
       const made = (hasMost ? 1 : 0) + (hasFewest ? 1 : 0);
@@ -1092,7 +1103,6 @@
       const outcome = ['bad', 'part', 'good'][result.correct];
       reviewSub.replaceWith(el('span', { class: `result-chip outcome-${outcome}`, role: 'status' },
         el('b', { text: scoreWord }), `· ${result.correct} of 2 picks right`));
-      reviewIntro.remove();
       const tipBox = q.tip && el('div', { class: 'tip', hidden: true }, el('b', { text: "Examiner's tip" }), q.tip);
       const tipBtn = q.tip && el('button', { class: 'tip-btn', 'aria-expanded': 'false', onclick: () => {
         const open = tipBox.hidden;
@@ -1106,6 +1116,7 @@
       paperAfter.replaceChildren(el('div', { class: 'rank-actions' },
         el('span', { class: 'hint', text: 'Marked. Open the answers to see why each one scored what it did.' }), makeNext()));
       afterEl.replaceChildren(examPanel, tipBox);
+      reviewBody.classList.add('marked');
       showExamPanel();
       reviewBody.scrollTo({ top: 0, behavior: 'smooth' });
       nextBtn.focus({ preventScroll: true });
