@@ -27,6 +27,10 @@
     --shadow: 0 1px 1px rgba(0,0,0,.06), 0 8px 24px -8px rgba(40,30,10,.35);
     --radius: 3px;
     --accent: #1f5f8b;
+    --dock-bg: #111;
+    --dock-fg: #fff;
+    --dock-edge: transparent;
+    --track: var(--desk-dark);
     --line: 28px;     /* ruled-line spacing on the answer sheets = handwriting line height */
     --rule-y: 21px;   /* where the rule sits in each line; recalibrated to the font's baseline in JS */
     --sheet-max: calc(var(--line) * 13);  /* tallest the writing area gets before it scrolls */
@@ -38,6 +42,11 @@
       --desk-ink: #ece8dc;
       --desk-muted: #a8a392;
       --shadow: 0 1px 1px rgba(0,0,0,.4), 0 14px 30px -10px rgba(0,0,0,.8);
+      /* The docked "Review answers" bar flips to paper-on-dark so it stands out from the dark desk. */
+      --dock-bg: #fffefa;
+      --dock-fg: #111;
+      --dock-edge: #111;
+      --track: #45473f;
     }
   }
 
@@ -146,7 +155,7 @@
 
   /* ---------- Progress bar ---------- */
   .progress { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: .9rem; color: var(--desk-muted); }
-  .progress .bar { flex: 1; height: 6px; background: var(--desk-dark); border-radius: 3px; overflow: hidden; }
+  .progress .bar { flex: 1; height: 6px; background: var(--track); border-radius: 3px; overflow: hidden; }
   .progress .bar i { display: block; height: 100%; background: var(--desk-ink); transition: width .4s ease; }
 
   /* ---------- Exam paper ---------- */
@@ -348,7 +357,7 @@
     position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 20;
     width: min(560px, calc(100% - 24px));
     display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-    background: var(--print); color: #fff; border: 0; border-radius: 16px; cursor: pointer; text-align: left;
+    background: var(--dock-bg); color: var(--dock-fg); border: 0; border-radius: 16px; cursor: pointer; text-align: left;
     padding: .85rem 1.1rem; box-shadow: 0 12px 28px -10px rgba(0,0,0,.65);
     transition: opacity .2s, transform .2s;
     animation: dockIn .4s .2s cubic-bezier(.2,.8,.2,1) both;
@@ -358,7 +367,10 @@
   .dock b { display: block; font-size: 1rem; }
   .dock small { display: block; font-size: .78rem; opacity: .78; margin-top: .1rem; }
   .dock .pile { display: flex; flex: none; padding-left: 9px; }
-  .dock .pile i { width: 20px; height: 26px; background: #fff; border-radius: 2px; margin-left: -9px; box-shadow: -1px 0 0 var(--print); }
+  .dock .pile i {
+    width: 20px; height: 26px; background: #fff; border-radius: 2px; margin-left: -9px;
+    border: 1.5px solid var(--dock-edge); box-shadow: -1px 0 0 var(--dock-bg);
+  }
   .dock .pile i:nth-child(1) { transform: rotate(-8deg); }
   .dock .pile i:nth-child(2) { transform: rotate(-2deg); }
   .dock .pile i:nth-child(3) { transform: rotate(6deg); }
