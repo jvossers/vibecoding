@@ -265,8 +265,8 @@
   /* Colour language: ink = your choices and the examiner's information; green = a pick you got right;
      red = a pick you got wrong (and nothing else); amber = half right. */
   .response.pick-most, .response.pick-fewest { border-color: var(--print); box-shadow: 3px 3px 0 var(--print); }
-  .response.right { border-color: var(--green); box-shadow: 3px 3px 0 var(--green); }
-  .response.wrong { border-color: var(--red); box-shadow: 3px 3px 0 var(--red); }
+  .response.right { border-color: var(--green); box-shadow: 2px 2px 0 var(--green); }
+  .response.wrong { border-color: var(--red); box-shadow: 2px 2px 0 var(--red); }
 
   .pick-row { display: flex; justify-content: flex-end; gap: 6px; margin-top: auto; }
   .pick-btn {
@@ -331,7 +331,7 @@
     display: flex; flex-wrap: wrap; gap: .4rem 1rem; align-items: baseline; margin-bottom: .35rem;
     font-family: "Caveat", cursive; font-size: 1.35rem; font-weight: 700; color: var(--print); line-height: 1.1;
   }
-  .feedback .placing { font-family: "Arimo", sans-serif; font-size: .8rem; font-weight: 700; padding: .1rem .5rem; border-radius: 999px; }
+  .placing, .feedback .placing { font-family: "Arimo", sans-serif; font-size: .8rem; font-weight: 700; padding: .1rem .5rem; border-radius: 999px; }
   .placing.ok { background: var(--green-soft); color: var(--green); }
   .placing.off { background: var(--red-soft); color: var(--red); }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -413,6 +413,25 @@
     .wrap { transition: max-width .32s cubic-bezier(.2,.8,.2,1), margin .32s cubic-bezier(.2,.8,.2,1); }
     body.reviewing .wrap { margin-left: 24px; max-width: calc(100vw - min(56vw, 780px) - 48px); }
   }
+
+  /* After marking: stamp row on each sheet, one examiner's panel, result chip, tip button */
+  .mark-row { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: .4rem .5rem; margin-top: auto; min-height: 2.1rem; }
+  .mark-row .placing { font-size: .72rem; font-weight: 700; padding: .1rem .5rem; border-radius: 999px; }
+  .exam-panel { margin-top: .9rem; animation: none; }
+  .result-chip {
+    display: inline-flex; align-items: baseline; gap: .35rem; margin-top: .25rem;
+    font-size: .8rem; font-weight: 700; padding: .12rem .65rem; border-radius: 999px; color: var(--outcome);
+  }
+  .result-chip b { font-family: "Caveat", cursive; font-size: 1.25rem; line-height: 1; }
+  .result-chip.outcome-good { background: var(--green-soft); }
+  .result-chip.outcome-part { background: #fbf1df; }
+  .result-chip.outcome-bad { background: var(--red-soft); }
+  .tip-btn {
+    border: 1px solid #e8d77a; background: #fff8d6; color: var(--print); border-radius: 999px; cursor: pointer;
+    padding: .5rem .9rem; font-weight: 700; font-size: .85rem;
+  }
+  .tip-btn[aria-expanded="true"] { background: #f5e9a8; }
+  .review-body .tip { margin-top: .8rem; }
 
   /* Result banner + tip */
   .result {
@@ -889,6 +908,7 @@
       prevBtn.disabled = current === 0;
       nextNavBtn.disabled = current === list.length - 1;
       countEl.textContent = `Answer ${current + 1} of ${list.length}`;
+      if (submitted) showExamPanel();
       dotsEl.replaceChildren(...list.map((c, i) => {
         const idx = +c.dataset.idx;
         const kind = picks.most === idx ? 'most' : picks.fewest === idx ? 'fewest' : '';
@@ -914,10 +934,11 @@
     // --- the review overlay (bottom sheet on phones, side panel on wide screens)
     const wide = () => window.matchMedia('(min-width: 900px)').matches;
     const firstLine = q.prompt.split('\n').find(l => l.trim()) || '';
+    const reviewSub = el('small', { text: 'Swipe or use the arrows to read them all' });
     const closeBtn = el('button', { class: 'x-btn', 'aria-label': 'Close and go back to the question', onclick: () => closeReview() }, '✕');
     const sheetHead = el('div', { class: 'review-head' },
       el('div', { class: 'handle', 'aria-hidden': 'true' }),
-      el('div', { class: 'review-title' }, el('h3', { text: 'Student answers' }), el('small', { text: 'Swipe or use the arrows to read them all' })),
+      el('div', { class: 'review-title' }, el('h3', { text: 'Student answers' }), reviewSub),
       closeBtn);
     const recall = el('div', { class: 'recall' },
       el('span', { text: `Q${q.number || s.index + 1} · ${firstLine}` }), el('b', { text: `[${q.marks}]` }));
@@ -973,10 +994,21 @@
 
     const afterEl = el('div');
     const paperAfter = el('div', { class: 'paper-after' });
-    reviewBody.append(
-      el('p', { class: 'review-intro' }, 'All of these answers are creditworthy. Pick the one that earns ',
-        el('b', { text: 'the most marks' }), ' and the one that earns ', el('b', { text: 'the fewest' }), '.'),
-      nav, responses, afterEl);
+    const reviewIntro = el('p', { class: 'review-intro' }, 'All of these answers are creditworthy. Pick the one that earns ',
+        el('b', { text: 'the most marks' }), ' and the one that earns ', el('b', { text: 'the fewest' }), '.');
+    reviewBody.append(reviewIntro, nav, responses, afterEl);
+    // After marking: one examiner's panel that explains whichever answer is in view.
+    const examPanel = el('div', { class: 'feedback exam-panel', 'aria-live': 'polite' });
+    function showExamPanel() {
+      const c = trackCards()[current];
+      if (!c || !c._marking) return;
+      const { a, label, tags } = c._marking;
+      examPanel.replaceChildren(
+        el('div', { class: 'verdict' },
+          el('span', { class: 'mark-stamp', 'aria-label': `${a.marks} out of ${q.marks} marks` }, `${a.marks}/${q.marks}`),
+          label, ...tags(false)),
+        a.explanation);
+    }
     reviewFoot.append(actionsEl);
 
     // Choosing an answer for one role takes it away from whichever answer had it,
@@ -1024,15 +1056,15 @@
       cards.forEach(card => {
         const idx = +card.dataset.idx;
         const a = q.answers[idx];
-        const tags = [];
-        if (picks.most === idx) tags.push(el('span', {
-          class: `placing ${result.mostRight ? 'ok' : 'off'}`,
-          text: result.mostRight ? 'Your "most marks" pick ✓' : 'Your "most marks" pick ✗'
-        }));
-        if (picks.fewest === idx) tags.push(el('span', {
-          class: `placing ${result.fewestRight ? 'ok' : 'off'}`,
-          text: result.fewestRight ? 'Your "fewest marks" pick ✓' : 'Your "fewest marks" pick ✗'
-        }));
+        // Tags for the student's own picks: short on the sheet, full in the examiner's panel.
+        const tags = short => {
+          const out = [];
+          const tag = (ok, kind) => el('span', { class: `placing ${ok ? 'ok' : 'off'}`,
+            text: short ? `${ok ? '✓' : '✗'} your "${kind}" pick` : `Your "${kind} marks" pick ${ok ? '✓' : '✗'}` });
+          if (picks.most === idx) out.push(tag(result.mostRight, 'most'));
+          if (picks.fewest === idx) out.push(tag(result.fewestRight, 'fewest'));
+          return out;
+        };
         const label = a.marks === max ? `${plural(a.marks, 'mark')}: the best answer`
           : a.marks === min ? `${plural(a.marks, 'mark')}: the weakest answer`
           : plural(a.marks, 'mark');
@@ -1042,12 +1074,10 @@
         card.classList.toggle('right', pickedRight);
         card.classList.toggle('wrong', pickedWrong);
         card._verdict = pickedRight ? 'right' : pickedWrong ? 'wrong' : '';
-        card._pickRow.replaceWith(el('div', { class: 'feedback' },
-          el('div', { class: 'verdict' },
-            el('span', { class: 'mark-stamp', 'aria-label': `${a.marks} out of ${q.marks} marks` }, `${a.marks}/${q.marks}`),
-            label, ...tags),
-          a.explanation
-        ));
+        card._marking = { a, label, tags };
+        card._pickRow.replaceWith(el('div', { class: 'mark-row' },
+          ...tags(true),
+          el('span', { class: 'mark-stamp', 'aria-label': `${a.marks} out of ${q.marks} marks` }, `${a.marks}/${q.marks}`)));
       });
       // Answers stay in the position the student saw them in.
       updateNav();
@@ -1059,24 +1089,24 @@
       const nextBtn = makeNext();
       const scoreWord = result.correct === 2 ? 'Spot on!' : result.correct === 1 ? 'Half right' : 'Not quite';
 
-      reviewFoot.replaceChildren(el('div', { class: 'rank-actions' },
-        el('span', { class: 'hint', text: `${scoreWord} Each answer now shows its marks.` }), nextBtn));
+      const outcome = ['bad', 'part', 'good'][result.correct];
+      reviewSub.replaceWith(el('span', { class: `result-chip outcome-${outcome}`, role: 'status' },
+        el('b', { text: scoreWord }), `· ${result.correct} of 2 picks right`));
+      reviewIntro.remove();
+      const tipBox = q.tip && el('div', { class: 'tip', hidden: true }, el('b', { text: "Examiner's tip" }), q.tip);
+      const tipBtn = q.tip && el('button', { class: 'tip-btn', 'aria-expanded': 'false', onclick: () => {
+        const open = tipBox.hidden;
+        tipBox.hidden = !open;
+        tipBtn.setAttribute('aria-expanded', String(open));
+        if (open) tipBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } }, "💡 Examiner's tip");
+      reviewFoot.replaceChildren(el('div', { class: 'rank-actions' }, tipBtn || el('span'), nextBtn));
       dockTitle.textContent = "See the examiner's marks";
       dockSub.textContent = `${scoreWord} · ${result.correct} of 2 picks right`;
       paperAfter.replaceChildren(el('div', { class: 'rank-actions' },
         el('span', { class: 'hint', text: 'Marked. Open the answers to see why each one scored what it did.' }), makeNext()));
-      afterEl.replaceChildren(
-        el('div', { class: `result outcome-${['bad', 'part', 'good'][result.correct]}`, role: 'status' },
-          el('div', { class: 'score', text: result.correct === 2 ? 'Spot on!' : result.correct === 1 ? 'Half right' : 'Not quite' }),
-          el('ul', {},
-            el('li', { class: result.mostRight ? 'yes' : 'no',
-              text: result.mostRight ? 'You found the answer with the most marks.' : 'Your "most marks" pick was not the top-scoring answer.' }),
-            el('li', { class: result.fewestRight ? 'yes' : 'no',
-              text: result.fewestRight ? 'You found the answer with the fewest marks.' : 'Your "fewest marks" pick was not the lowest-scoring answer.' })
-          )
-        ),
-        q.tip && el('div', { class: 'tip' }, el('b', { text: "Examiner's tip" }), q.tip)
-      );
+      afterEl.replaceChildren(examPanel, tipBox);
+      showExamPanel();
       reviewBody.scrollTo({ top: 0, behavior: 'smooth' });
       nextBtn.focus({ preventScroll: true });
     }
