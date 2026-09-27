@@ -57,7 +57,7 @@ Add an entry to `data/subjects.json` and create the file it points to. The keys 
       "id": "maths-005",                     // unique, stable
       "boards": ["AQA", "Edexcel", "OCR"],   // boards this question suits
       "paper": "Non-calculator paper",       // shown in the paper header; keep it board-neutral for all-board questions
-      "number": "5",                         // printed question number (optional)
+      "number": "5",                         // number on the source paper (optional; not shown, the app numbers by position in the session)
       "topic": "Estimation",
       "skill": "Round to 1 s.f. and show it", // the exam technique being tested
       "marks": 3,                            // total marks available

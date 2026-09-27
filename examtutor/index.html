@@ -992,7 +992,7 @@
       q.bullets && el('ul', { class: 'q-bullets' }, q.bullets.map(b => el('li', { text: b })))
     );
     const qLine = el('div', { class: 'q-line' },
-      el('div', { class: 'q-num', text: q.number || String(s.index + 1) }),
+      el('div', { class: 'q-num', text: String(s.index + 1) }),
       el('div', {}, qText, el('p', { class: 'q-marks', text: `[${plural(q.marks, 'mark')}]` }))
     );
 
@@ -1095,7 +1095,7 @@
       el('div', { class: 'review-title' }, el('h3', { text: 'Student answers' }), reviewSub),
       closeBtn);
     const recall = el('div', { class: 'recall' },
-      el('span', { text: `Q${q.number || s.index + 1} · ${firstLine}` }), el('b', { text: `[${q.marks}]` }));
+      el('span', { text: `Q${s.index + 1} · ${firstLine}` }), el('b', { text: `[${q.marks}]` }));
     const reviewFoot = el('div', { class: 'review-foot' });
     const reviewBody = el('div', { class: 'review-body' });
     const panel = el('div', { class: 'review-panel', role: 'dialog', 'aria-label': 'Student answers', tabindex: '-1' },
