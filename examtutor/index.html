@@ -72,7 +72,7 @@
   .masthead small { font-size: .8rem; color: var(--desk-muted); text-transform: uppercase; letter-spacing: .12em; text-align: right; }
 
   /* ---------- Setup ---------- */
-  .intro { display: grid; gap: 1.5rem; grid-template-columns: 1fr; margin-bottom: 2rem; }
+  .intro { display: grid; gap: 1.5rem; grid-template-columns: 1fr; margin-bottom: 1.4rem; }
   @media (min-width: 720px) { .intro { grid-template-columns: 1.3fr 1fr; align-items: end; } }
   .intro h2 {
     font-family: "Fraunces", Georgia, serif; font-weight: 700;
@@ -87,8 +87,8 @@
   }
   .subject-grid {
     display: grid; gap: 8px;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    margin-bottom: 1.4rem;
   }
   .subject {
     position: relative; text-align: left; cursor: pointer;
@@ -112,6 +112,31 @@
     border: 1.5px solid var(--print); padding: .05rem .4rem; min-width: 3.4rem; text-align: center;
   }
   .subj-board.diff { background: var(--print); color: #fff; }
+
+  /* Phones: a compact setup so everything down to the start button fits on one screen. */
+  @media (max-width: 599px) {
+    .masthead { padding: 1rem 0 .7rem; margin-bottom: 1rem; align-items: center; }
+    .masthead small { font-size: .62rem; line-height: 1.35; max-width: 11rem; }
+    .intro { gap: .5rem; margin-bottom: 1rem; }
+    .intro h2 { font-size: 1.75rem; }
+    .intro p { font-size: .95rem; line-height: 1.4; }
+    .boards-card { padding: .5rem .5rem .5rem .8rem; margin-bottom: 1rem; }
+    .boards-card { line-height: 1.3; }
+    .boards-card b { font-size: .88rem; }
+    .boards-card span { font-size: .8rem; }
+    .boards-card .chip { padding: .25rem .8rem; }
+    .step-label { margin-bottom: .5rem; }
+    .subject-grid { grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 1rem; }
+    .subject {
+      display: grid; grid-template-columns: 1fr auto; align-items: end; gap: .15rem .4rem;
+      min-height: 0; padding: .5rem .55rem .5rem .9rem;
+    }
+    .subject strong { grid-column: 1 / -1; font-size: .92rem; }
+    .subject.mixed { grid-column: 1 / -1; grid-template-columns: 1fr auto; align-items: center; }
+    .subject.mixed strong { grid-column: auto; }
+    .subject::after { font-size: 1.6rem; }
+    .count-row { margin-bottom: .9rem; }
+  }
   .subject[aria-pressed="true"] { outline: 3px solid var(--c, var(--accent)); outline-offset: 2px; transform: translateY(-2px); }
   .subject[aria-pressed="true"]::after {
     content: "✓"; position: absolute; right: -.2rem; top: -1.1rem;
@@ -120,7 +145,7 @@
   .subject.mixed { background: repeating-linear-gradient(-45deg, var(--paper), var(--paper) 10px, #f5f2ea 10px, #f5f2ea 20px); }
 
   [data-step] { scroll-margin: 24px 0 48px; }  /* extra room below for phone browser toolbars */
-  .count-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 2rem; }
+  .count-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.2rem; }
   .chip {
     border: 2px solid var(--desk-ink); background: transparent; border-radius: 999px;
     padding: .45rem 1.1rem; font-weight: 700; cursor: pointer; min-width: 3.2rem;
@@ -884,7 +909,7 @@
     (next ? rerender : render)(
       el('section', { class: 'intro' },
         el('h2', {}, 'Every answer is right. Only one gets ', el('em', { text: 'full marks.' })),
-        el('p', {}, 'Each question comes with several real-style student answers. They are all correct, but they earn different marks. Pick the one that earns the most and the one that earns the fewest, then see how an examiner would mark them.')
+        el('p', {}, 'Pick the answer that earns the most marks and the one that earns the fewest.')
       ),
       boardsCard,
       el('p', { class: 'step-label', text: '1 · Choose a subject' }),
