@@ -30,9 +30,9 @@
           "explanation": "Level 1 (1–2 marks): a basic pattern with one named example. It needs more precise use of the map: latitudes, more named areas, and where storms are absent."
         },
         {
-          "text": "Tropical storms form over warm oceans above 27 °C. They need the Coriolis effect to spin, which is why they don't form on the Equator. They lose energy when they reach land.",
+          "text": "Tropical storms form over warm oceans where the sea is above 27 °C. They need the Coriolis effect to spin, which is why they don't form on the Equator. They lose energy when they reach land, because they are no longer over warm water to feed them. They are called hurricanes, cyclones or typhoons depending on where they form.",
           "marks": 1,
-          "explanation": "Mostly explanation, which the command word 'describe' does not ask for. Only the general idea that storms form over oceans (the pattern) can be credited. Save causes for an 'explain' or 'suggest why' question."
+          "explanation": "Mostly explanation, which the command word 'describe' does not ask for. Only the general idea that storms form over oceans (the pattern) can be credited; the reasons, and the different names for storms, earn nothing here. Save causes for an 'explain' or 'suggest why' question."
         },
         {
           "text": "Tropical storms are very dangerous. They cause lots of damage and kill many people, like Typhoon Haiyan in the Philippines in 2013.",
@@ -55,7 +55,7 @@
       "prompt": "Explain why the effects of earthquakes are often greater in low-income countries (LICs) than in high-income countries (HICs).",
       "answers": [
         {
-          "text": "In LICs many buildings are not built to earthquake-resistant designs because of the cost, so they are more likely to collapse, which leads to more deaths and injuries. Also, LICs often have fewer emergency services and hospitals, which means injured people may not be rescued or treated quickly, so more people die after the earthquake.",
+          "text": "In LICs many buildings are not earthquake-resistant because of the cost, so more collapse, causing more deaths. LICs also have fewer emergency services and hospitals, which means injured people are not rescued or treated quickly, so more die after the earthquake.",
           "marks": 4,
           "explanation": "Level 2 (3–4 marks): two points, each developed into a clear chain of reasoning (cause, then consequence, then effect on deaths or damage). The connectives 'so', 'which leads to' and 'which means' show the development examiners reward."
         },
@@ -70,9 +70,9 @@
           "explanation": "Level 1 (1–2 marks): a list of relevant ideas, but none is explained. In a 4-mark 'explain' question, two developed points beat five undeveloped ones."
         },
         {
-          "text": "Because LICs are poor.",
+          "text": "Earthquakes happen at plate boundaries, and some of the biggest earthquakes have happened in HICs such as Japan and the USA. The effects are often greater in LICs because LICs are poor. HICs are rich countries and LICs are poor countries, which is the main difference between them, so LICs can't cope as well.",
           "marks": 1,
-          "explanation": "Level 1, low: a valid basic idea, but it doesn't explain how being poor makes the effects greater. One mark at most."
+          "explanation": "Level 1, low: a valid basic idea (LICs are poor), but it never explains how being poor makes the effects greater. The rest defines HICs and LICs and says where earthquakes happen, which earns nothing. One mark at most."
         }
       ],
       "tip": "Use 'point, then develop': make a point, then add 'this means that…' and a consequence. Two well-developed points are enough for 4 marks."
@@ -105,9 +105,9 @@
           "explanation": "Level 2, low: it has a judgement and some balance, but no named example, even though the question asks for one. Generic answers cap your mark. Learn three or four facts about your case study."
         },
         {
-          "text": "Flooding happens when a river bursts its banks. It is caused by heavy rainfall, snowmelt and urbanisation, as impermeable surfaces mean water runs off quickly into the river.",
+          "text": "Flooding happens when a river bursts its banks and water spreads onto the floodplain. It is caused by heavy rainfall, snowmelt and urbanisation, as impermeable surfaces mean water runs off quickly into the river. Deforestation also increases flood risk because fewer trees intercept the rain. Floods can damage homes and businesses and even kill people, so they are a serious hazard.",
           "marks": 1,
-          "explanation": "Level 1 (1–3 marks): accurate but irrelevant. It explains the causes of flooding, not whether management schemes are worth it. Only a small amount of credit is given for relevant understanding."
+          "explanation": "Level 1 (1–3 marks): accurate but irrelevant. It explains the causes and effects of flooding, not whether management schemes are worth it, and never names a scheme. Only a small amount of credit is given for relevant understanding."
         }
       ],
       "tip": "About 12 minutes. Name your example in the first line, use at least three specific facts, cover both sides, and finish with 'Overall, I agree to a large extent because…'. Up to 3 extra marks for spelling, punctuation and grammar."
@@ -157,9 +157,9 @@
           "explanation": "One mark for finding the change correctly, but it was divided by the new value instead of the original. Percentage change is always compared with the starting value."
         },
         {
-          "text": "14.4 ÷ 4.8 × 100 = 300%",
+          "text": "Population in 1990 = 4.8 million\nPopulation in 2020 = 14.4 million\n14.4 ÷ 4.8 × 100 = 300%\nThe population increased by 300%.",
           "marks": 0,
-          "explanation": "Zero. This shows the 2020 population as a percentage of the 1990 population, not the increase. A population that triples has increased by 200%, not 300%."
+          "explanation": "Zero. This shows the 2020 population as a percentage of the 1990 population, not the increase. A population that triples has increased by 200%, not 300%. Copying the data out neatly doesn't earn marks on its own."
         }
       ],
       "tip": "Skills questions appear on every paper and are quick marks. Learn: % change = (new − original) ÷ original × 100. Show each step and include the unit."
@@ -183,9 +183,9 @@
           "explanation": "Full marks: easting 43 plus 3 tenths (433), then northing 17 plus 6 tenths (176)."
         },
         {
-          "text": "4317",
+          "text": "Grid square 4317\n(easting 43, northing 17)",
           "marks": 1,
-          "explanation": "One mark at most: this is the four-figure reference for the square. The question asks for six figures, which pinpoint the church within the square."
+          "explanation": "One mark at most: this is the four-figure reference for the square. The question asks for six figures, which pinpoint the church within the square. Labelling the easting and northing is good practice, but the answer still stops at four figures."
         },
         {
           "text": "176433",
@@ -219,7 +219,7 @@
           "explanation": "One mark for the range. The median is the middle value after putting the data in order; here the middle of the unordered list was used."
         },
         {
-          "text": "Range = 0.2 to 0.8\nMedian = 0.44 m/s",
+          "text": "Range = 0.2 to 0.8 m/s\nMedian = 0.44 m/s (the average)",
           "marks": 0,
           "explanation": "Zero. The range is one number (the difference), not two end points, and 0.44 is the mean, not the median."
         }
@@ -268,14 +268,14 @@
       "prompt": "Using Figure 1, describe the changes in atmospheric carbon dioxide concentration between 1960 and 2020.",
       "answers": [
         {
-          "text": "CO₂ concentration increased throughout the period, from about 317 ppm in 1960 to about 414 ppm in 2020, an increase of nearly 100 ppm. The rate of increase has sped up: it rose by 22 ppm from 1960 to 1980 but by 44 ppm from 2000 to 2020.",
+          "text": "It rose steadily, from about 317 ppm in 1960 to about 414 ppm in 2020, and the rise sped up: +22 ppm from 1960 to 1980 but +44 ppm from 2000 to 2020.",
           "marks": 3,
           "explanation": "Full marks: the overall trend (1), data with units (1), and the change in the rate of increase (1)."
         },
         {
-          "text": "CO₂ went up from 317 ppm in 1960 to 414 ppm in 2020.",
+          "text": "Looking at Figure 1, the amount of carbon dioxide in the atmosphere changed a lot between 1960 and 2020. CO₂ went up from 317 ppm in 1960 to 414 ppm in 2020, which is a big change.",
           "marks": 2,
-          "explanation": "Two marks: the trend with data. Look for a third point: here, the increase is accelerating."
+          "explanation": "Two marks: the trend with data. Look for a third point: here, the increase is accelerating. 'Changed a lot' and 'a big change' restate the question rather than adding a point."
         },
         {
           "text": "It went up.",
@@ -318,9 +318,9 @@
           "explanation": "Two marks: two relevant features, but neither is explained. Add 'which means…' to link each one to flooding."
         },
         {
-          "text": "It might rain a lot.",
+          "text": "Figure 2 shows a town centre next to a river, which could flood. It might rain a lot, and if there is a lot of rain the river could flood the town.",
           "marks": 1,
-          "explanation": "One mark at most: rain is relevant everywhere, so this isn't a reason based on the photo."
+          "explanation": "One mark at most: rain is relevant everywhere, so this isn't a reason based on the photo. Describing the photo in general terms ('a town centre next to a river') just repeats the question."
         }
       ],
       "tip": "'Suggest' + photo: point to something you can see, then explain how it increases the risk."
@@ -339,14 +339,14 @@
       "prompt": "Explain one advantage and one disadvantage of using a questionnaire to collect data in a human geography enquiry.",
       "answers": [
         {
-          "text": "An advantage is that a questionnaire collects people's opinions directly, for example asking residents how safe they feel in a regenerated area, which can't be measured any other way. A disadvantage is that people may not answer honestly or may misunderstand a question, so the data may not be reliable, especially if the sample is small or only includes people who were willing to stop.",
+          "text": "Advantage: it records people's opinions directly (e.g. how safe residents feel after regeneration), which can't be measured another way. Disadvantage: people may answer dishonestly or misunderstand a question, so the data may be unreliable.",
           "marks": 4,
           "explanation": "Full marks: an advantage and a disadvantage, each explained and linked to the reliability or usefulness of the data."
         },
         {
-          "text": "Advantage: you can get people's opinions. Disadvantage: people might lie.",
+          "text": "Advantage: you can get people's opinions, which is useful in a human geography enquiry and is one of the main advantages of questionnaires.\nDisadvantage: people might lie, which is a disadvantage of using a questionnaire because it is a problem.",
           "marks": 2,
-          "explanation": "Two marks: valid points, but neither is explained. Develop each with 'because' or 'which means'."
+          "explanation": "Two marks: valid points, but neither is explained. Develop each with 'because' or 'which means'. The 'which…' phrases only repeat the question ('useful', 'a disadvantage', 'a problem'), so they don't count as explanation."
         },
         {
           "text": "It is easy to do.",
@@ -370,7 +370,7 @@
       "prompt": "Justify the sampling method you used to choose sites for your river fieldwork.",
       "answers": [
         {
-          "text": "We used systematic sampling, choosing a site every 200 m along the river. This was appropriate because it gave an even spread of sites from upstream to downstream, so we could see how the channel changed with distance. It also reduced bias, because we couldn't just pick the easiest spots.",
+          "text": "Systematic sampling: a site every 200 m along the river. This gave an even spread from upstream to downstream, so we could see how the channel changed with distance, and it avoided bias because we couldn't just pick the easiest spots.",
           "marks": 3,
           "explanation": "Full marks: the method named and described (1), with two reasons why it suited this enquiry (2)."
         },
@@ -380,9 +380,9 @@
           "explanation": "One mark for naming and describing the method, but 'justify' needs reasons why it was a good choice."
         },
         {
-          "text": "We went to the river and measured the width, depth and velocity.",
+          "text": "We went to the river on a sunny day in June and worked in groups of four. At each site we measured the width with a tape measure, the depth with a metre ruler and the velocity using a float and a stopwatch, and we recorded everything on a data sheet.",
           "marks": 0,
-          "explanation": "Zero. This describes what was measured, not how the sites were chosen or why."
+          "explanation": "Zero. This describes the day and what was measured in some detail, but not how the sites were chosen or why. Read the question: it is only about sampling."
         }
       ],
       "tip": "Justify = 'I chose X because…'. Link the reason to your enquiry question, and to reducing bias or improving reliability."
@@ -432,7 +432,7 @@
       "prompt": "Using an atlas map of South America, describe the location of Brazil.",
       "answers": [
         {
-          "text": "Brazil is in eastern South America, with a long coastline on the Atlantic Ocean. The Equator passes through the north of the country and the Tropic of Capricorn crosses the south. It borders most other South American countries, including Argentina to the south-west and Colombia to the north-west.",
+          "text": "Eastern South America, with a long Atlantic coastline. The Equator crosses the north and the Tropic of Capricorn the south. It borders most South American countries, including Argentina to the south-west and Colombia to the north-west.",
           "marks": 3,
           "explanation": "Full marks: continent and position within it (1), a line of latitude (1), and neighbouring countries or oceans with compass directions (1)."
         },
@@ -447,9 +447,9 @@
           "explanation": "One mark: correct, but too basic for 3 marks."
         },
         {
-          "text": "Brazil is hot and has the Amazon rainforest.",
+          "text": "Brazil is a very large country and it is hot, with a tropical climate. It has the Amazon rainforest and the Amazon River, and its capital is Brasília. Its biggest cities are São Paulo and Rio de Janeiro. It is also famous for football and carnival.",
           "marks": 0,
-          "explanation": "Zero. This describes Brazil's climate and features, not its location."
+          "explanation": "Zero. This describes Brazil's climate, features and cities, not its location (where it is). Location answers use the continent, lines of latitude, oceans and neighbouring countries."
         }
       ],
       "tip": "Location = where it is: continent, compass position, lines of latitude, oceans, neighbours. Features and climate are not location."
@@ -467,7 +467,7 @@
       "prompt": "Using an example, explain how urban regeneration can improve quality of life.",
       "answers": [
         {
-          "text": "The regeneration of Stratford in East London for the 2012 Olympics improved quality of life in several ways. The athletes' village was converted into the East Village, providing thousands of new homes, some of them affordable, for people who had lived in overcrowded housing. Westfield Stratford City shopping centre created thousands of jobs, raising incomes in one of London's most deprived boroughs. Transport links improved, so residents can reach jobs across London more easily, and the Queen Elizabeth Olympic Park gave the area large green spaces for leisure and health. However, rising house prices mean some original residents have been priced out.",
+          "text": "The regeneration of Stratford, East London, for the 2012 Olympics improved quality of life. The athletes' village became East Village, providing thousands of new homes, some affordable, for people from overcrowded housing. Westfield Stratford City created thousands of jobs, raising incomes in a deprived borough. Better transport links help residents reach jobs across London, and the Queen Elizabeth Olympic Park provides green space for leisure and health. However, rising house prices have priced some original residents out.",
           "marks": 6,
           "explanation": "Level 3 (5–6 marks): a named example with specific detail, several ways quality of life improved (housing, jobs, transport, green space), each clearly explained, and some balance."
         },
@@ -477,14 +477,14 @@
           "explanation": "Level 2 (3–4 marks): a named example with relevant changes, but explanations of how quality of life improved are brief and the detail is limited."
         },
         {
-          "text": "Regeneration can improve quality of life because it makes areas nicer, with new houses and shops and fewer crimes.",
+          "text": "Urban regeneration is when an old, run-down area of a city is improved. This can improve quality of life in lots of ways. Regeneration can make areas nicer, with new houses and shops, and there will be fewer crimes because the area is looked after. There will be more jobs, so people will have more money, and new parks and green spaces make people healthier and happier. Transport can also be improved, with new roads and train stations. All of these things make it a much better place to live, which improves quality of life for the people who live there.",
           "marks": 2,
-          "explanation": "Level 1 (1–2 marks): relevant general points, but no named example, which caps the mark."
+          "explanation": "Level 1 (1–2 marks): relevant general points, but no named example, which caps the mark however many points are made. 'Using an example' means a real place with specific detail."
         },
         {
-          "text": "Urban regeneration is when an old area is improved.",
+          "text": "Urban regeneration is when an old area is improved. It happens in lots of cities in the UK, especially in areas where old industries such as docks and factories have closed down and the buildings are empty.",
           "marks": 1,
-          "explanation": "Level 1, low: a definition only, with no explanation of quality of life."
+          "explanation": "Level 1, low: a definition and some background on where regeneration happens, with no explanation of quality of life."
         }
       ],
       "tip": "Name your example in the first sentence. Give 2–3 specific changes, and for each say how it improved people's lives."
@@ -536,7 +536,7 @@
       "prompt": "Assess the importance of physical factors in causing river flooding.",
       "answers": [
         {
-          "text": "Physical factors are often the main trigger. Prolonged or intense rainfall is the most important, because it supplies the water; if the ground is already saturated, infiltration stops and surface runoff increases rapidly. Impermeable rock such as clay, steep slopes and a small, circular drainage basin also shorten the lag time, so water reaches the channel quickly.\n\nHowever, human factors can be just as important. Urbanisation replaces soil with impermeable surfaces, and deforestation reduces interception, both increasing runoff. In many towns, flooding happens because human changes make the effects of heavy rain worse.\n\nOverall, physical factors, especially intense rainfall, are usually the cause, but their importance depends on human land use.",
+          "text": "Physical factors are often the main trigger. Intense or prolonged rainfall matters most because it supplies the water; if the ground is saturated, infiltration stops and surface runoff rises rapidly. Impermeable rock such as clay, steep slopes and a small, circular basin also shorten the lag time.\n\nHowever, human factors can be just as important: urbanisation creates impermeable surfaces and deforestation reduces interception, both increasing runoff.\n\nOverall, physical factors, especially intense rainfall, usually cause the flood, but how serious it is depends on human land use.",
           "marks": 8,
           "explanation": "Top level (6–8 marks): several physical factors explained, weighed against human factors, with a clear, supported judgement about their relative importance."
         },
@@ -551,9 +551,9 @@
           "explanation": "Lower middle: relevant factors listed, but none is explained."
         },
         {
-          "text": "Flooding is when a river bursts its banks.",
+          "text": "Flooding is when a river bursts its banks and water spreads out over the land around it, which is called the floodplain. Floods can be very dangerous. They can damage houses, shops and roads, and people may have to be evacuated from their homes. Farmland can be covered in water, so crops are ruined, and electricity and water supplies can be cut off. It can cost millions of pounds to repair the damage afterwards, and insurance becomes more expensive. In some countries, floods kill a lot of people. In the UK there have been many serious floods in recent years, for example in Cumbria and Somerset.",
           "marks": 1,
-          "explanation": "Level 1: a definition only."
+          "explanation": "Level 1: a definition followed by the effects of flooding, which the question doesn't ask about. It never assesses any physical factor, so the extra length earns nothing."
         }
       ],
       "tip": "'Assess': explain the factors, compare their importance, and finish with a judgement ('the most important factor is… because…')."
@@ -570,17 +570,17 @@
       "prompt": "Explain one reason why tropical storms weaken when they reach land.",
       "answers": [
         {
-          "text": "Tropical storms get their energy from warm, moist air rising from the ocean surface. Over land this supply of heat and moisture is cut off, so the storm loses its energy source and weakens.",
+          "text": "Over land the storm is cut off from the warm, moist air rising off the ocean, which is its energy source, so it weakens.",
           "marks": 2,
           "explanation": "Full marks: the reason (loss of the warm ocean energy supply) (1), developed to explain how this weakens the storm (1)."
         },
         {
-          "text": "Because there is no warm sea.",
+          "text": "Tropical storms weaken when they reach land because there is no warm sea there, and tropical storms need a warm sea to keep going.",
           "marks": 1,
-          "explanation": "One mark for the idea, but it isn't developed. Explain why the warm sea matters (it supplies the heat and moisture)."
+          "explanation": "One mark for the idea, but it isn't developed. Explain why the warm sea matters (it supplies the heat and moisture). Saying storms 'need a warm sea' repeats the idea without saying what the sea supplies."
         },
         {
-          "text": "Because the land stops the wind.",
+          "text": "Because the land stops the wind, as there are lots of buildings and hills in the way.",
           "marks": 0,
           "explanation": "Zero. Friction does slow the winds a little, but this isn't explained, and the main reason is the loss of the ocean energy supply."
         }

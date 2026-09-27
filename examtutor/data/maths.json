@@ -68,9 +68,9 @@
           "explanation": "M1 for the first expansion only. In a 'show that' question you already know the answer, so the marks are entirely for the steps that get you there. Skipping steps throws them away."
         },
         {
-          "text": "Try x = 2:\nLHS = (7)(1) − 2(3) = 7 − 6 = 1\nRHS = 2² − 3 = 1\n\nLHS = RHS so it is true.",
+          "text": "Try x = 2:\nLHS = (7)(1) − 2(3) = 7 − 6 = 1\nRHS = 2² − 3 = 1 ✓\n\nTry x = 5:\nLHS = (13)(4) − 5(6) = 52 − 30 = 22\nRHS = 5² − 3 = 22 ✓\n\nBoth sides are equal for both values, so it is true.",
           "marks": 0,
-          "explanation": "Zero. The ≡ sign means 'true for all values of x'. Checking one value does not prove this. It could be a coincidence. An identity must be proved algebraically. (Substituting a value is a good way to check your algebra, though.)"
+          "explanation": "Zero. The ≡ sign means 'true for all values of x'. Checking two values (or ten) does not prove this: it could be a coincidence. An identity must be proved algebraically. The working looks thorough, but none of it is the method the question needs. (Substituting a value is a good way to check your algebra, though.)"
         }
       ],
       "tip": "In 'show that' questions the answer is given, so all the marks are for the method. Show every line, use brackets when subtracting, and finish with exactly the required expression."
@@ -90,9 +90,9 @@
       "prompt": "Work out an estimate for the value of\n\n(48.7 × 3.1) ÷ 0.49",
       "answers": [
         {
-          "text": "48.7 ≈ 50   3.1 ≈ 3   0.49 ≈ 0.5\n\n(50 × 3) ÷ 0.5 = 150 ÷ 0.5\n                     = 300\n\nAnswer: 300",
+          "text": "(50 × 3) ÷ 0.5\n= 150 ÷ 0.5\n= 300",
           "marks": 3,
-          "explanation": "Full marks. B1 (or M1) for rounding each value to 1 significant figure, M1 for correctly working with the rounded values, and A1 for 300. The roundings are shown explicitly, which is what the examiner is looking for."
+          "explanation": "Full marks. B1 (or M1) for rounding each value to 1 significant figure, M1 for correctly working with the rounded values, and A1 for 300. The rounded values appear in the first line, which is all the examiner needs to see: short working is fine when every step is visible."
         },
         {
           "text": "50 × 3 = 150\n150 ÷ 0.5 = 75\n\nAnswer: 75",
@@ -100,7 +100,7 @@
           "explanation": "One mark for the correct roundings. Dividing by 0.5 is the same as multiplying by 2, so the answer should be 300, not 75. A quick sense check helps: dividing by a number less than 1 makes the answer bigger."
         },
         {
-          "text": "50 × 3 = 150\n150 ÷ 0.5 = 300\n\nAnswer: 30",
+          "text": "48.7 rounds to 50, 3.1 rounds to 3 and 0.49 rounds to 0.5\n50 × 3 = 150\n150 ÷ 0.5 = 300\n\nAnswer: 30",
           "marks": 2,
           "explanation": "M1 M1 A0. The method is correct and the right value appears in the working, but the final answer is copied down wrongly. This is an easy mark to lose under time pressure, so re-read your answer line."
         },
@@ -137,12 +137,12 @@
           "explanation": "M1 M1 M1 A0. Correct area, two coats and division, but she can't buy 4.32 tins. In real-life problems, think about whether your answer makes sense: tins, buses and people must be whole numbers, and here you must round up."
         },
         {
-          "text": "4.5 × 2.4 = 10.8\n10.8 ÷ 5 = 2.16 → 3 tins\n3 × 12 = £36\n\nAnswer: £36",
+          "text": "Area of the wall = length × height\n= 4.5 × 2.4 = 10.8 m²\nNumber of tins = 10.8 ÷ 5 = 2.16, so she needs 3 tins (you can't buy part of a tin)\nCost = 3 × £12 = £36\n\nAnswer: £36",
           "marks": 2,
-          "explanation": "Two method marks, for the area and for rounding up the number of tins correctly, but the second coat has been forgotten. In multi-step problems, tick off each piece of information in the question as you use it."
+          "explanation": "Two method marks, for the area and for rounding up the number of tins correctly, but the second coat has been forgotten. In multi-step problems, tick off each piece of information in the question as you use it. The careful labelling is good, but it can't make up for a missing step."
         },
         {
-          "text": "4.5 × 2.4 = 10.8 m²",
+          "text": "Area of the wall = length × height\n= 4.5 × 2.4\n= 10.8 m²\n\nI am not sure how to do the rest.",
           "marks": 1,
           "explanation": "One mark for the correct area, then the student stopped. Even if you are unsure how to finish, keep going and write down any sensible next step, because each correct step can earn a mark."
         }
@@ -204,9 +204,9 @@
           "explanation": "Two method marks: the student correctly found 1% and scaled up, but made a place-value slip (0.80 × 100 = 80, not 8). A sense check would catch it: a coat can't cost less before a sale."
         },
         {
-          "text": "20% of 64 = 12.80\n64 + 12.80 = £76.80",
+          "text": "Sale = 20% off\n20% of 64 = 0.2 × 64 = 12.80\nOriginal price = 64 + 12.80\n= £76.80",
           "marks": 0,
-          "explanation": "Zero. This is the classic reverse-percentage trap: 20% of the sale price is not the amount taken off, because the 20% was of the original price. No method mark is available for the wrong base."
+          "explanation": "Zero. This is the classic reverse-percentage trap: 20% of the sale price is not the amount taken off, because the 20% was of the original price. No method mark is available for the wrong base. Clear layout doesn't help when the percentage is taken of the wrong amount."
         }
       ],
       "tip": "Ask 'what percentage of the original is this?' then divide by that multiplier. Always check by working forwards."
@@ -230,9 +230,9 @@
           "explanation": "Full marks: numbers and powers handled separately, and the answer adjusted so the first number is between 1 and 10."
         },
         {
-          "text": "12.8 × 10³",
+          "text": "3.2 × 4 = 12.8 and 10⁵ × 10⁻² = 10³\n\nAnswer: 12.8 × 10³ (in standard form)",
           "marks": 1,
-          "explanation": "One mark: the value is correct but it is not in standard form, which the question demands. 12.8 must become 1.28, and the power goes up by one."
+          "explanation": "One mark: the value is correct but it is not in standard form, which the question demands. 12.8 must become 1.28, and the power goes up by one. Writing '(in standard form)' next to it doesn't make it so."
         },
         {
           "text": "3.2 × 4 = 12.8\n10⁵ × 10⁻² = 10⁻¹⁰\n12.8 × 10⁻¹⁰",
@@ -266,9 +266,9 @@
           "explanation": "One method mark, but the answer is a rounded decimal. 'In terms of π' means leave π as a symbol: the exact answer is 36π."
         },
         {
-          "text": "2 × π × 6 = 12π cm",
+          "text": "Area of circle:\n2 × π × r\n= 2 × π × 6\n= 12π cm",
           "marks": 0,
-          "explanation": "Zero: this is the circumference formula. Learn which formula is which: area uses r², circumference uses 2πr."
+          "explanation": "Zero: this is the circumference formula. Learn which formula is which: area uses r², circumference uses 2πr. Heading it 'Area' doesn't change which formula was used."
         }
       ],
       "tip": "Look for 'exact' or 'in terms of π' in the question. If you see it, leave π (or a surd) in your answer."
@@ -292,12 +292,12 @@
           "explanation": "Full marks: the highest common factor, 3x, has been taken out, leaving nothing further that can be factorised."
         },
         {
-          "text": "x(6x + 9)",
+          "text": "6x² + 9x\n= x(6x + 9)",
           "marks": 1,
           "explanation": "One mark for a correct partial factorisation. 6 and 9 still share a factor of 3, so it isn't 'fully' factorised."
         },
         {
-          "text": "15x³",
+          "text": "6x² + 9x\n= 15x³",
           "marks": 0,
           "explanation": "Zero. 6x² and 9x are not like terms, so they can't be added. Factorising means rewriting as a product using brackets."
         }
@@ -328,7 +328,7 @@
           "explanation": "One mark for the angle. The reason is too vague: examiners need the angle fact named ('co-interior angles add up to 180°'), not just the arithmetic."
         },
         {
-          "text": "x = 65° (alternate angles)",
+          "text": "x = 65°\nAlternate angles are equal.",
           "marks": 0,
           "explanation": "Zero. Alternate angles are equal, but x is co-interior, not alternate. Draw on the diagram to identify the pair before choosing a fact."
         }
@@ -359,12 +359,12 @@
           "explanation": "Two method marks: the right fractions are multiplied, but the arithmetic is wrong. Multiply numerators and denominators: 3 × 2 = 6 and 8 × 7 = 56."
         },
         {
-          "text": "3/8 × 3/8 = 9/64",
+          "text": "P(red) = 3/8\nP(red and red) = 3/8 × 3/8\n= 9/64",
           "marks": 1,
           "explanation": "One mark for multiplying probabilities, but this treats the counter as replaced. 'Without replacement' means there are only 2 red out of 7 left for the second pick."
         },
         {
-          "text": "3/8 + 2/7",
+          "text": "3/8 + 2/7 = 37/56",
           "marks": 0,
           "explanation": "Zero. 'Both' means one event AND the other, so the probabilities are multiplied, not added."
         }
@@ -483,14 +483,14 @@
       "prompt": "Work out\n\n√(17.3² − 4.2²)\n\nGive your answer correct to 3 significant figures.",
       "answers": [
         {
-          "text": "17.3² − 4.2² = 299.29 − 17.64 = 281.65\n√281.65 = 16.782…\n= 16.8 (3 s.f.)",
+          "text": "√(299.29 − 17.64) = √281.65\n= 16.782…\n= 16.8 (3 s.f.)",
           "marks": 2,
           "explanation": "Full marks: correct calculation, with the unrounded value shown before rounding to 3 significant figures."
         },
         {
-          "text": "√281.65 = 16.78",
+          "text": "17.3² = 299.29 and 4.2² = 17.64\n√(299.29 − 17.64) = √281.65 = 16.78",
           "marks": 1,
-          "explanation": "One mark: correct method but rounded to 4 significant figures. The accuracy instruction is worth a mark of its own."
+          "explanation": "One mark: correct method but rounded to 4 significant figures. The accuracy instruction is worth a mark of its own. All the working is right; only the rounding lets it down."
         },
         {
           "text": "√(17.3² − 4.2²) = 17.3 − 4.2 = 13.1",
@@ -574,7 +574,7 @@
       "prompt": "The table shows the times, t minutes, that 20 students spent on homework.",
       "answers": [
         {
-          "text": "Midpoints: 5, 15, 25\nfx: 20 + 150 + 150 = 320\n320 ÷ 20 = 16\n\nEstimated mean = 16 minutes",
+          "text": "Midpoints 5, 15, 25\nΣfx = 20 + 150 + 150 = 320\n320 ÷ 20 = 16 minutes",
           "marks": 3,
           "explanation": "Full marks: midpoints × frequency (M1), divided by the total frequency (M1), correct estimate (A1)."
         },
@@ -589,9 +589,9 @@
           "explanation": "One mark for the fx column. Dividing by the number of groups (3) instead of the number of students (20) gives an impossible mean: larger than every time in the table."
         },
         {
-          "text": "(5 + 15 + 25) ÷ 3 = 15",
+          "text": "Mean = total ÷ number of groups\nMidpoints: 5, 15, 25\n(5 + 15 + 25) ÷ 3 = 45 ÷ 3 = 15 minutes",
           "marks": 0,
-          "explanation": "Zero. This ignores the frequencies, so every group counts equally even though 10 students were in the middle group."
+          "explanation": "Zero. Using midpoints is the right idea, but this ignores the frequencies, so every group counts equally even though 10 students were in the middle group. The mean of grouped data is Σfx ÷ Σf."
         }
       ],
       "tip": "Midpoint × frequency, add up, divide by the total frequency. Check the mean lies inside the range of the data."

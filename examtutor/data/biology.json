@@ -26,14 +26,14 @@
           "explanation": "Two marks, for the conversion and the correct substitution. The final division is wrong (24 000 ÷ 8 = 3000). Because the working is shown, the method marks are still awarded. With just '× 300' written, this would score 0."
         },
         {
-          "text": "magnification = image ÷ real\n= 24 ÷ 8\n= × 3",
+          "text": "magnification = image ÷ real\n= 24 ÷ 8\n= × 3\n\nSo the drawing is 3 times bigger than the real cell.",
           "marks": 1,
-          "explanation": "One mark for using the correct equation the right way round, but the units were not converted. mm and µm must be the same before dividing. The clue is in the question: it gives you the conversion for a reason."
+          "explanation": "One mark for using the correct equation the right way round, but the units were not converted. mm and µm must be the same before dividing. The clue is in the question: it gives you the conversion for a reason. The last line just restates the answer in words."
         },
         {
-          "text": "8 ÷ 24 = 0.33\n\nmagnification = 0.33",
+          "text": "I need to find the magnification. This is how many times bigger the drawing is than the real cell.\n\nmagnification = real ÷ image\n= 8 ÷ 24\n= 0.33\n\nmagnification = 0.33 times",
           "marks": 0,
-          "explanation": "Zero: the equation is upside down and the units are not converted. A quick sense check would help: a drawing of a microscopic cell must be magnified many times, so the answer must be much bigger than 1."
+          "explanation": "Zero: the equation is upside down and the units are not converted. A quick sense check would help: a drawing of a microscopic cell must be magnified many times, so the answer must be much bigger than 1. The opening sentences explain what magnification means, which earns nothing, and neat layout can't rescue an upside-down equation."
         }
       ],
       "tip": "Learn the equation (magnification = image size ÷ real size), write it down, convert units first, and sense-check the answer."
@@ -89,9 +89,9 @@
       "prompt": "Describe the effect of temperature on the rate of the reaction.\n\nUse data from Table 1 in your answer.",
       "answers": [
         {
-          "text": "As temperature increases from 10 °C to 40 °C the rate increases from 2 to 9 mg per minute. The rate is highest (the optimum) at 40 °C. Above 40 °C the rate decreases quickly, reaching 0 mg per minute at 60 °C.",
+          "text": "From 10 °C to 40 °C the rate rises from 2 to 9 mg per minute, peaking (the optimum) at 40 °C. Above 40 °C it falls quickly, to 0 mg per minute at 60 °C.",
           "marks": 3,
-          "explanation": "Full marks: the increase (1), the optimum (1) and the decrease after the optimum (1), all supported with data from the table as the question demands. Nothing is wasted on explanation."
+          "explanation": "Full marks: the increase (1), the optimum (1) and the decrease after the optimum (1), all supported with data from the table as the question demands. It is short because every phrase earns something, and nothing is wasted on explanation."
         },
         {
           "text": "The rate goes up as the temperature increases until 40 °C, then it goes down because the enzyme is denatured.",
@@ -99,9 +99,9 @@
           "explanation": "Two marks for the pattern (increase, then decrease after 40 °C). But it only quotes one value, and the question says 'use data'. The explanation about denaturing earns nothing because the command word is 'describe'."
         },
         {
-          "text": "It goes up and then it goes down.",
+          "text": "Looking at Table 1, temperature has a big effect on the rate of the reaction. It goes up and then it goes down. This shows that temperature is very important for enzymes.",
           "marks": 1,
-          "explanation": "One mark for the general shape, but it is vague: what goes up, and when does it change? A description needs specific values and the point where the trend changes."
+          "explanation": "One mark for the general shape, but it is vague: what goes up, and when does it change? A description needs specific values and the point where the trend changes. The first and last sentences sound like analysis but only restate the question, so they earn nothing."
         },
         {
           "text": "At high temperatures the enzyme's active site changes shape so the substrate can no longer fit. This means the enzyme is denatured and the reaction stops.",
@@ -126,7 +126,7 @@
       "prompt": "Describe how a student could investigate the effect of light intensity on the rate of photosynthesis in pondweed.",
       "answers": [
         {
-          "text": "1. Place a piece of pondweed in a boiling tube of sodium hydrogencarbonate solution, so carbon dioxide is not limiting.\n2. Put the boiling tube in a beaker of water to keep the temperature constant.\n3. Place an LED lamp 10 cm from the pondweed, measured with a metre ruler.\n4. Leave for 5 minutes to acclimatise.\n5. Count the number of oxygen bubbles produced in 1 minute (or collect the gas in a measuring cylinder).\n6. Repeat at 20, 30, 40 and 50 cm.\n7. Repeat each distance three times and calculate a mean.\n\nLight intensity is the independent variable; the rate of bubbles is the dependent variable.",
+          "text": "1. Put pondweed in a boiling tube of sodium hydrogencarbonate solution (so CO₂ is not limiting), standing in a beaker of water to keep the temperature constant.\n2. Place an LED lamp 10 cm away, measured with a metre ruler. Leave for 5 minutes to acclimatise.\n3. Count the oxygen bubbles given off in 1 minute (or collect the gas in a measuring cylinder).\n4. Repeat at 20, 30, 40 and 50 cm, three times at each distance, and calculate a mean.",
           "marks": 6,
           "explanation": "Level 3 (5–6 marks): a coherent, logically ordered method that could be followed to get valid results. It says how light intensity is changed (distance), what is measured and for how long, which variables are controlled (CO₂, temperature), and how to improve reliability (repeats, mean)."
         },
@@ -136,14 +136,14 @@
           "explanation": "Level 2 (3–4 marks): the key steps are here in a sensible order, but they are imprecise: no distances, no range, no way of measuring distance, and no explanation of how temperature is kept constant. Top-band methods include quantities and equipment."
         },
         {
-          "text": "The closer the lamp is to the pondweed, the more bubbles there will be because it has more light for photosynthesis. The bubbles are oxygen. This is because light is a limiting factor.",
+          "text": "Light intensity is one of the factors that affects the rate of photosynthesis, along with carbon dioxide and temperature. The closer the lamp is to the pondweed, the more bubbles there will be because it has more light for photosynthesis. The bubbles are oxygen, which is a product of photosynthesis. This is because light is a limiting factor. If the lamp is very far away the plant will hardly photosynthesise at all, so there will be very few bubbles. This shows that plants need light.",
           "marks": 2,
-          "explanation": "Level 1 (1–2 marks): some relevant science (bubbles are oxygen, light is a limiting factor), but it is a prediction and explanation, not a method. 'Describe how…' is asking for what the student would do, step by step."
+          "explanation": "Level 1 (1–2 marks): some relevant science (bubbles are oxygen, light is a limiting factor), but it is a prediction and explanation, not a method. 'Describe how…' is asking for what the student would do, step by step. Most of the extra sentences repeat the same prediction in different words, so the length adds nothing."
         },
         {
-          "text": "Photosynthesis is when plants make glucose. The equation is carbon dioxide + water → glucose + oxygen. It happens in the chloroplasts. Plants need light to photosynthesise.",
+          "text": "Photosynthesis is when plants make glucose. The equation is carbon dioxide + water → glucose + oxygen. It happens in the chloroplasts. Plants need light to photosynthesise. Light intensity means how bright the light is. Photosynthesis is important because it makes food for the whole food chain.",
           "marks": 1,
-          "explanation": "Level 1, low: correct facts about photosynthesis, but none of it describes an investigation. Using the words of the question ('light intensity', 'rate') would have kept this answer on track."
+          "explanation": "Level 1, low: correct facts about photosynthesis, but none of it describes an investigation. Using the words of the question ('light intensity', 'rate') would have kept this answer on track. Defining light intensity and saying why photosynthesis matters still doesn't describe a method."
         }
       ],
       "tip": "For 6-mark method questions, use numbered steps. Include the equipment, what you change and how, what you measure and how, what you keep the same, and repeats. Imagine someone following your instructions exactly."
@@ -163,7 +163,7 @@
       "prompt": "Coronary heart disease can be treated with stents or with statins.\n\nEvaluate the use of stents compared with statins to treat coronary heart disease.",
       "answers": [
         {
-          "text": "Stents are inserted into a narrowed coronary artery to hold it open. An advantage is that they work immediately to restore blood flow and last a long time. A disadvantage is that they need surgery, which carries a risk of infection or blood clots.\n\nStatins are drugs that reduce blood cholesterol, which slows the build-up of fatty material in the arteries. An advantage is that no surgery is needed. Disadvantages are that they must be taken every day for life, take time to work, and can have side effects such as muscle pain.\n\nOverall, stents are better for a patient whose artery is already badly blocked because they act immediately, but statins are better for prevention in someone at lower risk, as they avoid the risks of surgery.",
+          "text": "Stents hold a narrowed coronary artery open. They restore blood flow immediately and last a long time, but fitting one needs surgery, with a risk of infection or blood clots.\n\nStatins lower blood cholesterol, slowing the build-up of fatty material. No surgery is needed, but they must be taken daily for life, take time to work and can cause side effects such as muscle pain.\n\nOverall, a stent is better for an artery that is already badly blocked because it acts at once; statins are better for preventing disease in lower-risk patients, as they avoid the risks of surgery.",
           "marks": 6,
           "explanation": "Level 3 (5–6 marks): advantages and disadvantages of both treatments, a direct comparison, and a justified conclusion. The conclusion doesn't just pick one. It says when each is better and why, which is exactly what 'evaluate' asks for."
         },
@@ -173,9 +173,9 @@
           "explanation": "Level 2 (3–4 marks): balanced advantages and disadvantages of both treatments with accurate science, but there is no conclusion. Without a judgement it is a comparison, not an evaluation, and that caps the mark."
         },
         {
-          "text": "Stents are better because they work straight away and they last a long time. They open up the blocked artery so more oxygen gets to the heart.",
+          "text": "Stents are definitely the better treatment for coronary heart disease. A stent is a small mesh tube that is put into the blocked artery. Stents are better because they work straight away and they last a long time. They open up the blocked artery so more oxygen gets to the heart. This means the heart muscle can keep working properly and the patient is much less likely to have a heart attack. Lots of people have stents fitted every year, which shows how well they work. In conclusion, stents are the best way to treat coronary heart disease because they work straight away.",
           "marks": 2,
-          "explanation": "Level 1 (1–2 marks): a one-sided answer. It gives only advantages of stents and never discusses statins, even though the question asks you to compare them. An unsupported conclusion is not an evaluation."
+          "explanation": "Level 1 (1–2 marks): a one-sided answer. It gives only advantages of stents and never discusses statins, even though the question asks you to compare them. An unsupported conclusion is not an evaluation. Length doesn't rescue it: the extra sentences say more about stents but still never weigh them against statins, and the conclusion just repeats the opening."
         },
         {
           "text": "Coronary heart disease is when fatty material builds up in the coronary arteries. This means less oxygen gets to the heart muscle and it can cause a heart attack. It is caused by smoking, a bad diet and not doing exercise.",
@@ -199,9 +199,9 @@
       "prompt": "A potato cylinder had a mass of 2.50 g.\nAfter 30 minutes in a sugar solution its mass was 2.15 g.\n\nCalculate the percentage change in mass.",
       "answers": [
         {
-          "text": "Change = 2.15 − 2.50 = −0.35 g\n−0.35 ÷ 2.50 × 100 = −14%",
+          "text": "(2.15 − 2.50) ÷ 2.50 × 100 = −14%",
           "marks": 2,
-          "explanation": "Full marks: the change divided by the starting mass, and the negative sign shows it is a decrease (mass was lost by osmosis)."
+          "explanation": "Full marks: the change (−0.35 g) divided by the starting mass, and the negative sign shows it is a decrease (mass was lost by osmosis). One line of working is enough when it is the right line."
         },
         {
           "text": "0.35 ÷ 2.15 × 100 = 16.3%",
@@ -209,9 +209,9 @@
           "explanation": "One mark for the correct change, but it was divided by the final mass. Percentage change always compares with the starting value."
         },
         {
-          "text": "2.15 ÷ 2.50 × 100 = 86%",
+          "text": "Percentage change = new ÷ old × 100\n2.15 ÷ 2.50 = 0.86\n0.86 × 100 = 86%\n\nThe percentage change in mass of the potato is 86%.",
           "marks": 0,
-          "explanation": "Zero. This is the new mass as a percentage of the old one, not the percentage change."
+          "explanation": "Zero. This is the new mass as a percentage of the old one, not the percentage change. Setting the working out neatly doesn't help when the formula itself is wrong."
         }
       ],
       "tip": "Change ÷ original × 100. Keep the minus sign for a decrease; it tells the examiner which way water moved."
@@ -235,14 +235,14 @@
           "explanation": "Full marks: a similarity plus three differences, each written as a comparison ('both…', 'only plant cells…')."
         },
         {
-          "text": "Both have a nucleus and a cell membrane. Plant cells have a cell wall and chloroplasts but animal cells do not.",
+          "text": "Both have a nucleus and a cell membrane. Only plant cells have a cell wall and chloroplasts.",
           "marks": 3,
           "explanation": "Three marks: one similarity and two clear differences. A third difference (permanent vacuole) would complete the answer."
         },
         {
-          "text": "Plant cells have chloroplasts and animal cells don't. Plant cells are rectangular.",
+          "text": "Plant cells and animal cells are the building blocks of plants and animals, and you can see both of them with a light microscope. Plant cells have chloroplasts and animal cells don't. Plant cells are rectangular and quite regular, whereas animal cells are usually rounder and can be lots of different shapes.",
           "marks": 2,
-          "explanation": "Two marks: one valid comparison and a shape comment that gets limited credit. Structures (organelles) are what the question is about."
+          "explanation": "Two marks: one valid comparison and a shape comment that gets limited credit. Structures (organelles) are what the question is about. The opening sentence and the extra detail about shape add length but no marks."
         },
         {
           "text": "Plant cells: cell wall, chloroplasts, vacuole, nucleus.\nAnimal cells: nucleus, cytoplasm, membrane.",
@@ -266,17 +266,17 @@
       "prompt": "A student counted the number of bubbles produced by pondweed in one minute, repeated four times.\n\nResults: 12, 13, 25, 11\n\nCalculate the mean. Do not include the anomalous result.",
       "answers": [
         {
-          "text": "Anomaly = 25\n(12 + 13 + 11) ÷ 3 = 12 bubbles per minute",
+          "text": "Leave out 25.\n(12 + 13 + 11) ÷ 3 = 12",
           "marks": 2,
           "explanation": "Full marks: the anomaly is excluded and the total is divided by the three remaining results."
         },
         {
-          "text": "12 + 13 + 11 = 36\n36 ÷ 4 = 9",
+          "text": "The anomalous result is 25 because it is much higher than the others, so I will not use it.\n12 + 13 + 11 = 36\n36 ÷ 4 = 9",
           "marks": 1,
-          "explanation": "One mark for excluding the anomaly, but the total must be divided by 3 (the number of values used), not 4. A mean smaller than every value should look wrong."
+          "explanation": "One mark for excluding the anomaly, but the total must be divided by 3 (the number of values used), not 4. A mean smaller than every value should look wrong. Explaining why 25 is anomalous is sensible but the mark for that is already given; the division is still wrong."
         },
         {
-          "text": "(12 + 13 + 25 + 11) ÷ 4 = 15.25",
+          "text": "Mean = (12 + 13 + 25 + 11) ÷ 4\n= 15.25 bubbles per minute",
           "marks": 0,
           "explanation": "Zero. The question tells you to leave the anomaly out. Including it drags the mean upwards."
         }
@@ -312,9 +312,9 @@
           "explanation": "Level 1 (1–2 marks): relevant context (finishing the course), but no mention of mutation, selection or inheritance, so it doesn't explain how resistance develops."
         },
         {
-          "text": "The bacteria get used to the antibiotic and become immune to it, like how you get immune to a disease.",
+          "text": "The bacteria get used to the antibiotic and become immune to it, like how you get immune to a disease after you have had it. The more times the bacteria meet the antibiotic, the more used to it they get, until the antibiotic doesn't work at all.",
           "marks": 1,
-          "explanation": "Level 1, low: a common misconception. Bacteria don't 'get used to' antibiotics or become 'immune'; resistance comes from random mutations being selected."
+          "explanation": "Level 1, low: a common misconception. Bacteria don't 'get used to' antibiotics or become 'immune'; resistance comes from random mutations being selected. The extra length just repeats the same misconception in more detail."
         }
       ],
       "tip": "For any natural selection question, run through: variation (mutation) → selection pressure → survival → reproduction → inheritance → population changes."
@@ -348,7 +348,7 @@
           "explanation": "One mark for recognising both parents are Ff, but without a Punnett square the offspring have been guessed. 50% is the probability of a child being a carrier (Ff), not having the disease."
         },
         {
-          "text": "They both have the allele so the child will definitely have it.",
+          "text": "They both carry the allele, so the child will definitely have it: 100%.",
           "marks": 0,
           "explanation": "Zero. Carriers have one dominant allele, so each child only has cystic fibrosis if they inherit f from both parents."
         }
@@ -369,7 +369,7 @@
       "prompt": "Explain how a vaccine protects a person against a disease.",
       "answers": [
         {
-          "text": "A vaccine contains dead or inactive forms of the pathogen, which carry antigens. White blood cells (lymphocytes) recognise the antigens and produce specific antibodies. Memory cells are also made. If the person is later infected by the real pathogen, the memory cells produce the right antibodies much faster and in greater numbers, so the pathogen is destroyed before it causes illness.",
+          "text": "A vaccine contains dead or inactive pathogens carrying antigens. Lymphocytes recognise the antigens and make specific antibodies, and memory cells are produced. If the real pathogen infects the person later, memory cells trigger a much faster, larger antibody response, so the pathogen is destroyed before it causes illness.",
           "marks": 4,
           "explanation": "Full marks: all four linked ideas: inactive pathogen/antigens, antibody production by white blood cells, memory cells, and a faster, larger secondary response."
         },
@@ -379,14 +379,14 @@
           "explanation": "Three marks: good, but it doesn't mention memory cells, which are the reason the second response is faster."
         },
         {
-          "text": "The vaccine makes your body produce antibodies, which fight the disease so you don't get ill.",
+          "text": "Vaccines protect people from lots of serious diseases such as measles and polio. The vaccine makes your body produce antibodies, which fight the disease so you don't get ill. It also stops the disease spreading to people who can't be vaccinated, which is called herd immunity. This is why it is important for everyone to have their vaccinations.",
           "marks": 2,
-          "explanation": "Two marks: antibodies are relevant, but it doesn't say what triggers them (antigens) or why protection lasts (memory cells)."
+          "explanation": "Two marks: antibodies are relevant, but it doesn't say what triggers them (antigens) or why protection lasts (memory cells). Herd immunity and the examples are true but don't explain how the vaccine protects the person, so the extra sentences earn nothing."
         },
         {
-          "text": "A vaccine puts antibodies into your body so you are protected from the disease.",
+          "text": "A vaccine puts antibodies into your body so you are protected from the disease. The antibodies stay in your blood for the rest of your life, so they are ready to kill it.",
           "marks": 1,
-          "explanation": "One mark at most. Vaccines contain antigens (from inactive pathogens), not antibodies; your own body makes the antibodies."
+          "explanation": "One mark at most. Vaccines contain antigens (from inactive pathogens), not antibodies; your own body makes the antibodies. The second sentence builds on the same misconception, so it earns nothing more."
         }
       ],
       "tip": "4-mark 'explain' questions usually want a four-step chain. Use key words: antigen, lymphocyte, antibody, memory cell, faster response."
@@ -415,7 +415,7 @@
           "explanation": "One mark: the idea is right, but a named factor is needed for the second mark."
         },
         {
-          "text": "Because the plant has had enough light and doesn't need any more.",
+          "text": "Because the plant has had enough light and doesn't need any more, so giving it extra light makes no difference to the rate.",
           "marks": 0,
           "explanation": "Zero. Plants don't 'need' a set amount of light; the rate is held back by a different factor. Use the term 'limiting factor'."
         }
@@ -436,7 +436,7 @@
       "prompt": "A student investigates how pH affects the time taken for amylase to break down starch. She tests pH 5, 6, 7 and 8, and times how long until iodine stops turning blue-black.\n\nIdentify the independent variable, the dependent variable and one control variable.",
       "answers": [
         {
-          "text": "Independent: pH\nDependent: the time taken for the starch to be broken down\nControl: the temperature of the solutions (or volume/concentration of amylase or starch)",
+          "text": "Independent: pH\nDependent: time taken for the starch to be broken down\nControl: temperature",
           "marks": 3,
           "explanation": "Full marks: all three correct and specific."
         },
@@ -446,9 +446,9 @@
           "explanation": "Two marks. 'Time' is acceptable but 'the amount' is too vague: amount of what? Name the substance and the quantity (e.g. volume of amylase)."
         },
         {
-          "text": "Independent: time\nDependent: pH\nControl: temperature",
+          "text": "Independent variable: time, because this is what is being timed with the stopwatch\nDependent variable: pH, because it depends on the solution used\nControl variable: temperature, to make it a fair test",
           "marks": 1,
-          "explanation": "One mark for the control variable, but the independent and dependent variables are swapped. The student chooses the pH (independent) and measures the time (dependent)."
+          "explanation": "One mark for the control variable, but the independent and dependent variables are swapped. The student chooses the pH (independent) and measures the time (dependent). Adding reasons doesn't help when the variables are the wrong way round."
         }
       ],
       "tip": "Independent = what you change; dependent = what you measure; control = what you keep the same. Be specific: 'volume of amylase', not 'amount'."
@@ -467,14 +467,14 @@
       "prompt": "In an investigation, a student counted the bubbles of gas given off by pondweed.\n\nSuggest one improvement to the method that would make the results more accurate. Give a reason for your answer.",
       "answers": [
         {
-          "text": "Collect the gas in a gas syringe or measuring cylinder and measure its volume, because bubbles can be different sizes so counting them is not accurate.",
+          "text": "Measure the volume of gas with a gas syringe, because bubbles vary in size so counting them is inaccurate.",
           "marks": 2,
           "explanation": "Full marks: a specific improvement (1) and a reason linked to accuracy (1)."
         },
         {
-          "text": "Use a gas syringe.",
+          "text": "The student should use a gas syringe instead of counting the bubbles, as this is a much better piece of equipment for this experiment.",
           "marks": 1,
-          "explanation": "One mark for the improvement, but no reason. 'Suggest' questions with 'give a reason' have a mark for the 'because'."
+          "explanation": "One mark for the improvement, but no reason. 'Suggest' questions with 'give a reason' have a mark for the 'because'. 'A much better piece of equipment' is not a reason: say why it is better (bubbles vary in size)."
         },
         {
           "text": "Repeat the experiment more times.",
@@ -513,9 +513,9 @@
           "explanation": "Two marks: the overall route is right but too general. Name the chambers and vessels."
         },
         {
-          "text": "The blood goes in through the vena cava and the heart pumps it out through the aorta to the body.",
+          "text": "The heart is a double pump made of muscle, and its job is to pump blood around the body. The blood goes in through the vena cava, which is the main vein, and the heart pumps it out through the aorta so that it can take oxygen to all the organs.",
           "marks": 1,
-          "explanation": "One mark: this repeats the start and end given in the question without describing the path in between."
+          "explanation": "One mark: this repeats the start and end given in the question without describing the path in between. Most of it is general description of the heart; the path between the vena cava and the aorta is still missing."
         }
       ],
       "tip": "For sequences, give every step in order with the correct names. A quick sketch of the heart in the margin helps you keep left and right straight."
@@ -534,7 +534,7 @@
       "prompt": "Explain why it is important that human body temperature is kept at about 37 °C.",
       "answers": [
         {
-          "text": "Enzymes work best at their optimum temperature, about 37 °C. If the temperature gets too high, enzymes denature because the shape of the active site changes, so reactions in cells slow down or stop.",
+          "text": "Enzymes work best at their optimum, about 37 °C. Too hot and they denature (the active site changes shape), so reactions in cells slow down or stop.",
           "marks": 2,
           "explanation": "Full marks: the link to enzymes working at an optimum (1) and the consequence of denaturing (1)."
         },
@@ -544,9 +544,9 @@
           "explanation": "One mark for linking temperature to enzymes, but it doesn't explain what happens if the temperature changes."
         },
         {
-          "text": "Because if you get too hot you will feel ill and sweat a lot.",
+          "text": "Body temperature is controlled by the thermoregulatory centre in the brain. It is important to keep it at 37 °C because if you get too hot you will feel ill and sweat a lot, and if you get too cold you will shiver, which is very uncomfortable.",
           "marks": 0,
-          "explanation": "Zero. This describes symptoms, not the biological reason. Most homeostasis questions come back to enzymes and cells."
+          "explanation": "Zero. This describes symptoms, not the biological reason. Most homeostasis questions come back to enzymes and cells. Naming the thermoregulatory centre is accurate but doesn't answer 'why'."
         }
       ],
       "tip": "When a question asks why a condition must be controlled, think: which enzymes or cells are affected, and what exactly happens to them?"
@@ -565,14 +565,14 @@
       "prompt": "The number of people in the UK with type 2 diabetes has increased over the last 30 years.\n\nSuggest two reasons for this increase.",
       "answers": [
         {
-          "text": "More people are obese, which is a risk factor for type 2 diabetes. People also do less exercise, so they are more likely to become overweight.",
+          "text": "More people are obese, and people exercise less; both are risk factors for type 2 diabetes.",
           "marks": 2,
           "explanation": "Full marks: two valid risk factors, each clearly linked to type 2 diabetes."
         },
         {
-          "text": "People eat more sugary food. People eat more junk food.",
+          "text": "People eat more sugary food than they used to. People also eat a lot more junk food and takeaways these days, because they are cheap and easy to get.",
           "marks": 1,
-          "explanation": "One mark: these are really the same reason (diet) written twice. 'Two reasons' means two different ideas."
+          "explanation": "One mark: these are really the same reason (diet) written twice. 'Two reasons' means two different ideas. The extra detail about takeaways is still the same idea."
         },
         {
           "text": "People are born with it more often now.",

@@ -26,9 +26,9 @@
           "explanation": "Two marks, for 'giant structure' and 'a lot of energy'. It never says what the bonds are, so it misses the mark for strong electrostatic forces between oppositely charged ions. 'Answer in terms of structure and bonding' is a hint to use those exact ideas."
         },
         {
-          "text": "Because it is ionic so the bonds are really strong.",
+          "text": "Sodium chloride is a compound made from sodium and chlorine, which are a metal and a non-metal. Because it is ionic, the bonds are really strong, so you have to heat it to a very high temperature, 801 °C, before it will melt.",
           "marks": 1,
-          "explanation": "One mark for identifying ionic bonding. It is too brief for a 3-mark question: one mark usually means one point. Three marks need three distinct ideas."
+          "explanation": "One mark for identifying ionic bonding. Despite its length, it makes only one creditworthy point: the first sentence says what the compound is made of and the last repeats the melting point from the question. Three marks need three distinct ideas."
         },
         {
           "text": "Sodium chloride has strong covalent bonds and strong intermolecular forces between the molecules, so it needs lots of energy to melt.",
@@ -53,9 +53,9 @@
       "prompt": "Magnesium reacts with oxygen to produce magnesium oxide.\n\n2Mg + O₂ → 2MgO\n\nCalculate the mass of magnesium oxide produced when 6.0 g of magnesium reacts completely.\n\nRelative atomic masses (Aᵣ): Mg = 24   O = 16",
       "answers": [
         {
-          "text": "Moles of Mg = 6.0 ÷ 24 = 0.25 mol\nRatio Mg : MgO = 2 : 2 = 1 : 1, so 0.25 mol MgO\nMᵣ MgO = 24 + 16 = 40\nMass = 0.25 × 40 = 10 g",
+          "text": "6.0 ÷ 24 = 0.25 mol Mg\n1 : 1 ratio, so 0.25 mol MgO\n0.25 × 40 = 10 g",
           "marks": 3,
-          "explanation": "Full marks. Moles of Mg (1), correct use of the ratio with the Mᵣ of MgO (1), final mass with units (1). Each step is labelled, which makes it easy for the examiner to award marks."
+          "explanation": "Full marks. Moles of Mg (1), correct use of the 1 : 1 ratio with the Mᵣ of MgO, 40 (1), final mass with units (1). The working is brief, but every step the examiner is looking for is visible."
         },
         {
           "text": "Moles of Mg = 6.0 ÷ 24 = 0.25\nMoles of MgO = 0.25 ÷ 2 = 0.125\nMass = 0.125 × 40 = 5 g",
@@ -68,9 +68,9 @@
           "explanation": "One mark for the correct Mᵣ of MgO. The mass of magnesium has been divided by the Mᵣ of the wrong substance. Moles of a substance = its own mass ÷ its own Mᵣ."
         },
         {
-          "text": "6.0 + 16 = 22 g",
+          "text": "Mass of magnesium = 6.0 g\nAᵣ of oxygen = 16\nMagnesium oxide is magnesium and oxygen added together, so\nmass of MgO = 6.0 + 16 = 22 g",
           "marks": 0,
-          "explanation": "Zero. Adding the mass to a relative atomic mass has no chemical meaning. Use the method: mass → moles → ratio → moles → mass."
+          "explanation": "Zero. Adding the mass to a relative atomic mass has no chemical meaning. Use the method: mass → moles → ratio → moles → mass. Setting the values out neatly doesn't give the addition a chemical meaning."
         }
       ],
       "tip": "Use the same four steps every time: moles = mass ÷ Mᵣ; use the ratio from the equation; find the new Mᵣ; mass = moles × Mᵣ. Write units on your final answer."
@@ -105,9 +105,9 @@
           "explanation": "Level 1 (1–2 marks): it reacts the two substances, but it misses filtering, so the product would be contaminated with unreacted copper oxide. Heating to dryness also would not give crystals."
         },
         {
-          "text": "Copper oxide + sulfuric acid → copper sulfate + water. This is a neutralisation reaction because copper oxide is a base.",
+          "text": "Copper oxide + sulfuric acid → copper sulfate + water. This is a neutralisation reaction because copper oxide is a base. Copper sulfate is a salt, and it forms blue crystals. Salts are made when the hydrogen in an acid is replaced by a metal.",
           "marks": 1,
-          "explanation": "Level 1, low: a correct word equation and good knowledge, but no method at all. 'Describe how you would make…' means give practical steps."
+          "explanation": "Level 1, low: a correct word equation and good knowledge, but no method at all. 'Describe how you would make…' means give practical steps. The extra facts about salts are correct but still aren't a method."
         }
       ],
       "tip": "For making salts, remember: excess (warm, stir), filter, evaporate, crystallise, dry. Always explain why the insoluble reactant is added in excess."
@@ -127,14 +127,14 @@
       "prompt": "Explain why increasing the temperature increases the rate of a reaction.\n\nAnswer in terms of particles.",
       "answers": [
         {
-          "text": "At a higher temperature the particles have more kinetic energy and move faster. They collide more frequently. A greater proportion of the collisions have energy equal to or greater than the activation energy, so there are more successful collisions per second.",
+          "text": "The particles gain kinetic energy and move faster, so they collide more frequently. A greater proportion of collisions have at least the activation energy, so there are more successful collisions per second.",
           "marks": 3,
           "explanation": "Full marks: more energy / faster (1), more frequent collisions (1), more collisions with at least the activation energy (1). The words 'frequent' and 'activation energy' are exactly what examiners look for."
         },
         {
-          "text": "The particles gain more energy so they move faster. This means they collide more frequently, so the reaction is faster.",
+          "text": "When you increase the temperature, the particles gain more energy so they move around faster. This means they collide with each other more frequently, so the reaction is faster. This is why food goes off more quickly when it is left out of the fridge.",
           "marks": 2,
-          "explanation": "Two marks, for more energy / faster movement and more frequent collisions. It misses the key idea for temperature: more collisions have enough energy to react (at least the activation energy)."
+          "explanation": "Two marks, for more energy / faster movement and more frequent collisions. It misses the key idea for temperature: more collisions have enough energy to react (at least the activation energy). The fridge example is real-world context, not the missing third point."
         },
         {
           "text": "The particles move faster so there are more collisions.",
@@ -173,9 +173,9 @@
           "explanation": "One mark for the balancing, but the question asks for state symbols, and they are worth a separate mark."
         },
         {
-          "text": "Mg + HCl₂ → MgCl₂ + H₂",
+          "text": "Mg + HCl₂ → MgCl₂ + H₂\n(balanced: 1 Mg, 2 H and 2 Cl on each side)",
           "marks": 0,
-          "explanation": "Zero. Changing HCl to HCl₂ changes the substance. You balance by putting numbers in front of formulae, not by changing subscripts."
+          "explanation": "Zero. Changing HCl to HCl₂ changes the substance. You balance by putting numbers in front of formulae, not by changing subscripts. The check looks careful, but it only balances because the formula of hydrochloric acid was changed."
         }
       ],
       "tip": "Write the formulae first, then balance one element at a time with big numbers in front. Tick off 'state symbols' if the question mentions them."
@@ -194,7 +194,7 @@
       "prompt": "Describe the test for hydrogen gas. Give the result of the test.",
       "answers": [
         {
-          "text": "Hold a burning splint at the mouth of the test tube. If hydrogen is present, it burns with a squeaky pop.",
+          "text": "Hold a lit splint at the mouth of the tube: it goes out with a squeaky pop.",
           "marks": 2,
           "explanation": "Full marks: the correct test (burning/lighted splint) and the correct result (squeaky pop)."
         },
@@ -204,9 +204,9 @@
           "explanation": "One mark for the result. The splint must be burning (lit); 'a splint' alone isn't precise enough for the method mark."
         },
         {
-          "text": "Put a glowing splint in and it relights.",
+          "text": "Hydrogen is a colourless gas with no smell, so you can't see it. To test for it, put a glowing splint in the test tube and it relights.",
           "marks": 0,
-          "explanation": "Zero: this is the test for oxygen. Learn the tests as pairs: hydrogen with a burning splint and squeaky pop; oxygen with a glowing splint that relights; carbon dioxide with limewater that turns milky."
+          "explanation": "Zero: this is the test for oxygen. Learn the tests as pairs: hydrogen with a burning splint and squeaky pop; oxygen with a glowing splint that relights; carbon dioxide with limewater that turns milky. The description of hydrogen at the start earns nothing."
         }
       ],
       "tip": "Learn every test as 'method + result'. Missing either half loses a mark."
@@ -230,9 +230,9 @@
           "explanation": "Full marks: actual yield divided by theoretical yield, multiplied by 100."
         },
         {
-          "text": "9.0 ÷ 12.0 = 0.75",
+          "text": "Percentage yield = actual ÷ theoretical\n9.0 ÷ 12.0 = 0.75\nThe percentage yield is 0.75.",
           "marks": 1,
-          "explanation": "One mark for the correct division, but it hasn't been turned into a percentage (× 100)."
+          "explanation": "One mark for the correct division, but it hasn't been turned into a percentage (× 100). Writing the formula out doesn't make up for the missing × 100."
         },
         {
           "text": "12.0 ÷ 9.0 × 100 = 133%",
@@ -271,9 +271,9 @@
           "explanation": "One mark for the moles of acid, then the student stopped. Moles → ratio → concentration: each step earns a mark."
         },
         {
-          "text": "0.10 × 25.0 ÷ 20.0 = 0.125 mol/dm³",
+          "text": "Concentration = concentration of acid × volume of alkali ÷ volume of acid\n= 0.10 × 25.0 ÷ 20.0\n= 0.125 mol/dm³",
           "marks": 0,
-          "explanation": "Zero. The volumes are the wrong way round, so the method doesn't follow from moles = concentration × volume."
+          "explanation": "Zero. The volumes are the wrong way round, so the method doesn't follow from moles = concentration × volume. Writing a formula first only helps if it is the right one."
         }
       ],
       "tip": "Write the three steps every time: moles of the known solution, use the ratio, then concentration = moles ÷ volume (in dm³)."
@@ -302,9 +302,9 @@
           "explanation": "Two marks: correct value and conclusion, but no explanation. The question asks you to explain."
         },
         {
-          "text": "2400 − 2000 = +400 kJ, so it is endothermic because the number is positive.",
+          "text": "Energy change = bonds made − bonds broken\n= 2400 − 2000 = +400 kJ\nThe reaction is endothermic because the answer is positive, which means energy is taken in from the surroundings.",
           "marks": 1,
-          "explanation": "One mark for the size of the energy change, but the subtraction is the wrong way round. It is always bonds broken − bonds made, which gives the correct sign."
+          "explanation": "One mark for the size of the energy change, but the subtraction is the wrong way round. It is always bonds broken − bonds made, which gives the correct sign. The extra sentence explains what 'endothermic' means, but it follows from the wrong sign, so it earns nothing."
         }
       ],
       "tip": "Bonds broken (in, +) minus bonds made (out, −). Negative = exothermic; positive = endothermic."
@@ -323,19 +323,19 @@
       "prompt": "Explain why potassium is more reactive than sodium.",
       "answers": [
         {
-          "text": "Potassium's outer electron is in a shell further from the nucleus (it has more shells). So there is a weaker attraction between the nucleus and the outer electron, and it is lost more easily.",
+          "text": "Potassium's outer electron is further from the nucleus (it has more shells), so it is less strongly attracted and is lost more easily.",
           "marks": 3,
           "explanation": "Full marks: more shells / further from the nucleus (1), weaker attraction (1), outer electron lost more easily (1)."
         },
         {
-          "text": "Potassium has more shells, so its outer electron is lost more easily.",
+          "text": "Potassium and sodium are both alkali metals in group 1, so they both have one electron in their outer shell. Potassium has more shells, so its outer electron is lost more easily.",
           "marks": 2,
-          "explanation": "Two marks: it misses the key link that the attraction between the nucleus and the outer electron is weaker."
+          "explanation": "Two marks: it misses the key link that the attraction between the nucleus and the outer electron is weaker. The first sentence is true, but it explains why the two metals are similar, not why potassium is more reactive."
         },
         {
-          "text": "Because potassium is further down the group and reactivity increases down group 1.",
+          "text": "Because potassium is further down the group than sodium, and reactivity increases as you go down group 1. You can see this because potassium reacts more violently with water.",
           "marks": 0,
-          "explanation": "Zero. This describes the trend but doesn't explain it. 'Explain' needs the reason in terms of electrons."
+          "explanation": "Zero. This describes the trend but doesn't explain it. 'Explain' needs the reason in terms of electrons. The observation about water just describes the trend again."
         }
       ],
       "tip": "Group 1 trend explanations: more shells → outer electron further from nucleus → weaker attraction → electron lost more easily → more reactive."
@@ -359,9 +359,9 @@
           "explanation": "Full marks. Sodium is more reactive than hydrogen, so hydrogen forms at the cathode; chloride ions are discharged at the anode as chlorine."
         },
         {
-          "text": "Cathode: sodium\nAnode: chlorine",
+          "text": "Cathode (negative electrode): sodium, because sodium ions are positive so they are attracted to the negative electrode\nAnode (positive electrode): chlorine",
           "marks": 1,
-          "explanation": "One mark for chlorine. In an aqueous solution, the metal is only produced at the cathode if it is less reactive than hydrogen; sodium is more reactive, so hydrogen is produced."
+          "explanation": "One mark for chlorine. In an aqueous solution, the metal is only produced at the cathode if it is less reactive than hydrogen; sodium is more reactive, so hydrogen is produced. It is right that positive ions move to the cathode, but that doesn't decide which product forms there."
         },
         {
           "text": "Cathode: chlorine\nAnode: hydrogen",
@@ -385,7 +385,7 @@
       "prompt": "In a chromatography experiment, a spot moved 3.6 cm from the start line. The solvent front moved 9.0 cm.\n\nCalculate the Rf value of the spot.",
       "answers": [
         {
-          "text": "Rf = 3.6 ÷ 9.0 = 0.40",
+          "text": "Rf = distance moved by spot ÷ distance moved by solvent\n= 3.6 ÷ 9.0\n= 0.40",
           "marks": 2,
           "explanation": "Full marks: correct substitution and answer. Rf has no units."
         },
@@ -421,9 +421,9 @@
           "explanation": "Full marks: correct Mᵣ, accounting for the bracket (1), and correct percentage (1)."
         },
         {
-          "text": "Mᵣ = 40 + 16 + 1 = 57\n40 ÷ 57 × 100 = 70.2%",
+          "text": "Mᵣ of Ca(OH)₂ = 40 + 16 + 1 = 57\n% of Ca = mass of Ca ÷ Mᵣ × 100\n= 40 ÷ 57 × 100 = 70.2%",
           "marks": 1,
-          "explanation": "One mark for the correct method, but the bracket was ignored: (OH)₂ means two oxygens and two hydrogens."
+          "explanation": "One mark for the correct method, but the bracket was ignored: (OH)₂ means two oxygens and two hydrogens. Writing the formula for percentage by mass is fine, but the mark depends on the Mᵣ being right."
         },
         {
           "text": "40 ÷ 16 × 100 = 250%",
@@ -488,9 +488,9 @@
           "explanation": "One mark. Link this to collisions to explain why the rate increases."
         },
         {
-          "text": "A catalyst speeds up a reaction without being used up.",
+          "text": "A catalyst is a substance that speeds up a reaction without being used up itself, so it can be used again and again. Enzymes are biological catalysts. Catalysts are used a lot in industry because they save money and energy.",
           "marks": 0,
-          "explanation": "Zero. That's the definition of a catalyst, not an explanation of how it works."
+          "explanation": "Zero. That's the definition of a catalyst, not an explanation of how it works. The points about enzymes and industry are true but still don't say how a catalyst works."
         }
       ],
       "tip": "Rate explanations always end with collisions: more frequent collisions, or more successful collisions (energy ≥ activation energy)."
@@ -524,9 +524,9 @@
           "explanation": "Level 1 (1–2 marks): correct theory, but the question asks you to describe a method."
         },
         {
-          "text": "Chromatography separates mixtures.",
+          "text": "Chromatography is a way of separating mixtures, such as the different dyes in an ink. It works because some substances are more soluble in the solvent than others. It is used in forensics to compare inks.",
           "marks": 1,
-          "explanation": "Level 1, low: true, but it describes no steps at all."
+          "explanation": "Level 1, low: true, but it describes no steps at all. The extra sentences are background theory and uses, not steps of a method."
         }
       ],
       "tip": "For 6-mark methods, use numbered steps and add a short 'because' to key steps. Always say how you'd interpret the results."

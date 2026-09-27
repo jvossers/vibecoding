@@ -26,9 +26,9 @@
           "explanation": "Two marks: correct substitution with power converted to watts, but minutes were not converted into seconds. Time in physics equations is almost always in seconds."
         },
         {
-          "text": "E = P × t\nE = 2.2 × 3\nE = 6.6 J",
+          "text": "Power = 2.2 kW\nTime = 3 minutes\n\nE = P × t\nE = 2.2 × 3\nE = 6.6 J\n\nThe energy transferred is 6.6 J.",
           "marks": 1,
-          "explanation": "One mark for correct substitution of the given values into the equation, but neither unit has been converted, so the answer is not in joules. When a question says 'give your answer in joules', check your units."
+          "explanation": "One mark for correct substitution of the given values into the equation, but neither unit has been converted, so the answer is not in joules. When a question says 'give your answer in joules', check your units. Listing the values first is good practice, but they needed converting, not just copying."
         },
         {
           "text": "P = E ÷ t\nso E = t ÷ P\nE = 180 ÷ 2200 = 0.08 J",
@@ -53,7 +53,7 @@
       "prompt": "A skydiver jumps from an aeroplane.\nAfter some time she falls at a constant speed called terminal velocity.\n\nExplain why the skydiver reaches terminal velocity.",
       "answers": [
         {
-          "text": "At first, her weight is much bigger than the air resistance, so there is a resultant force downwards and she accelerates. As her speed increases, the air resistance increases. Eventually the air resistance equals her weight. The resultant force is now zero, so she stops accelerating and falls at a constant speed: terminal velocity.",
+          "text": "At first her weight is much bigger than the air resistance, so the resultant force is downwards and she accelerates. As her speed increases, air resistance increases, until it equals her weight. The resultant force is then zero, so she stops accelerating and falls at a constant speed.",
           "marks": 4,
           "explanation": "Full marks: weight > air resistance so she accelerates (1), air resistance increases with speed (1), air resistance becomes equal to weight (1), resultant force is zero so velocity is constant (1). It walks through each stage in order."
         },
@@ -68,9 +68,9 @@
           "explanation": "Two marks, for air resistance increasing and becoming equal to weight. It never says what happens as a result: zero resultant force, so constant velocity. The final link is often the mark students forget."
         },
         {
-          "text": "Gravity stops pulling her down as much because she is falling so fast.",
+          "text": "When a skydiver jumps out of a plane she falls because of gravity, and she goes faster and faster. But after a while gravity stops pulling her down as much because she is falling so fast, so she can't go any faster. This is called terminal velocity, and it is the fastest speed she can fall at. When she opens her parachute she slows down.",
           "marks": 0,
-          "explanation": "Zero. Gravity (her weight) stays the same throughout. It's the air resistance that changes. A common misconception scores nothing, even in a longer answer."
+          "explanation": "Zero. Gravity (her weight) stays the same throughout; it's the air resistance that changes. This is a long answer built around a common misconception, and a misconception scores nothing however much is written around it. The parachute isn't part of the question."
         }
       ],
       "tip": "Count the marks and plan that many steps. For terminal velocity: start → speed increases → air resistance increases → forces balance → zero resultant force → constant velocity."
@@ -90,12 +90,12 @@
       "prompt": "The potential difference across a resistor is 12 V.\nThe current in the resistor is 0.35 A.\n\nCalculate the resistance of the resistor.\n\nGive your answer to 2 significant figures.",
       "answers": [
         {
-          "text": "V = I × R\nR = V ÷ I\nR = 12 ÷ 0.35\nR = 34.29 Ω\nR = 34 Ω (2 s.f.)",
+          "text": "R = V ÷ I = 12 ÷ 0.35 = 34.29\nR = 34 Ω (2 s.f.)",
           "marks": 3,
           "explanation": "Full marks: correct substitution (1), correct rearrangement and calculation (1), and the answer to 2 significant figures as instructed (1). Writing the unrounded value first makes the rounding easy to check."
         },
         {
-          "text": "R = 12 ÷ 0.35 = 34.2857 Ω",
+          "text": "V = I × R, so R = V ÷ I\nR = 12 ÷ 0.35\nR = 34.2857 Ω",
           "marks": 2,
           "explanation": "Two marks: the calculation is correct, but the question asked for 2 significant figures and this answer has six. When a question specifies rounding, there is a mark for doing it."
         },
@@ -178,9 +178,9 @@
           "explanation": "One mark for the correct equation, but neither unit was converted, so the answer isn't in m/s."
         },
         {
-          "text": "12 ÷ 3.6 = 3.33 m/s",
+          "text": "Speed = time ÷ distance\nTime = 12 minutes\nDistance = 3.6 km\nSpeed = 12 ÷ 3.6 = 3.33 m/s",
           "marks": 0,
-          "explanation": "Zero: the equation is upside down. Speed = distance ÷ time."
+          "explanation": "Zero: the equation is upside down. Speed = distance ÷ time. Writing the equation first only helps if it is the right one."
         }
       ],
       "tip": "Write the equation, convert to SI units (m, s), substitute, calculate, then sense-check the size of the answer."
@@ -209,7 +209,7 @@
           "explanation": "Two marks: correct value, but the question asks for the unit. When 'give the unit' is in the question, it is worth a mark."
         },
         {
-          "text": "c = 42 000 ÷ 2.0 = 21 000 J/kg °C",
+          "text": "ΔE = m c Δθ\nrearranged: c = ΔE ÷ m\nc = 42 000 ÷ 2.0\n= 21 000 J/kg °C",
           "marks": 1,
           "explanation": "One mark for the correct unit, but the temperature change was left out of the rearrangement. Write the rearranged equation first."
         },
@@ -245,9 +245,9 @@
           "explanation": "One mark: the value is correct but not in standard form (30 must become 3.0 and the power goes up by one), which the question asked for."
         },
         {
-          "text": "v = 5.0 × 6.0 = 30 m/s",
+          "text": "wave speed = frequency × wavelength\nv = 5.0 × 6.0\nv = 30 m/s",
           "marks": 0,
-          "explanation": "Zero: the powers of ten have been ignored. Light travelling at 30 m/s should seem very wrong."
+          "explanation": "Zero: the powers of ten have been ignored. Light travelling at 30 m/s should seem very wrong. Copying out the equation doesn't earn a mark when the substitution is wrong."
         }
       ],
       "tip": "Use the EXP / ×10ˣ button on your calculator, and check the power is sensible (light ≈ 3 × 10⁸ m/s)."
@@ -307,12 +307,12 @@
           "explanation": "Full marks: two halvings identified (1), so the half-life is 6 hours (1)."
         },
         {
-          "text": "It halves twice, so the half-life is 12 × 2 = 24 hours.",
+          "text": "800 Bq halves to 400 Bq, which halves again to 200 Bq.\nIt halves twice, so the half-life is 12 × 2 = 24 hours.",
           "marks": 1,
           "explanation": "One mark for identifying two half-lives, but then multiplying instead of dividing. Two half-lives fit into 12 hours."
         },
         {
-          "text": "800 − 200 = 600, 600 ÷ 12 = 50 Bq per hour",
+          "text": "Activity drops by 800 − 200 = 600 Bq in 12 hours\n600 ÷ 12 = 50 Bq per hour",
           "marks": 0,
           "explanation": "Zero. Radioactive decay isn't linear, and this doesn't find a half-life. Keep halving until you reach the final activity."
         }
@@ -379,9 +379,9 @@
           "explanation": "One mark for the correct rearrangement, but the extension must be in metres for the unit N/m."
         },
         {
-          "text": "k = 4.0 × 0.050 = 0.2 N/m",
+          "text": "force = spring constant × extension\nso spring constant = force × extension\nk = 4.0 × 0.050 = 0.2 N/m",
           "marks": 0,
-          "explanation": "Zero: the equation has been rearranged wrongly. From F = ke, k = F ÷ e."
+          "explanation": "Zero: the equation has been rearranged wrongly. From F = ke, k = F ÷ e. Converting the extension to metres was right, but it can't rescue the wrong rearrangement."
         }
       ],
       "tip": "Physics equations use SI units: m, kg, s, N. Convert cm to m (÷ 100) before substituting."
@@ -400,14 +400,14 @@
       "prompt": "An electric kettle has a metal case, an earth wire and a fuse.\n\nExplain how the earth wire and fuse protect the user if the live wire touches the metal case.",
       "answers": [
         {
-          "text": "If the live wire touches the case, a large current flows from the case through the earth wire to the ground. This large current makes the fuse wire heat up and melt, which breaks the circuit and disconnects the live wire. The case is no longer live, so the user can't get an electric shock.",
+          "text": "A large current flows from the live wire through the case and the earth wire to the ground. This large current heats the fuse until it melts, breaking the circuit and disconnecting the live wire, so the case is no longer live and the user can't get a shock.",
           "marks": 4,
           "explanation": "Full marks: current flows through the earth wire (1), a large current (1), the fuse melts and breaks the circuit (1), the case is not live so there's no shock (1)."
         },
         {
-          "text": "The earth wire takes the electricity to the ground and the fuse melts so you don't get a shock.",
+          "text": "The earth wire and the fuse are both important safety features in a kettle with a metal case. If the live wire touches the metal case, the earth wire takes the electricity to the ground and the fuse melts so you don't get a shock. This is why appliances with metal cases always need an earth wire and a fuse.",
           "marks": 2,
-          "explanation": "Two marks: the basic idea is there, but it misses the large current (why the fuse melts) and the circuit being broken."
+          "explanation": "Two marks: the basic idea is there, but it misses the large current (why the fuse melts) and the circuit being broken. The first and last sentences restate the question, so they don't add any of the missing links."
         },
         {
           "text": "The earth wire and fuse are safety features that stop you getting electrocuted.",
@@ -431,7 +431,7 @@
       "prompt": "A ball is thrown vertically upwards.\n\nDescribe the energy transfers from when the ball leaves the hand until it reaches its highest point.",
       "answers": [
         {
-          "text": "As the ball rises, energy is transferred from its kinetic energy store to its gravitational potential energy store. Some energy is also dissipated to the thermal energy store of the surroundings because of air resistance. At the highest point the kinetic energy store is (almost) empty.",
+          "text": "As the ball rises, energy transfers from its kinetic store to its gravitational potential store, and some is dissipated to the thermal store of the surroundings by air resistance. At the highest point its kinetic store is (almost) empty.",
           "marks": 3,
           "explanation": "Full marks: kinetic → gravitational potential (1), energy dissipated by air resistance (1), kinetic store empty at the top (1)."
         },
@@ -441,9 +441,9 @@
           "explanation": "Two marks. It misses the energy dissipated to the surroundings by air resistance, which is always worth including."
         },
         {
-          "text": "The energy gets used up as the ball goes higher.",
+          "text": "When the ball is thrown it has lots of energy, which comes from the person's arm. As the ball goes higher and higher, the energy gets used up, because it takes energy to go up against gravity. At the highest point all the energy has been used up, so the ball stops and then falls back down.",
           "marks": 0,
-          "explanation": "Zero. Energy is never 'used up'; it is transferred between stores. Name the stores."
+          "explanation": "Zero. Energy is never 'used up'; it is transferred between stores. The answer repeats the misconception three times and never names a store, so its length earns nothing."
         }
       ],
       "tip": "Use the energy-store words: kinetic, gravitational potential, elastic potential, thermal, chemical. Energy is transferred or dissipated, never 'used up'."
@@ -462,7 +462,7 @@
       "prompt": "Describe how a student could investigate how the length of a wire affects its resistance.",
       "answers": [
         {
-          "text": "1. Attach the wire to a metre ruler and connect it in series with an ammeter and a power supply, with a voltmeter in parallel across the wire.\n2. Connect one crocodile clip at 0 cm and the other at 10 cm.\n3. Switch on, record the current and potential difference, then switch off quickly so the wire doesn't heat up.\n4. Calculate resistance with R = V ÷ I.\n5. Repeat for lengths of 20, 30, 40, 50 cm, and repeat each length three times to find a mean.\n6. Plot resistance against length.",
+          "text": "1. Tape the wire along a metre ruler; connect it in series with an ammeter and power supply, with a voltmeter in parallel across it.\n2. Put crocodile clips at 0 cm and 10 cm.\n3. Switch on, record current and potential difference, then switch off quickly so the wire doesn't heat up.\n4. Calculate R = V ÷ I.\n5. Repeat for 20, 30, 40 and 50 cm, three times each, and find means.\n6. Plot resistance against length.",
           "marks": 6,
           "explanation": "Level 3 (5–6 marks): a complete, logical method with the circuit, how length is changed and measured, how resistance is calculated, control of temperature, repeats and a graph."
         },
@@ -472,12 +472,12 @@
           "explanation": "Level 2 (3–4 marks): the right approach, but not detailed enough: no lengths or range, no R = V ÷ I, no way of stopping the wire heating up, no repeats."
         },
         {
-          "text": "A longer wire has more resistance because the electrons collide with more ions.",
+          "text": "The length of a wire affects its resistance. A longer wire has more resistance because the electrons collide with more ions as they travel through it. I predict that if you double the length, the resistance will double, so resistance is directly proportional to length. The thickness of the wire also affects its resistance, because thinner wires have fewer paths for the electrons, and the material matters too. The temperature of the wire also affects the resistance, because hot wires have more resistance.",
           "marks": 2,
-          "explanation": "Level 1 (1–2 marks): correct physics, but it is an explanation of the result, not a method."
+          "explanation": "Level 1 (1–2 marks): correct physics, and plenty of it, but it is a prediction and an explanation of the result, not a method. 'Describe how a student could investigate' asks what the student would do, step by step."
         },
         {
-          "text": "Use different wires and see which one has the most resistance.",
+          "text": "Get lots of different wires, some long and some short, and connect them to a battery one at a time. See which one has the most resistance. The longest wire will have the most resistance, so that proves it.",
           "marks": 1,
           "explanation": "Level 1, low: changing the wire changes more than the length (thickness, material), so it's not a fair test, and there is no measurement method."
         }
@@ -508,9 +508,9 @@
           "explanation": "One mark. Explain what happens next: the total current increases for the same pd, so the total resistance goes down."
         },
         {
-          "text": "Because the resistances add together.",
+          "text": "Because the resistances add together, so adding another resistor makes the total bigger.",
           "marks": 0,
-          "explanation": "Zero: that's true for series circuits. In parallel, the total resistance is less than the smallest individual resistance."
+          "explanation": "Zero: that's true for series circuits. In parallel, the total resistance is less than the smallest individual resistance. It also contradicts the question, which tells you the total decreases."
         }
       ],
       "tip": "Parallel: more paths → more total current (same pd) → less total resistance. Series: resistances add up."
@@ -539,7 +539,7 @@
           "explanation": "One mark for the correct motion, but 'explain' needs the reason: the increasing gradient shows increasing speed."
         },
         {
-          "text": "The car is going uphill because the line goes up.",
+          "text": "The car is going uphill because the line goes up and gets steeper.",
           "marks": 0,
           "explanation": "Zero. The graph shows distance travelled, not height. The shape describes motion, not the road."
         }

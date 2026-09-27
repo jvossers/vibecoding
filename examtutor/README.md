@@ -86,3 +86,4 @@ Guidelines for writing questions:
 - Answers are shuffled and relabelled (Candidate A, B, …) every time, so **don't mention letters** in explanations.
 - Every answer should be *relevant and creditworthy*. The lesson is in why good answers score differently.
 - In each explanation, name the level or mark-scheme points, and say what the answer would need to score higher.
+- **Don't let length give the answer away.** Vary which answer is the longest and which is the shortest: pad some weak answers with wording that earns nothing (restating the question, retelling the plot, background facts, feature-spotting, neat working for a wrong method), and keep some top answers concise. When you pad an answer, say in its explanation why the extra words earn no marks.
