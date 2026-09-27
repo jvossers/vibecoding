@@ -86,18 +86,18 @@
     color: var(--desk-muted); margin: 0 0 .7rem;
   }
   .subject-grid {
-    display: grid; gap: 12px;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    display: grid; gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
     margin-bottom: 2rem;
   }
   .subject {
     position: relative; text-align: left; cursor: pointer;
     background: var(--paper); color: var(--print);
     border: 0; border-radius: var(--radius);
-    padding: 1rem 1rem .9rem 1.2rem; min-height: 96px;
+    padding: .7rem .9rem .7rem 1.2rem; min-height: 52px;
     box-shadow: var(--shadow);
     transition: transform .15s ease, box-shadow .15s ease;
-    display: flex; flex-direction: column; justify-content: space-between;
+    display: flex; align-items: center; gap: .7rem;
   }
   .subject::before {
     content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
@@ -105,11 +105,16 @@
   }
   .subject:hover { transform: translateY(-2px) rotate(-.4deg); }
   .subject:focus-visible { outline: 3px solid var(--biro); outline-offset: 2px; }
-  .subject strong { font-size: 1.05rem; line-height: 1.2; }
-  .subject small { color: var(--print-muted); font-size: .8rem; }
+  .subject strong { font-size: 1rem; line-height: 1.2; flex: 1; }
+  .subject small { color: var(--print-muted); font-size: .8rem; white-space: nowrap; }
+  .subj-board {
+    font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    border: 1.5px solid var(--print); padding: .05rem .4rem; min-width: 3.4rem; text-align: center;
+  }
+  .subj-board.diff { background: var(--print); color: #fff; }
   .subject[aria-pressed="true"] { outline: 3px solid var(--c, var(--accent)); outline-offset: 2px; transform: translateY(-2px); }
   .subject[aria-pressed="true"]::after {
-    content: "✓"; position: absolute; right: .7rem; top: .35rem;
+    content: "✓"; position: absolute; right: -.2rem; top: -1.1rem;
     font-family: "Caveat", cursive; font-weight: 700; font-size: 1.9rem; color: var(--red);
   }
   .subject.mixed { background: repeating-linear-gradient(-45deg, var(--paper), var(--paper) 10px, #f5f2ea 10px, #f5f2ea 20px); }
@@ -122,6 +127,52 @@
   }
   .chip[aria-pressed="true"] { background: var(--desk-ink); color: var(--desk); }
   .chip:disabled { opacity: .35; cursor: not-allowed; }
+
+  /* Your exam boards: a summary card on the setup screen and a sheet to change them */
+  .boards-card {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    background: var(--paper); color: var(--print); box-shadow: var(--shadow); border-radius: var(--radius);
+    padding: .75rem .9rem; margin: 0 0 1.4rem; max-width: 600px;
+  }
+  .boards-card b { display: block; font-size: .95rem; }
+  .boards-card span { font-size: .85rem; color: var(--print-muted); }
+  .boards-card .chip { border-color: var(--print); color: var(--print); padding: .35rem .9rem; flex: none; }
+  .boards-overlay {
+    position: fixed; inset: 0; z-index: 40; background: rgba(20,18,12,.45);
+    display: flex; align-items: flex-end; justify-content: center; animation: fadeIn .2s ease both;
+  }
+  .boards-sheet {
+    width: 100%; max-height: 92vh; overflow-y: auto; overscroll-behavior: contain;
+    background: var(--paper); color: var(--print); border-radius: 18px 18px 0 0;
+    padding: 10px 16px calc(16px + env(safe-area-inset-bottom));
+    animation: sheetUp .28s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @media (min-width: 640px) {
+    .boards-overlay { align-items: center; }
+    .boards-sheet { max-width: 520px; border-radius: 14px; padding: 18px 22px 20px; }
+  }
+  @keyframes fadeIn { from { opacity: 0; } }
+  @keyframes sheetUp { from { transform: translateY(40px); opacity: 0; } }
+  .bs-grip { display: block; width: 40px; height: 4px; border-radius: 2px; background: #b9b4a6; margin: 0 auto 10px; }
+  @media (min-width: 640px) { .bs-grip { display: none; } }
+  .boards-sheet h3 { font-family: "Fraunces", Georgia, serif; font-size: 1.3rem; margin: 0 0 .2rem; }
+  .boards-sheet p { margin: 0 0 .9rem; font-size: .85rem; color: var(--print-muted); }
+  .bs-all { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: .6rem; font-size: .85rem; font-weight: 700; }
+  .bs-all span { margin-right: 4px; }
+  .bs-all .chip { border-color: var(--print); color: var(--print); padding: .25rem .8rem; font-size: .85rem; min-width: 0; }
+  .bs-all .chip[aria-pressed="true"] { background: var(--print); color: #fff; }
+  .bs-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .8rem; padding: .4rem 0; border-bottom: 1px solid #ece8de; }
+  .bs-name { font-size: .92rem; }
+  .bs-seg { display: grid; grid-auto-flow: column; grid-auto-columns: 4.1rem; border: 1.5px solid var(--print); border-radius: 8px; overflow: hidden; }
+  .bs-seg button {
+    border: 0; background: #fff; color: var(--print); font: inherit; font-size: .78rem; font-weight: 700; cursor: pointer;
+    padding: .3rem 0 .25rem; line-height: 1.15; display: flex; flex-direction: column; align-items: center;
+  }
+  .bs-seg button + button { border-left: 1.5px solid var(--print); }
+  .bs-seg button small { font-weight: 400; font-size: .66rem; opacity: .7; }
+  .bs-seg button[aria-checked="true"] { background: var(--print); color: #fff; }
+  .bs-seg button:focus-visible, .boards-sheet .btn:focus-visible { outline: 3px solid var(--biro); outline-offset: -3px; }
+  .boards-sheet .btn { display: flex; justify-content: center; width: 100%; margin-top: 1rem; background: var(--print); color: #fff; }
 
   .btn {
     display: inline-flex; align-items: center; gap: .5rem;
@@ -526,19 +577,6 @@
     display: grid; place-items: center; font-weight: 700;
   }
   .tip b { display: block; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; margin-bottom: .2rem; }
-  .board-picker { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: .7rem; }
-  .board-chip { display: inline-flex; align-items: center; gap: .5rem; }
-  .board-chip .dot { width: .65rem; height: .65rem; border-radius: 50%; background: var(--b, currentColor); }
-  .board-chip small { font-weight: 400; opacity: .75; }
-  .board-note { font-size: .88rem; color: var(--desk-muted); margin: 0 0 2rem; max-width: 60ch; }
-  .board-table { display: grid; gap: 8px; margin-bottom: .7rem; max-width: 520px; }
-  .board-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1rem; padding: .35rem 0; border-bottom: 1px solid var(--desk-dark); }
-  .board-row select {
-    font: inherit; font-weight: 700; color: var(--desk-ink); background: transparent;
-    border: 2px solid var(--desk-ink); border-radius: 999px; padding: .3rem .8rem; cursor: pointer;
-    width: 13.5rem; max-width: 55vw;
-  }
-  .board-row select option { color: #111; background: #fff; }
   .board-badge {
     border: 1.5px solid var(--print); padding: .05rem .5rem; font-weight: 700; color: var(--print); white-space: nowrap;
   }
@@ -719,7 +757,18 @@
   function setBoard(subjectId, board) {
     state.boardFor[subjectId] = board;
     saveBoardPrefs();
-    renderSetup('count');
+  }
+  // The board most subjects use, and the subjects that differ from it (for the summary and badges).
+  function boardSummary() {
+    const chosen = state.subjects.map(s => [s, boardFor(s.id)]);
+    const tally = {};
+    chosen.forEach(([, b]) => { tally[b] = (tally[b] || 0) + 1; });
+    const main = Object.keys(tally).sort((a, b) => tally[b] - tally[a])[0];
+    const others = chosen.filter(([, b]) => b !== main);
+    const text = !others.length ? `${main} for every subject`
+      : others.length <= 2 ? `${main} · ${others.map(([s, b]) => `${b} for ${s.name}`).join(', ')}`
+      : `${main} for most · ${plural(others.length, 'subject')} differ`;
+    return { main, text };
   }
 
   function questionsFor(subjectId) {
@@ -728,72 +777,87 @@
     return (state.bank[subjectId] || []).filter(q => questionBoards(q).includes(board));
   }
 
+  // ---------- exam boards sheet ----------
+  // A bottom sheet on phones (a centred dialog on wider screens) to set the board for every subject.
+  function openBoards({ first = false } = {}) {
+    const opener = document.activeElement;
+    const setAll = state.boards.map(b => el('button', {
+      class: 'chip', onclick: () => {
+        state.subjects.forEach(s => { if (subjectBoards(s).includes(b.id)) state.boardFor[s.id] = b.id; });
+        saveBoardPrefs(); update();
+      }
+    }, b.id));
+    const rows = state.subjects.map(s => {
+      const btns = subjectBoards(s).map(b => el('button', {
+        role: 'radio', 'data-board': b,
+        title: `${boardById(b).name}${s.specs && s.specs[b] ? ` · ${s.specs[b]}` : ''}`,
+        onclick: () => { setBoard(s.id, b); update(); }
+      }, b, el('small', { text: countFor(s.id, b) ? String(countFor(s.id, b)) : 'none' })));
+      return { s, btns, row: el('div', { class: 'bs-row' }, el('span', { class: 'bs-name', text: s.name }),
+        el('div', { class: 'bs-seg', role: 'radiogroup', 'aria-label': `Exam board for ${s.name}` }, btns)) };
+    });
+    function update() {
+      rows.forEach(({ s, btns }) => btns.forEach(btn => btn.setAttribute('aria-checked', String(btn.dataset.board === boardFor(s.id)))));
+      setAll.forEach((btn, i) => btn.setAttribute('aria-pressed', String(state.subjects.every(s => boardFor(s.id) === state.boards[i].id))));
+      if (overlay) renderSetup('keep');  // keep the summary and badges behind the sheet in step
+    }
+    let overlay = null;
+    update();
+
+    const done = el('button', { class: 'btn', onclick: () => close() }, 'Done');
+    const sheet = el('div', { class: 'boards-sheet', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'boards-title' },
+      el('span', { class: 'bs-grip', 'aria-hidden': 'true' }),
+      el('h3', { id: 'boards-title', text: first ? 'Which exam boards do you sit?' : 'Your exam boards' }),
+      el('p', { text: first
+        ? 'Questions follow each board\'s format. Ask your teacher if you\'re not sure. You can change this any time.'
+        : 'Remembered on this device. The numbers show how many questions each board has.' }),
+      el('div', { class: 'bs-all' }, el('span', { text: 'Set all to' }), setAll),
+      el('div', { class: 'bs-rows' }, rows.map(x => x.row)),
+      done);
+    overlay = el('div', { class: 'boards-overlay', onclick: e => { if (e.target === overlay) close(); } }, sheet);
+    const onKey = e => { if (e.key === 'Escape') close(); };
+    function close() {
+      saveBoardPrefs();  // also records that the first-visit question has been answered
+      overlay.remove();
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+      renderSetup('keep');
+      const back = appEl.querySelector('.boards-card .chip');
+      (opener && opener.isConnected ? opener : back)?.focus({ preventScroll: true });
+    }
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    document.body.append(overlay);
+    done.focus({ preventScroll: true });
+  }
+
   // ---------- setup screen ----------
-  // `next` is the step to bring into view after a choice ('board', 'count' or 'start').
+  // `next` is the step to bring into view after a choice ('count' or 'start'; 'keep' just redraws in place).
   // Without it (first load, Home, Change subject) the screen is drawn fresh at the top.
   function renderSetup(next) {
     if (typeof next !== 'string') next = null;
     const available = state.selectedSubject ? questionsFor(state.selectedSubject).length : 0;
 
-    const subjectBtn = (id, name, sub, colour, extraClass = '') => el('button', {
+    const summary = boardSummary();
+    const subjectBtn = (id, name, count, badge, colour, extraClass = '') => el('button', {
       class: `subject ${extraClass}`,
       style: colour ? `--c:${colour}` : null,
       'aria-pressed': String(state.selectedSubject === id),
-      onclick: () => { state.selectedSubject = id; renderSetup('board'); }
-    }, el('strong', { text: name }), el('small', { text: sub }));
+      onclick: () => { state.selectedSubject = id; renderSetup('count'); }
+    }, el('strong', { text: name }), el('small', { class: 'subject-count', text: count }), badge);
+
+    const boardsCard = el('div', { class: 'boards-card' },
+      el('div', {}, el('b', { text: 'Your exam boards' }), el('span', { text: summary.text })),
+      el('button', { class: 'chip', 'aria-haspopup': 'dialog', onclick: () => openBoards() }, 'Change'));
 
     const subjectGrid = el('div', { class: 'subject-grid', role: 'group', 'aria-label': 'Subject' },
       state.subjects.map(s => {
-        const n = questionsFor(s.id).length;
-        const board = boardById(boardFor(s.id)).name;
-        return subjectBtn(s.id, s.name, n ? `${plural(n, 'question')} · ${board}` : `No ${board} questions yet`, s.colour);
+        const b = boardFor(s.id), n = questionsFor(s.id).length;
+        const badge = el('span', { class: `subj-board${b !== summary.main ? ' diff' : ''}`, text: b, title: boardById(b).name });
+        return subjectBtn(s.id, s.name, n ? String(n) : 'none yet', badge, s.colour);
       }),
-      subjectBtn('mixed', 'Mixed paper', `${plural(questionsFor('mixed').length, 'question')} · every subject`, '#222', 'mixed')
+      subjectBtn('mixed', 'Mixed paper', `${questionsFor('mixed').length} · your boards`, null, '#222', 'mixed')
     );
-
-    const boardOption = (subjectId, b) => {
-      const n = countFor(subjectId, b);
-      const spec = (subjectById(subjectId).specs || {})[b];
-      return { id: b, name: boardById(b).name, n, spec };
-    };
-
-    let boardStep = null;
-    if (state.selectedSubject === 'mixed') {
-      boardStep = el('div', {},
-        el('div', { class: 'board-table' },
-          state.subjects.map(subj => el('label', { class: 'board-row' },
-            el('span', { text: subj.name }),
-            el('select', {
-              'aria-label': `Exam board for ${subj.name}`,
-              onchange: e => setBoard(subj.id, e.target.value)
-            }, subjectBoards(subj).map(b => {
-              const o = boardOption(subj.id, b);
-              return el('option', { value: b, selected: b === boardFor(subj.id) },
-                `${o.name} (${o.n ? o.n : 'none yet'})`);
-            }))
-          ))
-        ),
-        el('p', { class: 'board-note', text: 'Schools often use different boards for different subjects, so you can choose one per subject. Your choices are remembered on this device.' })
-      );
-    } else if (state.selectedSubject) {
-      const sid = state.selectedSubject;
-      const current = boardFor(sid);
-      boardStep = el('div', {},
-        el('div', { class: 'board-picker', role: 'group', 'aria-label': 'Exam board' },
-          subjectBoards(subjectById(sid)).map(b => {
-            const o = boardOption(sid, b);
-            return el('button', {
-              class: 'chip board-chip',
-              style: `--b:${boardById(b).colour || 'currentColor'}`,
-              'aria-pressed': String(b === current),
-              title: o.spec ? `Specification ${o.spec}` : null,
-              onclick: () => setBoard(sid, b)
-            }, el('span', { class: 'dot' }), o.name, el('small', { text: o.n ? `${o.n}` : 'none yet' }));
-          })
-        ),
-        el('p', { class: 'board-note', text: 'Questions tagged "All boards" test technique that is the same whichever board you sit. The others follow the chosen board\'s question format.' })
-      );
-    }
 
     const countRow = el('div', { class: 'count-row', role: 'group', 'aria-label': 'Number of questions' },
       COUNT_OPTIONS.map(opt => {
@@ -822,13 +886,11 @@
         el('h2', {}, 'Every answer is right. Only one gets ', el('em', { text: 'full marks.' })),
         el('p', {}, 'Each question comes with several real-style student answers. They are all correct, but they earn different marks. Pick the one that earns the most and the one that earns the fewest, then see how an examiner would mark them.')
       ),
+      boardsCard,
       el('p', { class: 'step-label', text: '1 · Choose a subject' }),
       subjectGrid,
-      state.selectedSubject && el('div', { 'data-step': 'board' },
-        el('p', { class: 'step-label', text: state.selectedSubject === 'mixed' ? '2 · Your exam board for each subject' : '2 · Your exam board' }),
-        boardStep),
       el('div', { 'data-step': 'count' },
-        el('p', { class: 'step-label', text: `${state.selectedSubject ? 3 : 2} · How many questions?` }),
+        el('p', { class: 'step-label', text: '2 · How many questions?' }),
         countRow),
       el('div', { class: 'actions', 'data-step': 'start' }, startBtn)
     );
@@ -1344,7 +1406,12 @@
     if (state.subjects.length) renderSetup();
   });
 
-  loadData().then(renderSetup).catch(err => {
+  loadData().then(() => {
+    renderSetup();
+    let asked = false;
+    try { asked = localStorage.getItem(BOARD_KEY) !== null; } catch { asked = true; }
+    if (!asked) openBoards({ first: true });
+  }).catch(err => {
     console.error(err);
     render(el('div', { class: 'notice' },
       el('strong', { text: 'The question bank could not be loaded.' }),

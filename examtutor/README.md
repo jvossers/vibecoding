@@ -27,7 +27,7 @@ cd examtutor && python3 -m http.server   # then open http://localhost:8000
 
 ## Exam boards
 
-Students pick their exam board **per subject**, because schools often mix boards, e.g. AQA English with Edexcel Maths. The choice is remembered in the browser. A mixed paper uses each subject's chosen board.
+Students set their exam board **per subject**, because schools often mix boards, e.g. AQA English with Edexcel Maths. On the first visit a sheet asks for them (with "Set all to…" for the common one-board case); after that, a *Your exam boards* card on the setup screen summarises them and its Change button reopens the sheet. Each subject in the list shows its board, highlighted when it differs from the main one. The choices are remembered in the browser, and a mixed paper uses each subject's board.
 
 Each question has a `boards` list saying which boards it suits:
 
