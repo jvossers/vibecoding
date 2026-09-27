@@ -1104,11 +1104,12 @@
       noteTags.replaceChildren(...tags(false));
       noteText.textContent = a.explanation;
     }
-    // Drag the tab up or down; it snaps to the nearest of closed / half / full.
+    // Drag the tab up or down. On release it snaps to the next stop (closed / half / full) in the
+    // direction of the drag, so a short pull is enough; a tiny wobble snaps back to the nearest stop.
     let drag = null;
     noteBar.addEventListener('pointerdown', e => {
       if (wide()) return;
-      drag = { y: e.clientY, h: note.offsetHeight, moved: false };
+      drag = { y: e.clientY, h: note.offsetHeight, moved: false, lastY: e.clientY, dir: 0 };
       noteBar.setPointerCapture(e.pointerId);
       note.style.transition = 'none';
     });
@@ -1116,19 +1117,24 @@
       if (!drag) return;
       const dy = drag.y - e.clientY;
       if (Math.abs(dy) > 6) drag.moved = true;
+      if (Math.abs(drag.lastY - e.clientY) > 2) { drag.dir = Math.sign(drag.lastY - e.clientY); drag.lastY = e.clientY; }
       if (!drag.moved) return;
       const H = noteHeights();
       note.style.height = `${Math.max(H.closed, Math.min(H.full, drag.h + dy))}px`;
     });
     const endNoteDrag = () => {
       if (!drag) return;
-      const moved = drag.moved;
+      const { moved, dir, h: startH } = drag;
       drag = null;
       note.style.transition = '';
       if (!moved) return;
       justDragged = true;
-      const H = noteHeights(), h = note.offsetHeight;
-      setNote(['closed', 'half', 'full'].reduce((best, k) => Math.abs(H[k] - h) < Math.abs(H[best] - h) ? k : best, 'closed'));
+      const H = noteHeights(), h = note.offsetHeight, stops = ['closed', 'half', 'full'];
+      const nearest = stops.reduce((best, k) => Math.abs(H[k] - h) < Math.abs(H[best] - h) ? k : best, 'closed');
+      if (Math.abs(h - startH) < 16 || !dir) return setNote(nearest);
+      // Up: the first stop above the tab; down: the first stop below it.
+      const next = dir > 0 ? stops.find(k => H[k] > h + 4) || 'full' : [...stops].reverse().find(k => H[k] < h - 4) || 'closed';
+      setNote(next);
     };
     noteBar.addEventListener('pointerup', endNoteDrag);
     noteBar.addEventListener('pointercancel', endNoteDrag);
