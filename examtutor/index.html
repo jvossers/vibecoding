@@ -214,15 +214,26 @@
 
   /* ---------- Candidate responses ---------- */
   .responses {
-    position: relative; display: flex; align-items: stretch; gap: 14px;
+    --card-w: 80%;
+    --gap: 14px;
+    position: relative; display: flex; align-items: stretch; gap: var(--gap);
     overflow-x: auto; overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory; scroll-padding-inline: 4px;
-    padding: 4px 4px 12px;
+    scroll-snap-type: x mandatory;
+    padding: 4px 0 12px;
     scrollbar-width: thin; scrollbar-color: #b9b4a6 transparent;
   }
+  /* Spacers at both ends let the first and last answers sit centred too, so the answer in view
+     always has the same space on both sides, with its neighbours peeking in equally. */
+  @media (max-width: 640px) { .responses { --card-w: 74%; --gap: 10px; } }
+  /* On narrow phones the buttons say just "Most" / "Fewest" (the bar icons carry the meaning),
+     so the answer can be narrow enough for its neighbours to show on both sides. */
+  @media (max-width: 440px) { .pick-word { display: none; } }
+  .responses::before, .responses::after {
+    content: ""; flex: 0 0 calc((100% - var(--card-w)) / 2 - var(--gap));
+  }
   .response {
-    position: relative; display: flex; flex-direction: column; gap: .8rem;
-    flex: 0 0 88%; scroll-snap-align: start;
+    min-width: 0; position: relative; display: flex; flex-direction: column; gap: .8rem;
+    flex: 0 0 var(--card-w); scroll-snap-align: center;
     text-align: left;
     background-color: #fff;
     border: 1.5px solid #bdb8aa; border-radius: 2px;
@@ -740,11 +751,12 @@
       const a = q.answers[ansIdx];
       const pickBtn = (kind, label) => el('button', {
         class: `pick-btn ${kind}`,
+        'aria-label': `${label} marks`,
         'aria-pressed': 'false',
         onclick: e => { e.stopPropagation(); pick(kind, ansIdx); }
-      }, meter(kind === 'most'), label);
-      const mostBtn = pickBtn('most', 'Most marks');
-      const fewestBtn = pickBtn('fewest', 'Fewest marks');
+      }, meter(kind === 'most'), label, el('span', { class: 'pick-word', text: ' marks' }));
+      const mostBtn = pickBtn('most', 'Most');
+      const fewestBtn = pickBtn('fewest', 'Fewest');
       const pickRow = el('div', { class: 'pick-row' }, mostBtn, fewestBtn);
       const card = el('div', {
         class: 'response',
@@ -785,19 +797,18 @@
     function goTo(i, smooth = true) {
       const list = trackCards();
       i = Math.max(0, Math.min(list.length - 1, i));
-      responses.scrollTo({ left: list[i].offsetLeft - 4, behavior: smooth ? 'smooth' : 'auto' });
+      const c = list[i];
+      responses.scrollTo({ left: c.offsetLeft + c.offsetWidth / 2 - responses.clientWidth / 2, behavior: smooth ? 'smooth' : 'auto' });
     }
     function updateNav() {
       const list = trackCards();
-      const max = responses.scrollWidth - responses.clientWidth;
-      if (responses.scrollLeft >= max - 2) current = list.length - 1;
-      else {
-        let best = Infinity;
-        list.forEach((c, i) => {
-          const d = Math.abs(c.offsetLeft - 4 - responses.scrollLeft);
-          if (d < best) { best = d; current = i; }
-        });
-      }
+      // The current answer is the one whose centre is closest to the centre of the track.
+      const mid = responses.scrollLeft + responses.clientWidth / 2;
+      let best = Infinity;
+      list.forEach((c, i) => {
+        const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid);
+        if (d < best) { best = d; current = i; }
+      });
       prevBtn.disabled = current === 0;
       nextNavBtn.disabled = current === list.length - 1;
       countEl.textContent = `Answer ${current + 1} of ${list.length}`;
