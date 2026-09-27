@@ -251,7 +251,7 @@
   }
   /* Spacers at both ends let the first and last answers sit centred too, so the answer in view
      always has the same space on both sides, with its neighbours peeking in equally. */
-  @media (max-width: 640px) { .responses { --card-w: 74%; --gap: 10px; } }
+  @media (max-width: 640px) { .responses { --card-w: 84%; --gap: 10px; } }
   /* On narrow phones the buttons say just "Most" / "Fewest" (the bar icons carry the meaning),
      so the answer can be narrow enough for its neighbours to show on both sides. */
   @media (max-width: 440px) { .pick-word { display: none; } }
@@ -460,7 +460,50 @@
   /* After marking: stamp row on each sheet, one examiner's panel, result chip, tip button */
   .mark-row { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: .4rem .5rem; margin-top: auto; min-height: 2.1rem; }
   .mark-row .placing { font-size: .72rem; font-weight: 700; padding: .1rem .5rem; border-radius: 999px; }
-  .exam-panel { margin-top: .6rem; animation: none; }
+  /* ---------- Examiner's note after marking ---------- */
+  .review-panel.is-marked .review-title h3 { display: none; }
+  .review-panel.is-marked .review-head { align-items: center; }
+  .note { background: #f5f3ec; color: #2b2a26; display: flex; flex-direction: column; }
+  .note-bar {
+    position: relative; display: flex; align-items: center; gap: .6rem; width: 100%;
+    padding: 14px 14px 8px; border: 0; background: transparent; color: inherit; font: inherit; text-align: left;
+    cursor: pointer; touch-action: none;
+  }
+  .note-bar:focus-visible { outline: 3px solid var(--biro); outline-offset: -3px; }
+  .note-grip { position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: 38px; height: 4px; border-radius: 2px; background: #b9b4a6; }
+  .note-bar .mark-stamp { font-size: 1.2rem; animation: none; }
+  .note-verdict { font-family: "Caveat", cursive; font-weight: 700; font-size: 1.3rem; line-height: 1.1; }
+  .note-why { margin-left: auto; font-size: .8rem; font-weight: 700; color: var(--biro); white-space: nowrap; }
+  .note-body { padding: 0 14px 12px; font-size: .93rem; line-height: 1.55; overflow-y: auto; overscroll-behavior: contain; flex: 1; min-height: 0; }
+  .note-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .note-text { margin: .45rem 0 0; }
+  .note .tip { margin-top: .8rem; }
+
+  @media (max-width: 899px) {
+    /* Phones: compact arrows beside the dots, and the note as a pull-up tab over the answers. */
+    .review .carousel-nav { justify-content: center; gap: .8rem; margin-bottom: .5rem; }
+    .review .nav-btn { width: 2rem; height: 2rem; font-size: .95rem; }
+    .review .nav-mid { flex-direction: row; }
+    .review .nav-count { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .review-body.marked { position: relative; }
+    .review-body.marked > div:last-child {
+      position: absolute; left: 12px; right: 12px; bottom: 0; max-height: none; overflow: visible; pointer-events: none;
+    }
+    .note {
+      pointer-events: auto; overflow: hidden;
+      border: 1.5px solid #9a9486; border-bottom: 0; border-radius: 14px 14px 0 0;
+      box-shadow: 0 -10px 26px -10px rgba(0,0,0,.45);
+      transition: height .28s cubic-bezier(.2,.8,.2,1);
+    }
+    .note[data-state="closed"] .note-body { visibility: hidden; }
+    .review-body.note-open > .responses { opacity: .45; transition: opacity .2s; }
+  }
+  @media (min-width: 900px) {
+    /* Wide screens: the note simply sits open under the answers. */
+    .note { margin-top: .6rem; border-left: 3px solid #9a9486; }
+    .note-bar { cursor: default; padding-top: 10px; }
+    .note-grip, .note-why { display: none; }
+  }
   .result-chip {
     display: inline-flex; align-items: baseline; gap: .35rem; margin-top: .25rem;
     font-size: .8rem; font-weight: 700; padding: .12rem .65rem; border-radius: 999px; color: var(--outcome);
@@ -1015,7 +1058,10 @@
       review.classList.add('open');
       document.body.classList.add('reviewing');
       if (!wide()) document.body.style.overflow = 'hidden';
-      requestAnimationFrame(() => { goTo(current, false); updateNav(); cards.forEach(c => c._updateMore()); });
+      requestAnimationFrame(() => {
+        goTo(current, false); updateNav(); cards.forEach(c => c._updateMore());
+        if (submitted) setNote(noteState);
+      });
       panel.focus({ preventScroll: true });
     }
     function closeReview() {
@@ -1051,18 +1097,74 @@
     const afterEl = el('div');
     const paperAfter = el('div', { class: 'paper-after' });
     reviewBody.append(nav, responses, afterEl);
-    // After marking: one examiner's panel that explains whichever answer is in view.
-    const examPanel = el('div', { class: 'feedback exam-panel', 'aria-live': 'polite' });
+    // After marking: the examiner's note for whichever answer is in view. On phones it is a
+    // pull-up tab over the answers (closed / half / full); on wide screens it sits open underneath.
+    const noteStamp = el('span', { class: 'mark-stamp' });
+    const noteVerdict = el('span', { class: 'note-verdict' });
+    const noteWhy = el('span', { class: 'note-why', 'aria-hidden': 'true' });
+    const noteTags = el('div', { class: 'note-tags' });
+    const noteText = el('p', { class: 'note-text' });
+    let noteState = 'closed', justDragged = false;
+    const noteBar = el('button', { class: 'note-bar', 'aria-expanded': 'false', onclick: () => {
+      if (justDragged) { justDragged = false; return; }
+      if (!wide()) setNote(noteState === 'closed' ? 'half' : 'closed');
+    } }, el('span', { class: 'note-grip', 'aria-hidden': 'true' }), noteStamp, noteVerdict, noteWhy);
+    const noteBody = el('div', { class: 'note-body' }, noteTags, noteText);
+    const note = el('section', { class: 'note', 'aria-label': "Examiner's comment", 'aria-live': 'polite' }, noteBar, noteBody);
+
+    function noteHeights() {
+      const avail = reviewBody.clientHeight - (nav.offsetTop + nav.offsetHeight) - 4;
+      return { closed: noteBar.offsetHeight, half: Math.round(avail * 0.6), full: avail };
+    }
+    function setNote(state) {
+      noteState = state;
+      note.dataset.state = state;
+      reviewBody.classList.toggle('note-open', state !== 'closed');
+      noteBar.setAttribute('aria-expanded', String(state !== 'closed'));
+      noteWhy.textContent = state === 'closed' ? 'Why? ▴' : 'Hide ▾';
+      if (wide()) { note.style.height = ''; reviewBody.style.paddingBottom = ''; return; }
+      reviewBody.style.paddingBottom = `${noteBar.offsetHeight + 12}px`;  // keep the closed tab clear of the answers
+      note.style.height = `${noteHeights()[state]}px`;
+    }
     function showExamPanel() {
       const c = trackCards()[current];
       if (!c || !c._marking) return;
       const { a, label, tags } = c._marking;
-      examPanel.replaceChildren(
-        el('div', { class: 'verdict' },
-          el('span', { class: 'mark-stamp', 'aria-label': `${a.marks} out of ${q.marks} marks` }, `${a.marks}/${q.marks}`),
-          label, ...tags(false)),
-        a.explanation);
+      noteStamp.textContent = `${a.marks}/${q.marks}`;
+      noteStamp.setAttribute('aria-label', `${a.marks} out of ${q.marks} marks`);
+      noteVerdict.textContent = label;
+      noteTags.replaceChildren(...tags(false));
+      noteText.textContent = a.explanation;
     }
+    // Drag the tab up or down; it snaps to the nearest of closed / half / full.
+    let drag = null;
+    noteBar.addEventListener('pointerdown', e => {
+      if (wide()) return;
+      drag = { y: e.clientY, h: note.offsetHeight, moved: false };
+      noteBar.setPointerCapture(e.pointerId);
+      note.style.transition = 'none';
+    });
+    noteBar.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const dy = drag.y - e.clientY;
+      if (Math.abs(dy) > 6) drag.moved = true;
+      if (!drag.moved) return;
+      const H = noteHeights();
+      note.style.height = `${Math.max(H.closed, Math.min(H.full, drag.h + dy))}px`;
+    });
+    const endNoteDrag = () => {
+      if (!drag) return;
+      const moved = drag.moved;
+      drag = null;
+      note.style.transition = '';
+      if (!moved) return;
+      justDragged = true;
+      const H = noteHeights(), h = note.offsetHeight;
+      setNote(['closed', 'half', 'full'].reduce((best, k) => Math.abs(H[k] - h) < Math.abs(H[best] - h) ? k : best, 'closed'));
+    };
+    noteBar.addEventListener('pointerup', endNoteDrag);
+    noteBar.addEventListener('pointercancel', endNoteDrag);
+    window.addEventListener('resize', () => { if (submitted && reviewBody.isConnected) setNote(noteState); });
     reviewFoot.append(actionsEl);
 
     // Choosing an answer for one role takes it away from whichever answer had it,
@@ -1151,16 +1253,20 @@
         const open = tipBox.hidden;
         tipBox.hidden = !open;
         tipBtn.setAttribute('aria-expanded', String(open));
-        if (open) tipBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (open && !wide()) setNote('full');
+        if (open) requestAnimationFrame(() => tipBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
       } }, "💡 Examiner's tip");
       reviewFoot.replaceChildren(el('div', { class: 'rank-actions' }, tipBtn || el('span'), nextBtn));
       dockTitle.textContent = "See the examiner's marks";
       dockSub.textContent = `${scoreWord} · ${result.correct} of 2 picks right`;
       paperAfter.replaceChildren(el('div', { class: 'rank-actions' },
         el('span', { class: 'hint', text: 'Marked. Open the answers to see why each one scored what it did.' }), makeNext()));
-      afterEl.replaceChildren(examPanel, tipBox);
+      if (tipBox) noteBody.append(tipBox);
+      afterEl.replaceChildren(note);
       reviewBody.classList.add('marked');
+      panel.classList.add('is-marked');
       showExamPanel();
+      requestAnimationFrame(() => setNote('closed'));
       reviewBody.scrollTo({ top: 0, behavior: 'smooth' });
       nextBtn.focus({ preventScroll: true });
     }
