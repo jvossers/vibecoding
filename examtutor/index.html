@@ -27,9 +27,10 @@
     --shadow: 0 1px 1px rgba(0,0,0,.06), 0 8px 24px -8px rgba(40,30,10,.35);
     --radius: 3px;
     --accent: #1f5f8b;
-    --dock-bg: #111;
-    --dock-fg: #fff;
-    --dock-edge: transparent;
+    /* The docked "Review answers" bar: examiner's-highlighter yellow in both light and dark mode. */
+    --dock-bg: #ffe45c;
+    --dock-fg: #111;
+    --dock-edge: #111;
     --track: var(--desk-dark);
     --line: 28px;     /* ruled-line spacing on the answer sheets = handwriting line height */
     --rule-y: 21px;   /* where the rule sits in each line; recalibrated to the font's baseline in JS */
@@ -42,10 +43,6 @@
       --desk-ink: #ece8dc;
       --desk-muted: #a8a392;
       --shadow: 0 1px 1px rgba(0,0,0,.4), 0 14px 30px -10px rgba(0,0,0,.8);
-      /* The docked "Review answers" bar flips to paper-on-dark so it stands out from the dark desk. */
-      --dock-bg: #fffefa;
-      --dock-fg: #111;
-      --dock-edge: #111;
       --track: #45473f;
     }
   }
@@ -357,7 +354,7 @@
     position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 20;
     width: min(560px, calc(100% - 24px));
     display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-    background: var(--dock-bg); color: var(--dock-fg); border: 0; border-radius: 16px; cursor: pointer; text-align: left;
+    background: var(--dock-bg); color: var(--dock-fg); border: 2px solid var(--dock-edge); border-radius: 16px; cursor: pointer; text-align: left;
     padding: .85rem 1.1rem; box-shadow: 0 12px 28px -10px rgba(0,0,0,.65);
     transition: opacity .2s, transform .2s;
     animation: dockIn .4s .2s cubic-bezier(.2,.8,.2,1) both;
