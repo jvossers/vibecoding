@@ -1,0 +1,518 @@
+{
+  "subject": "Business",
+  "questions": [
+    {
+      "id": "bus-001",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Calculating profit",
+      "skill": "Revenue − total costs, where total costs = fixed + (variable cost per unit × quantity)",
+      "marks": 2,
+      "prompt": "In one month a café sold 2,000 coffees at £2.50 each.\nIts costs that month were £1,800 of fixed costs and a variable cost of £0.90 per coffee.\n\nCalculate the café's profit for the month.",
+      "answers": [
+        {
+          "text": "Revenue = 2000 × £2.50 = £5000\nTotal costs = £1800 + (2000 × £0.90) = £3600\nProfit = £5000 − £3600 = £1400",
+          "marks": 2,
+          "explanation": "Full marks: correct revenue and total costs (1) and the correct profit (1)."
+        },
+        {
+          "text": "Revenue = 2000 × £2.50 = £5000\nProfit = £5000 − £1800 − £0.90 = £3199.10",
+          "marks": 1,
+          "explanation": "One mark for revenue. The variable cost is per coffee, so it must be multiplied by the 2,000 sold before it is subtracted."
+        },
+        {
+          "text": "£2.50 − £0.90 = £1.60 profit per coffee",
+          "marks": 0,
+          "explanation": "Zero. This is the contribution per coffee, not profit: it ignores the fixed costs and the number sold."
+        }
+      ],
+      "tip": "Write the formula first (profit = revenue − total costs), then check that every cost that depends on quantity has been multiplied by it."
+    },
+    {
+      "id": "bus-002",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Break-even",
+      "skill": "Break-even = fixed costs ÷ (selling price − variable cost per unit)",
+      "marks": 2,
+      "prompt": "A business has fixed costs of £12,000. It sells each product for £20, and the variable cost of each product is £12.\n\nCalculate the break-even level of output.",
+      "answers": [
+        {
+          "text": "12 000 ÷ (20 − 12) = 1500 units",
+          "marks": 2,
+          "explanation": "Full marks: the correct formula (1) and answer (1). One line is enough when it is the right line."
+        },
+        {
+          "text": "Contribution per unit = selling price − variable cost\n= £20 − £12 = £8\n\nBreak-even = contribution ÷ fixed costs\n= 8 ÷ 12 000 = 0.00067 units",
+          "marks": 1,
+          "explanation": "One mark for the contribution per unit. The division is upside down: fixed costs are divided by contribution. A break-even of less than one product should look wrong."
+        },
+        {
+          "text": "12 000 ÷ 20 = 600 units",
+          "marks": 0,
+          "explanation": "Zero: dividing by the selling price ignores the variable cost of each product, so this is not break-even."
+        }
+      ],
+      "tip": "Work out contribution per unit first, then divide fixed costs by it. Answers are in units, and should be a sensible number of products."
+    },
+    {
+      "id": "bus-003",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Gross profit margin",
+      "skill": "Divide by revenue, not by costs",
+      "marks": 2,
+      "prompt": "A business has revenue of £80,000 and cost of sales of £50,000.\n\nCalculate its gross profit margin.",
+      "answers": [
+        {
+          "text": "Gross profit = £80 000 − £50 000 = £30 000\n£30 000 ÷ £80 000 × 100 = 37.5%",
+          "marks": 2,
+          "explanation": "Full marks: gross profit (1) and the margin as a percentage of revenue (1)."
+        },
+        {
+          "text": "Gross profit = £80 000 − £50 000 = £30 000\nGross profit margin = gross profit ÷ cost of sales × 100\n= 30 000 ÷ 50 000 × 100 = 60%",
+          "marks": 1,
+          "explanation": "One mark for gross profit. The margin compares profit with revenue, not with cost of sales; writing out the wrong formula makes the slip easy to see."
+        },
+        {
+          "text": "50 000 ÷ 80 000 × 100 = 62.5%",
+          "marks": 0,
+          "explanation": "Zero: this is cost of sales as a percentage of revenue, not the profit margin."
+        }
+      ],
+      "tip": "Every profit margin is profit ÷ revenue × 100. Sense-check: the margin can't be more than 100%."
+    },
+    {
+      "id": "bus-004",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Market research",
+      "skill": "Link the advantage to the business in the question",
+      "marks": 2,
+      "prompt": "Pulse Gym is planning to open in a new town.\n\nExplain one advantage to Pulse Gym of using primary market research.",
+      "answers": [
+        {
+          "text": "A survey of local residents gives information specific to the new town, such as how much people would pay for membership, so Pulse Gym can set prices local customers will accept.",
+          "marks": 2,
+          "explanation": "Full marks: an advantage (1) developed and linked to Pulse Gym (1)."
+        },
+        {
+          "text": "It is up to date.",
+          "marks": 1,
+          "explanation": "One mark: a valid advantage, but not explained or linked to the gym."
+        },
+        {
+          "text": "Primary research is research carried out for the first time by the business itself, using methods such as questionnaires, interviews, focus groups and observation. Secondary research uses data that already exists, such as government statistics or reports.",
+          "marks": 0,
+          "explanation": "Zero. Accurate definitions of both types of research, but no advantage is given, and the gym is never mentioned."
+        }
+      ],
+      "tip": "'Explain one advantage' = the advantage + 'so…' + how it helps this business. Definitions don't earn marks unless the question asks for one."
+    },
+    {
+      "id": "bus-005",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Business ownership: sole traders",
+      "skill": "Give the disadvantage, then its consequence for the owner",
+      "marks": 2,
+      "prompt": "Amira is setting up a dog-grooming business as a sole trader.\n\nExplain one disadvantage to Amira of being a sole trader.",
+      "answers": [
+        {
+          "text": "She has unlimited liability, so if the business can't pay its debts, she could lose personal possessions such as her car or savings.",
+          "marks": 2,
+          "explanation": "Full marks: the disadvantage (1) and its consequence for Amira (1)."
+        },
+        {
+          "text": "Unlimited liability.",
+          "marks": 1,
+          "explanation": "One mark: correct, but the consequence isn't explained."
+        },
+        {
+          "text": "A sole trader is a business owned by one person, so Amira keeps all the profit and makes all the decisions herself.",
+          "marks": 0,
+          "explanation": "Zero: these are advantages of being a sole trader, not disadvantages. Read the question word carefully."
+        }
+      ],
+      "tip": "Check whether the question asks for an advantage or a disadvantage, and underline which one before you write."
+    },
+    {
+      "id": "bus-006",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Motivation",
+      "skill": "Name the method, then explain how it motivates in this business",
+      "marks": 2,
+      "prompt": "Explain one method of non-financial motivation a supermarket could use for its staff.",
+      "answers": [
+        {
+          "text": "Job rotation: staff move between the tills, stock and the deli counter, so their work is less repetitive and they stay more interested and productive.",
+          "marks": 2,
+          "explanation": "Full marks: a non-financial method (1) explained and applied to a supermarket (1)."
+        },
+        {
+          "text": "There are lots of different ways to motivate staff, and a supermarket could use any of them depending on what its staff want. One method is giving staff praise.",
+          "marks": 1,
+          "explanation": "One mark for the method (praise). The first sentence is filler, and the answer never explains how praise would motivate staff."
+        },
+        {
+          "text": "Give staff a bonus if they work hard.",
+          "marks": 0,
+          "explanation": "Zero: a bonus is financial motivation, which the question rules out."
+        }
+      ],
+      "tip": "Financial = money (pay, bonus, commission). Non-financial = praise, training, job rotation, job enrichment, teamwork."
+    },
+    {
+      "id": "bus-007",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Recruitment",
+      "skill": "Two separate benefits, each with a 'because'",
+      "marks": 4,
+      "prompt": "Explain two benefits to a hotel of recruiting its new manager internally.",
+      "answers": [
+        {
+          "text": "It is quicker and cheaper, because the hotel doesn't have to pay for job adverts or an agency. The person already knows how the hotel works, so they need less induction training and can be effective sooner.",
+          "marks": 4,
+          "explanation": "Full marks: two benefits (1 each), each explained (1 each)."
+        },
+        {
+          "text": "It is cheaper, as there is no need to advertise. The employee already knows the business.",
+          "marks": 3,
+          "explanation": "Three marks: the first benefit is explained; the second is stated but not developed (so less training is needed)."
+        },
+        {
+          "text": "Cheaper. Quicker. Staff are motivated. Less training.",
+          "marks": 2,
+          "explanation": "Two marks: only two benefits can be credited, and none is explained. Two developed points beat four listed ones."
+        },
+        {
+          "text": "Internal recruitment is when a business fills a job with someone who already works there, for example by promoting a receptionist to manager. External recruitment is when the job is advertised outside the business, on job websites or in newspapers, which can attract more applicants and bring in new ideas.",
+          "marks": 1,
+          "explanation": "One mark at most, for understanding internal recruitment. Most of the answer is about external recruitment and its benefits, which the question doesn't ask for."
+        }
+      ],
+      "tip": "Split 'explain two' answers into two paragraphs so the examiner can see both points and both explanations."
+    },
+    {
+      "id": "bus-008",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Cash flow",
+      "skill": "Net cash flow = inflows − outflows; closing = opening + net cash flow",
+      "marks": 2,
+      "prompt": "In one month a business has an opening balance of £2,000, cash inflows of £5,500 and cash outflows of £7,000.\n\nCalculate the closing balance.",
+      "answers": [
+        {
+          "text": "Net cash flow = £5500 − £7000 = −£1500\nClosing balance = £2000 − £1500 = £500",
+          "marks": 2,
+          "explanation": "Full marks: net cash flow (1) and the closing balance (1)."
+        },
+        {
+          "text": "Net cash flow = £5500 − £7000 = −£1500",
+          "marks": 1,
+          "explanation": "One mark for net cash flow, but the question asks for the closing balance: add it to the opening balance."
+        },
+        {
+          "text": "£2000 + £5500 + £7000 = £14 500",
+          "marks": 0,
+          "explanation": "Zero: outflows leave the business, so they must be subtracted, not added."
+        }
+      ],
+      "tip": "Opening balance + inflows − outflows = closing balance. The closing balance becomes next month's opening balance."
+    },
+    {
+      "id": "bus-009",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Stakeholders",
+      "skill": "Name two different groups and a developed effect for each",
+      "marks": 4,
+      "prompt": "A car manufacturer decides to close one of its factories.\n\nExplain how this decision could affect two different stakeholder groups.",
+      "answers": [
+        {
+          "text": "Employees at the factory may lose their jobs, so their income falls and they may have to move to find work. Local suppliers, such as a parts maker, lose a major customer, so their revenue and profits fall.",
+          "marks": 4,
+          "explanation": "Full marks: two stakeholder groups (1 each), each with a developed effect (1 each)."
+        },
+        {
+          "text": "Employees would lose their jobs and their income. Shareholders might be pleased because the business saves money.",
+          "marks": 3,
+          "explanation": "Three marks: the employees point is developed. The shareholder point needs one more step: lower costs → higher profit → higher dividends or share price."
+        },
+        {
+          "text": "Workers would lose their jobs. The local community would be affected.",
+          "marks": 2,
+          "explanation": "Two marks: two relevant groups, but 'affected' doesn't say how, and neither effect is developed."
+        },
+        {
+          "text": "Shareholders, employees, customers, suppliers, the government and the local community are all stakeholders, because they all have an interest in the business. They would all be affected by the decision to close the factory, because it is a big decision.",
+          "marks": 1,
+          "explanation": "One mark at most. A list of every stakeholder group and the claim that they would 'all be affected' explain nothing: pick two groups and say exactly what happens to each."
+        }
+      ],
+      "tip": "Use a chain for each group: decision → what happens to them → why it matters (income, profit, jobs)."
+    },
+    {
+      "id": "bus-010",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Promotion",
+      "skill": "Tie the reason to the size and market of the business",
+      "marks": 2,
+      "prompt": "Explain one reason why social media advertising may be suitable for a small bakery.",
+      "answers": [
+        {
+          "text": "It is cheap or even free, which suits a small bakery with a limited marketing budget.",
+          "marks": 2,
+          "explanation": "Full marks: a reason (1) linked to the bakery's situation (1)."
+        },
+        {
+          "text": "Social media is used by millions of people all over the world every day, on apps like Instagram, TikTok and Facebook, so lots of people would see the adverts.",
+          "marks": 1,
+          "explanation": "One mark for reach, but a local bakery doesn't need customers all over the world. The reason isn't linked to this business, however many apps are named."
+        },
+        {
+          "text": "Social media advertising is a type of promotion, which is one of the 4Ps in the marketing mix.",
+          "marks": 0,
+          "explanation": "Zero: this classifies social media advertising rather than giving a reason it suits the bakery."
+        }
+      ],
+      "tip": "Small-business questions usually reward points about cost, budget and a local target market."
+    },
+    {
+      "id": "bus-011",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Interest rates",
+      "skill": "Follow the chain from the rate rise to the business's costs and profit",
+      "marks": 2,
+      "prompt": "Explain how a rise in interest rates could affect a business that has a large bank loan.",
+      "answers": [
+        {
+          "text": "If the loan has a variable rate, the repayments go up, increasing the business's costs and reducing its profit.",
+          "marks": 2,
+          "explanation": "Full marks: higher repayments (1) and the effect on costs or profit (1)."
+        },
+        {
+          "text": "The business would have to pay more.",
+          "marks": 1,
+          "explanation": "One mark: the right idea, but 'pay more' what? Say the loan repayments rise, then what that does to costs or profit."
+        },
+        {
+          "text": "Customers would save more of their money in the bank to earn more interest, so they would spend less in shops and demand would fall.",
+          "marks": 0,
+          "explanation": "Zero here. This is a real effect of higher interest rates, but the question is about a business with a large loan, so the marks are for the effect on its repayments."
+        }
+      ],
+      "tip": "Use the context in the question: 'a business that has a large bank loan' is telling you which effect to write about."
+    },
+    {
+      "id": "bus-012",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Quality",
+      "skill": "Give a benefit of the method asked about, compared with the other",
+      "marks": 2,
+      "prompt": "Explain one benefit to a manufacturer of using quality assurance rather than quality control.",
+      "answers": [
+        {
+          "text": "Quality is checked at every stage of production, so faults are found early, which reduces waste and the cost of scrapping finished products.",
+          "marks": 2,
+          "explanation": "Full marks: the benefit (1) developed into its effect on the manufacturer (1)."
+        },
+        {
+          "text": "Less waste.",
+          "marks": 1,
+          "explanation": "One mark: correct, but it doesn't explain why quality assurance reduces waste."
+        },
+        {
+          "text": "Quality control is when finished products are checked at the end of production by inspectors, and any faulty products are thrown away or reworked.",
+          "marks": 0,
+          "explanation": "Zero: this describes quality control, not a benefit of quality assurance."
+        }
+      ],
+      "tip": "Quality assurance = checking at every stage, often by the workers themselves. Quality control = inspecting at the end."
+    },
+    {
+      "id": "bus-013",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 2: Influences of marketing and finance on business activity",
+      "topic": "Making a recommendation (9 marks)",
+      "skill": "Use the case study, weigh both options, and make a justified recommendation",
+      "marks": 9,
+      "stimulus": {
+        "label": "Case study",
+        "caption": "Bloom Florists",
+        "text": "Bloom Florists is a flower shop in a market town, run by its owner, Jess Carter, as a sole trader. Last year its revenue was £140,000 and its profit was £21,000.\n\nAbout 40% of Bloom's sales are wedding flowers. Couples usually choose them at a face-to-face consultation in the shop.\n\nJess has £30,000 to invest and is considering two options:\n\nOption 1: open a second shop in a nearby city. The rent would be £18,000 a year, and she would need to employ a shop manager.\n\nOption 2: launch a website offering local and national delivery. The website would cost £8,000 to build, plus the cost of each delivery."
+      },
+      "prompt": "Recommend which option Jess should choose.\n\nGive reasons for your answer.",
+      "answers": [
+        {
+          "text": "Option 2 is the better choice. At £8,000 the website uses only about a quarter of Jess's £30,000, leaving money for delivery costs and marketing, whereas the shop's rent alone is £18,000 a year before a manager's wages, which could wipe out most of her £21,000 profit if the new shop is slow to build sales. A website also reaches customers nationally, so it can grow revenue without Jess having to be in two places.\n\nHowever, 40% of sales are wedding flowers chosen at face-to-face consultations, which a website can't easily replace, so online sales may mostly be smaller orders such as bouquets. A second shop would keep that personal service.\n\nOverall, I recommend the website, because it is far less risky for a small sole trader and she can still hold wedding consultations in her current shop. It depends on whether delivery costs can be kept low enough for online orders to be profitable.",
+          "marks": 9,
+          "explanation": "Level 3 (7–9 marks): detailed use of the case study (costs, profit, the 40% wedding sales), chains of reasoning for both options, and a justified recommendation that says what it depends on."
+        },
+        {
+          "text": "Jess should build the website. It only costs £8,000, so she will have £22,000 left. She can sell to people all over the country, which will increase revenue. A second shop would cost £18,000 in rent and she would have to pay a manager, so it is expensive. Therefore the website is better.",
+          "marks": 6,
+          "explanation": "Level 2 (4–6 marks): a clear recommendation using figures from the case study, but only one side is really developed. The wedding consultations, the website's biggest weakness, are ignored, so it doesn't weigh the options."
+        },
+        {
+          "text": "There are advantages and disadvantages of both options. A second shop would mean more customers and more sales, but it would cost a lot of money. A website would also mean more customers and more sales, but it would cost money too. Lots of businesses have websites nowadays, and online shopping has grown a lot in recent years. Jess should think carefully about both options before she decides, and maybe do some market research to find out what her customers want. In conclusion, both options have good and bad points.",
+          "marks": 3,
+          "explanation": "Level 1 (1–3 marks): general points that could apply to any business, no figures or details from the case study, and no recommendation, even though the question asks for one. 'Both have good and bad points' is not a conclusion."
+        }
+      ],
+      "tip": "For a 9-mark recommendation: use numbers from the case study, argue for one option, give the strongest point against it, then decide and say what your decision depends on."
+    },
+    {
+      "id": "bus-014",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 2: Influences of marketing and finance on business activity",
+      "topic": "Analyse (6 marks)",
+      "skill": "Build chains of reasoning and apply each one to the business",
+      "marks": 6,
+      "stimulus": {
+        "label": "Case study",
+        "caption": "Bloom Florists",
+        "text": "Bloom Florists is a flower shop in a market town, run by its owner, Jess Carter, as a sole trader. Last year its revenue was £140,000 and its profit was £21,000.\n\nAbout 40% of Bloom's sales are wedding flowers. Couples usually choose them at a face-to-face consultation in the shop.\n\nJess has £30,000 to invest and is considering two options:\n\nOption 1: open a second shop in a nearby city. The rent would be £18,000 a year, and she would need to employ a shop manager.\n\nOption 2: launch a website offering local and national delivery. The website would cost £8,000 to build, plus the cost of each delivery."
+      },
+      "prompt": "Analyse the benefits to Bloom Florists of using social media to promote the business.",
+      "answers": [
+        {
+          "text": "Social media is cheap, so Bloom can promote itself without much of its £21,000 profit going on advertising, which matters for a small sole trader. Jess can post photos of wedding arrangements; because couples choose wedding flowers largely on how they look, this could bring in more consultations for the part of the business that makes up 40% of sales.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): two developed chains of reasoning, each applied to Bloom (its profit, its wedding sales)."
+        },
+        {
+          "text": "Social media is cheap, so Jess can spend less on advertising and keep more profit. She can also reach lots of people, which should increase sales.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): two relevant benefits, each with a consequence, but neither is applied to Bloom (weddings, local customers, a sole trader's budget)."
+        },
+        {
+          "text": "Social media is a very popular way to promote a business nowadays. Almost everyone uses social media, especially young people, who spend hours every day on apps like Instagram and TikTok. Businesses of all sizes use it, from big companies like Nike to small local shops, and it is quick and easy to set up an account and post as often as you like. This means it is a good idea for Bloom Florists.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): lots of general points about social media, but no chain of reasoning about how it benefits Bloom. Naming big companies and apps adds length, not analysis."
+        }
+      ],
+      "tip": "In 'analyse' questions, use 'so', 'which means' and 'therefore' to extend each point, and mention the case study in every chain."
+    },
+    {
+      "id": "bus-015",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Theme 1: Investigating small business",
+      "topic": "Justify (9 marks)",
+      "skill": "Choose one option, use the case study, consider the other option, and conclude",
+      "marks": 9,
+      "stimulus": {
+        "label": "Case study",
+        "caption": "Tom's Tech Fix",
+        "text": "Tom runs Tom's Tech Fix, a phone-repair stall in a busy shopping centre. Demand is growing, and customers often have to queue or come back later.\n\nMuch of each repair is spent working out what is wrong with the phone.\n\nTom is considering two options to increase the number of repairs he can do:\n\nOption 1: employ a part-time repair technician at £11 per hour for 20 hours a week.\n\nOption 2: buy a £4,000 diagnostic machine that halves the time needed to find a fault."
+      },
+      "prompt": "Justify which one of these two options Tom should choose.",
+      "answers": [
+        {
+          "text": "Tom should buy the diagnostic machine. The technician would cost £220 a week (£11 × 20), about £11,400 a year, and that cost continues, whereas the machine is a one-off £4,000, so it costs less than employing someone for five months. As much of each repair is spent finding the fault, halving that time means Tom can do more repairs per hour, cutting queues and increasing revenue without adding wage costs.\n\nA technician would let Tom serve two customers at once and cover his breaks, but he would have to recruit and train them and pay them even in quiet weeks.\n\nOverall, the machine is better because it raises capacity at a lower, one-off cost. This depends on the machine being reliable: if it breaks down, Tom is back to working alone.",
+          "marks": 9,
+          "explanation": "Level 3 (7–9 marks): a clear choice, supported by calculations from the case study, a balanced look at the other option, and a conclusion that says what the decision depends on."
+        },
+        {
+          "text": "Tom should choose the technician. With two people working, Tom can repair twice as many phones, so the queues will go and he will make more revenue. The technician would only cost £220 a week, which Tom can probably afford as demand is growing. The machine costs £4,000, which is a lot of money for a small business.",
+          "marks": 6,
+          "explanation": "Level 2 (4–6 marks): a choice with some developed reasoning and a calculation, but the machine is dismissed in one sentence without being weighed, and there is no real conclusion."
+        },
+        {
+          "text": "Both options are good. Option 1 is good because Tom will have help. Option 2 is good because it is quicker. Tom should choose option 2.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): a choice, but the reasons are asserted rather than explained, and nothing from the case study is used."
+        }
+      ],
+      "tip": "For 'justify', pick one option in your first sentence, build the case with figures from the case study, give the best point for the other option, then conclude with 'it depends on…'."
+    },
+    {
+      "id": "bus-016",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Theme 1: Investigating small business",
+      "topic": "Discuss (6 marks)",
+      "skill": "Develop the impact in a chain, and look at more than one side",
+      "marks": 6,
+      "prompt": "Discuss the impact on a small business of an increase in the minimum wage.",
+      "answers": [
+        {
+          "text": "Wages are a large cost for many small businesses, such as cafés, so a higher minimum wage raises costs and reduces profit unless prices go up. If the business raises prices, it may lose customers to cheaper competitors. However, better-paid staff may be more motivated and less likely to leave, reducing recruitment and training costs, and workers everywhere have more to spend, which could raise demand. The overall impact depends on how many minimum-wage staff the business employs.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): developed chains of reasoning on both the costs and the possible benefits, with a sense of what the impact depends on."
+        },
+        {
+          "text": "The business will have higher costs because it has to pay its staff more. This means its profits will fall. It might have to put its prices up.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): a developed chain (costs → profit → prices), but only the negative side is discussed."
+        },
+        {
+          "text": "The minimum wage is the lowest hourly rate employers are allowed to pay workers, and it is set by the government. It depends on the worker's age, and it usually goes up every April. The highest rate is called the National Living Wage. The minimum wage was first introduced in the UK in 1999, and many people think it should be higher because the cost of living has risen.",
+          "marks": 1,
+          "explanation": "Level 1 (1–2 marks): accurate knowledge of the minimum wage, but almost nothing about its impact on a small business, which is the whole question. Facts earn marks only when they are used to answer it."
+        }
+      ],
+      "tip": "'Discuss' wants consequences, not definitions: follow each point to its effect on costs, profit or sales, and include at least one point on the other side."
+    }
+  ]
+}

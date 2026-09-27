@@ -15,6 +15,10 @@
     { "id": "history",            "name": "History",            "file": "history.json",            "colour": "#6b5a2e",
       "specs": { "AQA": "8145", "Edexcel": "1HI0", "OCR": "J410" } },
     { "id": "geography",          "name": "Geography",          "file": "geography.json",          "colour": "#1c7a78",
-      "specs": { "AQA": "8035", "Edexcel": "1GA0 / 1GB0", "OCR": "J383 / J384" } }
+      "specs": { "AQA": "8035", "Edexcel": "1GA0 / 1GB0", "OCR": "J383 / J384" } },
+    { "id": "computer-science",   "name": "Computer Science",   "file": "computer-science.json",   "colour": "#3f4a5a",
+      "specs": { "AQA": "8525", "Edexcel": "1CP2", "OCR": "J277" } },
+    { "id": "business",           "name": "Business",           "file": "business.json",           "colour": "#8a6d0b",
+      "specs": { "AQA": "8132", "Edexcel": "1BS0", "OCR": "J204" } }
   ]
 }

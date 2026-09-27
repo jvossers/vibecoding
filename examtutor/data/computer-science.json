@@ -1,0 +1,591 @@
+{
+  "subject": "Computer Science",
+  "questions": [
+    {
+      "id": "cs-001",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Binary to denary",
+      "skill": "Write the place values above the bits, then add the columns that hold a 1",
+      "marks": 2,
+      "prompt": "Convert the 8-bit binary number 10110101 into denary.\n\nShow your working.",
+      "answers": [
+        {
+          "text": "128 + 32 + 16 + 4 + 1\n= 181",
+          "marks": 2,
+          "explanation": "Full marks: the right place values picked out (1) and the correct total (1). Short working is fine when every value is visible."
+        },
+        {
+          "text": "Place values: 128, 64, 32, 16, 8, 4, 2, 1\n\n1  0  1  1  0  1  0  1\n\n128 + 32 + 16 + 4 + 1 = 179",
+          "marks": 1,
+          "explanation": "One mark for the method: the correct place values are chosen. The addition slips (it is 181). Because the working is shown, the method mark is safe; '179' on its own would score nothing."
+        },
+        {
+          "text": "1 + 0 + 1 + 1 + 0 + 1 + 0 + 1 = 5\n\nSo 10110101 in denary is 5.",
+          "marks": 0,
+          "explanation": "Zero. Adding the digits only counts the 1s; it ignores place value. Each bit is worth double the one to its right: 1, 2, 4, 8 … 128."
+        }
+      ],
+      "tip": "Write 128 64 32 16 8 4 2 1 above the bits and add the columns with a 1. Sense-check: an 8-bit number is always between 0 and 255."
+    },
+    {
+      "id": "cs-002",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Denary to hexadecimal",
+      "skill": "Divide by 16, then write each part as a single hex digit (A–F for 10–15)",
+      "marks": 2,
+      "prompt": "Convert the denary number 200 into hexadecimal.\n\nShow your working.",
+      "answers": [
+        {
+          "text": "200 ÷ 16 = 12 remainder 8\n12 = C\n\nAnswer: C8",
+          "marks": 2,
+          "explanation": "Full marks: correct division (1) and both parts written as hex digits (1)."
+        },
+        {
+          "text": "200 ÷ 16 = 12 remainder 8\n\nAnswer: 128",
+          "marks": 1,
+          "explanation": "One mark for the division. But 12 must be written as the single hex digit C: hex has only one character per place, so '12' followed by '8' reads as three digits."
+        },
+        {
+          "text": "Hexadecimal is base 16, which is used because it is shorter than binary and easier for humans to read. All the digits in 200 are less than 16, so it stays the same in hexadecimal: 200.",
+          "marks": 0,
+          "explanation": "Zero. The first sentence is true but doesn't convert anything, and a number's digits don't carry over between bases: 200 in hex would be 512 in denary."
+        }
+      ],
+      "tip": "Hex digits run 0–9 then A–F (10–15). Either divide by 16 (quotient, then remainder) or go through binary: 200 = 1100 1000 = C 8."
+    },
+    {
+      "id": "cs-003",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Image file size",
+      "skill": "Pixels × colour depth gives bits; then ÷ 8 for bytes and ÷ 1000 for kilobytes",
+      "marks": 3,
+      "prompt": "An image is 800 pixels wide and 600 pixels high. It uses a colour depth of 16 bits.\n\nCalculate the file size of the image in kilobytes (KB).\n\n1 KB = 1000 bytes. Show your working.",
+      "answers": [
+        {
+          "text": "800 × 600 = 480 000 pixels\n480 000 × 16 = 7 680 000 bits\n÷ 8 = 960 000 bytes\n÷ 1000 = 960 KB",
+          "marks": 3,
+          "explanation": "Full marks: pixels × colour depth (1), converting bits to bytes (1) and bytes to kilobytes (1)."
+        },
+        {
+          "text": "800 × 600 × 16 = 7 680 000\n7 680 000 ÷ 1000 = 7680 KB",
+          "marks": 2,
+          "explanation": "Two marks: the number of bits is right and the ÷ 1000 step is right, but the answer is still in kilobits. Bits must be divided by 8 to give bytes before converting to kilobytes."
+        },
+        {
+          "text": "The number of pixels is the width multiplied by the height, so the image has 800 × 600 = 480 000 pixels. Every pixel is stored in the file, so the file size is 480 000 KB. This is quite a large image.",
+          "marks": 1,
+          "explanation": "One mark for the number of pixels. The colour depth is never used, and the units are wrong. The explanation of what a pixel count is adds length but no marks."
+        },
+        {
+          "text": "800 + 600 = 1400\n1400 × 16 = 22 400 KB",
+          "marks": 0,
+          "explanation": "Zero: the number of pixels is width × height, not width + height, so none of the later steps can be credited."
+        }
+      ],
+      "tip": "Write the units at every step: pixels → bits (× colour depth) → bytes (÷ 8) → KB (÷ 1000). Most lost marks come from skipping the ÷ 8."
+    },
+    {
+      "id": "cs-004",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Logic gates",
+      "skill": "Work out each gate in brackets first, then combine",
+      "marks": 2,
+      "prompt": "P = (A AND B) OR (NOT C)\n\nState the value of P when A = 1, B = 0 and C = 0. Show how you got your answer.",
+      "answers": [
+        {
+          "text": "A AND B = 1 AND 0 = 0\nNOT C = NOT 0 = 1\n0 OR 1 = 1\n\nP = 1",
+          "marks": 2,
+          "explanation": "Full marks: each gate evaluated in turn (1) and the correct output (1)."
+        },
+        {
+          "text": "A AND B = 0\nNOT C = 0\nP = 0",
+          "marks": 1,
+          "explanation": "One mark for A AND B. NOT reverses its input, so NOT 0 = 1, which makes the OR gate output 1."
+        },
+        {
+          "text": "P = 0, because B and C are both 0, so most of the inputs are off.",
+          "marks": 0,
+          "explanation": "Zero. Logic gates don't take a majority vote: each gate follows its own rule, so work through them one at a time."
+        }
+      ],
+      "tip": "Evaluate the brackets first and write each intermediate result down. A quick truth table for each gate (AND, OR, NOT) avoids guesswork."
+    },
+    {
+      "id": "cs-005",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "The CPU: program counter",
+      "skill": "Say what the register holds and what happens to it during the cycle",
+      "marks": 2,
+      "prompt": "Describe the role of the program counter (PC) in the fetch–execute cycle.",
+      "answers": [
+        {
+          "text": "It holds the memory address of the next instruction to be fetched. Once that instruction has been fetched, the PC is incremented so it points to the following instruction.",
+          "marks": 2,
+          "explanation": "Full marks: holds the address of the next instruction (1) and is incremented after each fetch (1)."
+        },
+        {
+          "text": "The program counter stores the address of the next instruction. It is a register inside the CPU, along with other registers such as the accumulator, the MAR and the MDR, which are all very small and very fast areas of memory.",
+          "marks": 1,
+          "explanation": "One mark for 'the address of the next instruction'. The rest describes other registers, which doesn't explain what the PC does; the second mark was for saying it is incremented."
+        },
+        {
+          "text": "It counts how many programs are running on the computer.",
+          "marks": 0,
+          "explanation": "Zero: the name is misleading. The PC doesn't count programs; it keeps track of where the next instruction is in memory."
+        }
+      ],
+      "tip": "For any register, give two things: what it holds, and when or how it changes during fetch–decode–execute."
+    },
+    {
+      "id": "cs-006",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Memory: RAM and ROM",
+      "skill": "Every point should mention both: 'RAM is…, whereas ROM is…'",
+      "marks": 4,
+      "prompt": "Compare RAM and ROM.",
+      "answers": [
+        {
+          "text": "RAM is volatile, so its contents are lost when the power is off, whereas ROM is non-volatile. RAM can be read from and written to, but ROM can normally only be read. RAM holds the programs and data currently in use, while ROM holds the start-up instructions (such as the BIOS).",
+          "marks": 4,
+          "explanation": "Full marks: four clear comparisons (volatility, read/write, and the purpose of each), each written with both memories in the same sentence."
+        },
+        {
+          "text": "RAM is volatile but ROM is non-volatile. RAM can be written to and ROM is read-only. RAM stores programs in use.",
+          "marks": 3,
+          "explanation": "Three marks: two comparisons and one purpose. ROM's purpose (start-up instructions) is missing."
+        },
+        {
+          "text": "RAM: volatile, stores programs being used.\nROM: stores the BIOS.",
+          "marks": 2,
+          "explanation": "Two marks: correct facts, but written as two separate descriptions. The examiner shouldn't have to do the comparing for you."
+        },
+        {
+          "text": "RAM stands for Random Access Memory and ROM stands for Read Only Memory. They are both types of memory found inside a computer and they are both very important, because without memory a computer could not work. RAM is usually bigger.",
+          "marks": 1,
+          "explanation": "One mark at most, for 'RAM is usually bigger' (capacity). Expanding the acronyms and saying both are important earns nothing."
+        }
+      ],
+      "tip": "In 'compare' questions, write 'whereas' or 'but' in every sentence, so each point covers both things."
+    },
+    {
+      "id": "cs-007",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "CPU performance: cores",
+      "skill": "Link the feature to what the CPU can do, not just 'faster'",
+      "marks": 2,
+      "prompt": "Explain how having more cores in a CPU can improve its performance.",
+      "answers": [
+        {
+          "text": "Each core can fetch, decode and execute its own instructions, so several instructions can be processed at the same time.",
+          "marks": 2,
+          "explanation": "Full marks: each core processes instructions independently (1), so more can be done simultaneously (1)."
+        },
+        {
+          "text": "More cores means it can do more things at once, so the computer is faster.",
+          "marks": 1,
+          "explanation": "One mark for the idea of doing more at once, but it doesn't say why: each core processes its own instructions."
+        },
+        {
+          "text": "Cores increase the clock speed, so the CPU carries out more cycles every second.",
+          "marks": 0,
+          "explanation": "Zero: this confuses cores with clock speed. Adding cores doesn't change the clock speed; it adds more processors that work in parallel."
+        }
+      ],
+      "tip": "For performance questions, name the feature, say what it does, then link it to performance: 'each core…, so…'."
+    },
+    {
+      "id": "cs-008",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Networks: star topology",
+      "skill": "Give each advantage a reason, and compare it with the other topology",
+      "marks": 4,
+      "prompt": "Explain two advantages of a star topology compared with a bus topology.",
+      "answers": [
+        {
+          "text": "If one cable fails, only the device on that cable loses its connection, because each device has its own link to the switch; on a bus, a break in the backbone can stop the whole network. Performance is also better, because the switch sends data only to the device it is addressed to, so there are fewer collisions than on a shared bus.",
+          "marks": 4,
+          "explanation": "Full marks: two advantages (1 each), each explained with a reason linked to how the topologies work (1 each)."
+        },
+        {
+          "text": "If one cable breaks, the rest of the network keeps working because each computer has its own cable to the switch. It is also faster.",
+          "marks": 3,
+          "explanation": "Three marks: the first advantage is fully explained. 'Faster' needs a reason: the switch sends data only where it is needed, so there are fewer collisions."
+        },
+        {
+          "text": "It is more reliable. It has better performance.",
+          "marks": 2,
+          "explanation": "Two marks for two valid advantages, but neither is explained. 'Explain' questions have a mark for each 'because'."
+        },
+        {
+          "text": "In a star topology all the computers are connected to a central switch, so each one has its own cable, which makes a star shape. In a bus topology all the computers are connected to one long cable called the backbone, with terminators at each end. Star topologies are used in most schools and offices.",
+          "marks": 1,
+          "explanation": "One mark for the relevant point that each device has its own cable, but the answer describes the topologies rather than explaining any advantage."
+        }
+      ],
+      "tip": "For 'explain two advantages', use two short paragraphs: the advantage, then 'because…', then the comparison with the other option."
+    },
+    {
+      "id": "cs-009",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Cyber security: phishing",
+      "skill": "Describe the threat, then give a method and say how it helps",
+      "marks": 4,
+      "prompt": "Describe what is meant by phishing and explain one way a company could reduce the risk from it.",
+      "answers": [
+        {
+          "text": "Phishing is when criminals send emails or messages pretending to be from a trusted organisation, to trick people into giving away details such as passwords or bank information, often through a link to a fake website. The company could train staff to spot the signs, such as unexpected links, spelling mistakes and urgent requests, so they don't click the links or enter their details.",
+          "marks": 4,
+          "explanation": "Full marks: a clear description of phishing (2) and a method explained by how it reduces the risk (2)."
+        },
+        {
+          "text": "Phishing is a fake email that tries to get your password by pretending to be from a real company. The company could use a spam filter.",
+          "marks": 3,
+          "explanation": "Three marks: a good description and a valid method, but the method isn't explained (a filter detects and blocks many phishing emails before they reach staff)."
+        },
+        {
+          "text": "Phishing is a type of cyber attack. There are many types of cyber attack, such as malware, ransomware, brute-force attacks and denial of service attacks, and companies need to protect themselves from all of them by using firewalls and anti-malware software.",
+          "marks": 1,
+          "explanation": "One mark at most, for recognising phishing as an attack. Listing other attacks earns nothing, and firewalls don't stop someone choosing to type their password into a fake website."
+        }
+      ],
+      "tip": "Name the exact threat asked about. General security vocabulary only earns marks when it is linked to that threat."
+    },
+    {
+      "id": "cs-010",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Searching algorithms",
+      "skill": "Answer both parts: the advantage and the condition",
+      "marks": 2,
+      "prompt": "State one advantage of a binary search compared with a linear search, and one condition that must be met before a binary search can be used.",
+      "answers": [
+        {
+          "text": "Advantage: it is usually much faster on large lists, because it halves the number of items left to check each time.\nCondition: the list must be sorted.",
+          "marks": 2,
+          "explanation": "Full marks: a valid advantage (1) and the condition (1)."
+        },
+        {
+          "text": "Binary search is faster because it checks every item in the list one at a time until it finds the one it is looking for.",
+          "marks": 1,
+          "explanation": "One mark for 'faster', but the reason describes a linear search, and no condition is given."
+        },
+        {
+          "text": "It uses binary, so the data must be stored as 0s and 1s.",
+          "marks": 0,
+          "explanation": "Zero. 'Binary' here means splitting the list in two each time, not base-2 numbers."
+        }
+      ],
+      "tip": "When a question asks for two things, label them ('Advantage:', 'Condition:') so you don't forget the second."
+    },
+    {
+      "id": "cs-011",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Sorting algorithms: bubble sort",
+      "skill": "One pass goes all the way to the end of the list",
+      "marks": 2,
+      "prompt": "Show the list after the first pass of a bubble sort into ascending order.\n\n5, 2, 8, 1, 4",
+      "answers": [
+        {
+          "text": "2, 5, 1, 4, 8",
+          "marks": 2,
+          "explanation": "Full marks: every adjacent pair is compared once, from left to right, so the largest value ends up at the end."
+        },
+        {
+          "text": "5 and 2 swap → 2, 5, 8, 1, 4\n8 and 1 swap → 2, 5, 1, 8, 4\n\nAfter the first pass: 2, 5, 1, 8, 4",
+          "marks": 1,
+          "explanation": "One mark: the first swaps are right, but the pass continues to the end of the list, so 8 and 4 must also swap. Neat working is useful, but it has to finish the pass."
+        },
+        {
+          "text": "1, 2, 4, 5, 8",
+          "marks": 0,
+          "explanation": "Zero: this is the fully sorted list, after several passes. The question asks for the list after the first pass only."
+        }
+      ],
+      "tip": "After one pass of a bubble sort, the largest value is always at the end. Use that as a check."
+    },
+    {
+      "id": "cs-012",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Legislation",
+      "skill": "Name the exact law, then link it to what happened",
+      "marks": 2,
+      "prompt": "A student guesses a teacher's password and logs in to change their own marks.\n\nIdentify the law the student has broken and explain why.",
+      "answers": [
+        {
+          "text": "The Computer Misuse Act. The student gained unauthorised access to the system and changed data without permission.",
+          "marks": 2,
+          "explanation": "Full marks: the correct law (1) and why it applies (1)."
+        },
+        {
+          "text": "The Computer Misuse Act.",
+          "marks": 1,
+          "explanation": "One mark for the law. The second mark needs the link to what the student did: unauthorised access and changing data."
+        },
+        {
+          "text": "The Data Protection Act, because the marks are personal data about the student, and personal data must be kept accurate and secure. The school should also use stronger passwords.",
+          "marks": 0,
+          "explanation": "Zero: wrong law. The Data Protection Act sets rules for organisations that hold personal data; accessing a system without permission is covered by the Computer Misuse Act. The advice about passwords doesn't answer the question."
+        }
+      ],
+      "tip": "Computer Misuse Act = unauthorised access or changing data. Data Protection Act = how organisations collect and store personal data. Copyright = copying others' work."
+    },
+    {
+      "id": "cs-013",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Validation",
+      "skill": "Name the check and say what it tests for this field",
+      "marks": 2,
+      "prompt": "A website asks users to enter their date of birth.\n\nDescribe one validation check that could be used on this field.",
+      "answers": [
+        {
+          "text": "A range check: the date must be in the past and, for example, no more than 120 years ago; otherwise it is rejected.",
+          "marks": 2,
+          "explanation": "Full marks: a suitable check (1) described for this field (1)."
+        },
+        {
+          "text": "A presence check.",
+          "marks": 1,
+          "explanation": "One mark: a valid check, but not described (the field must not be left empty)."
+        },
+        {
+          "text": "Ask the user to type their date of birth twice and check that both entries match, so any typing mistakes are spotted.",
+          "marks": 0,
+          "explanation": "Zero: that's double-entry verification, not validation. Validation checks the data is sensible; verification checks it was entered correctly."
+        }
+      ],
+      "tip": "Validation = is the data sensible (range, type, length, presence, format)? Verification = was it entered correctly (double entry, proofreading)?"
+    },
+    {
+      "id": "cs-014",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "Computational thinking: abstraction",
+      "skill": "Apply the idea to the scenario in the question",
+      "marks": 2,
+      "prompt": "A programmer is creating a map app for walkers.\n\nExplain how abstraction could be used when designing the app.",
+      "answers": [
+        {
+          "text": "Leave out details walkers don't need, such as shop names or building interiors, and keep only paths, distances and landmarks, so the map is simpler to use and to program.",
+          "marks": 2,
+          "explanation": "Full marks: the details removed (1) and what is kept, applied to the walking app (1)."
+        },
+        {
+          "text": "Abstraction means removing unnecessary details from a problem so you can focus on what is important. It is one of the key parts of computational thinking, along with decomposition and algorithmic thinking.",
+          "marks": 1,
+          "explanation": "One mark for a correct definition, but it is never applied to the map app, which is what 'explain how… could be used' asks for."
+        },
+        {
+          "text": "Break the app into smaller parts, like the map, the search and the settings.",
+          "marks": 0,
+          "explanation": "Zero: that is decomposition, not abstraction."
+        }
+      ],
+      "tip": "Scenario questions want the idea applied: name real details from the scenario that would be removed or kept."
+    },
+    {
+      "id": "cs-015",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 1: Computational thinking and programming skills",
+      "topic": "Trace tables: AQA pseudo-code",
+      "skill": "Track every variable after every change, including the starting values",
+      "marks": 3,
+      "stimulus": {
+        "label": "Algorithm",
+        "caption": "AQA pseudo-code",
+        "code": "total ← 0\nFOR i ← 1 TO 4\n   total ← total + i\nENDFOR\nOUTPUT total"
+      },
+      "prompt": "Complete a trace table for the algorithm and state the output.",
+      "answers": [
+        {
+          "text": "i | total\n– | 0\n1 | 1\n2 | 3\n3 | 6\n4 | 10\n\nOutput: 10",
+          "marks": 3,
+          "explanation": "Full marks: correct values of i (1), total accumulating correctly (1) and the right output (1). In AQA pseudo-code, FOR i ← 1 TO 4 includes 4."
+        },
+        {
+          "text": "i | total\n1 | 1\n2 | 3\n3 | 6\n\nOutput: 6",
+          "marks": 2,
+          "explanation": "Two marks for the accumulating total, but the loop stopped one pass early. In AQA pseudo-code the end value is included, so i also takes the value 4."
+        },
+        {
+          "text": "i | total\n1 | 1\n2 | 2\n3 | 3\n4 | 4\n\nOutput: 4",
+          "marks": 1,
+          "explanation": "One mark for the values of i. The line total ← total + i adds to the running total rather than replacing it."
+        }
+      ],
+      "tip": "Write one row every time a variable changes. Check the loop's start and end values: AQA's FOR … TO includes the end value."
+    },
+    {
+      "id": "cs-016",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 2: Application of computational thinking",
+      "topic": "Trace tables: Python",
+      "skill": "Check exactly where range() stops",
+      "marks": 3,
+      "stimulus": {
+        "label": "Program",
+        "caption": "Python",
+        "code": "total = 0\nfor i in range(1, 4):\n    total = total + i\nprint(total)"
+      },
+      "prompt": "Complete a trace table for the program and state the output.",
+      "answers": [
+        {
+          "text": "i | total\n  | 0\n1 | 1\n2 | 3\n3 | 6\n\nOutput: 6",
+          "marks": 3,
+          "explanation": "Full marks: correct values of i (1), total accumulating correctly (1) and the right output (1). range(1, 4) gives 1, 2 and 3: the end value is not included."
+        },
+        {
+          "text": "i | total\n  | 0\n1 | 1\n2 | 3\n3 | 6\n4 | 10\n\nOutput: 10",
+          "marks": 2,
+          "explanation": "Two marks for the accumulating total, but the loop runs one time too many. In Python, range(1, 4) stops before 4. The table is neat and complete, but it traces a loop that doesn't exist."
+        },
+        {
+          "text": "Output: 1 2 3",
+          "marks": 0,
+          "explanation": "Zero. The print is after the loop (it isn't indented), so it runs once and prints total, not each value of i."
+        }
+      ],
+      "tip": "range(a, b) starts at a and stops before b. Check the indentation to see which lines are inside the loop."
+    },
+    {
+      "id": "cs-017",
+      "boards": [
+        "OCR"
+      ],
+      "paper": "Paper 2: Computational thinking, algorithms and programming",
+      "topic": "Trace tables: OCR Exam Reference Language",
+      "skill": "Check the loop condition before every pass",
+      "marks": 3,
+      "stimulus": {
+        "label": "Algorithm",
+        "caption": "OCR Exam Reference Language",
+        "code": "x = 3\nwhile x < 20\n   x = x * 2\nendwhile\nprint(x)"
+      },
+      "prompt": "Complete a trace table for the algorithm and state the output.",
+      "answers": [
+        {
+          "text": "x\n3\n6\n12\n24\n\nOutput: 24",
+          "marks": 3,
+          "explanation": "Full marks: the starting value (1), each doubling (1) and the correct output (1). When x is 12, 12 < 20 is still true, so the loop runs once more."
+        },
+        {
+          "text": "x\n3\n6\n12\n\nOutput: 12",
+          "marks": 2,
+          "explanation": "Two marks for the start and the doubling, but the loop stopped too early. The condition is checked before each pass: 12 < 20, so x becomes 24 before the loop ends."
+        },
+        {
+          "text": "x\n3\n6\n9\n12\n15\n18\n21\n\nOutput: 21",
+          "marks": 1,
+          "explanation": "One mark for the starting value and for stopping once x reaches 20 or more. But x = x * 2 doubles x rather than adding 3, so every value after the first is wrong, however carefully it is set out."
+        }
+      ],
+      "tip": "Before each pass, write the condition out with the current value (12 < 20? yes). The loop only ends when it is false."
+    },
+    {
+      "id": "cs-018",
+      "boards": [
+        "AQA",
+        "OCR"
+      ],
+      "paper": "Written paper",
+      "topic": "SQL",
+      "skill": "SELECT the fields, FROM the table, WHERE the condition",
+      "marks": 3,
+      "prompt": "A table called Students has the fields StudentID, FirstName, Surname and Year.\n\nWrite an SQL query to show the first name and surname of every student in Year 11.",
+      "answers": [
+        {
+          "text": "SELECT FirstName, Surname\nFROM Students\nWHERE Year = 11",
+          "marks": 3,
+          "explanation": "Full marks: the right fields (1), the right table (1) and the right condition (1)."
+        },
+        {
+          "text": "SELECT *\nFROM Students\nWHERE Year = 11",
+          "marks": 2,
+          "explanation": "Two marks: the table and condition are right, but * returns every field, not just the first name and surname."
+        },
+        {
+          "text": "SELECT FirstName, Surname FROM Year 11",
+          "marks": 1,
+          "explanation": "One mark for selecting the right fields. 'Year 11' isn't a table: the table is Students, and Year = 11 belongs in a WHERE clause."
+        },
+        {
+          "text": "Look in the Students table, find all the students where the Year field is 11, and then show their first names and surnames on the screen.",
+          "marks": 0,
+          "explanation": "Zero. The logic is right, but the question asks for an SQL query, so a description in words can't be credited."
+        }
+      ],
+      "tip": "Build every query from the same three lines: SELECT fields, FROM table, WHERE condition. Copy field names exactly as given."
+    }
+  ]
+}

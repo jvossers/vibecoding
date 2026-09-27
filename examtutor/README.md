@@ -65,6 +65,7 @@ Add an entry to `data/subjects.json` and create the file it points to. The keys 
         "label": "Source A",
         "caption": "Italic intro or figure description",
         "text": "Extract text. Line breaks (\n) are kept, so poetry works.",
+        "code": "total ← 0\nFOR i ← 1 TO 4 …",   // program code, shown in a monospace box with indentation kept
         "table": { "headers": ["Year", "Value"], "rows": [["1990", "4.8"]] }
       },
       "prompt": "The question itself. \\n\\n makes a new paragraph.",
