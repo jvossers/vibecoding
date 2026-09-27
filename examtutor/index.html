@@ -338,9 +338,81 @@
 
   .rank-actions { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 1.4rem; }
   .rank-actions .hint { font-size: .9rem; color: var(--print-muted); }
-  .paper .btn { background: var(--print); color: #fff; }
-  .paper .btn.red { background: var(--print); }
-  .paper .btn.ghost { background: transparent; color: var(--print); border-color: var(--print); }
+  .paper .btn, .review .btn { background: var(--print); color: #fff; }
+  .paper .btn.red, .review .btn.red { background: var(--print); }
+  .paper .btn.ghost, .review .btn.ghost { background: transparent; color: var(--print); border-color: var(--print); }
+
+  /* ---------- Review overlay: bottom sheet on phones, side panel on wide screens ---------- */
+  .paper.q-paper { margin-bottom: 110px; }
+  .dock {
+    position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 20;
+    width: min(560px, calc(100% - 24px));
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    background: var(--print); color: #fff; border: 0; border-radius: 16px; cursor: pointer; text-align: left;
+    padding: .85rem 1.1rem; box-shadow: 0 12px 28px -10px rgba(0,0,0,.65);
+    transition: opacity .2s, transform .2s;
+    animation: dockIn .4s .2s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes dockIn { from { opacity: 0; transform: translate(-50%, 20px); } }
+  .dock:focus-visible { outline: 3px solid var(--biro); outline-offset: 3px; }
+  .dock b { display: block; font-size: 1rem; }
+  .dock small { display: block; font-size: .78rem; opacity: .78; margin-top: .1rem; }
+  .dock .pile { display: flex; flex: none; padding-left: 9px; }
+  .dock .pile i { width: 20px; height: 26px; background: #fff; border-radius: 2px; margin-left: -9px; box-shadow: -1px 0 0 var(--print); }
+  .dock .pile i:nth-child(1) { transform: rotate(-8deg); }
+  .dock .pile i:nth-child(2) { transform: rotate(-2deg); }
+  .dock .pile i:nth-child(3) { transform: rotate(6deg); }
+  body.reviewing .dock { opacity: 0; pointer-events: none; }
+
+  .review { position: fixed; inset: 0; z-index: 30; visibility: hidden; pointer-events: none; }
+  .review.open { visibility: visible; pointer-events: auto; }
+  .review-backdrop { position: absolute; inset: 0; background: rgba(25,22,16,.5); opacity: 0; transition: opacity .25s; }
+  .review.open .review-backdrop { opacity: 1; }
+  .review-panel {
+    position: absolute; left: 0; right: 0; bottom: 0; top: 48px;
+    display: flex; flex-direction: column; outline: none;
+    background: var(--paper); color: var(--print);
+    border-radius: 18px 18px 0 0; box-shadow: 0 -12px 32px rgba(0,0,0,.35);
+    transform: translateY(100%); transition: transform .32s cubic-bezier(.2,.8,.2,1), visibility 0s;
+  }
+  .review.open .review-panel { transform: none; }
+  .review-head {
+    position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+    padding: 20px 16px 8px; touch-action: none;
+  }
+  .review-head .handle { position: absolute; top: 7px; left: 50%; transform: translateX(-50%); width: 44px; height: 5px; border-radius: 3px; background: #c9c2b2; }
+  .review-title h3 { margin: 0; font-size: 1.05rem; }
+  .review-title small { color: var(--print-muted); font-size: .8rem; }
+  .x-btn {
+    width: 2.2rem; height: 2.2rem; flex: none; border-radius: 50%; cursor: pointer;
+    border: 1.5px solid var(--print); background: #fff; color: var(--print); font-weight: 700;
+  }
+  .recall {
+    margin: 0 16px 6px; padding: .4rem .6rem; display: flex; justify-content: space-between; gap: .6rem;
+    font-size: .8rem; background: #f4f1e7; border-left: 3px solid var(--print);
+  }
+  .recall span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .review-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 4px 16px 14px; }
+  .review-intro { font-size: .85rem; color: var(--print-muted); margin: .2rem 0 .8rem; }
+  .review-foot { border-top: 1px solid var(--paper-line); padding: 10px 16px calc(12px + env(safe-area-inset-bottom)); background: var(--paper); }
+  .review-foot .rank-actions { margin-top: 0; }
+  .paper-after .rank-actions { margin-top: 1.4rem; }
+
+  @media (min-width: 900px) {
+    /* Desktop: the answers slide in from the right; the question stays readable on the left. */
+    .review.open { pointer-events: none; }
+    .review.open .review-panel { pointer-events: auto; }
+    .review-backdrop { display: none; }
+    .review-panel {
+      top: 0; left: auto; width: min(56vw, 780px);
+      border-radius: 0; border-left: 2px solid var(--print); box-shadow: -18px 0 40px -12px rgba(0,0,0,.45);
+      transform: translateX(100%);
+    }
+    .review-head { padding-top: 16px; touch-action: auto; }
+    .review-head .handle, .recall { display: none; }
+    .wrap { transition: max-width .32s cubic-bezier(.2,.8,.2,1), margin .32s cubic-bezier(.2,.8,.2,1); }
+    body.reviewing .wrap { margin-left: 24px; max-width: calc(100vw - min(56vw, 780px) - 48px); }
+  }
 
   /* Result banner + tip */
   .result {
@@ -501,7 +573,12 @@
   };
   const clean = nodes => nodes.filter(n => n != null && n !== false);
   // New screen: start at the top.
-  const render = (...nodes) => { appEl.replaceChildren(...clean(nodes)); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const render = (...nodes) => {
+    document.body.classList.remove('reviewing');
+    document.body.style.overflow = '';
+    appEl.replaceChildren(...clean(nodes));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   // Same screen redrawn after a choice: keep the reader's place.
   const rerender = (...nodes) => { const y = window.scrollY; appEl.replaceChildren(...clean(nodes)); window.scrollTo(0, y); };
 
@@ -834,12 +911,73 @@
       if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
     });
 
+    // --- the review overlay (bottom sheet on phones, side panel on wide screens)
+    const wide = () => window.matchMedia('(min-width: 900px)').matches;
+    const firstLine = q.prompt.split('\n').find(l => l.trim()) || '';
+    const closeBtn = el('button', { class: 'x-btn', 'aria-label': 'Close and go back to the question', onclick: () => closeReview() }, '✕');
+    const sheetHead = el('div', { class: 'review-head' },
+      el('div', { class: 'handle', 'aria-hidden': 'true' }),
+      el('div', { class: 'review-title' }, el('h3', { text: 'Student answers' }), el('small', { text: 'Swipe or use the arrows to read them all' })),
+      closeBtn);
+    const recall = el('div', { class: 'recall' },
+      el('span', { text: `Q${q.number || s.index + 1} · ${firstLine}` }), el('b', { text: `[${q.marks}]` }));
+    const reviewFoot = el('div', { class: 'review-foot' });
+    const reviewBody = el('div', { class: 'review-body' });
+    const panel = el('div', { class: 'review-panel', role: 'dialog', 'aria-label': 'Student answers', tabindex: '-1' },
+      sheetHead, recall, reviewBody, reviewFoot);
+    const review = el('div', { class: 'review' }, el('div', { class: 'review-backdrop', onclick: () => closeReview() }), panel);
+
+    const dockTitle = el('b', { text: `Review ${order.length} student answers` });
+    const dockSub = el('small', { text: 'Pick the most and the fewest marks' });
+    const dock = el('button', { class: 'dock', 'aria-haspopup': 'dialog', onclick: () => openReview() },
+      el('span', {}, dockTitle, dockSub), el('span', { class: 'pile', 'aria-hidden': 'true' }, el('i'), el('i'), el('i')));
+
+    let lastFocus = null;
+    function openReview() {
+      lastFocus = document.activeElement;
+      review.classList.add('open');
+      document.body.classList.add('reviewing');
+      if (!wide()) document.body.style.overflow = 'hidden';
+      requestAnimationFrame(() => { goTo(current, false); updateNav(); cards.forEach(c => c._updateMore()); });
+      panel.focus({ preventScroll: true });
+    }
+    function closeReview() {
+      review.classList.remove('open');
+      document.body.classList.remove('reviewing');
+      document.body.style.overflow = '';
+      (lastFocus && lastFocus.isConnected ? lastFocus : dock).focus({ preventScroll: true });
+    }
+    panel.addEventListener('keydown', e => { if (e.key === 'Escape') closeReview(); });
+    // Phones: drag the sheet's header down to close it.
+    let dragY = null;
+    sheetHead.addEventListener('pointerdown', e => {
+      if (wide() || e.target.closest('button')) return;
+      dragY = e.clientY; sheetHead.setPointerCapture(e.pointerId); panel.style.transition = 'none';
+    });
+    sheetHead.addEventListener('pointermove', e => {
+      if (dragY !== null) panel.style.transform = `translateY(${Math.max(0, e.clientY - dragY)}px)`;
+    });
+    const endDrag = e => {
+      if (dragY === null) return;
+      const dy = e.clientY - dragY;
+      dragY = null; panel.style.transition = ''; panel.style.transform = '';
+      if (dy > 90) closeReview();
+    };
+    sheetHead.addEventListener('pointerup', endDrag);
+    sheetHead.addEventListener('pointercancel', endDrag);
+
     const hintEl = el('span', { class: 'hint' });
     const clearBtn = el('button', { class: 'btn ghost', onclick: () => { picks.most = picks.fewest = null; refresh(); } }, 'Clear');
     const submitBtn = el('button', { class: 'btn red', onclick: submit }, 'Hand to the examiner');
     const actionsEl = el('div', { class: 'rank-actions' }, hintEl, el('div', { class: 'actions' }, clearBtn, submitBtn));
 
     const afterEl = el('div');
+    const paperAfter = el('div', { class: 'paper-after' });
+    reviewBody.append(
+      el('p', { class: 'review-intro' }, 'All of these answers are creditworthy. Pick the one that earns ',
+        el('b', { text: 'the most marks' }), ' and the one that earns ', el('b', { text: 'the fewest' }), '.'),
+      nav, responses, afterEl);
+    reviewFoot.append(actionsEl);
 
     // Choosing an answer for one role takes it away from whichever answer had it,
     // and an answer can't be both "most" and "fewest". Clicking a pressed button un-picks it.
@@ -869,6 +1007,9 @@
         : 'Read every answer, then pick the one with the most marks and the one with the fewest.';
       submitBtn.disabled = !(hasMost && hasFewest);
       clearBtn.disabled = !(hasMost || hasFewest);
+      const made = (hasMost ? 1 : 0) + (hasFewest ? 1 : 0);
+      dockSub.textContent = made === 0 ? 'Pick the most and the fewest marks'
+        : made === 1 ? '1 of 2 picks made' : 'Both picked: ready to hand in';
       updateNav();
     }
 
@@ -913,10 +1054,17 @@
       cards.forEach(c => c._updateMore());
 
       const isLast = s.index === s.questions.length - 1;
-      const nextBtn = el('button', { class: 'btn red', onclick: isLast ? renderSummary : () => { s.index++; renderQuestion(); } },
+      const makeNext = () => el('button', { class: 'btn red', onclick: isLast ? renderSummary : () => { s.index++; renderQuestion(); } },
         isLast ? 'See your results →' : 'Next question →');
+      const nextBtn = makeNext();
+      const scoreWord = result.correct === 2 ? 'Spot on!' : result.correct === 1 ? 'Half right' : 'Not quite';
 
-      actionsEl.replaceWith(el('div'));
+      reviewFoot.replaceChildren(el('div', { class: 'rank-actions' },
+        el('span', { class: 'hint', text: `${scoreWord} Each answer now shows its marks.` }), nextBtn));
+      dockTitle.textContent = "See the examiner's marks";
+      dockSub.textContent = `${scoreWord} · ${result.correct} of 2 picks right`;
+      paperAfter.replaceChildren(el('div', { class: 'rank-actions' },
+        el('span', { class: 'hint', text: 'Marked. Open the answers to see why each one scored what it did.' }), makeNext()));
       afterEl.replaceChildren(
         el('div', { class: `result outcome-${['bad', 'part', 'good'][result.correct]}`, role: 'status' },
           el('div', { class: 'score', text: result.correct === 2 ? 'Spot on!' : result.correct === 1 ? 'Half right' : 'Not quite' }),
@@ -927,10 +1075,9 @@
               text: result.fewestRight ? 'You found the answer with the fewest marks.' : 'Your "fewest marks" pick was not the lowest-scoring answer.' })
           )
         ),
-        q.tip && el('div', { class: 'tip' }, el('b', { text: "Examiner's tip" }), q.tip),
-        el('div', { class: 'rank-actions' }, el('span'), nextBtn)
+        q.tip && el('div', { class: 'tip' }, el('b', { text: "Examiner's tip" }), q.tip)
       );
-      nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      reviewBody.scrollTo({ top: 0, behavior: 'smooth' });
       nextBtn.focus({ preventScroll: true });
     }
 
@@ -941,22 +1088,16 @@
 
     render(
       progress,
-      el('article', { class: 'paper' },
+      el('article', { class: 'paper q-paper' },
         head,
         meta,
         q.skill && el('p', { class: 'skill-tag' }, el('b', { text: 'Technique' }), q.skill),
         source,
         qLine,
-        el('div', { class: 'divider', text: 'Candidate responses' }),
-        el('div', { class: 'instructions' },
-          el('b', { text: 'Spot the best and the weakest. ' }),
-          'All of these answers are creditworthy. Swipe or use the arrows to read them all, then mark the one that earns ',
-          el('b', { text: 'the most marks' }), ' and the one that earns ', el('b', { text: 'the fewest' }), '.'),
-        nav,
-        responses,
-        actionsEl,
-        afterEl
-      )
+        paperAfter
+      ),
+      dock,
+      review
     );
     refresh();
   }
