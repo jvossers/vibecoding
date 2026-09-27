@@ -144,6 +144,496 @@
         }
       ],
       "tip": "About 20 minutes. Plan: the given factor, then one or two other factors, then a conclusion. State your judgement in the introduction, and in the conclusion explain why one factor mattered most or how the factors linked. Up to 4 extra marks for spelling, punctuation and grammar."
+    },
+    {
+      "id": "hist-005",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 1 Section A: Germany, 1890–1945",
+      "number": "1",
+      "topic": "Interpretations: how do they differ?",
+      "skill": "Identify a difference in content and explain it using both interpretations",
+      "marks": 4,
+      "stimulus": {
+        "label": "Interpretation A and Interpretation B",
+        "caption": "Interpretation A: A woman who was a member of the League of German Maidens (the girls' branch of the Hitler Youth), remembering her experiences in 1987. (A practice interpretation written for this app.) / Interpretation B: From a history of Nazi Germany written by a British historian in 2005. (A practice interpretation written for this app.)",
+        "text": "INTERPRETATION A\nI loved the camps. We sang around the fire, went hiking and felt that we were part of something bigger than ourselves. For the first time, girls from rich and poor families were treated the same. Nobody forced me to join; I was proud to wear the uniform.\n\nINTERPRETATION B\nMembership of the Hitler Youth became compulsory in 1939, and even before then pressure from schools and employers made refusing difficult. Its activities were designed to produce obedient followers: boys were prepared for war and girls for motherhood. Many young people grew bored of the endless drills, and some joined rebel groups such as the Edelweiss Pirates."
+      },
+      "prompt": "How does Interpretation B differ from Interpretation A about the Nazis' youth organisations?\n\nExplain your answer based on what it says in Interpretations A and B.",
+      "answers": [
+        {
+          "text": "Interpretation A presents the youth organisations as enjoyable and voluntary: the writer 'loved the camps' and says 'Nobody forced me to join'. Interpretation B presents them as controlling and compulsory: membership 'became compulsory in 1939' and activities were designed 'to produce obedient followers'. So A sees them as fun and uniting, while B sees them as a tool of Nazi control that many resented.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): a developed difference in content, supported with detail from both interpretations, and summed up clearly."
+        },
+        {
+          "text": "Interpretation A says the girl enjoyed it but Interpretation B says it was compulsory.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): a simple difference identified, but not explained with supporting detail from both."
+        },
+        {
+          "text": "Interpretation A is written by a woman who was in the League of German Maidens, and Interpretation B is by a historian.",
+          "marks": 1,
+          "explanation": "Level 1, low: this is about the authors (provenance), which is the next question. This question is about how the content differs."
+        }
+      ],
+      "tip": "Q1 is about what the interpretations say. Find the main difference, quote both, and sum up the contrast in one sentence. About 5 minutes."
+    },
+    {
+      "id": "hist-006",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 1 Section A: Germany, 1890–1945",
+      "number": "2",
+      "topic": "Interpretations: why do they differ?",
+      "skill": "Use provenance (who, when, why) and context to explain the difference",
+      "marks": 4,
+      "stimulus": {
+        "label": "Interpretation A and Interpretation B",
+        "caption": "Interpretation A: A woman who was a member of the League of German Maidens (the girls' branch of the Hitler Youth), remembering her experiences in 1987. (A practice interpretation written for this app.) / Interpretation B: From a history of Nazi Germany written by a British historian in 2005. (A practice interpretation written for this app.)",
+        "text": "INTERPRETATION A\nI loved the camps. We sang around the fire, went hiking and felt that we were part of something bigger than ourselves. For the first time, girls from rich and poor families were treated the same. Nobody forced me to join; I was proud to wear the uniform.\n\nINTERPRETATION B\nMembership of the Hitler Youth became compulsory in 1939, and even before then pressure from schools and employers made refusing difficult. Its activities were designed to produce obedient followers: boys were prepared for war and girls for motherhood. Many young people grew bored of the endless drills, and some joined rebel groups such as the Edelweiss Pirates."
+      },
+      "prompt": "Why might the authors of Interpretations A and B have a different interpretation about the Nazis' youth organisations?\n\nExplain your answer using Interpretations A and B and your contextual knowledge.",
+      "answers": [
+        {
+          "text": "The author of A was a member of the League of German Maidens, so her view is based on her own positive memories. She may be nostalgic, remembering the friendship and camps rather than the political purpose. The author of B is a historian writing in 2005 with access to wider evidence, such as the 1939 law making membership compulsory and the growth of groups like the Edelweiss Pirates, so he can see the organisations' purpose of control and how many young people resisted.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): developed explanation of the difference using the provenance of both authors, supported by contextual knowledge."
+        },
+        {
+          "text": "Interpretation A is from someone who was there, so she only knows about her own experience. Interpretation B is by a historian who has studied it.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): simple reasons based on provenance, not developed with context or linked to what each says."
+        },
+        {
+          "text": "Interpretation A is biased because she was in the Hitler Youth.",
+          "marks": 1,
+          "explanation": "Level 1, low: 'biased' on its own explains nothing. Say why her position would shape her view, and what the historian's position allows him to see."
+        }
+      ],
+      "tip": "Think: who wrote each one, when, and with what purpose or evidence? Link each to the view they give. Avoid just saying 'biased'."
+    },
+    {
+      "id": "hist-007",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 1 Section A: Germany, 1890–1945",
+      "number": "3",
+      "topic": "Interpretations: which is more convincing?",
+      "skill": "Test both interpretations against your own knowledge before judging",
+      "marks": 8,
+      "stimulus": {
+        "label": "Interpretation A and Interpretation B",
+        "caption": "Interpretation A: A woman who was a member of the League of German Maidens (the girls' branch of the Hitler Youth), remembering her experiences in 1987. (A practice interpretation written for this app.) / Interpretation B: From a history of Nazi Germany written by a British historian in 2005. (A practice interpretation written for this app.)",
+        "text": "INTERPRETATION A\nI loved the camps. We sang around the fire, went hiking and felt that we were part of something bigger than ourselves. For the first time, girls from rich and poor families were treated the same. Nobody forced me to join; I was proud to wear the uniform.\n\nINTERPRETATION B\nMembership of the Hitler Youth became compulsory in 1939, and even before then pressure from schools and employers made refusing difficult. Its activities were designed to produce obedient followers: boys were prepared for war and girls for motherhood. Many young people grew bored of the endless drills, and some joined rebel groups such as the Edelweiss Pirates."
+      },
+      "prompt": "Which interpretation gives the more convincing account of the Nazis' youth organisations?\n\nExplain your answer based on your contextual knowledge and what it says in Interpretations A and B.",
+      "answers": [
+        {
+          "text": "Interpretation B is more convincing overall. Its claim that membership 'became compulsory in 1939' is accurate, and the idea that activities prepared boys for war and girls for motherhood is supported by the emphasis on drill, sport and 'Kinder, Küche, Kirche'. Its reference to the Edelweiss Pirates reflects real opposition, especially during the war.\n\nHowever, Interpretation A is convincing about why many young people enjoyed the organisations: camps, hiking and a sense of belonging were genuinely attractive, especially for poorer children. So A is convincing about some young people's experiences, but B is more convincing as an overall account because it explains the Nazis' aims and the pressure to join.",
+          "marks": 8,
+          "explanation": "Level 4 (7–8 marks): complex evaluation of both interpretations, each tested against precise contextual knowledge, leading to a substantiated judgement."
+        },
+        {
+          "text": "I think Interpretation B is more convincing because it's true that the Hitler Youth became compulsory in 1939 and that the Nazis wanted to prepare boys for the army. There were also groups like the Edelweiss Pirates who rebelled. Interpretation A is less convincing because it is only one person's view.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): developed evaluation of one interpretation with good knowledge. To reach Level 4, test A against knowledge too, rather than dismissing it because it is one person's view."
+        },
+        {
+          "text": "Interpretation B is more convincing because it is written by a historian, and historians know more.",
+          "marks": 3,
+          "explanation": "Level 2 (3–4 marks), low: the judgement is based only on provenance. This question asks you to test the content against your own knowledge."
+        },
+        {
+          "text": "Interpretation A is more convincing because she was actually there.",
+          "marks": 1,
+          "explanation": "Level 1 (1–2 marks): a simple judgement with no knowledge used to test either interpretation."
+        }
+      ],
+      "tip": "About 10 minutes. For each interpretation, use your own knowledge to test what it says, then judge which is more convincing and why."
+    },
+    {
+      "id": "hist-008",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 2 Section A: Britain: Health and the people",
+      "number": "1",
+      "topic": "Significance",
+      "skill": "Explain significance in the short term and the long term, with specific evidence",
+      "marks": 8,
+      "prompt": "Explain the significance of penicillin for the development of medicine.",
+      "answers": [
+        {
+          "text": "Penicillin was significant because it was the first effective antibiotic, able to cure bacterial infections that had killed millions. In the short term, after Fleming's discovery in 1928 was developed by Florey and Chain and mass-produced in the USA during the Second World War, it saved thousands of soldiers' lives from infected wounds by 1944.\n\nIn the long term, it began the age of antibiotics: scientists searched for and developed many more, so deaths from infections like pneumonia fell dramatically. It also made surgery much safer. However, its overuse has led to antibiotic-resistant bacteria, which shows its significance is still developing today.",
+          "marks": 8,
+          "explanation": "Level 4 (7–8 marks): complex explanation of significance over the short and long term, with precise supporting knowledge and a consideration of how significance has changed."
+        },
+        {
+          "text": "Penicillin was discovered by Alexander Fleming in 1928, but it wasn't developed until Florey and Chain in 1940. It was mass-produced during the Second World War and saved many soldiers. It was significant because it was the first antibiotic and could cure infections.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): a developed explanation with good knowledge. To reach Level 4, explain the longer-term significance (other antibiotics, safer surgery, resistance)."
+        },
+        {
+          "text": "Penicillin was important because it could kill bacteria and cure infections. Lots of people's lives were saved.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): a simple explanation of significance with little specific knowledge (no names, dates or examples)."
+        },
+        {
+          "text": "Alexander Fleming noticed that mould had killed bacteria in a petri dish when he came back from holiday.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): a story of the discovery, but it doesn't explain the significance."
+        }
+      ],
+      "tip": "Significance = what difference it made. Cover the short term and the long term, and use specific evidence (names, dates, numbers)."
+    },
+    {
+      "id": "hist-009",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 2 Section A: Britain: Health and the people",
+      "number": "2",
+      "topic": "Comparison: similarities",
+      "skill": "Compare both events in every point, explaining why they were similar",
+      "marks": 8,
+      "prompt": "Compare the responses to the Black Death (1348–49) and the Great Plague (1665).\n\nIn what ways were they similar?\n\nExplain your answer with reference to both.",
+      "answers": [
+        {
+          "text": "The responses were similar because in both periods people did not know that the plague was spread by fleas on rats, so they relied on the same kinds of explanations. In 1348 and in 1665 many blamed miasma (bad air), so people carried sweet-smelling herbs or pomanders and lit fires to clean the air. Religion was important in both: in 1348 flagellants whipped themselves to show repentance, and in 1665 people prayed and attended church, believing God was punishing sin.\n\nIn both outbreaks many who could afford to fled the towns. Even the 1665 government orders, such as shutting infected houses, reflected the same limited understanding, so the similarity comes from the lack of germ theory in both periods.",
+          "marks": 8,
+          "explanation": "Level 4 (7–8 marks): complex explanation of similarities, supported with specific knowledge of both events, and an overall explanation of why the responses were similar."
+        },
+        {
+          "text": "In both the Black Death and the Great Plague people thought it was caused by bad air, so they carried herbs. People also prayed to God in both. Rich people fled from the towns in both plagues.",
+          "marks": 5,
+          "explanation": "Level 3 (5–6 marks), low: several valid similarities for both events. It needs more specific detail, and an explanation of why the responses were similar (no knowledge of germs)."
+        },
+        {
+          "text": "In 1348 people whipped themselves because they thought God was angry. In 1665 they shut people in their houses and painted red crosses on the doors.",
+          "marks": 3,
+          "explanation": "Level 2 (3–4 marks), low: accurate knowledge, but each event is described separately and these are differences rather than similarities."
+        },
+        {
+          "text": "Both were plagues and lots of people died.",
+          "marks": 1,
+          "explanation": "Level 1 (1–2 marks): a basic point that doesn't address the responses."
+        }
+      ],
+      "tip": "Every point should mention both events: 'In both 1348 and 1665…'. Finish with why they were similar (the same lack of scientific understanding)."
+    },
+    {
+      "id": "hist-010",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 3: Weimar and Nazi Germany, 1918–39",
+      "number": "1",
+      "topic": "Inference",
+      "skill": "An inference goes beyond the source; the detail proves it",
+      "marks": 4,
+      "stimulus": {
+        "label": "Source A",
+        "caption": "From a letter written by a shopkeeper in Munich in November 1923. (A practice source written for this app.)",
+        "text": "Yesterday a customer paid me for a loaf with a basket full of notes, and by the afternoon the same notes would not buy a bread roll. My savings, forty years of work, are worth less than the paper this letter is written on. People say the government has betrayed us, and there is talk in the beer halls of men who promise to set things right."
+      },
+      "prompt": "Give two things you can infer from Source A about the effects of hyperinflation.\n\nComplete the table: for each, give (i) what you can infer, and (ii) the details in the source that tell you this.",
+      "answers": [
+        {
+          "text": "(i) Hyperinflation destroyed the savings of the middle classes.\nDetail: 'My savings, forty years of work, are worth less than the paper this letter is written on.'\n\n(ii) Hyperinflation made people lose faith in the Weimar government and turn to extremists.\nDetail: 'People say the government has betrayed us, and there is talk in the beer halls of men who promise to set things right.'",
+          "marks": 4,
+          "explanation": "Full marks: two valid inferences (1 each), each supported by a relevant detail from the source (1 each)."
+        },
+        {
+          "text": "(i) People's savings became worthless.\nDetail: 'My savings… are worth less than the paper this letter is written on.'\n\n(ii) People turned against the government.",
+          "marks": 3,
+          "explanation": "Three marks: two valid inferences, but the second has no supporting detail from the source."
+        },
+        {
+          "text": "(i) Prices rose very quickly.\nDetail: 'by the afternoon the same notes would not buy a bread roll.'\n\n(ii) A customer paid with a basket of notes.\nDetail: 'paid me for a loaf with a basket full of notes'.",
+          "marks": 2,
+          "explanation": "Two marks. The first is a valid inference with support; the second just copies the source. An inference must say something the source suggests but doesn't state."
+        },
+        {
+          "text": "(i) The writer was a shopkeeper in Munich.\n(ii) The letter was written in 1923.",
+          "marks": 0,
+          "explanation": "Zero: these come from the provenance, not the content, and they aren't inferences about the effects of hyperinflation."
+        }
+      ],
+      "tip": "Only about 6 minutes. 'I can infer that…' should be your own words; the detail should be a short quotation that proves it."
+    },
+    {
+      "id": "hist-011",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 3: Weimar and Nazi Germany, 1918–39",
+      "number": "2",
+      "topic": "Explain why (12 marks)",
+      "skill": "Explain several causes analytically, going beyond the stimulus points",
+      "marks": 12,
+      "prompt": "Explain why there was opposition to the Weimar Republic in the years 1919–23.\n\nYou may use the following in your answer:\n• the Treaty of Versailles\n• the Kapp Putsch\n\nYou must also use information of your own.",
+      "answers": [
+        {
+          "text": "One key reason was the Treaty of Versailles. Many Germans saw it as a 'diktat' and blamed the Weimar politicians, the 'November Criminals', for signing it. Losing territory and the army being limited to 100,000 men angered nationalists, which is why right-wing groups tried to overthrow the government in the Kapp Putsch of 1920.\n\nOpposition also came from the left. Communists believed Weimar hadn't gone far enough, leading to the Spartacist Uprising in 1919. Finally, the crisis of 1923 increased opposition: when France occupied the Ruhr and hyperinflation wiped out savings, many blamed the government, which encouraged Hitler's Munich Putsch. Together, these show Weimar was attacked from both sides because it was linked to defeat and economic disaster.",
+          "marks": 11,
+          "explanation": "Level 4 (10–12 marks): an analytical explanation of several causes, clearly linked to opposition, using both stimulus points and precise knowledge of its own (Spartacists, the Ruhr, hyperinflation, the Munich Putsch), with an overall line of reasoning."
+        },
+        {
+          "text": "The Treaty of Versailles caused opposition because Germans thought it was unfair. Germany lost land and had to pay reparations, so people blamed the government. The Kapp Putsch happened in 1920 when the Freikorps tried to take over Berlin because they were angry about the army being reduced. There was also the Spartacist Uprising by communists in 1919.",
+          "marks": 8,
+          "explanation": "Level 3 (7–9 marks): a developed explanation of several causes with good knowledge, including its own. To reach Level 4, analyse how each cause led to opposition and link them together."
+        },
+        {
+          "text": "The Treaty of Versailles made people angry. The Kapp Putsch was when people tried to take over. Hyperinflation made money worthless.",
+          "marks": 5,
+          "explanation": "Level 2 (4–6 marks): relevant points, but little explanation of why they caused opposition, and limited detail."
+        },
+        {
+          "text": "The Weimar Republic had lots of problems and people didn't like it, so they opposed it.",
+          "marks": 2,
+          "explanation": "Level 1 (1–3 marks): a general statement with no specific knowledge."
+        }
+      ],
+      "tip": "About 15 minutes. Use both stimulus points plus at least one of your own. Start each paragraph with a cause, then explain how it led to opposition."
+    },
+    {
+      "id": "hist-012",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 3: Weimar and Nazi Germany, 1918–39",
+      "number": "3(a)",
+      "topic": "Utility of two sources",
+      "skill": "Judge usefulness through content, provenance and context, for this enquiry",
+      "marks": 8,
+      "stimulus": {
+        "label": "Sources B and C",
+        "caption": "Source B: a photograph published in a Nazi magazine in 1936. Source C: from an account written in secret by a German schoolteacher in 1938. (Practice sources written for this app.)",
+        "text": "SOURCE B\n[Photograph: rows of smiling Hitler Youth members marching in step, carrying swastika flags, watched by cheering crowds.]\n\nSOURCE C\nBoys who miss Hitler Youth meetings are named in front of the class. Many of them are too tired to concentrate on Mondays, because the Saturday marches go on all day. One boy told me he only goes because his father would lose his job if he refused."
+      },
+      "prompt": "How useful are Sources B and C for an enquiry into the treatment of young people in Nazi Germany?\n\nExplain your answer, using Sources B and C and your knowledge of the historical context.",
+      "answers": [
+        {
+          "text": "Source B is useful for showing how the Nazis wanted young people to be seen: disciplined, happy and united. Because it was published in a Nazi magazine in 1936, it is propaganda, so it's less useful for real experiences but very useful for the image the regime promoted, which fits the Nazis' aim of winning the loyalty of the young.\n\nSource C is useful for revealing the pressure behind membership: boys were 'named in front of the class' and one joined only because 'his father would lose his job'. Written in secret, the teacher had no reason to flatter the regime, which makes it more reliable about everyday experience. Together they are useful because they show the contrast between Nazi propaganda and reality.",
+          "marks": 8,
+          "explanation": "Level 3 (6–8 marks): judgements on the usefulness of both sources, based on content and provenance, and supported by contextual knowledge, with an overall judgement."
+        },
+        {
+          "text": "Source B is useful because it shows Hitler Youth members marching and looking happy. But it is propaganda so it might not be true. Source C is useful because it shows that boys were forced to go to the Hitler Youth and were tired. It was written by a teacher who saw it happen.",
+          "marks": 5,
+          "explanation": "Level 2 (3–5 marks): some judgement on both sources using content and provenance, but no contextual knowledge and limited development."
+        },
+        {
+          "text": "Source B shows boys marching with flags. Source C says boys were named in front of the class.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): describes the content without judging usefulness."
+        }
+      ],
+      "tip": "For each source: what it shows (content), how the provenance affects its usefulness, and your own knowledge to support or challenge it. End with a judgement."
+    },
+    {
+      "id": "hist-013",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 3: Weimar and Nazi Germany, 1918–39",
+      "number": "3(b)",
+      "topic": "Interpretations: main difference",
+      "skill": "State the main difference in view and support it from both",
+      "marks": 4,
+      "stimulus": {
+        "label": "Interpretation 1 and Interpretation 2",
+        "caption": "Interpretation 1: A woman who was a member of the League of German Maidens (the girls' branch of the Hitler Youth), remembering her experiences in 1987. (A practice interpretation written for this app.) / Interpretation 2: From a history of Nazi Germany written by a British historian in 2005. (A practice interpretation written for this app.)",
+        "text": "INTERPRETATION 1\nI loved the camps. We sang around the fire, went hiking and felt that we were part of something bigger than ourselves. For the first time, girls from rich and poor families were treated the same. Nobody forced me to join; I was proud to wear the uniform.\n\nINTERPRETATION 2\nMembership of the Hitler Youth became compulsory in 1939, and even before then pressure from schools and employers made refusing difficult. Its activities were designed to produce obedient followers: boys were prepared for war and girls for motherhood. Many young people grew bored of the endless drills, and some joined rebel groups such as the Edelweiss Pirates."
+      },
+      "prompt": "Study Interpretations 1 and 2. They give different views about young people's experiences of the Nazi youth organisations.\n\nWhat is the main difference between these views?\n\nExplain your answer, using details from both interpretations.",
+      "answers": [
+        {
+          "text": "The main difference is that Interpretation 1 suggests young people joined willingly and enjoyed it, whereas Interpretation 2 suggests they were pressured or forced to take part. Interpretation 1 says 'Nobody forced me to join; I was proud to wear the uniform', while Interpretation 2 says membership 'became compulsory' and that pressure 'made refusing difficult'.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): the main difference is clearly identified and supported with details from both interpretations."
+        },
+        {
+          "text": "Interpretation 1 says the writer loved the camps. Interpretation 2 says it became compulsory in 1939 and many young people got bored.",
+          "marks": 3,
+          "explanation": "Level 2, low: relevant details from both, but the main difference isn't stated as an overall point. Sum up the difference in one clear sentence first."
+        },
+        {
+          "text": "Interpretation 1 is from a woman who was there and Interpretation 2 is from a historian.",
+          "marks": 1,
+          "explanation": "Level 1: this is about who wrote them, not the difference in their views."
+        }
+      ],
+      "tip": "One clear sentence stating the main difference in view, then a detail from each interpretation that shows it."
+    },
+    {
+      "id": "hist-014",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 3: Weimar and Nazi Germany, 1918–39",
+      "number": "3(c)",
+      "topic": "Interpretations: suggest a reason",
+      "skill": "Give a reason such as different sources or a different focus, and support it",
+      "marks": 4,
+      "stimulus": {
+        "label": "Interpretation 1 and Interpretation 2",
+        "caption": "Interpretation 1: A woman who was a member of the League of German Maidens (the girls' branch of the Hitler Youth), remembering her experiences in 1987. (A practice interpretation written for this app.) / Interpretation 2: From a history of Nazi Germany written by a British historian in 2005. (A practice interpretation written for this app.)",
+        "text": "INTERPRETATION 1\nI loved the camps. We sang around the fire, went hiking and felt that we were part of something bigger than ourselves. For the first time, girls from rich and poor families were treated the same. Nobody forced me to join; I was proud to wear the uniform.\n\nINTERPRETATION 2\nMembership of the Hitler Youth became compulsory in 1939, and even before then pressure from schools and employers made refusing difficult. Its activities were designed to produce obedient followers: boys were prepared for war and girls for motherhood. Many young people grew bored of the endless drills, and some joined rebel groups such as the Edelweiss Pirates."
+      },
+      "prompt": "Suggest one reason why Interpretations 1 and 2 give different views about young people's experiences of the Nazi youth organisations.\n\nYou may use Sources B and C to help explain your answer.",
+      "answers": [
+        {
+          "text": "They may differ because they are based on different evidence. Interpretation 1 is based on one girl's personal memories of the camps, whereas Interpretation 2 draws on wider evidence, such as the 1939 law and accounts like Source C, which shows boys being pressured because 'his father would lose his job'. Using a source like Source B, which shows smiling marchers, could support a more positive view like Interpretation 1.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): a valid reason (different sources/evidence), explained and supported using Sources B and C."
+        },
+        {
+          "text": "They are different because one is a personal memory and the other is a historian.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): a simple reason, not explained or supported."
+        },
+        {
+          "text": "Because people have different opinions.",
+          "marks": 0,
+          "explanation": "Zero: too general to explain anything about these interpretations."
+        }
+      ],
+      "tip": "Useful reasons: different sources used, different focus (one person or a whole country), or different weight given to evidence. Explain and support it."
+    },
+    {
+      "id": "hist-015",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 3: Weimar and Nazi Germany, 1918–39",
+      "number": "3(d)",
+      "topic": "Interpretations: how far do you agree?",
+      "skill": "Use both interpretations and your own knowledge to reach a sustained judgement",
+      "marks": 16,
+      "stimulus": {
+        "label": "Interpretation 1 and Interpretation 2",
+        "caption": "Interpretation 1: A woman who was a member of the League of German Maidens (the girls' branch of the Hitler Youth), remembering her experiences in 1987. (A practice interpretation written for this app.) / Interpretation 2: From a history of Nazi Germany written by a British historian in 2005. (A practice interpretation written for this app.)",
+        "text": "INTERPRETATION 1\nI loved the camps. We sang around the fire, went hiking and felt that we were part of something bigger than ourselves. For the first time, girls from rich and poor families were treated the same. Nobody forced me to join; I was proud to wear the uniform.\n\nINTERPRETATION 2\nMembership of the Hitler Youth became compulsory in 1939, and even before then pressure from schools and employers made refusing difficult. Its activities were designed to produce obedient followers: boys were prepared for war and girls for motherhood. Many young people grew bored of the endless drills, and some joined rebel groups such as the Edelweiss Pirates."
+      },
+      "prompt": "How far do you agree with Interpretation 2 about young people's experiences of the Nazi youth organisations?\n\nExplain your answer, using both interpretations and your knowledge of the historical context.",
+      "answers": [
+        {
+          "text": "I largely agree with Interpretation 2. It is right that membership became compulsory in 1939 and that, even before then, pressure was intense: my knowledge of schools rewarding members and employers expecting membership supports its claim that 'refusing was difficult'. Its view that activities prepared boys for war fits the emphasis on drill, shooting and fitness, and girls were trained in homemaking for motherhood.\n\nHowever, Interpretation 1 is also valid. Many young people did enjoy the camps, sport and sense of belonging, especially at first, and the organisations offered opportunities poorer children had never had. Interpretation 2 accepts this only indirectly.\n\nOverall, Interpretation 2 is more convincing as a general account because it explains both the Nazis' aims and the growing resistance (the Edelweiss Pirates), but it underestimates the genuine enthusiasm that Interpretation 1 shows existed, particularly before 1939.",
+          "marks": 15,
+          "explanation": "Level 4 (13–16 marks): a sustained, balanced evaluation using both interpretations and precise contextual knowledge, reaching a clearly justified judgement. Up to 4 more marks are available for spelling, punctuation and grammar."
+        },
+        {
+          "text": "I agree with Interpretation 2 because the Hitler Youth did become compulsory in 1939, and boys did military-style training. The Edelweiss Pirates show that not everyone was happy. However, Interpretation 1 shows that some young people enjoyed the camps and hiking, so Interpretation 2 isn't completely right.",
+          "marks": 11,
+          "explanation": "Level 3 (9–12 marks): a developed evaluation using both interpretations and some knowledge, with a judgement. More precise knowledge and a sustained line of argument would reach Level 4."
+        },
+        {
+          "text": "Interpretation 2 says the Hitler Youth was compulsory and boring. Interpretation 1 says it was fun. I agree with Interpretation 2 because it is by a historian.",
+          "marks": 6,
+          "explanation": "Level 2 (5–8 marks): describes both interpretations, but the judgement rests on the author rather than on testing the content with knowledge."
+        },
+        {
+          "text": "I agree because the Nazis were bad.",
+          "marks": 2,
+          "explanation": "Level 1 (1–4 marks): an unsupported opinion."
+        }
+      ],
+      "tip": "About 20 minutes. Test Interpretation 2 with your knowledge, consider Interpretation 1 as the counter-view, then judge 'how far' in the conclusion."
+    },
+    {
+      "id": "hist-016",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 1: Medicine in Britain, c1250–present",
+      "number": "2",
+      "topic": "Explain one way… different",
+      "skill": "Explain one clear difference with specific detail from both periods",
+      "marks": 4,
+      "prompt": "Explain one way in which ideas about the causes of disease in the nineteenth century were different from ideas in the fourteenth century.",
+      "answers": [
+        {
+          "text": "In the fourteenth century, people believed disease was caused by supernatural or natural forces they couldn't see, such as punishment from God or an imbalance of the Four Humours, so the Black Death was blamed on sin or 'bad air'. By the late nineteenth century, Louis Pasteur's germ theory (1861) showed that microorganisms cause disease, and Robert Koch later identified specific bacteria, such as the one causing tuberculosis. So the cause shifted from God and the humours to scientifically identified germs.",
+          "marks": 4,
+          "explanation": "Full marks: a clear difference (1), supported by specific knowledge of the fourteenth century (1) and the nineteenth century (1), with the difference explained (1)."
+        },
+        {
+          "text": "In the fourteenth century people thought God caused disease, but in the nineteenth century they knew about germs.",
+          "marks": 2,
+          "explanation": "Two marks: a valid difference with simple support, but without specific detail (Pasteur, the humours, the Black Death) it can't be fully developed."
+        },
+        {
+          "text": "In the nineteenth century Louis Pasteur discovered germ theory in 1861.",
+          "marks": 1,
+          "explanation": "One mark: accurate knowledge of one period only. 'Different from' needs both sides."
+        }
+      ],
+      "tip": "Pick ONE difference. State it, give specific evidence from each period, and use a comparison word ('whereas', 'by contrast')."
+    },
+    {
+      "id": "hist-017",
+      "boards": [
+        "OCR"
+      ],
+      "paper": "Period study: Germany, 1925–55",
+      "number": "1",
+      "topic": "Analytical summary",
+      "skill": "Organise the summary into analytical themes with examples",
+      "marks": 9,
+      "prompt": "Write a clear and organised summary that analyses the Nazis' methods of controlling the German people in the years 1933–39.\n\nSupport your summary with examples.",
+      "answers": [
+        {
+          "text": "The Nazis used a combination of terror, propaganda and control of everyday life. Terror was the foundation: the Gestapo, the SS and concentration camps such as Dachau (opened 1933) made opposition dangerous, and after the Night of the Long Knives in 1934 even Nazis knew disloyalty could be fatal.\n\nPropaganda worked alongside terror: Goebbels' Ministry controlled newspapers, radio and film, while rallies such as Nuremberg created a sense of unity. Finally, the Nazis controlled everyday life through organisations: the Hitler Youth for the young and the German Labour Front in place of trade unions. Together these methods meant that most Germans either supported the regime or felt it was too dangerous to resist.",
+          "marks": 9,
+          "explanation": "Top level: a clear, organised summary with analytical themes (terror, propaganda, organisations), specific examples, and an explanation of how the methods worked together."
+        },
+        {
+          "text": "The Nazis controlled people through terror. The Gestapo were secret police and people were sent to concentration camps. They also used propaganda. Goebbels controlled the radio and newspapers. There were also big rallies at Nuremberg.",
+          "marks": 6,
+          "explanation": "Middle level: relevant methods with some examples. It needs more analysis of how each method controlled people and how they worked together."
+        },
+        {
+          "text": "The Nazis were very strict and people had to do what Hitler said or they would be punished.",
+          "marks": 3,
+          "explanation": "Lower level: a general statement with little specific knowledge."
+        }
+      ],
+      "tip": "A summary still needs analysis: group methods into themes, give examples, and explain how each kept control."
+    },
+    {
+      "id": "hist-018",
+      "boards": [
+        "OCR"
+      ],
+      "paper": "Period study: Germany, 1925–55",
+      "number": "2",
+      "topic": "Explaining causes",
+      "skill": "Explain each cause and show how causes combined",
+      "marks": 10,
+      "prompt": "Why did Hitler become Chancellor in January 1933?\n\nExplain your answer.",
+      "answers": [
+        {
+          "text": "The Depression created the conditions: unemployment rose to around 6 million, and voters turned to extremists, making the Nazis the largest party in the Reichstag by July 1932. Nazi propaganda exploited this, with Hitler presented as a strong leader offering 'work and bread'.\n\nHowever, the Nazis never won a majority, and their vote fell in November 1932. The decisive factor was political intrigue: von Papen persuaded President Hindenburg to appoint Hitler Chancellor, believing he could be controlled. So the Depression made Hitler popular, but it was the elite's miscalculation that actually put him in power.",
+          "marks": 10,
+          "explanation": "Top level: several causes explained, supported with precise knowledge, and linked together to show how they combined to produce the outcome."
+        },
+        {
+          "text": "The Depression made lots of people unemployed and they voted for the Nazis. Nazi propaganda was also effective, and Hitler was a good speaker. In the end von Papen and Hindenburg made Hitler Chancellor because they thought they could control him.",
+          "marks": 7,
+          "explanation": "Middle level: several relevant causes with some explanation. More precise detail and links between the causes would reach the top level."
+        },
+        {
+          "text": "Hitler became Chancellor because he was very popular and people liked his speeches.",
+          "marks": 3,
+          "explanation": "Lower level: one simple cause with no specific detail."
+        }
+      ],
+      "tip": "Aim for three causes. For each: explain how it helped Hitler, give evidence, then link the causes in a conclusion (conditions + trigger)."
     }
   ]
 }

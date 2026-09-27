@@ -178,6 +178,561 @@
         }
       ],
       "tip": "This is the highest-mark reading question. Spend about 20 minutes on it. Keep the statement in view, agree 'to an extent', and for each point evaluate how the writer creates the effect, with a quotation."
+    },
+    {
+      "id": "eng-lang-005",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 2: Writers' Viewpoints and Perspectives",
+      "number": "1",
+      "topic": "Identifying true statements",
+      "skill": "Choose statements that the source states directly; don't infer",
+      "marks": 4,
+      "stimulus": {
+        "label": "Source A",
+        "caption": "This is a blog post written in 2023 by a Year 9 student about a school trip.",
+        "text": "We got to Whitby at ten and Mr Hughes told us we had until two to 'explore responsibly', which obviously meant chips. The beach was freezing (proper North Sea freezing) and nobody went in past their ankles except Callum, who lasted about four seconds.\n\nMost of us spent the day taking photos of the abbey for our history project and then editing them on the coach so they looked moodier. Honestly, the best bit was the arcade. I won a keyring shaped like a crab, which is now on my school bag.\n\nIt was a good day, but it was just a day out. I've been to the seaside loads of times."
+      },
+      "prompt": "Read again the whole of Source A.\n\nChoose four statements below which are TRUE.\n\nA  The students arrived at Whitby at ten o'clock.\nB  Mr Hughes gave the students until four o'clock.\nC  The sea was warm.\nD  Callum went into the sea.\nE  The students took photos of the abbey.\nF  The writer had never been to the seaside before.\nG  The writer won a keyring.\nH  The students stayed on the beach all day.",
+      "answers": [
+        {
+          "text": "A, D, E, G",
+          "marks": 4,
+          "explanation": "Full marks: all four true statements. Each one is stated directly in the source."
+        },
+        {
+          "text": "A, D, E, F",
+          "marks": 3,
+          "explanation": "Three marks. F is false: the writer says 'I've been to the seaside loads of times'. Check each statement against the exact words in the text."
+        },
+        {
+          "text": "A, B, E, H",
+          "marks": 2,
+          "explanation": "Two marks. B is false (until two, not four) and H is false (they spent time at the abbey and the arcade). Small details like times are deliberately changed."
+        },
+        {
+          "text": "B, C, F, H",
+          "marks": 0,
+          "explanation": "Zero: all four are false. The sea is described as 'freezing', so C contradicts the source. Read each statement slowly against the text."
+        }
+      ],
+      "tip": "Spend about 4 minutes. Find each statement in the source and check the exact detail: numbers, names and times are the usual traps."
+    },
+    {
+      "id": "eng-lang-006",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 2: Writers' Viewpoints and Perspectives",
+      "number": "2",
+      "topic": "Summary of differences",
+      "skill": "Make inferences about both sources and link them; no language analysis",
+      "marks": 8,
+      "stimulus": {
+        "label": "Sources A and B",
+        "caption": "This is a blog post written in 2023 by a Year 9 student about a school trip. / This is part of a letter written in 1893 by a Sunday school teacher to her sister, describing a trip for children from a factory town.",
+        "text": "SOURCE A\nWe got to Whitby at ten and Mr Hughes told us we had until two to 'explore responsibly', which obviously meant chips. The beach was freezing (proper North Sea freezing) and nobody went in past their ankles except Callum, who lasted about four seconds.\n\nMost of us spent the day taking photos of the abbey for our history project and then editing them on the coach so they looked moodier. Honestly, the best bit was the arcade. I won a keyring shaped like a crab, which is now on my school bag.\n\nIt was a good day, but it was just a day out. I've been to the seaside loads of times.\n\nSOURCE B\nMy dear sister, I must tell you of our excursion. Forty children from the mill streets, most of whom had never been further than the chapel, were taken by train to Scarborough.\n\nWhen the sea came into view, a great hush fell upon the carriage; then little Annie Pratt burst into tears and asked whether it went on for ever. They ran upon the sands as though they had been let out of a cage, and several of the boys filled their pockets with shells to carry home to their mothers.\n\nWe gave each child a bun and a cup of milk, which they ate as if it were a feast. On the journey home, not one of them complained of tiredness. I believe they will remember this day as long as they live."
+      },
+      "prompt": "You need to refer to Source A and Source B for this question.\n\nUse details from both sources. Write a summary of the differences between the children's experiences of the seaside.",
+      "answers": [
+        {
+          "text": "The biggest difference is how extraordinary the sea is to each group. For the Victorian mill children it is overwhelming: Annie 'burst into tears' and asks 'whether it went on for ever', suggesting she has never imagined anything so vast, whereas for the writer of Source A it is ordinary, 'just a day out', because she has 'been to the seaside loads of times'.\n\nTheir behaviour reflects this. The mill children run 'as though they had been let out of a cage', implying their everyday lives feel confined, while the Year 9s spend much of the day on photos and in the arcade, so the sea itself barely holds their attention. Even food shows the gap: a plain bun is 'a feast' to children used to poverty, whereas chips are simply expected.",
+          "marks": 8,
+          "explanation": "Level 4 (7–8 marks): perceptive inferences from both sources, clearly synthesised ('whereas', 'while'), with judicious quotations. It explains what the differences suggest about the children's lives, not just what happened."
+        },
+        {
+          "text": "In Source B the children have never seen the sea before, so they are amazed. Annie 'burst into tears'. In Source A the writer has been to the seaside many times so she isn't excited, and says it was 'just a day out'. The children in Source B are poor and a bun is 'a feast', but in Source A they buy chips.",
+          "marks": 5,
+          "explanation": "Level 3 (5–6 marks): clear differences with relevant quotations and some inference (poverty, familiarity). To reach Level 4, explore what the details suggest more deeply and link the two sources in every point."
+        },
+        {
+          "text": "In Source A they went to Whitby but in Source B they went to Scarborough. In Source A they went by coach and in Source B they went by train. In Source A they had chips and in Source B they had a bun.",
+          "marks": 3,
+          "explanation": "Level 2 (3–4 marks): accurate but surface-level differences with no inference. The question is about the children's experiences: what they felt and what the day meant to them."
+        },
+        {
+          "text": "In Source B the writer uses a simile, 'as though they had been let out of a cage', which makes the reader imagine animals escaping. This shows how excited they are. Source A uses informal language like 'obviously meant chips'.",
+          "marks": 1,
+          "explanation": "Level 1 (1–2 marks): this analyses language, which is Question 3's job. Question 2 rewards inference and synthesis about the content, not the writers' methods."
+        }
+      ],
+      "tip": "Question 2 is about what the sources say, not how. Aim for three developed differences, each with a quotation from each source and an inference about what it shows."
+    },
+    {
+      "id": "eng-lang-007",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 2: Writers' Viewpoints and Perspectives",
+      "number": "3",
+      "topic": "Language analysis (non-fiction)",
+      "skill": "Analyse the effect of specific words, linked to the focus of the question",
+      "marks": 12,
+      "stimulus": {
+        "label": "Source B",
+        "caption": "This is part of a letter written in 1893 by a Sunday school teacher to her sister, describing a trip for children from a factory town.",
+        "text": "My dear sister, I must tell you of our excursion. Forty children from the mill streets, most of whom had never been further than the chapel, were taken by train to Scarborough.\n\nWhen the sea came into view, a great hush fell upon the carriage; then little Annie Pratt burst into tears and asked whether it went on for ever. They ran upon the sands as though they had been let out of a cage, and several of the boys filled their pockets with shells to carry home to their mothers.\n\nWe gave each child a bun and a cup of milk, which they ate as if it were a feast. On the journey home, not one of them complained of tiredness. I believe they will remember this day as long as they live."
+      },
+      "prompt": "You now need to refer only to Source B.\n\nHow does the writer use language to describe the children's experience of the day?",
+      "answers": [
+        {
+          "text": "The writer presents the day as almost a religious revelation. The 'great hush' that falls when the sea appears is reverent, like a congregation falling silent, which fits a Sunday school teacher's view of the world. Annie's tears and question 'whether it went on for ever' use the language of eternity: the sea becomes a glimpse of something infinite to a child whose world has been the 'mill streets'.\n\nThe simile 'as though they had been let out of a cage' implies the children's normal lives are a kind of captivity, so the beach represents freedom. Even small details are elevated: a plain 'bun and a cup of milk' are eaten 'as if it were a feast', which is touching but also exposes how deprived the children usually are. The final sentence, 'as long as they live', turns one day into a lifelong memory…",
+          "marks": 11,
+          "explanation": "Level 4 (10–12 marks): detailed, perceptive analysis with a clear overview. It zooms in on words ('hush', 'for ever', 'cage', 'feast'), explores connotations and links them to the writer's viewpoint. Terminology is used naturally."
+        },
+        {
+          "text": "The writer uses the simile 'as though they had been let out of a cage' to show that the children feel free on the beach, like animals escaping. This suggests their lives in the mill town are hard. The phrase 'a great hush fell upon the carriage' shows how amazed they are when they first see the sea. The writer also says the bun and milk were eaten 'as if it were a feast', which shows the children are poor and not used to treats.",
+          "marks": 8,
+          "explanation": "Level 3 (7–9 marks): clear explanation of the effects of well-chosen quotations, with some inference. To reach Level 4, zoom in on single words and explore more than one layer of meaning."
+        },
+        {
+          "text": "The writer uses a simile 'like they had been let out of a cage'. This makes the reader imagine the scene. The writer also uses the word 'hush' which shows it was quiet. There is a list at the end.",
+          "marks": 5,
+          "explanation": "Level 2 (4–6 marks): some relevant comments and terminology, but the effects are general ('makes the reader imagine') and the quotation is misquoted. 'There is a list' is feature-spotting."
+        },
+        {
+          "text": "The children went to Scarborough on a train and saw the sea. One girl cried. They ran on the beach and collected shells and had a bun. They were not tired on the way home.",
+          "marks": 2,
+          "explanation": "Level 1 (1–3 marks): a summary of events with no analysis of language. The question asks how the writer uses language, so comment on words and their effects."
+        }
+      ],
+      "tip": "About 12 minutes. Pick 3–4 rich quotations, zoom in on key words, and link each effect back to the focus of the question."
+    },
+    {
+      "id": "eng-lang-008",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 2: Writers' Viewpoints and Perspectives",
+      "number": "4",
+      "topic": "Comparing perspectives",
+      "skill": "Compare attitudes AND the methods used to convey them, throughout",
+      "marks": 16,
+      "stimulus": {
+        "label": "Sources A and B",
+        "caption": "This is a blog post written in 2023 by a Year 9 student about a school trip. / This is part of a letter written in 1893 by a Sunday school teacher to her sister, describing a trip for children from a factory town.",
+        "text": "SOURCE A\nWe got to Whitby at ten and Mr Hughes told us we had until two to 'explore responsibly', which obviously meant chips. The beach was freezing (proper North Sea freezing) and nobody went in past their ankles except Callum, who lasted about four seconds.\n\nMost of us spent the day taking photos of the abbey for our history project and then editing them on the coach so they looked moodier. Honestly, the best bit was the arcade. I won a keyring shaped like a crab, which is now on my school bag.\n\nIt was a good day, but it was just a day out. I've been to the seaside loads of times.\n\nSOURCE B\nMy dear sister, I must tell you of our excursion. Forty children from the mill streets, most of whom had never been further than the chapel, were taken by train to Scarborough.\n\nWhen the sea came into view, a great hush fell upon the carriage; then little Annie Pratt burst into tears and asked whether it went on for ever. They ran upon the sands as though they had been let out of a cage, and several of the boys filled their pockets with shells to carry home to their mothers.\n\nWe gave each child a bun and a cup of milk, which they ate as if it were a feast. On the journey home, not one of them complained of tiredness. I believe they will remember this day as long as they live."
+      },
+      "prompt": "For this question, you need to refer to the whole of Source A, together with the whole of Source B.\n\nCompare how the writers convey their different attitudes to a day at the seaside.",
+      "answers": [
+        {
+          "text": "Both writers present a seaside trip, but their attitudes could not be more different: the Victorian teacher sees it as a life-changing gift, while the modern student treats it as routine. The teacher's language is elevated and emotional ('a great hush', 'as long as they live'), reflecting her belief that the trip is a moral kindness to deprived children. In contrast, the student's tone is casual and ironic: 'explore responsibly', 'which obviously meant chips'. The inverted commas mock the teacher's instruction, showing her relaxed, slightly bored attitude.\n\nStructurally, the teacher builds to an emotional conclusion, whereas the student deflates hers: 'It was a good day, but it was just a day out.' That final 'but' sums up the contrast between a generation for whom the sea is wonder and one for whom it is ordinary…",
+          "marks": 14,
+          "explanation": "Level 4 (13–16 marks): perceptive comparison of both attitudes and methods (tone, language, structure) with judicious references, linked throughout by comparative connectives. It also considers why the perspectives differ (context)."
+        },
+        {
+          "text": "The writer of Source B thinks the trip is amazing and very important for the children, but the writer of Source A thinks it was just an ordinary day. Source B uses emotional language like 'burst into tears' and 'a feast' to show how much it meant. However, Source A uses informal language like 'honestly' and 'loads of times', which shows she isn't that impressed.\n\nBoth writers end with their opinion of the day. Source B says the children 'will remember this day as long as they live', whereas Source A says 'it was just a day out'.",
+          "marks": 10,
+          "explanation": "Level 3 (9–12 marks): clear comparison of attitudes with relevant methods and quotations. To reach Level 4, analyse methods in more depth (tone, irony, structure) and explain why the perspectives differ."
+        },
+        {
+          "text": "Source B is about a trip in 1893. The children were poor and had never seen the sea. They were excited. Source A is about a school trip to Whitby. The writer thinks it was OK and liked the arcade.",
+          "marks": 6,
+          "explanation": "Level 2 (5–8 marks): some understanding of the attitudes, but it deals with each source separately and barely mentions methods. 'Compare' means linking them in every paragraph."
+        },
+        {
+          "text": "Source B uses a simile and Source A uses a list. Both use quotations.",
+          "marks": 3,
+          "explanation": "Level 1 (1–4 marks): feature-spotting with no attitudes and no explanation. The question is about attitudes and how they are conveyed."
+        }
+      ],
+      "tip": "About 20 minutes. Plan three comparison points. For each: attitude in A + method + quotation, then 'whereas' B + method + quotation, and explain the difference."
+    },
+    {
+      "id": "eng-lang-009",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 2: Writers' Viewpoints and Perspectives",
+      "number": "5",
+      "topic": "Viewpoint writing",
+      "skill": "Match form, audience and purpose, and vary structure and sentences for effect",
+      "marks": 40,
+      "prompt": "'Schools should ban mobile phones completely.'\n\nWrite an article for a broadsheet newspaper in which you explain your point of view on this statement.\n\n(24 marks for content and organisation; 16 marks for technical accuracy.) The answers below show the opening of each response.",
+      "answers": [
+        {
+          "text": "Every lunchtime at my school, the canteen falls strangely quiet. Not because students are hungry, not because they are tired, but because two hundred teenagers are staring, thumbs twitching, at glowing rectangles. Should we ban them? My answer, perhaps surprisingly for a sixteen-year-old, is yes. But not for the reasons you might expect.\n\nCritics of a ban argue that phones are essential for safety…",
+          "marks": 36,
+          "explanation": "Opening typical of a top-band response (around 34–40 overall). The hook is vivid and controlled, the tone suits a broadsheet, the viewpoint is clear but nuanced, and a counter-argument is anticipated. Sentences are varied for effect and the vocabulary is precise."
+        },
+        {
+          "text": "Mobile phones are a big part of teenagers' lives today. Nearly every student has one, and many spend hours on them each day. In this article I will argue that schools should ban phones, because they are distracting and cause problems like cyberbullying.\n\nFirstly, phones are very distracting in lessons…",
+          "marks": 26,
+          "explanation": "Opening typical of a middle-band response (around 23–29). Clear, organised and accurate, with an explicit viewpoint, but predictable: 'In this article I will…' and 'Firstly' signal the structure mechanically. Richer vocabulary and a more engaging hook would lift it."
+        },
+        {
+          "text": "In this article I am going to talk about wether schools should ban phones. I think they should because phones are bad and people are always on them in lessons and teachers get angry, also people get bullied on social media which is really bad.",
+          "marks": 18,
+          "explanation": "Opening typical of a lower-middle response (around 15–20). The viewpoint is clear, but the sentences run on, the vocabulary is simple ('bad', 'really bad'), there is a spelling error ('wether'), and it doesn't read like a newspaper article."
+        },
+        {
+          "text": "phones r good tbh u need them for emergencys and stuff and if ur mum needs to ring u so schools shouldnt ban them thats stupid",
+          "marks": 9,
+          "explanation": "Opening typical of a very low response (under 12). Text-speak, no punctuation or capital letters, and no sense of audience. A broadsheet article needs formal Standard English."
+        }
+      ],
+      "tip": "Spend 5 minutes planning: viewpoint, 4–5 paragraphs, a counter-argument, a strong ending. Vary sentence openings and lengths, and leave 5 minutes to proofread: 16 marks are for accuracy."
+    },
+    {
+      "id": "eng-lang-010",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 1: Explorations in Creative Reading and Writing",
+      "number": "5",
+      "topic": "Descriptive writing",
+      "skill": "Describe (don't narrate), zooming in on details and varying structure",
+      "marks": 40,
+      "prompt": "Write a description suggested by this picture.\n\n[The picture shows a crowded outdoor market at dusk: stalls with striped awnings, strings of lights, steam rising from a food stall, and people in coats pushing past each other.]\n\n(24 marks for content and organisation; 16 marks for technical accuracy.) The answers below show the opening of each response.",
+      "answers": [
+        {
+          "text": "The lights came on one by one, strung between the awnings like beads on a broken necklace. Beneath them, the market breathed. Steam rolled from the noodle stall in slow, fragrant clouds, and for a moment everything smelled of ginger and burnt sugar.\n\nPeople. So many people. Coats brushed against coats; elbows negotiated with shoulders…",
+          "marks": 35,
+          "explanation": "Opening typical of a top-band description (around 32–40). Precise, original images, sensory detail beyond sight, deliberate sentence variety (the fragment 'People. So many people.'), and a clear sense of zooming in. It describes rather than tells a story."
+        },
+        {
+          "text": "The market was very busy. There were lots of stalls selling different things like food, clothes and jewellery. The lights were bright and colourful and they lit up the whole street. I could smell the delicious food cooking and hear people shouting.",
+          "marks": 26,
+          "explanation": "Opening typical of a middle-band description (around 21–27). Accurate and relevant, with some sensory detail, but the vocabulary is general ('very busy', 'delicious', 'bright and colourful') and the sentences follow the same pattern."
+        },
+        {
+          "text": "It was a dark and stormy night. My friend Jake said 'lets go to the market' so we went. When we got there we saw a man running and he had stolen a bag! We chased him through the market and…",
+          "marks": 18,
+          "explanation": "Opening typical of a lower response for this task (around 14–19). It becomes a story with a plot and dialogue, so there is little description. Clichés ('a dark and stormy night') and a missing apostrophe also cost marks."
+        },
+        {
+          "text": "there was loads of people and it was noisy. the food smelt nice. i bought a hotdog it was nice. then i went home.",
+          "marks": 10,
+          "explanation": "Opening typical of a very low response (under 12). Very little description, repeated 'nice', and no capital letters."
+        }
+      ],
+      "tip": "Describe a moment, not a story. Plan a 'camera route' (wide shot, then details, then a shift in time or mood), use all five senses, and vary sentence lengths deliberately."
+    },
+    {
+      "id": "eng-lang-011",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 1: Fiction and Imaginative Writing",
+      "number": "2",
+      "topic": "Retrieval",
+      "skill": "Give two separate, accurate details from the lines stated",
+      "marks": 2,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "From Great Expectations by Charles Dickens (1861). Young Pip is alone in a churchyard on the marshes.",
+        "text": "\"Hold your noise!\" cried a terrible voice, as a man started up from among the graves at the side of the church porch. \"Keep still, you little devil, or I'll cut your throat!\"\n\nA fearful man, all in coarse grey, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and whose teeth chattered in his head as he seized me by the chin."
+      },
+      "prompt": "From the second paragraph, give two ways in which the writer describes the man's appearance.\n\nYou may use your own words or quotation from the text.",
+      "answers": [
+        {
+          "text": "1. He is dressed 'all in coarse grey'.\n2. He has 'a great iron on his leg'.",
+          "marks": 2,
+          "explanation": "Full marks: two separate, accurate details from the correct part of the text."
+        },
+        {
+          "text": "1. He has no hat.\n2. He is terrifying.",
+          "marks": 1,
+          "explanation": "One mark. 'He has no hat' is correct, but 'terrifying' is an opinion about him, not a description of his appearance."
+        },
+        {
+          "text": "1. He shouts at Pip.\n2. He threatens to cut his throat.",
+          "marks": 0,
+          "explanation": "Zero: these are what he says, from the first paragraph, not his appearance from the second paragraph. Check both the focus and the lines."
+        }
+      ],
+      "tip": "Short retrieval questions: take details only from the lines named, match the focus word ('appearance'), and keep it brief."
+    },
+    {
+      "id": "eng-lang-012",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 1: Fiction and Imaginative Writing",
+      "number": "3",
+      "topic": "Language and structure",
+      "skill": "Cover both language AND structure, with effects linked to the question",
+      "marks": 6,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "From Great Expectations by Charles Dickens (1861). Young Pip is alone in a churchyard on the marshes.",
+        "text": "\"Hold your noise!\" cried a terrible voice, as a man started up from among the graves at the side of the church porch. \"Keep still, you little devil, or I'll cut your throat!\"\n\nA fearful man, all in coarse grey, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and whose teeth chattered in his head as he seized me by the chin."
+      },
+      "prompt": "In the second paragraph, how does the writer use language and structure to show that the man is frightening?\n\nSupport your views with reference to the text.",
+      "answers": [
+        {
+          "text": "Dickens builds a relentless list of past participles: 'soaked… smothered… lamed… cut… stung… torn'. Each verb suggests violence done to the man, so he seems like someone who has survived something brutal, which makes him more dangerous. Structurally, the paragraph repeats 'A man…' at the start of each sentence, piling up details so the reader is overwhelmed, just as Pip is. The paragraph ends with the sudden action 'seized me by the chin', shifting from description to physical threat.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): analysis of language (the list of verbs and their connotations) AND structure (repetition, the build-up, the final shift to action), each linked to fear."
+        },
+        {
+          "text": "The writer uses a long list: 'soaked in water, and smothered in mud, and lamed by stones'. This shows the man is in a terrible state and makes him seem wild and frightening. The repetition of 'and' makes the list seem never-ending.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): relevant language comments with an explained effect, but structure is barely addressed. The question names both, so both are needed for the top level."
+        },
+        {
+          "text": "The man is scary because he has an iron on his leg, which means he is a prisoner. He is wet and muddy and he limps. He is dangerous.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): shows understanding of the man, but doesn't comment on the writer's choices of language or structure."
+        }
+      ],
+      "tip": "When a question says 'language and structure', make sure you write about both: words and techniques, then how the text is organised (openings, repetition, shifts, endings)."
+    },
+    {
+      "id": "eng-lang-013",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 1: Fiction and Imaginative Writing",
+      "number": "4",
+      "topic": "Evaluation",
+      "skill": "Evaluate how successfully the effect is created, throughout the extract",
+      "marks": 15,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "From Great Expectations by Charles Dickens (1861). Young Pip is alone in a churchyard on the marshes.",
+        "text": "\"Hold your noise!\" cried a terrible voice, as a man started up from among the graves at the side of the church porch. \"Keep still, you little devil, or I'll cut your throat!\"\n\nA fearful man, all in coarse grey, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and whose teeth chattered in his head as he seized me by the chin."
+      },
+      "prompt": "In this extract, there is an attempt to create a sense of fear.\n\nEvaluate how successfully this is achieved throughout this extract.\n\nSupport your views with detailed reference to the text.",
+      "answers": [
+        {
+          "text": "Dickens creates fear very successfully by plunging the reader straight into danger with no introduction. The extract opens with a command in direct speech, 'Hold your noise!', and the man 'started up from among the graves', so he seems to rise from the dead, which is especially effective in a churchyard.\n\nThe threat is then made brutally specific: 'I'll cut your throat!' Dickens could have chosen a vaguer threat, but this concrete image is far more frightening for a child narrator. The second paragraph is perhaps even more effective because it switches from threat to description, forcing us to look at the man as Pip does. However, the details also create sympathy (he 'shivered' and his 'teeth chattered'), which is subtle: the man is frightening but also pitiable, so the fear is more complex and memorable than simple horror…",
+          "marks": 14,
+          "explanation": "Level 5 (13–15 marks): a sustained, perceptive evaluation of how successfully fear is created across the whole extract, with judgements ('very successfully', 'even more effective') supported by precise analysis. It also considers a complicating effect (sympathy)."
+        },
+        {
+          "text": "I think Dickens is successful in creating fear. At the start the man shouts 'Hold your noise!' and threatens to 'cut your throat', which is shocking and makes the reader scared for Pip. The setting is a graveyard, which is associated with death.\n\nThe description of the man is also frightening. The list 'limped, and shivered, and glared, and growled' makes him sound like an animal. This is effective because the reader feels as trapped as Pip.",
+          "marks": 10,
+          "explanation": "Level 4 (10–12 marks): clear evaluation with relevant references and explained effects. For Level 5, develop judgements further (which moments are most effective, and why) and explore alternative effects."
+        },
+        {
+          "text": "The extract is scary. A man jumps out from the graves and shouts at Pip. He is covered in mud and has an iron on his leg. He grabs Pip by the chin. I would be scared if this happened to me.",
+          "marks": 6,
+          "explanation": "Level 2 (4–6 marks): shows understanding of what happens but mostly retells it. Evaluation means judging how well the writer's methods create fear."
+        },
+        {
+          "text": "Great Expectations is a novel by Charles Dickens. It is about a boy called Pip. It was written in the Victorian times.",
+          "marks": 2,
+          "explanation": "Level 1 (1–3 marks): background information with no reference to how fear is created."
+        }
+      ],
+      "tip": "Keep the key phrase ('a sense of fear') in every paragraph. Make judgements ('most effective', 'less successful') and prove them with close analysis from across the extract."
+    },
+    {
+      "id": "eng-lang-014",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 2: Non-fiction and Transactional Writing",
+      "number": "7(a)",
+      "topic": "Synthesis",
+      "skill": "Find similarities with evidence from BOTH texts for each point",
+      "marks": 6,
+      "stimulus": {
+        "label": "Texts 1 and 2",
+        "caption": "From a newspaper feature published in 1968 about a family's first package holiday abroad. / From a blog post written in 2022 by a parent about a camping holiday in Cornwall.",
+        "text": "TEXT 1\nFor the Harrisons of Leeds, the package holiday was a leap into the unknown. Mrs Harrison packed three jars of instant coffee and a tin of corned beef, 'just in case the food is foreign'. Stepping off the aeroplane at Palma, eight-year-old Susan declared that the air smelled 'like the inside of an oven'.\n\nBy the end of the fortnight the family had eaten paella, learned to say 'gracias' and, in Mr Harrison's words, 'turned the colour of a boiled lobster'. 'We'll never go back to Blackpool,' he announced at the airport. 'Not when the sun is guaranteed.'\n\nTEXT 2\nAfter two years of cancelled flights, we decided the adventure could be closer to home. The kids were horrified at first (no pool, no wifi, no guaranteed sunshine) and it rained for three days straight.\n\nBut something shifted. My thirteen-year-old, who normally communicates only through headphones, spent an entire afternoon rock-pooling with his sister and came back soaked and grinning. We ate fish and chips in the car while the windscreen steamed up and laughed until we cried.\n\nNobody would call it glamorous. But I'd swap a week of all-inclusive buffets for that one soggy afternoon."
+      },
+      "prompt": "The two texts are about family holidays.\n\nWhat similarities do the families share?\n\nUse evidence from both texts to support your answer.",
+      "answers": [
+        {
+          "text": "Both families are nervous about the unknown at first: Mrs Harrison packs corned beef 'just in case the food is foreign', just as the children in Text 2 are 'horrified' at the lack of a pool and wifi. Both holidays also end up changing the families' opinions: Mr Harrison declares 'We'll never go back to Blackpool', while the parent in Text 2 would 'swap a week of all-inclusive buffets' for one afternoon. In both, small shared experiences, such as trying paella or eating fish and chips in the car, become the highlights.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): several clear similarities, each supported by evidence from both texts and linked with comparative phrases ('Both…', 'just as…', 'while…')."
+        },
+        {
+          "text": "Both families go on holiday. In Text 1 they are worried about the food and in Text 2 the children are worried about no wifi. Both families end up enjoying the holiday.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): valid similarities, but the evidence is thin and there are no quotations. Each point needs a detail from each text."
+        },
+        {
+          "text": "In Text 1 the family go to Spain and get sunburnt. In Text 2 the family go camping in Cornwall and it rains.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): these are differences, not similarities. Read the question word carefully."
+        }
+      ],
+      "tip": "Similarity questions: start each point with 'Both…', then give evidence from Text 1 AND Text 2. Two or three well-supported points are enough."
+    },
+    {
+      "id": "eng-lang-015",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 2: Non-fiction and Transactional Writing",
+      "number": "7(b)",
+      "topic": "Comparing ideas and perspectives",
+      "skill": "Compare ideas and perspectives AND how they are conveyed, across both texts",
+      "marks": 14,
+      "stimulus": {
+        "label": "Texts 1 and 2",
+        "caption": "From a newspaper feature published in 1968 about a family's first package holiday abroad. / From a blog post written in 2022 by a parent about a camping holiday in Cornwall.",
+        "text": "TEXT 1\nFor the Harrisons of Leeds, the package holiday was a leap into the unknown. Mrs Harrison packed three jars of instant coffee and a tin of corned beef, 'just in case the food is foreign'. Stepping off the aeroplane at Palma, eight-year-old Susan declared that the air smelled 'like the inside of an oven'.\n\nBy the end of the fortnight the family had eaten paella, learned to say 'gracias' and, in Mr Harrison's words, 'turned the colour of a boiled lobster'. 'We'll never go back to Blackpool,' he announced at the airport. 'Not when the sun is guaranteed.'\n\nTEXT 2\nAfter two years of cancelled flights, we decided the adventure could be closer to home. The kids were horrified at first (no pool, no wifi, no guaranteed sunshine) and it rained for three days straight.\n\nBut something shifted. My thirteen-year-old, who normally communicates only through headphones, spent an entire afternoon rock-pooling with his sister and came back soaked and grinning. We ate fish and chips in the car while the windscreen steamed up and laughed until we cried.\n\nNobody would call it glamorous. But I'd swap a week of all-inclusive buffets for that one soggy afternoon."
+      },
+      "prompt": "Compare how the writers of Text 1 and Text 2 present their ideas and perspectives about holidays.\n\nSupport your answer with detailed reference to the texts.",
+      "answers": [
+        {
+          "text": "Both writers present holidays as a chance to escape, but they value opposite things. The 1968 feature celebrates the glamour and certainty of going abroad: Mr Harrison's triumphant 'Not when the sun is guaranteed' captures the excitement of the new package-holiday era. The writer's light humour ('the colour of a boiled lobster') presents the family as endearing novices.\n\nIn contrast, the 2022 blogger deliberately rejects glamour. The list 'no pool, no wifi, no guaranteed sunshine' sets up everything a modern holiday is 'supposed' to have, then the short sentence 'But something shifted' turns the piece. Whereas the Harrisons prize guaranteed sun, the blogger treasures 'one soggy afternoon', suggesting that after years of cancelled flights, connection matters more than luxury…",
+          "marks": 13,
+          "explanation": "Level 5 (12–14 marks): perceptive comparison of ideas and perspectives, with analysis of how each is conveyed (tone, humour, structure, word choice) and awareness of context (1968 package holidays; post-pandemic 2022)."
+        },
+        {
+          "text": "In Text 1 the family are excited about going abroad and think Spain is better than Blackpool because of the sun. In Text 2, however, the writer thinks holidays don't need to be glamorous and enjoyed camping even in the rain. Text 1 uses humour, such as 'boiled lobster', while Text 2 uses a list, 'no pool, no wifi, no guaranteed sunshine', to show what the children expected.",
+          "marks": 9,
+          "explanation": "Level 4 (9–11 marks): clear comparison of perspectives with relevant methods. To reach Level 5, analyse the methods in more depth and consider why the perspectives differ."
+        },
+        {
+          "text": "Text 1 is about a family who go to Spain. They take coffee and corned beef and eat paella. Text 2 is about a family who go camping in Cornwall. It rains a lot but they have fun rock-pooling.",
+          "marks": 6,
+          "explanation": "Level 3 (6–8 marks): accurate summary of both texts but mostly separate, with little on perspectives or methods. 'Compare' needs links in every paragraph."
+        },
+        {
+          "text": "Both texts are about holidays. They are both good.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): very limited, with no references and no comparison of ideas or methods."
+        }
+      ],
+      "tip": "Plan 3–4 comparison points on ideas/perspectives. For each: what each writer thinks, how they show it (with quotations), and a connective linking them."
+    },
+    {
+      "id": "eng-lang-016",
+      "boards": [
+        "OCR"
+      ],
+      "paper": "Component 02: Exploring effects and impact",
+      "number": "2",
+      "topic": "Exploring language (short answer)",
+      "skill": "Explore a few precise details in depth rather than many briefly",
+      "marks": 6,
+      "stimulus": {
+        "label": "Text A",
+        "caption": "From Great Expectations by Charles Dickens (1861). Young Pip is alone in a churchyard on the marshes.",
+        "text": "\"Hold your noise!\" cried a terrible voice, as a man started up from among the graves at the side of the church porch. \"Keep still, you little devil, or I'll cut your throat!\"\n\nA fearful man, all in coarse grey, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and whose teeth chattered in his head as he seized me by the chin."
+      },
+      "prompt": "Look again at the second paragraph of Text A.\n\nExplore how the writer presents the man.\n\nYou should consider the language and structure used and support your ideas with close reference to the text.",
+      "answers": [
+        {
+          "text": "The man is presented as both terrifying and pitiful. The repeated opening 'A man…' makes him sound less like a person than a list of horrors, and the long sequence 'soaked… smothered… lamed… cut… stung… torn' suggests the landscape itself has attacked him. The verbs 'glared, and growled' make him animal-like, yet 'shivered' and 'teeth chattered' hint at a desperate, freezing human being.",
+          "marks": 6,
+          "explanation": "Top band: detailed exploration of language and structure with precise references, and a perceptive two-sided reading of the character."
+        },
+        {
+          "text": "The writer uses a list to describe the man: 'soaked in water, and smothered in mud'. This shows he has been through a lot and makes him seem wild and frightening. 'Growled' makes him sound like an animal.",
+          "marks": 4,
+          "explanation": "Middle band: clear comments with explained effects, but only one idea about the man is developed, and structure isn't addressed."
+        },
+        {
+          "text": "The man is described as scary. He has a great iron on his leg and broken shoes. He grabs Pip.",
+          "marks": 2,
+          "explanation": "Lower band: identifies details but doesn't explore the writer's methods or their effects."
+        }
+      ],
+      "tip": "Short 'explore' questions: two or three precise quotations, each analysed closely, beat a long list of quotes."
+    },
+    {
+      "id": "eng-lang-017",
+      "boards": [
+        "OCR"
+      ],
+      "paper": "Component 02: Exploring effects and impact",
+      "number": "3",
+      "topic": "Language and structure: tension",
+      "skill": "Analyse how tension is built over the whole extract",
+      "marks": 12,
+      "stimulus": {
+        "label": "Text B",
+        "caption": "This extract is from a short story written for this app, in the style of 20th/21st-century fiction. Maya is in a lift in an office building.",
+        "text": "The lift shuddered and stopped between the fourth and fifth floors. The lights flickered, steadied, then dimmed to a sickly orange. Maya pressed the alarm button. Nothing. She pressed it again, harder, as if force might persuade it.\n\nBehind her, the man in the grey coat had not moved. He had not moved when the lift stopped, and he did not move now. He simply watched the numbers above the door, where the 4 glowed and faded, glowed and faded, like something breathing.\n\n'They'll come,' he said at last. His voice was very calm. Too calm.\n\nMaya counted the seconds. Twelve. Thirteen. The air was already warmer."
+      },
+      "prompt": "Look again at Text B.\n\nExplore how the writer uses language and structure to create tension.\n\nSupport your ideas with close reference to the text.",
+      "answers": [
+        {
+          "text": "Tension is built through a slow tightening of the situation. The opening verb 'shuddered' makes the lift seem alive and unstable, and the 'sickly orange' light suggests illness. Short sentences, 'Nothing.', mirror Maya's panic as her options disappear.\n\nThe focus then shifts to the man, and repetition ('He had not moved… he did not move now') makes his stillness unnerving. The simile of the numbers glowing 'like something breathing' personifies the lift, as if something is waiting. The writer delays his first words, then undercuts them: 'Too calm.' The ending uses a countdown ('Twelve. Thirteen.') and the detail that the air is 'already warmer', leaving the threat unresolved.",
+          "marks": 12,
+          "explanation": "Top band: detailed, well-organised exploration of both language and structure across the whole extract, with precise references and perceptive comments on how tension develops."
+        },
+        {
+          "text": "The writer creates tension with short sentences like 'Nothing.' which show Maya is panicking. The man in the grey coat is creepy because he doesn't move. The simile 'like something breathing' makes the lift seem alive. At the end the countdown builds tension because we don't know what will happen.",
+          "marks": 8,
+          "explanation": "Middle band: relevant methods and effects across the extract, but comments are brief. Develop each point by zooming in on words and explaining how the tension changes."
+        },
+        {
+          "text": "The lift stops and Maya presses the alarm but it doesn't work. There is a man who is very calm. It gets warmer. This is tense because they are stuck.",
+          "marks": 4,
+          "explanation": "Lower band: understanding of the situation but mostly retelling. Comment on the writer's choices of words and structure."
+        }
+      ],
+      "tip": "Follow the extract from start to finish, showing how the tension grows. Mix language points (words, imagery) with structure points (sentence length, shifts in focus, the ending)."
+    },
+    {
+      "id": "eng-lang-018",
+      "boards": [
+        "OCR"
+      ],
+      "paper": "Component 02: Exploring effects and impact",
+      "number": "4",
+      "topic": "Critical evaluation across two texts",
+      "skill": "Engage with the statement using both texts, and judge 'how far'",
+      "marks": 18,
+      "stimulus": {
+        "label": "Texts A and B",
+        "caption": "Text A: from Great Expectations by Charles Dickens (1861). Text B: a short story extract written for this app.",
+        "text": "TEXT A\n\"Hold your noise!\" cried a terrible voice, as a man started up from among the graves at the side of the church porch. \"Keep still, you little devil, or I'll cut your throat!\"\n\nA fearful man, all in coarse grey, with a great iron on his leg. A man with no hat, and with broken shoes, and with an old rag tied round his head. A man who had been soaked in water, and smothered in mud, and lamed by stones, and cut by flints, and stung by nettles, and torn by briars; who limped, and shivered, and glared, and growled; and whose teeth chattered in his head as he seized me by the chin.\n\nTEXT B\nThe lift shuddered and stopped between the fourth and fifth floors. The lights flickered, steadied, then dimmed to a sickly orange. Maya pressed the alarm button. Nothing. She pressed it again, harder, as if force might persuade it.\n\nBehind her, the man in the grey coat had not moved. He had not moved when the lift stopped, and he did not move now. He simply watched the numbers above the door, where the 4 glowed and faded, glowed and faded, like something breathing.\n\n'They'll come,' he said at last. His voice was very calm. Too calm.\n\nMaya counted the seconds. Twelve. Thirteen. The air was already warmer."
+      },
+      "prompt": "'In both texts, the characters face a threat they cannot control.'\n\nHow far do you agree with this statement?",
+      "answers": [
+        {
+          "text": "I largely agree, although the texts present different kinds of lack of control. In Text A, Pip is physically powerless: the man 'seized me by the chin', and the imperative 'Keep still, you little devil' leaves him no choice. Yet the man is also out of control of his own situation. The list 'lamed… cut… stung… torn' shows the marsh has overwhelmed him, so the threat and the threatened are both powerless.\n\nIn Text B, Maya tries to take control ('She pressed it again, harder'), but 'as if force might persuade it' shows how futile this is. Unlike Text A, the threat is uncertain: the man may be harmless, and 'Too calm' makes Maya, and us, unsure. So the statement is true for both, but Text B's threat is more psychological…",
+          "marks": 17,
+          "explanation": "Top band: a perceptive, balanced evaluation of the statement using both texts, with precise references and analysis of how the writers create the sense of powerlessness. It qualifies 'how far'."
+        },
+        {
+          "text": "I agree with the statement. In Text A, Pip cannot control the situation because the man is much bigger than him and grabs him. In Text B, Maya can't control the lift because the alarm button doesn't work. Both characters are trapped. However, in Text B we don't know if the man is dangerous, whereas in Text A the man threatens to 'cut your throat'.",
+          "marks": 12,
+          "explanation": "Middle band: clear engagement with the statement using both texts, with some comparison. For the top band, analyse the writers' methods and develop the 'how far' judgement."
+        },
+        {
+          "text": "In Text A a man jumps out at Pip in a graveyard. In Text B Maya is stuck in a lift with a man. Both are scary.",
+          "marks": 6,
+          "explanation": "Lower band: a simple summary of both texts with no real response to the statement."
+        }
+      ],
+      "tip": "Agree 'to an extent', then use both texts in each paragraph. Show how the writers create the effect, not just what happens."
+    },
+    {
+      "id": "eng-lang-019",
+      "boards": [
+        "OCR"
+      ],
+      "paper": "Component 02: Imaginative writing",
+      "number": "5",
+      "topic": "Narrative writing",
+      "skill": "Shape a narrative with a controlled structure, rather than retelling events",
+      "marks": 40,
+      "prompt": "Write a story about a time when someone was frightened by something that turned out to be harmless.\n\n(24 marks for content and organisation; 16 marks for technical accuracy.) The answers below show the opening of each response.",
+      "answers": [
+        {
+          "text": "The scratching started at 2:14 a.m. I know because I watched the numbers on my clock change, one agonising minute at a time, while something dragged itself slowly across the ceiling above my bed.\n\nScratch. Pause. Scratch.\n\nIn the morning, my dad would laugh. But at 2:14 a.m., nobody was laughing.",
+          "marks": 34,
+          "explanation": "Opening typical of a top-band narrative. A precise, intriguing hook, controlled pacing (the single-line paragraph), and a deliberate hint at the ending ('my dad would laugh') that builds tension through dramatic irony."
+        },
+        {
+          "text": "It was late at night and I was lying in bed when I heard a scratching noise coming from the ceiling. I was really scared and I pulled the covers over my head. I thought it might be a burglar or even a ghost. My heart was pounding.",
+          "marks": 25,
+          "explanation": "Opening typical of a middle-band narrative. Clear and accurate with some attempt at tension, but familiar phrases ('my heart was pounding') and a chronological structure make it predictable."
+        },
+        {
+          "text": "One day me and my friend was walking home and we heard a noise and we was scared so we ran and then we found out it was just a cat and we laughed and went home and had tea.",
+          "marks": 17,
+          "explanation": "Opening typical of a lower response. The whole story is summarised in one run-on sentence, so there is no tension or development, plus grammar errors ('we was')."
+        },
+        {
+          "text": "i was scard of a spider it was big. it was only small reely. the end",
+          "marks": 9,
+          "explanation": "Opening typical of a very low response: minimal content, contradictions, and spelling and capital-letter errors throughout."
+        }
+      ],
+      "tip": "Plan a simple shape: hook, build-up, turning point, resolution. Slow down the frightening moment, then leave time to proofread."
     }
   ]
 }

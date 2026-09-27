@@ -170,6 +170,440 @@
         }
       ],
       "tip": "Choose your second poem quickly, ideally one you've paired before. Use a comparative connective in every paragraph ('whereas', 'similarly', 'in contrast'), and compare methods, not just meanings."
+    },
+    {
+      "id": "eng-lit-005",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 1: Shakespeare and the 19th-century novel",
+      "topic": "Macbeth: guilt",
+      "skill": "Use the extract as a springboard to track the theme across the play",
+      "marks": 30,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "Macbeth, Act 2 Scene 2. Macbeth has just murdered King Duncan.",
+        "text": "Whence is that knocking?\nHow is't with me, when every noise appals me?\nWhat hands are here? Ha! They pluck out mine eyes.\nWill all great Neptune's ocean wash this blood\nClean from my hand? No, this my hand will rather\nThe multitudinous seas incarnadine,\nMaking the green one red."
+      },
+      "prompt": "Starting with this speech, explore how Shakespeare presents ideas about guilt in Macbeth.",
+      "answers": [
+        {
+          "text": "Shakespeare presents guilt as a force that cannot be washed away, however powerful the murderer. In this speech, Macbeth is terrified by 'every noise', and his hyperbole that the blood would 'the multitudinous seas incarnadine' turns a small stain into something that could redden every ocean. The polysyllabic 'multitudinous… incarnadine' contrasts with the blunt monosyllables 'Making the green one red', as if his elaborate language collapses under the simple fact of murder.\n\nThis is ironically echoed when Lady Macbeth, who claimed 'A little water clears us of this deed', later sleepwalks crying 'Out, damned spot!' For a Jacobean audience who believed regicide defied the divine order, the couple's inability to escape guilt shows that God's order reasserts itself…",
+          "marks": 27,
+          "explanation": "Level 6 (26–30): conceptualised argument (guilt as inescapable), close analysis of language (hyperbole, polysyllables versus monosyllables), links across the play (Lady Macbeth's reversal), and context woven into the argument."
+        },
+        {
+          "text": "In this extract Macbeth feels very guilty after killing Duncan. He asks if 'all great Neptune's ocean' could wash the blood from his hand, which is hyperbole and shows his guilt is huge. Later in the play Lady Macbeth also feels guilty. She sleepwalks and tries to wash imaginary blood off her hands, saying 'Out, damned spot!' This shows that guilt eventually destroys both of them. In Jacobean times killing a king was seen as a terrible sin.",
+          "marks": 19,
+          "explanation": "Level 4 (16–20): clear, relevant and well supported, with a link to the whole play and context. For higher marks, analyse individual words more closely and build an argument about how Shakespeare presents guilt."
+        },
+        {
+          "text": "Macbeth killed Duncan and now he has blood on his hands. He hears knocking. Then he kills Banquo and sees his ghost at the banquet. Lady Macbeth goes mad and dies. Macbeth is killed by Macduff.",
+          "marks": 12,
+          "explanation": "Level 3, low (11–15): accurate knowledge but mostly plot. Link each event back to guilt and explain how Shakespeare presents it."
+        },
+        {
+          "text": "Guilt is when you feel bad about something you did. Macbeth feels bad.",
+          "marks": 5,
+          "explanation": "Level 1 (1–5): a definition and a simple statement, with no quotations and no analysis."
+        }
+      ],
+      "tip": "About 50 minutes. Build your answer around ideas about guilt, not the story. Analyse words from the extract, then trace guilt through two or three other moments. Up to 4 marks are also available for spelling, punctuation and grammar."
+    },
+    {
+      "id": "eng-lit-006",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 1: Shakespeare and the 19th-century novel",
+      "topic": "Jekyll and Hyde: extract to whole text",
+      "skill": "Explore why Stevenson presents Hyde this way, not just how",
+      "marks": 30,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "Strange Case of Dr Jekyll and Mr Hyde, Chapter 1. Enfield describes Mr Hyde to Utterson.",
+        "text": "He is not easy to describe. There is something wrong with his appearance; something displeasing, something down-right detestable. I never saw a man I so disliked, and yet I scarce know why. He must be deformed somewhere; he gives a strong feeling of deformity, although I couldn't specify the point."
+      },
+      "prompt": "Starting with this extract, explore how Stevenson presents Mr Hyde as a frightening outsider.",
+      "answers": [
+        {
+          "text": "Stevenson makes Hyde frightening precisely because he cannot be defined. Enfield, a respectable gentleman, fails to describe him ('He is not easy to describe'), and the vague, repeated 'something… something… something' suggests Hyde's evil is felt rather than seen. The phrase 'strong feeling of deformity' without 'the point' taps into Victorian anxieties about degeneration after Darwin: the fear that humans could slide back towards the animal.\n\nThis is developed throughout the novel: Hyde tramples a girl 'like some damned Juggernaut' and attacks Carew with 'ape-like fury'. Yet the real horror is that Hyde is not an outsider at all but part of a respected doctor, so Stevenson exposes the hypocrisy of Victorian respectability…",
+          "marks": 28,
+          "explanation": "Level 6 (26–30): a critical, conceptualised response. It analyses language closely (vagueness, repetition), weaves in context (degeneration, respectability), tracks Hyde across the novel, and argues a thesis about why he is frightening."
+        },
+        {
+          "text": "In the extract, Enfield says Hyde is 'down-right detestable' and that he has 'a strong feeling of deformity'. This shows that Hyde is so evil that people hate him without knowing why. Later, Hyde tramples a young girl and beats Sir Danvers Carew to death with 'ape-like fury', which shows he is violent and animal-like. Victorians were worried about evolution and the idea that people could become like animals.",
+          "marks": 20,
+          "explanation": "Level 4 (16–20): clear and relevant, with apt quotations from the extract and the wider novel and context linked to the point. More precise analysis of individual words and a developed argument would move it up."
+        },
+        {
+          "text": "Hyde is a frightening character. He tramples a girl and kills Carew. He is small and ugly. At the end we find out that Jekyll and Hyde are the same person. Robert Louis Stevenson was Scottish and wrote the book in 1886.",
+          "marks": 11,
+          "explanation": "Level 3, low (11–15): relevant knowledge but mostly narrative. The biographical fact is bolted on, not used to explain anything."
+        },
+        {
+          "text": "Jekyll and Hyde is a horror story about a scientist. It is scary.",
+          "marks": 4,
+          "explanation": "Level 1 (1–5): very limited, with no reference to the extract or methods."
+        }
+      ],
+      "tip": "About 45 minutes. Start with 2–3 close points from the extract, then move out to key moments. Link context to Stevenson's purpose."
+    },
+    {
+      "id": "eng-lit-007",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 2: Modern texts and poetry",
+      "topic": "Poetry comparison: Power and Conflict",
+      "skill": "Compare methods and meanings throughout, with the printed poem as a starting point",
+      "marks": 30,
+      "stimulus": {
+        "label": "Ozymandias",
+        "caption": "Percy Bysshe Shelley (1818)",
+        "text": "I met a traveller from an antique land,\nWho said—\"Two vast and trunkless legs of stone\nStand in the desert. . . . Near them, on the sand,\nHalf sunk a shattered visage lies, whose frown,\nAnd wrinkled lip, and sneer of cold command,\nTell that its sculptor well those passions read\nWhich yet survive, stamped on these lifeless things,\nThe hand that mocked them, and the heart that fed;\nAnd on the pedestal, these words appear:\nMy name is Ozymandias, King of Kings;\nLook on my Works, ye Mighty, and despair!\nNothing beside remains. Round the decay\nOf that colossal Wreck, boundless and bare\nThe lone and level sands stretch far away.\""
+      },
+      "prompt": "Compare how poets present the power of humans in 'Ozymandias' and in one other poem from 'Power and conflict'.",
+      "answers": [
+        {
+          "text": "Both Shelley and Blake present human power as corrupting, but Shelley shows it destroyed by time while Blake shows it crushing ordinary lives in the present. In 'Ozymandias' the king's power survives only as 'a shattered visage'; the dramatic irony of 'Look on my Works, ye Mighty, and despair!' beside 'Nothing beside remains' mocks his arrogance. The sonnet form, traditionally for love, is broken by irregular rhyme, mirroring the broken statue.\n\nBy contrast, Blake's 'London' shows power still operating, through institutions. The 'chartered street' suggests even the land is owned, and 'mind-forged manacles' implies people are imprisoned by the ideas of the powerful. Whereas Shelley can take comfort that tyranny fades, Blake's relentless ABAB rhyme and repetition ('every… every') suggest there is no escape…",
+          "marks": 27,
+          "explanation": "Level 6 (26–30): sustained comparison of ideas and methods (form, structure, language) across both poems, with context (Romantic poets critiquing power) integrated."
+        },
+        {
+          "text": "Both poems criticise powerful people. In 'Ozymandias', the king thinks he is powerful ('King of Kings') but his statue is now 'shattered' in the desert, which shows that power doesn't last. Similarly, in 'London', Blake criticises those in power, such as the church and the monarchy: the 'blackening church' and 'palace walls' covered in blood show the suffering they cause. However, in 'London' the powerful are still in control, whereas in 'Ozymandias' the ruler's power has gone.",
+          "marks": 20,
+          "explanation": "Level 4 (16–20): clear comparison with relevant quotations and some analysis. For higher marks, analyse form and structure and develop the comparison in more depth."
+        },
+        {
+          "text": "Ozymandias is about a statue in the desert. The king was proud but now there is nothing left. London is about Blake walking around London and seeing people suffering. There are chimney sweeps and soldiers.",
+          "marks": 13,
+          "explanation": "Level 3, low (11–15): some understanding of both poems but no comparison and little analysis. Link the poems in every paragraph."
+        },
+        {
+          "text": "Ozymandias is a sonnet. It has 14 lines. London has four stanzas. Both poems are about power.",
+          "marks": 6,
+          "explanation": "Level 2, low (6–10): form is identified but not explained, and there is only a basic link between the poems."
+        }
+      ],
+      "tip": "About 45 minutes. Choose a second poem with a clear link, then compare in every paragraph: idea, method in poem A, 'whereas/similarly', method in poem B."
+    },
+    {
+      "id": "eng-lit-008",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 2: Modern texts and poetry",
+      "number": "27.1",
+      "topic": "Unseen poetry",
+      "skill": "Explore the speaker's feelings through the poet's methods, including form and structure",
+      "marks": 24,
+      "stimulus": {
+        "label": "The Last Morning",
+        "caption": "An unseen poem written for this app. The speaker's child is leaving home.",
+        "text": "Your room is boxes now. The posters gone,\nfour pale rectangles where the sun came in.\nI stand here with the kettle still switched on\nand cannot think which mug you drank tea in.\n\nThe car is packed. You hug me, quick and bright,\nalready halfway down the road in your head.\nI wave until the corner takes you from sight,\nthen go upstairs and sit on your stripped bed."
+      },
+      "prompt": "In 'The Last Morning', how does the poet present the speaker's feelings about their child leaving home?",
+      "answers": [
+        {
+          "text": "The poet presents the speaker's grief as quiet and domestic, hidden beneath ordinary actions. The opening short sentence, 'Your room is boxes now', is blunt, as if the speaker is stating a fact to stop themselves feeling it. The 'four pale rectangles' where posters hung are a powerful image of absence: the child's identity has literally been removed from the walls.\n\nThe kettle 'still switched on' and the speaker who 'cannot think which mug you drank tea in' suggest shock and disorientation; love is expressed through tiny details they fear forgetting. The contrast between the child's 'quick and bright' hug and 'already halfway down the road in your head' shows the child looking forward while the parent looks back. The regular rhymes and steady rhythm reflect the speaker's attempt at composure, which breaks in the final line: they 'sit on your stripped bed', an image of emptiness…",
+          "marks": 22,
+          "explanation": "Level 6 (21–24): critical, exploratory analysis of language, imagery, form and structure, with a clear overview of the speaker's feelings."
+        },
+        {
+          "text": "The speaker is sad that their child is leaving. 'Your room is boxes now' shows the room is empty. The 'four pale rectangles' show where the posters were, which reminds the speaker that the child has gone. At the end the speaker sits on the 'stripped bed', which shows they miss their child. The poem rhymes, which makes it sound calm.",
+          "marks": 15,
+          "explanation": "Level 4 (13–16): clear explanation of feelings with relevant quotations and a comment on form. For the top levels, explore the effects in more depth and track how the feelings develop."
+        },
+        {
+          "text": "The poem is about a child leaving home to go to university. The parent helps pack the car and then waves goodbye. The parent is sad.",
+          "marks": 9,
+          "explanation": "Level 3 (9–12), low: shows understanding of the situation but doesn't analyse the poet's methods."
+        },
+        {
+          "text": "The poem has two stanzas and it rhymes.",
+          "marks": 3,
+          "explanation": "Level 1 (1–4): feature-spotting with no link to the speaker's feelings."
+        }
+      ],
+      "tip": "Read the poem twice. Decide the main feeling and how it changes. Then analyse 3–4 key images and one structural feature (a short sentence, the rhyme, the ending)."
+    },
+    {
+      "id": "eng-lit-009",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 1: Shakespeare and the 19th-century novel",
+      "topic": "Romeo and Juliet: conflict",
+      "skill": "Analyse the extract closely, then connect it to key moments elsewhere",
+      "marks": 30,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "Romeo and Juliet, Act 1 Scene 1. Benvolio is trying to stop a fight between the servants when Tybalt arrives.",
+        "text": "BENVOLIO\nI do but keep the peace. Put up thy sword,\nOr manage it to part these men with me.\n\nTYBALT\nWhat, drawn, and talk of peace? I hate the word,\nAs I hate hell, all Montagues, and thee.\nHave at thee, coward!"
+      },
+      "prompt": "Starting with this extract, explore how Shakespeare presents conflict in Romeo and Juliet.",
+      "answers": [
+        {
+          "text": "Shakespeare presents conflict as an irrational hatred that consumes peace itself. Tybalt's rhetorical question, 'What, drawn, and talk of peace?', mocks the very idea, and the list 'I hate the word, / As I hate hell, all Montagues, and thee' escalates from an abstract word to a whole family to one person, showing how his hatred spreads. The plosive 'Have at thee, coward!' makes his aggression explosive.\n\nThis hatred drives the tragedy. The Prologue has already told us that 'civil blood makes civil hands unclean', and in Act 3 Mercutio's curse, 'A plague o' both your houses!', blames the feud itself. For an Elizabethan audience used to honour codes and duelling, Tybalt's hot-headedness would be recognisable, but Shakespeare shows its cost…",
+          "marks": 27,
+          "explanation": "Level 6 (26–30): a conceptualised response with close analysis of language and structure, perceptive links across the play and context integrated into the argument."
+        },
+        {
+          "text": "In this extract, Tybalt is very aggressive. He says he hates peace 'as I hate hell', which is a strong comparison and shows how much he hates the Montagues. This shows the conflict between the families is deep. Later, Tybalt kills Mercutio and Romeo kills Tybalt, which leads to Romeo being banished. This shows that conflict causes the tragedy.",
+          "marks": 20,
+          "explanation": "Level 4 (16–20): clear and supported, with a relevant link to later events. More detailed analysis of Shakespeare's language and some context would lift it."
+        },
+        {
+          "text": "The Montagues and Capulets hate each other. There is a fight at the start. Tybalt kills Mercutio and Romeo kills Tybalt. Romeo and Juliet both die at the end, which makes the families stop fighting.",
+          "marks": 13,
+          "explanation": "Level 3, low (11–15): accurate plot knowledge, but no analysis of how Shakespeare presents conflict."
+        },
+        {
+          "text": "Conflict is when people fight. There is a lot of fighting in Romeo and Juliet which makes it exciting.",
+          "marks": 6,
+          "explanation": "Level 2, low (6–10): a simple general response with no quotations."
+        }
+      ],
+      "tip": "About 50 minutes. Analyse 2–3 details from the extract, then link to the Prologue, Act 3 Scene 1 and the ending. Up to 4 marks are also available for spelling, punctuation and grammar."
+    },
+    {
+      "id": "eng-lit-010",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 1: Shakespeare and Post-1914 Literature",
+      "number": "1(a)",
+      "topic": "Macbeth (a): extract analysis",
+      "skill": "Part (a) rewards analysis of language, form and structure in the extract only",
+      "marks": 20,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "Macbeth, Act 2 Scene 1. Macbeth is alone, on his way to murder King Duncan.",
+        "text": "Is this a dagger which I see before me,\nThe handle toward my hand? Come, let me clutch thee.\nI have thee not, and yet I see thee still.\nArt thou not, fatal vision, sensible\nTo feeling as to sight? or art thou but\nA dagger of the mind, a false creation,\nProceeding from the heat-oppressed brain?"
+      },
+      "prompt": "Explore how Shakespeare presents Macbeth's state of mind in this extract.\n\nRefer closely to the extract in your answer.",
+      "answers": [
+        {
+          "text": "Shakespeare presents Macbeth's mind as disordered and torn. The opening rhetorical question, 'Is this a dagger which I see before me', shows he no longer trusts his own senses. The imperative 'Come, let me clutch thee' suggests he is drawn towards murder almost against his will, while the paradox 'I have thee not, and yet I see thee still' exposes the split between reality and imagination.\n\nThe soliloquy form lets us hear his thoughts directly, and the enjambment across 'sensible / To feeling as to sight?' mimics his mind running on. He finally diagnoses himself: 'A dagger of the mind', 'heat-oppressed brain'. The word 'oppressed' suggests his ambition is a weight he cannot bear…",
+          "marks": 18,
+          "explanation": "Level 5 (17–20): detailed, perceptive analysis of language, form and structure, with precise references throughout. Note that part (a) doesn't reward context, and this answer rightly focuses on the extract."
+        },
+        {
+          "text": "Macbeth is confused and anxious. He asks 'Is this a dagger which I see before me', which shows he isn't sure if it is real. He calls it 'a dagger of the mind', which suggests he is imagining it because of his guilt about the murder. This is a soliloquy, so we hear what he is really thinking.",
+          "marks": 13,
+          "explanation": "Level 4 (13–16), low: clear, relevant analysis with some terminology. More detail on structure and closer analysis of individual words would move it higher."
+        },
+        {
+          "text": "Macbeth sees a dagger that isn't there. This shows he is going mad. In Jacobean times people believed in witches and the supernatural, and King James was interested in witchcraft.",
+          "marks": 8,
+          "explanation": "Level 2 (5–8): some understanding, but the context paragraph earns nothing here: part (a) only rewards analysis of the extract's language, form and structure."
+        },
+        {
+          "text": "In the play Macbeth kills Duncan and becomes king. Then he kills Banquo. In the end he is killed by Macduff.",
+          "marks": 3,
+          "explanation": "Level 1 (1–4): plot of the whole play, which part (a) doesn't ask for."
+        }
+      ],
+      "tip": "Part (a): stay inside the extract and analyse Shakespeare's methods. Save context and the rest of the play for part (b)."
+    },
+    {
+      "id": "eng-lit-011",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 1: Shakespeare and Post-1914 Literature",
+      "number": "1(b)",
+      "topic": "Macbeth (b): elsewhere in the play",
+      "skill": "Part (b) must use elsewhere in the play and bring in context",
+      "marks": 20,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "Macbeth, Act 2 Scene 1. Macbeth is alone, on his way to murder King Duncan.",
+        "text": "Is this a dagger which I see before me,\nThe handle toward my hand? Come, let me clutch thee.\nI have thee not, and yet I see thee still.\nArt thou not, fatal vision, sensible\nTo feeling as to sight? or art thou but\nA dagger of the mind, a false creation,\nProceeding from the heat-oppressed brain?"
+      },
+      "prompt": "In this extract, Macbeth imagines a dagger.\n\nExplain the importance of the supernatural elsewhere in the play.\n\nYou should refer to the context of the play in your answer.",
+      "answers": [
+        {
+          "text": "The supernatural is central because it tempts Macbeth and marks his moral decline. The witches' prophecy, 'All hail, Macbeth, that shalt be king hereafter!', plants the ambition, but Shakespeare leaves it ambiguous whether they cause the murder or simply reveal Macbeth's desires. After the murder, Banquo's ghost at the banquet exposes his guilt in public, showing that the natural order is breaking down.\n\nFor a Jacobean audience, and King James, who wrote Daemonologie, witches were a real threat, so Macbeth's trust in the apparitions' riddles in Act 4 would be seen as damning. Their equivocation ('none of woman born') leads directly to his downfall…",
+          "marks": 18,
+          "explanation": "Level 5 (17–20): a thorough, well-structured response using several moments from elsewhere in the play, with context (witchcraft, James I, the Great Chain of Being) explaining the importance of the supernatural."
+        },
+        {
+          "text": "The witches are important because they tell Macbeth he will be king, which makes him think about killing Duncan. Banquo's ghost appears at the banquet, which shows Macbeth's guilt. People in Jacobean times believed in witches.",
+          "marks": 12,
+          "explanation": "Level 3 (9–12): relevant examples from elsewhere and some context, but explanations are brief and the context isn't linked to Shakespeare's purpose."
+        },
+        {
+          "text": "In the extract, Macbeth sees a dagger, and the phrase 'A dagger of the mind' shows he is imagining it. 'Heat-oppressed brain' shows he is stressed.",
+          "marks": 7,
+          "explanation": "Level 2 (5–8): this analyses the extract again, but part (b) asks about elsewhere in the play. Using the extract here earns very little."
+        },
+        {
+          "text": "There are witches in Macbeth. They are scary.",
+          "marks": 3,
+          "explanation": "Level 1 (1–4): very limited knowledge with no development or context."
+        }
+      ],
+      "tip": "Part (b): don't reuse the extract. Pick 3 moments from elsewhere, explain their importance, and link each to context."
+    },
+    {
+      "id": "eng-lit-012",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 2: 19th-century Novel and Poetry since 1789",
+      "number": "1(a)",
+      "topic": "A Christmas Carol (a): extract analysis",
+      "skill": "Analyse Dickens's language and structure in the extract",
+      "marks": 20,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "A Christmas Carol, Stave 3. The Ghost of Christmas Present reveals two children hidden beneath his robe.",
+        "text": "\"Spirit! are they yours?\" Scrooge could say no more.\n\n\"They are Man's,\" said the Spirit, looking down upon them. \"And they cling to me, appealing from their fathers. This boy is Ignorance. This girl is Want. Beware them both, and all of their degree, but most of all beware this boy, for on his brow I see that written which is Doom, unless the writing be erased.\"\n\n\"Have they no refuge or resource?\" cried Scrooge.\n\n\"Are there no prisons?\" said the Spirit, turning on him for the last time with his own words. \"Are there no workhouses?\""
+      },
+      "prompt": "Explore how Dickens presents the Ghost's warning in this extract.\n\nRefer closely to the extract in your answer.",
+      "answers": [
+        {
+          "text": "Dickens turns the Ghost's warning into a stark allegory. By naming the children 'Ignorance' and 'Want', he makes abstract social problems into suffering figures who 'cling' to the Spirit, 'appealing from their fathers', which implies society has abandoned them. The imperative 'Beware them both' and the ominous image of 'Doom' written on the boy's 'brow' give the warning a prophetic, biblical weight.\n\nStructurally, the extract ends by turning Scrooge's own words against him: 'Are there no prisons?… Are there no workhouses?' The repetition of his Stave One questions exposes their cruelty, and 'for the last time' makes the moment feel final…",
+          "marks": 17,
+          "explanation": "Level 5 (17–20): perceptive analysis of language (allegorical names, imperatives, imagery) and structure (the echo of Scrooge's own words), tightly focused on the extract."
+        },
+        {
+          "text": "The Ghost warns Scrooge using two children called Ignorance and Want. This shows that poverty and lack of education are dangerous. He says 'Beware them both', which is an imperative and sounds like a command. At the end, the Ghost repeats Scrooge's words 'Are there no prisons?', which makes Scrooge feel ashamed.",
+          "marks": 12,
+          "explanation": "Level 3 (9–12): clear comments on key methods with support. Deeper analysis of individual words would move it up."
+        },
+        {
+          "text": "Scrooge sees two poor children. The Ghost says they are Ignorance and Want. Dickens wrote the book because he was angry about poverty in Victorian London.",
+          "marks": 7,
+          "explanation": "Level 2 (5–8): understanding of the extract, but the context isn't rewarded in part (a), and there is little analysis of language."
+        },
+        {
+          "text": "A Christmas Carol is about Scrooge, who is visited by three ghosts and becomes kind.",
+          "marks": 3,
+          "explanation": "Level 1 (1–4): a plot summary that doesn't address the extract."
+        }
+      ],
+      "tip": "Part (a): stay in the extract. Pick 3–4 details and analyse how Dickens's words and structure create meaning."
+    },
+    {
+      "id": "eng-lit-013",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Paper 2: 19th-century Novel and Poetry since 1789",
+      "number": "1(b)",
+      "topic": "A Christmas Carol (b): elsewhere in the novel",
+      "skill": "Use other parts of the novel and connect them to context",
+      "marks": 20,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "A Christmas Carol, Stave 3. The Ghost of Christmas Present reveals two children hidden beneath his robe.",
+        "text": "\"Spirit! are they yours?\" Scrooge could say no more.\n\n\"They are Man's,\" said the Spirit, looking down upon them. \"And they cling to me, appealing from their fathers. This boy is Ignorance. This girl is Want. Beware them both, and all of their degree, but most of all beware this boy, for on his brow I see that written which is Doom, unless the writing be erased.\"\n\n\"Have they no refuge or resource?\" cried Scrooge.\n\n\"Are there no prisons?\" said the Spirit, turning on him for the last time with his own words. \"Are there no workhouses?\""
+      },
+      "prompt": "In this extract, the Ghost warns Scrooge about the effects of poverty.\n\nExplain the importance of poverty elsewhere in the novel.\n\nYou should refer to the context of the novel in your answer.",
+      "answers": [
+        {
+          "text": "Poverty is central to Dickens's message that the rich have a duty to help the poor. In Stave 1, Scrooge dismisses the poor as 'surplus population', echoing Malthusian ideas popular among wealthy Victorians. Dickens challenges this through the Cratchits: Bob earns only 'fifteen \"Bob\" a-week', yet the family's Christmas is full of warmth, and Tiny Tim's likely death gives poverty a human face.\n\nIn Stave 4 the vision of Old Joe's shop shows how poverty can degrade people, as they sell a dead man's belongings. Written in 1843 after the 1834 Poor Law had made workhouses harsher, the novel was Dickens's 'sledge-hammer' against such attitudes…",
+          "marks": 18,
+          "explanation": "Level 5 (17–20): several well-chosen moments from elsewhere, each explained, with context (Malthus, the Poor Law, Dickens's purpose) integrated into the argument."
+        },
+        {
+          "text": "Poverty is important because Dickens wanted to show how the poor suffered. The Cratchits are poor but happy, and Tiny Tim is ill because they can't afford treatment. Scrooge calls the poor 'surplus population'. In Victorian times there were workhouses for poor people.",
+          "marks": 12,
+          "explanation": "Level 3 (9–12): relevant moments and context, but the explanations are brief and the context isn't clearly linked to Dickens's purpose."
+        },
+        {
+          "text": "In the extract the children are called Ignorance and Want, which shows they are poor. The Ghost says 'Are there no workhouses?'",
+          "marks": 7,
+          "explanation": "Level 2 (5–8): this uses the extract again, but part (b) is about elsewhere in the novel."
+        },
+        {
+          "text": "Lots of people in the book are poor. It is sad.",
+          "marks": 3,
+          "explanation": "Level 1 (1–4): very limited, with no examples or context."
+        }
+      ],
+      "tip": "Part (b): three moments from elsewhere, explain why each matters, and link to Victorian context (the Poor Law, workhouses, Dickens's aims)."
+    },
+    {
+      "id": "eng-lit-014",
+      "boards": [
+        "OCR"
+      ],
+      "paper": "Shakespeare",
+      "topic": "Romeo and Juliet: a turning point",
+      "skill": "Explore the extract closely, then its significance in the whole play",
+      "marks": 40,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "Romeo and Juliet, Act 3 Scene 1. Mercutio has been fatally wounded by Tybalt.",
+        "text": "MERCUTIO\nI am hurt.\nA plague o' both your houses! I am sped.\nIs he gone and hath nothing?\n…\nA plague o' both your houses!\nThey have made worms' meat of me. I have it,\nAnd soundly too. Your houses!"
+      },
+      "prompt": "Explore how Shakespeare presents Mercutio's death as a turning point in the play.\n\nRefer to this extract and elsewhere in the play.",
+      "answers": [
+        {
+          "text": "Mercutio's death transforms the play from comedy into tragedy. His curse, 'A plague o' both your houses!', repeated three times, works like a prophecy: from this moment both families are 'plagued' by death. Even dying he puns, 'They have made worms' meat of me', so his wit, which has lightened the play, dies with him.\n\nThe structure confirms the shift. Before this scene the play contains celebration and love; afterwards Romeo kills Tybalt, cries 'O, I am fortune's fool!', and is banished, setting off the chain that ends in the tomb. Shakespeare places this at the play's centre, as the pivot of the tragedy…",
+          "marks": 37,
+          "explanation": "Top level: a perceptive, well-structured argument with close analysis of the extract and a clear understanding of its structural importance in the whole play."
+        },
+        {
+          "text": "Mercutio says 'A plague o' both your houses!' three times, which shows he blames both families for his death. After this, Romeo kills Tybalt in revenge and is banished, which leads to the tragic ending. So Mercutio's death is a turning point because the play becomes much darker.",
+          "marks": 26,
+          "explanation": "Middle level: clear understanding of why the moment matters, with relevant references. Closer analysis of language and a more developed argument would move it up."
+        },
+        {
+          "text": "Mercutio is Romeo's friend. Tybalt stabs him under Romeo's arm. He dies and then Romeo fights Tybalt. Romeo is banished and later Romeo and Juliet die.",
+          "marks": 15,
+          "explanation": "Lower level: accurate narrative, but no analysis of the extract and no explanation of why it is a turning point."
+        },
+        {
+          "text": "Mercutio is a funny character who dies. It is sad.",
+          "marks": 6,
+          "explanation": "Lowest level: a very limited response with no references."
+        }
+      ],
+      "tip": "Name the turning point in your first sentence: what changes, and why it matters. Then analyse the extract and follow the consequences through the rest of the play."
+    },
+    {
+      "id": "eng-lit-015",
+      "boards": [
+        "OCR"
+      ],
+      "paper": "19th-century prose",
+      "topic": "Jekyll and Hyde: respectability",
+      "skill": "Build an argument about Stevenson's purpose, using the whole novel",
+      "marks": 40,
+      "stimulus": {
+        "label": "Extract",
+        "caption": "Strange Case of Dr Jekyll and Mr Hyde, Chapter 1. Enfield describes Mr Hyde to Utterson.",
+        "text": "He is not easy to describe. There is something wrong with his appearance; something displeasing, something down-right detestable. I never saw a man I so disliked, and yet I scarce know why. He must be deformed somewhere; he gives a strong feeling of deformity, although I couldn't specify the point."
+      },
+      "prompt": "Explore how Stevenson presents the importance of reputation and respectability in Strange Case of Dr Jekyll and Mr Hyde.\n\nRefer to this extract and elsewhere in the novel.",
+      "answers": [
+        {
+          "text": "Stevenson presents respectability as a mask that Victorian gentlemen fear losing more than they fear evil itself. In the extract, Enfield cannot name what is wrong with Hyde, and throughout the novel respectable men prefer silence to scandal. Utterson's motto, 'I let my brother go to the devil in his own way', and the men's agreement 'never to refer to this again' show them protecting reputations rather than investigating.\n\nJekyll creates Hyde precisely so he can indulge his desires without damaging his 'grave countenance before the public'. The irony is that the effort to preserve respectability produces the monster, so Stevenson suggests Victorian repression, not science alone, is the real danger…",
+          "marks": 37,
+          "explanation": "Top level: a conceptualised argument about Stevenson's purpose, supported by precise references across the novel and integrated context."
+        },
+        {
+          "text": "Reputation is very important to the characters. Utterson is worried that Jekyll's reputation will be damaged if people find out about Hyde. Jekyll created Hyde so he could do bad things without people knowing it was him. In Victorian times, gentlemen had to appear respectable.",
+          "marks": 26,
+          "explanation": "Middle level: relevant ideas with some support and context. More quotations and closer analysis of Stevenson's methods are needed."
+        },
+        {
+          "text": "Jekyll is a doctor who makes a potion and turns into Hyde. Hyde is evil and kills Carew. In the end Jekyll kills himself.",
+          "marks": 15,
+          "explanation": "Lower level: plot summary with little focus on reputation or respectability."
+        },
+        {
+          "text": "Respectability means being respected by other people.",
+          "marks": 6,
+          "explanation": "Lowest level: a definition, not a response to the novel."
+        }
+      ],
+      "tip": "Turn the theme into an argument ('Stevenson suggests that…'), then prove it with 3–4 moments from across the novel, linking each to Victorian attitudes."
     }
   ]
 }

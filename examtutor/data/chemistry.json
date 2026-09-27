@@ -148,6 +148,388 @@
         }
       ],
       "tip": "Rate answers are marked on precise phrases. Learn them: 'more frequent collisions', 'more collisions per second', 'energy greater than or equal to the activation energy'."
+    },
+    {
+      "id": "chem-005",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Balanced equations",
+      "skill": "Balance by changing the numbers in front, never the formulae; add state symbols if asked",
+      "marks": 2,
+      "prompt": "Magnesium reacts with hydrochloric acid to produce magnesium chloride and hydrogen.\n\nWrite a balanced symbol equation for this reaction. Include state symbols.",
+      "answers": [
+        {
+          "text": "Mg(s) + 2HCl(aq) → MgCl₂(aq) + H₂(g)",
+          "marks": 2,
+          "explanation": "Full marks: correctly balanced (1) and correct state symbols (1)."
+        },
+        {
+          "text": "Mg + 2HCl → MgCl₂ + H₂",
+          "marks": 1,
+          "explanation": "One mark for the balancing, but the question asks for state symbols, and they are worth a separate mark."
+        },
+        {
+          "text": "Mg + HCl₂ → MgCl₂ + H₂",
+          "marks": 0,
+          "explanation": "Zero. Changing HCl to HCl₂ changes the substance. You balance by putting numbers in front of formulae, not by changing subscripts."
+        }
+      ],
+      "tip": "Write the formulae first, then balance one element at a time with big numbers in front. Tick off 'state symbols' if the question mentions them."
+    },
+    {
+      "id": "chem-006",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Chemical tests",
+      "skill": "A test answer needs the method and the positive result",
+      "marks": 2,
+      "prompt": "Describe the test for hydrogen gas. Give the result of the test.",
+      "answers": [
+        {
+          "text": "Hold a burning splint at the mouth of the test tube. If hydrogen is present, it burns with a squeaky pop.",
+          "marks": 2,
+          "explanation": "Full marks: the correct test (burning/lighted splint) and the correct result (squeaky pop)."
+        },
+        {
+          "text": "Put a splint in and it makes a squeaky pop.",
+          "marks": 1,
+          "explanation": "One mark for the result. The splint must be burning (lit); 'a splint' alone isn't precise enough for the method mark."
+        },
+        {
+          "text": "Put a glowing splint in and it relights.",
+          "marks": 0,
+          "explanation": "Zero: this is the test for oxygen. Learn the tests as pairs: hydrogen with a burning splint and squeaky pop; oxygen with a glowing splint that relights; carbon dioxide with limewater that turns milky."
+        }
+      ],
+      "tip": "Learn every test as 'method + result'. Missing either half loses a mark."
+    },
+    {
+      "id": "chem-007",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Percentage yield",
+      "skill": "Actual ÷ theoretical × 100, then sense-check that the yield is under 100%",
+      "marks": 2,
+      "prompt": "In a reaction, the theoretical yield was 12.0 g. The student obtained 9.0 g of product.\n\nCalculate the percentage yield.",
+      "answers": [
+        {
+          "text": "9.0 ÷ 12.0 × 100 = 75%",
+          "marks": 2,
+          "explanation": "Full marks: actual yield divided by theoretical yield, multiplied by 100."
+        },
+        {
+          "text": "9.0 ÷ 12.0 = 0.75",
+          "marks": 1,
+          "explanation": "One mark for the correct division, but it hasn't been turned into a percentage (× 100)."
+        },
+        {
+          "text": "12.0 ÷ 9.0 × 100 = 133%",
+          "marks": 0,
+          "explanation": "Zero: the fraction is upside down. A yield over 100% is impossible, and a quick sense check would have caught it."
+        }
+      ],
+      "tip": "Percentage yield is always actual ÷ theoretical × 100, and never more than 100%."
+    },
+    {
+      "id": "chem-008",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Higher tier",
+      "topic": "Titration calculations",
+      "skill": "Convert cm³ to dm³ (÷ 1000) every time you use a volume",
+      "marks": 3,
+      "prompt": "25.0 cm³ of sodium hydroxide solution was neutralised by 20.0 cm³ of 0.10 mol/dm³ hydrochloric acid.\n\nNaOH + HCl → NaCl + H₂O\n\nCalculate the concentration of the sodium hydroxide solution in mol/dm³.",
+      "answers": [
+        {
+          "text": "Moles HCl = 0.10 × (20.0 ÷ 1000) = 0.0020 mol\nRatio 1 : 1, so moles NaOH = 0.0020 mol\nConcentration = 0.0020 ÷ (25.0 ÷ 1000) = 0.080 mol/dm³",
+          "marks": 3,
+          "explanation": "Full marks: moles of acid (1), the 1 : 1 ratio applied (1), concentration using the volume in dm³ (1)."
+        },
+        {
+          "text": "Moles HCl = 0.10 × 0.020 = 0.0020 mol\nMoles NaOH = 0.0020 mol\nConcentration = 0.0020 ÷ 25 = 0.00008 mol/dm³",
+          "marks": 2,
+          "explanation": "Two marks: correct moles, but the volume of NaOH wasn't converted to dm³ (25.0 cm³ = 0.0250 dm³). An impossibly weak solution should prompt a check."
+        },
+        {
+          "text": "Moles HCl = 0.10 × 0.020 = 0.0020 mol",
+          "marks": 1,
+          "explanation": "One mark for the moles of acid, then the student stopped. Moles → ratio → concentration: each step earns a mark."
+        },
+        {
+          "text": "0.10 × 25.0 ÷ 20.0 = 0.125 mol/dm³",
+          "marks": 0,
+          "explanation": "Zero. The volumes are the wrong way round, so the method doesn't follow from moles = concentration × volume."
+        }
+      ],
+      "tip": "Write the three steps every time: moles of the known solution, use the ratio, then concentration = moles ÷ volume (in dm³)."
+    },
+    {
+      "id": "chem-009",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Higher tier",
+      "topic": "Bond energies",
+      "skill": "Energy change = bonds broken − bonds made; the sign tells you exo or endo",
+      "marks": 3,
+      "prompt": "In a reaction, 2000 kJ of energy is needed to break the bonds in the reactants and 2400 kJ is released when the bonds in the products form.\n\nCalculate the overall energy change and state whether the reaction is exothermic or endothermic. Explain your answer.",
+      "answers": [
+        {
+          "text": "Energy change = 2000 − 2400 = −400 kJ\nExothermic: more energy is released making bonds than is needed to break bonds.",
+          "marks": 3,
+          "explanation": "Full marks: correct calculation with the negative sign (1), exothermic (1), and the explanation comparing bond breaking and bond making (1)."
+        },
+        {
+          "text": "−400 kJ, so it is exothermic.",
+          "marks": 2,
+          "explanation": "Two marks: correct value and conclusion, but no explanation. The question asks you to explain."
+        },
+        {
+          "text": "2400 − 2000 = +400 kJ, so it is endothermic because the number is positive.",
+          "marks": 1,
+          "explanation": "One mark for the size of the energy change, but the subtraction is the wrong way round. It is always bonds broken − bonds made, which gives the correct sign."
+        }
+      ],
+      "tip": "Bonds broken (in, +) minus bonds made (out, −). Negative = exothermic; positive = endothermic."
+    },
+    {
+      "id": "chem-010",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Group 1 reactivity",
+      "skill": "Explain a trend using electron shells, distance and attraction, not just position in the table",
+      "marks": 3,
+      "prompt": "Explain why potassium is more reactive than sodium.",
+      "answers": [
+        {
+          "text": "Potassium's outer electron is in a shell further from the nucleus (it has more shells). So there is a weaker attraction between the nucleus and the outer electron, and it is lost more easily.",
+          "marks": 3,
+          "explanation": "Full marks: more shells / further from the nucleus (1), weaker attraction (1), outer electron lost more easily (1)."
+        },
+        {
+          "text": "Potassium has more shells, so its outer electron is lost more easily.",
+          "marks": 2,
+          "explanation": "Two marks: it misses the key link that the attraction between the nucleus and the outer electron is weaker."
+        },
+        {
+          "text": "Because potassium is further down the group and reactivity increases down group 1.",
+          "marks": 0,
+          "explanation": "Zero. This describes the trend but doesn't explain it. 'Explain' needs the reason in terms of electrons."
+        }
+      ],
+      "tip": "Group 1 trend explanations: more shells → outer electron further from nucleus → weaker attraction → electron lost more easily → more reactive."
+    },
+    {
+      "id": "chem-011",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Electrolysis",
+      "skill": "At each electrode, apply the rules for aqueous solutions",
+      "marks": 2,
+      "prompt": "Predict the products formed at each electrode when a solution of sodium chloride is electrolysed.",
+      "answers": [
+        {
+          "text": "Cathode (negative electrode): hydrogen\nAnode (positive electrode): chlorine",
+          "marks": 2,
+          "explanation": "Full marks. Sodium is more reactive than hydrogen, so hydrogen forms at the cathode; chloride ions are discharged at the anode as chlorine."
+        },
+        {
+          "text": "Cathode: sodium\nAnode: chlorine",
+          "marks": 1,
+          "explanation": "One mark for chlorine. In an aqueous solution, the metal is only produced at the cathode if it is less reactive than hydrogen; sodium is more reactive, so hydrogen is produced."
+        },
+        {
+          "text": "Cathode: chlorine\nAnode: hydrogen",
+          "marks": 0,
+          "explanation": "Zero: the products are the wrong way round. Positive ions (H⁺) go to the negative cathode; negative ions (Cl⁻) go to the positive anode."
+        }
+      ],
+      "tip": "Learn the rules for aqueous solutions: metal or hydrogen at the cathode (hydrogen if the metal is more reactive than hydrogen); halogen, or oxygen if there is no halide, at the anode."
+    },
+    {
+      "id": "chem-012",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Chromatography",
+      "skill": "Rf = distance moved by spot ÷ distance moved by solvent, so it is always less than 1",
+      "marks": 2,
+      "prompt": "In a chromatography experiment, a spot moved 3.6 cm from the start line. The solvent front moved 9.0 cm.\n\nCalculate the Rf value of the spot.",
+      "answers": [
+        {
+          "text": "Rf = 3.6 ÷ 9.0 = 0.40",
+          "marks": 2,
+          "explanation": "Full marks: correct substitution and answer. Rf has no units."
+        },
+        {
+          "text": "Rf = 3.6 ÷ 10 = 0.36",
+          "marks": 1,
+          "explanation": "One mark for the correct method, but the paper length was used instead of the distance moved by the solvent. Measure both from the start line."
+        },
+        {
+          "text": "Rf = 9.0 ÷ 3.6 = 2.5",
+          "marks": 0,
+          "explanation": "Zero: the fraction is upside down. An Rf value above 1 is impossible, because the spot can't move further than the solvent."
+        }
+      ],
+      "tip": "Rf = spot distance ÷ solvent distance, both measured from the start line. Always between 0 and 1."
+    },
+    {
+      "id": "chem-013",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Percentage by mass",
+      "skill": "Use brackets correctly when working out Mr",
+      "marks": 2,
+      "prompt": "Calculate the percentage by mass of calcium in calcium hydroxide, Ca(OH)₂.\n\nRelative atomic masses (Aᵣ): Ca = 40, O = 16, H = 1",
+      "answers": [
+        {
+          "text": "Mᵣ = 40 + 2 × (16 + 1) = 74\n40 ÷ 74 × 100 = 54.1%",
+          "marks": 2,
+          "explanation": "Full marks: correct Mᵣ, accounting for the bracket (1), and correct percentage (1)."
+        },
+        {
+          "text": "Mᵣ = 40 + 16 + 1 = 57\n40 ÷ 57 × 100 = 70.2%",
+          "marks": 1,
+          "explanation": "One mark for the correct method, but the bracket was ignored: (OH)₂ means two oxygens and two hydrogens."
+        },
+        {
+          "text": "40 ÷ 16 × 100 = 250%",
+          "marks": 0,
+          "explanation": "Zero. The mass of calcium must be divided by the Mᵣ of the whole compound. A percentage over 100 is impossible."
+        }
+      ],
+      "tip": "Expand brackets first when adding up Mᵣ. Then % by mass = (Aᵣ × number of atoms) ÷ Mᵣ × 100."
+    },
+    {
+      "id": "chem-014",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Metallic bonding",
+      "skill": "Explain properties with 'delocalised electrons' and what they do",
+      "marks": 2,
+      "prompt": "Explain why metals are good conductors of electricity.",
+      "answers": [
+        {
+          "text": "Metals have delocalised electrons, which are free to move through the structure and carry charge.",
+          "marks": 2,
+          "explanation": "Full marks: delocalised electrons (1) that can move and carry the charge/current (1)."
+        },
+        {
+          "text": "Metals have delocalised electrons.",
+          "marks": 1,
+          "explanation": "One mark. It names the right particles but doesn't say what they do: they must move to carry the current."
+        },
+        {
+          "text": "Metals have ions that can move around and carry the current.",
+          "marks": 0,
+          "explanation": "Zero. In solid metals the positive ions are fixed in a lattice; it is the delocalised electrons that move. Moving ions explain conduction in molten or dissolved ionic compounds."
+        }
+      ],
+      "tip": "Conduction questions: say which charged particles move. Metals: delocalised electrons. Ionic compounds (molten/aqueous): ions."
+    },
+    {
+      "id": "chem-015",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Catalysts",
+      "skill": "Explain with 'activation energy', not just what a catalyst is",
+      "marks": 2,
+      "prompt": "Explain how a catalyst increases the rate of a reaction.",
+      "answers": [
+        {
+          "text": "A catalyst provides an alternative reaction pathway with a lower activation energy, so more collisions have enough energy to react and there are more successful collisions per second.",
+          "marks": 2,
+          "explanation": "Full marks: lower activation energy (1) and the effect on successful collisions (1)."
+        },
+        {
+          "text": "It lowers the activation energy.",
+          "marks": 1,
+          "explanation": "One mark. Link this to collisions to explain why the rate increases."
+        },
+        {
+          "text": "A catalyst speeds up a reaction without being used up.",
+          "marks": 0,
+          "explanation": "Zero. That's the definition of a catalyst, not an explanation of how it works."
+        }
+      ],
+      "tip": "Rate explanations always end with collisions: more frequent collisions, or more successful collisions (energy ≥ activation energy)."
+    },
+    {
+      "id": "chem-016",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Practical skills: chromatography method",
+      "skill": "A method answer needs equipment, precise steps and why each matters",
+      "marks": 6,
+      "prompt": "Describe how a student could use paper chromatography to find out whether an ink contains a particular dye.",
+      "answers": [
+        {
+          "text": "1. Draw a start line in pencil about 2 cm from the bottom of the chromatography paper (pencil won't dissolve).\n2. Put a spot of the ink and a spot of the known dye on the line.\n3. Place the paper in a beaker of solvent so the solvent is below the line (so the spots don't wash off).\n4. Put a lid on and leave until the solvent has nearly reached the top.\n5. Mark the solvent front and let the paper dry.\n6. If a spot from the ink moves the same distance as the dye (same Rf value), the ink contains that dye.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): complete, logical and precise: pencil line and why, solvent below the line and why, reference spot, and how to interpret the result (matching spots or Rf values)."
+        },
+        {
+          "text": "Draw a line on the paper and put a dot of ink on it. Put the paper in water and wait. Then see if the spots match the dye.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): the main steps, but not precise: no pencil (ink lines would run), no mention of keeping the solvent below the line, and no reference spot of the dye to compare with."
+        },
+        {
+          "text": "The different dyes in the ink travel different distances up the paper because they have different solubilities.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): correct theory, but the question asks you to describe a method."
+        },
+        {
+          "text": "Chromatography separates mixtures.",
+          "marks": 1,
+          "explanation": "Level 1, low: true, but it describes no steps at all."
+        }
+      ],
+      "tip": "For 6-mark methods, use numbered steps and add a short 'because' to key steps. Always say how you'd interpret the results."
     }
   ]
 }

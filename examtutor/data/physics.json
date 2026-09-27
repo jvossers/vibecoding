@@ -148,6 +148,403 @@
         }
       ],
       "tip": "For practical method questions, write numbered steps: equipment, what to measure, how to measure it, the equation, and repeats. Look for clue words like 'irregular' that point to a specific method."
+    },
+    {
+      "id": "phys-005",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Speed",
+      "skill": "Convert km to m and minutes to s before substituting",
+      "marks": 3,
+      "prompt": "A cyclist travels 3.6 km in 12 minutes.\n\nCalculate her average speed in m/s.",
+      "answers": [
+        {
+          "text": "Distance = 3.6 km = 3600 m\nTime = 12 min = 720 s\nSpeed = 3600 ÷ 720 = 5 m/s",
+          "marks": 3,
+          "explanation": "Full marks: both conversions, correct substitution into speed = distance ÷ time, and the answer in m/s."
+        },
+        {
+          "text": "3600 ÷ 12 = 300 m/s",
+          "marks": 2,
+          "explanation": "Two marks: distance converted and correct method, but the time is still in minutes. 300 m/s is faster than a plane, so the answer should look wrong."
+        },
+        {
+          "text": "3.6 ÷ 12 = 0.3 m/s",
+          "marks": 1,
+          "explanation": "One mark for the correct equation, but neither unit was converted, so the answer isn't in m/s."
+        },
+        {
+          "text": "12 ÷ 3.6 = 3.33 m/s",
+          "marks": 0,
+          "explanation": "Zero: the equation is upside down. Speed = distance ÷ time."
+        }
+      ],
+      "tip": "Write the equation, convert to SI units (m, s), substitute, calculate, then sense-check the size of the answer."
+    },
+    {
+      "id": "phys-006",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Specific heat capacity",
+      "skill": "Rearrange the equation before substituting, and give the unit if asked",
+      "marks": 3,
+      "prompt": "42 000 J of energy raises the temperature of 2.0 kg of water by 5.0 °C.\n\nCalculate the specific heat capacity of water. Give the unit.\n\nΔE = m c Δθ",
+      "answers": [
+        {
+          "text": "c = ΔE ÷ (m × Δθ)\nc = 42 000 ÷ (2.0 × 5.0)\nc = 4200 J/kg °C",
+          "marks": 3,
+          "explanation": "Full marks: correct rearrangement and substitution (1), correct value (1), correct unit (1)."
+        },
+        {
+          "text": "c = 42 000 ÷ 10 = 4200",
+          "marks": 2,
+          "explanation": "Two marks: correct value, but the question asks for the unit. When 'give the unit' is in the question, it is worth a mark."
+        },
+        {
+          "text": "c = 42 000 ÷ 2.0 = 21 000 J/kg °C",
+          "marks": 1,
+          "explanation": "One mark for the correct unit, but the temperature change was left out of the rearrangement. Write the rearranged equation first."
+        },
+        {
+          "text": "c = 42 000 × 2.0 × 5.0 = 420 000",
+          "marks": 0,
+          "explanation": "Zero. To find c you divide ΔE by m and Δθ; multiplying them makes no sense."
+        }
+      ],
+      "tip": "Rearrange first (write c = ΔE ÷ mΔθ), then substitute. Check the equation sheet for units if you're unsure."
+    },
+    {
+      "id": "phys-007",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Higher tier",
+      "topic": "Waves",
+      "skill": "Handle powers of ten carefully and follow the standard form instruction",
+      "marks": 2,
+      "prompt": "A light wave has a frequency of 5.0 × 10¹⁴ Hz and a wavelength of 6.0 × 10⁻⁷ m.\n\nCalculate the speed of the wave. Give your answer in standard form.\n\nwave speed = frequency × wavelength",
+      "answers": [
+        {
+          "text": "v = 5.0 × 10¹⁴ × 6.0 × 10⁻⁷\nv = 3.0 × 10⁸ m/s",
+          "marks": 2,
+          "explanation": "Full marks: correct substitution and the answer in standard form."
+        },
+        {
+          "text": "v = 30 × 10⁷ m/s",
+          "marks": 1,
+          "explanation": "One mark: the value is correct but not in standard form (30 must become 3.0 and the power goes up by one), which the question asked for."
+        },
+        {
+          "text": "v = 5.0 × 6.0 = 30 m/s",
+          "marks": 0,
+          "explanation": "Zero: the powers of ten have been ignored. Light travelling at 30 m/s should seem very wrong."
+        }
+      ],
+      "tip": "Use the EXP / ×10ˣ button on your calculator, and check the power is sensible (light ≈ 3 × 10⁸ m/s)."
+    },
+    {
+      "id": "phys-008",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Particle model: gas pressure",
+      "skill": "Explain pressure using particle speed, collision frequency and force",
+      "marks": 3,
+      "prompt": "A sealed container of gas is heated.\n\nExplain why the pressure of the gas increases.",
+      "answers": [
+        {
+          "text": "The particles gain kinetic energy and move faster. They collide with the walls of the container more often and with more force, so the force per unit area (pressure) increases.",
+          "marks": 3,
+          "explanation": "Full marks: faster particles (1), more frequent collisions with the walls (1), greater force per unit area (1)."
+        },
+        {
+          "text": "The particles move faster so they hit the walls of the container more often.",
+          "marks": 2,
+          "explanation": "Two marks. It misses the link to pressure: collisions with more force, giving more force per unit area."
+        },
+        {
+          "text": "The particles have more energy so the pressure goes up.",
+          "marks": 1,
+          "explanation": "One mark for more (kinetic) energy, but there is no mention of collisions with the walls, which is how pressure is caused."
+        },
+        {
+          "text": "The particles expand when they get hot so they take up more space.",
+          "marks": 0,
+          "explanation": "Zero: a common misconception. Particles don't get bigger; they move faster. The container is sealed, so the volume doesn't change."
+        }
+      ],
+      "tip": "Gas pressure explanations need: particles move faster → collide with walls more often → with more force → more force per unit area."
+    },
+    {
+      "id": "phys-009",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Radioactive decay: half-life",
+      "skill": "Count half-lives step by step from the data",
+      "marks": 2,
+      "prompt": "The activity of a radioactive sample falls from 800 Bq to 200 Bq in 12 hours.\n\nWhat is the half-life of the sample?",
+      "answers": [
+        {
+          "text": "800 → 400 → 200 is two half-lives.\n12 hours ÷ 2 = 6 hours",
+          "marks": 2,
+          "explanation": "Full marks: two halvings identified (1), so the half-life is 6 hours (1)."
+        },
+        {
+          "text": "It halves twice, so the half-life is 12 × 2 = 24 hours.",
+          "marks": 1,
+          "explanation": "One mark for identifying two half-lives, but then multiplying instead of dividing. Two half-lives fit into 12 hours."
+        },
+        {
+          "text": "800 − 200 = 600, 600 ÷ 12 = 50 Bq per hour",
+          "marks": 0,
+          "explanation": "Zero. Radioactive decay isn't linear, and this doesn't find a half-life. Keep halving until you reach the final activity."
+        }
+      ],
+      "tip": "Write out the halvings (800 → 400 → 200) and count the steps. Half-life = total time ÷ number of halvings."
+    },
+    {
+      "id": "phys-010",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Higher tier",
+      "topic": "Momentum",
+      "skill": "Momentum before = momentum after; use the combined mass after a collision",
+      "marks": 3,
+      "prompt": "A 2.0 kg trolley moving at 3.0 m/s collides with a stationary 1.0 kg trolley. They stick together.\n\nCalculate their velocity after the collision.",
+      "answers": [
+        {
+          "text": "Momentum before = 2.0 × 3.0 = 6.0 kg m/s\nMomentum after = 6.0 kg m/s\n6.0 = (2.0 + 1.0) × v\nv = 2.0 m/s",
+          "marks": 3,
+          "explanation": "Full marks: momentum before (1), conservation with the combined mass (1), correct velocity (1)."
+        },
+        {
+          "text": "Momentum before = 6.0 kg m/s\n6.0 = 3.0 × v\nv = 3.0 m/s",
+          "marks": 2,
+          "explanation": "Two marks: correct method, but the final division is wrong (6.0 ÷ 3.0 = 2.0). A velocity that doesn't drop after gaining mass should look odd."
+        },
+        {
+          "text": "Momentum = 2.0 × 3.0 = 6.0 kg m/s",
+          "marks": 1,
+          "explanation": "One mark for the momentum before. Use conservation of momentum to find the velocity after."
+        },
+        {
+          "text": "v = 3.0 m/s because momentum is conserved.",
+          "marks": 0,
+          "explanation": "Zero. Momentum is conserved, not velocity. After the collision the same momentum is shared by a larger mass, so it moves more slowly."
+        }
+      ],
+      "tip": "Momentum before = momentum after. After sticking together, use the total mass."
+    },
+    {
+      "id": "phys-011",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Forces and springs",
+      "skill": "Convert extension to metres before using F = ke",
+      "marks": 2,
+      "prompt": "A force of 4.0 N stretches a spring by 5.0 cm.\n\nCalculate the spring constant.\n\nforce = spring constant × extension",
+      "answers": [
+        {
+          "text": "Extension = 5.0 cm = 0.050 m\nk = F ÷ e = 4.0 ÷ 0.050 = 80 N/m",
+          "marks": 2,
+          "explanation": "Full marks: extension converted to metres and the correct spring constant."
+        },
+        {
+          "text": "k = 4.0 ÷ 5.0 = 0.8 N/m",
+          "marks": 1,
+          "explanation": "One mark for the correct rearrangement, but the extension must be in metres for the unit N/m."
+        },
+        {
+          "text": "k = 4.0 × 0.050 = 0.2 N/m",
+          "marks": 0,
+          "explanation": "Zero: the equation has been rearranged wrongly. From F = ke, k = F ÷ e."
+        }
+      ],
+      "tip": "Physics equations use SI units: m, kg, s, N. Convert cm to m (÷ 100) before substituting."
+    },
+    {
+      "id": "phys-012",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Mains electricity safety",
+      "skill": "Explain the sequence of events, not just what the parts are called",
+      "marks": 4,
+      "prompt": "An electric kettle has a metal case, an earth wire and a fuse.\n\nExplain how the earth wire and fuse protect the user if the live wire touches the metal case.",
+      "answers": [
+        {
+          "text": "If the live wire touches the case, a large current flows from the case through the earth wire to the ground. This large current makes the fuse wire heat up and melt, which breaks the circuit and disconnects the live wire. The case is no longer live, so the user can't get an electric shock.",
+          "marks": 4,
+          "explanation": "Full marks: current flows through the earth wire (1), a large current (1), the fuse melts and breaks the circuit (1), the case is not live so there's no shock (1)."
+        },
+        {
+          "text": "The earth wire takes the electricity to the ground and the fuse melts so you don't get a shock.",
+          "marks": 2,
+          "explanation": "Two marks: the basic idea is there, but it misses the large current (why the fuse melts) and the circuit being broken."
+        },
+        {
+          "text": "The earth wire and fuse are safety features that stop you getting electrocuted.",
+          "marks": 1,
+          "explanation": "One mark at most: it names their purpose but explains nothing about how they work."
+        }
+      ],
+      "tip": "Safety-feature questions reward the chain of events: fault → large current → fuse melts → circuit broken → case safe."
+    },
+    {
+      "id": "phys-013",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Energy stores",
+      "skill": "Name the energy stores and say where the wasted energy goes",
+      "marks": 3,
+      "prompt": "A ball is thrown vertically upwards.\n\nDescribe the energy transfers from when the ball leaves the hand until it reaches its highest point.",
+      "answers": [
+        {
+          "text": "As the ball rises, energy is transferred from its kinetic energy store to its gravitational potential energy store. Some energy is also dissipated to the thermal energy store of the surroundings because of air resistance. At the highest point the kinetic energy store is (almost) empty.",
+          "marks": 3,
+          "explanation": "Full marks: kinetic → gravitational potential (1), energy dissipated by air resistance (1), kinetic store empty at the top (1)."
+        },
+        {
+          "text": "Kinetic energy turns into gravitational potential energy as it goes up.",
+          "marks": 2,
+          "explanation": "Two marks. It misses the energy dissipated to the surroundings by air resistance, which is always worth including."
+        },
+        {
+          "text": "The energy gets used up as the ball goes higher.",
+          "marks": 0,
+          "explanation": "Zero. Energy is never 'used up'; it is transferred between stores. Name the stores."
+        }
+      ],
+      "tip": "Use the energy-store words: kinetic, gravitational potential, elastic potential, thermal, chemical. Energy is transferred or dissipated, never 'used up'."
+    },
+    {
+      "id": "phys-014",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Practical skills: resistance of a wire",
+      "skill": "Describe a method with equipment, variables, measurements and safety",
+      "marks": 6,
+      "prompt": "Describe how a student could investigate how the length of a wire affects its resistance.",
+      "answers": [
+        {
+          "text": "1. Attach the wire to a metre ruler and connect it in series with an ammeter and a power supply, with a voltmeter in parallel across the wire.\n2. Connect one crocodile clip at 0 cm and the other at 10 cm.\n3. Switch on, record the current and potential difference, then switch off quickly so the wire doesn't heat up.\n4. Calculate resistance with R = V ÷ I.\n5. Repeat for lengths of 20, 30, 40, 50 cm, and repeat each length three times to find a mean.\n6. Plot resistance against length.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): a complete, logical method with the circuit, how length is changed and measured, how resistance is calculated, control of temperature, repeats and a graph."
+        },
+        {
+          "text": "Set up a circuit with the wire, an ammeter and a voltmeter. Change the length of the wire with crocodile clips and record the current and voltage each time. Work out the resistance.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): the right approach, but not detailed enough: no lengths or range, no R = V ÷ I, no way of stopping the wire heating up, no repeats."
+        },
+        {
+          "text": "A longer wire has more resistance because the electrons collide with more ions.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): correct physics, but it is an explanation of the result, not a method."
+        },
+        {
+          "text": "Use different wires and see which one has the most resistance.",
+          "marks": 1,
+          "explanation": "Level 1, low: changing the wire changes more than the length (thickness, material), so it's not a fair test, and there is no measurement method."
+        }
+      ],
+      "tip": "Numbered steps. Name the equipment, say how you change the independent variable, what you measure, how you calculate, what you control, and repeats."
+    },
+    {
+      "id": "phys-015",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Higher tier",
+      "topic": "Parallel circuits",
+      "skill": "Explain with current and paths, not just 'more paths'",
+      "marks": 2,
+      "prompt": "Explain why adding a second resistor in parallel decreases the total resistance of a circuit.",
+      "answers": [
+        {
+          "text": "Adding a resistor in parallel gives the current another path to flow through, so the total current from the supply increases for the same potential difference. Since R = V ÷ I, the total resistance decreases.",
+          "marks": 2,
+          "explanation": "Full marks: another path for current (1) and total current increases for the same pd, so resistance falls (1)."
+        },
+        {
+          "text": "Because there are more paths for the current to go through.",
+          "marks": 1,
+          "explanation": "One mark. Explain what happens next: the total current increases for the same pd, so the total resistance goes down."
+        },
+        {
+          "text": "Because the resistances add together.",
+          "marks": 0,
+          "explanation": "Zero: that's true for series circuits. In parallel, the total resistance is less than the smallest individual resistance."
+        }
+      ],
+      "tip": "Parallel: more paths → more total current (same pd) → less total resistance. Series: resistances add up."
+    },
+    {
+      "id": "phys-016",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Motion graphs",
+      "skill": "Link the shape of the graph to what the gradient represents",
+      "marks": 2,
+      "prompt": "A distance–time graph for a car is a curve that gets steeper over time.\n\nExplain what the graph shows about the motion of the car.",
+      "answers": [
+        {
+          "text": "The gradient of a distance–time graph represents speed. The gradient is increasing, so the car's speed is increasing: it is accelerating.",
+          "marks": 2,
+          "explanation": "Full marks: gradient = speed (1), increasing gradient so accelerating (1)."
+        },
+        {
+          "text": "The car is speeding up.",
+          "marks": 1,
+          "explanation": "One mark for the correct motion, but 'explain' needs the reason: the increasing gradient shows increasing speed."
+        },
+        {
+          "text": "The car is going uphill because the line goes up.",
+          "marks": 0,
+          "explanation": "Zero. The graph shows distance travelled, not height. The shape describes motion, not the road."
+        }
+      ],
+      "tip": "Distance–time: gradient = speed. Velocity–time: gradient = acceleration, area under the line = distance."
     }
   ]
 }

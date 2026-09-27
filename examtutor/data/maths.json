@@ -148,6 +148,484 @@
         }
       ],
       "tip": "Multi-step questions are marked step by step. Label your working ('Area =', 'Tins ='), use every piece of information given, and check your final answer makes sense in real life."
+    },
+    {
+      "id": "maths-005",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Calculator paper · Foundation and Higher",
+      "topic": "Bounds",
+      "skill": "Error intervals use ≤ for the lower bound and < for the upper bound",
+      "marks": 2,
+      "prompt": "The length, L cm, of a pencil is 7.4 cm, correct to 1 decimal place.\n\nWrite down the error interval for L.",
+      "answers": [
+        {
+          "text": "7.35 ≤ L < 7.45",
+          "marks": 2,
+          "explanation": "Full marks: both bounds correct (half a unit of 0.1 either side) and the correct inequality signs, ≤ for the lower bound and < for the upper."
+        },
+        {
+          "text": "7.35 < L < 7.45",
+          "marks": 1,
+          "explanation": "One mark for the correct bounds, but the lower bound must be included: 7.35 rounds up to 7.4, so L can equal 7.35. The upper bound 7.45 is excluded because it would round to 7.5."
+        },
+        {
+          "text": "7.3 ≤ L < 7.5",
+          "marks": 0,
+          "explanation": "Zero. These are the bounds for rounding to the nearest whole unit of 0.1 either side, not half a unit. For 1 decimal place the bounds are ±0.05."
+        }
+      ],
+      "tip": "Halve the degree of accuracy to find the bounds, then write lower ≤ L < upper. Check the signs: they carry a mark."
+    },
+    {
+      "id": "maths-006",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Calculator paper · Foundation and Higher",
+      "topic": "Reverse percentages",
+      "skill": "In a reverse percentage, divide by the multiplier; don't take a percentage of the sale price",
+      "marks": 3,
+      "prompt": "In a sale, all prices are reduced by 20%.\nThe sale price of a coat is £64.\n\nWork out the price of the coat before the sale.",
+      "answers": [
+        {
+          "text": "Sale price = 80% of original\n64 ÷ 0.8 = 80\n\nAnswer: £80",
+          "marks": 3,
+          "explanation": "Full marks: recognising £64 is 80% of the original (M1), dividing by the multiplier (M1), correct answer (A1). A quick check, 80% of £80 = £64, confirms it."
+        },
+        {
+          "text": "80% = £64\n1% = £0.80\n100% = £8.00",
+          "marks": 2,
+          "explanation": "Two method marks: the student correctly found 1% and scaled up, but made a place-value slip (0.80 × 100 = 80, not 8). A sense check would catch it: a coat can't cost less before a sale."
+        },
+        {
+          "text": "20% of 64 = 12.80\n64 + 12.80 = £76.80",
+          "marks": 0,
+          "explanation": "Zero. This is the classic reverse-percentage trap: 20% of the sale price is not the amount taken off, because the 20% was of the original price. No method mark is available for the wrong base."
+        }
+      ],
+      "tip": "Ask 'what percentage of the original is this?' then divide by that multiplier. Always check by working forwards."
+    },
+    {
+      "id": "maths-007",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Non-calculator paper · Higher",
+      "topic": "Standard form",
+      "skill": "When asked for standard form, the first number must be between 1 and 10",
+      "marks": 2,
+      "prompt": "Work out (3.2 × 10⁵) × (4 × 10⁻²)\n\nGive your answer in standard form.",
+      "answers": [
+        {
+          "text": "3.2 × 4 = 12.8\n10⁵ × 10⁻² = 10³\n12.8 × 10³ = 1.28 × 10⁴",
+          "marks": 2,
+          "explanation": "Full marks: numbers and powers handled separately, and the answer adjusted so the first number is between 1 and 10."
+        },
+        {
+          "text": "12.8 × 10³",
+          "marks": 1,
+          "explanation": "One mark: the value is correct but it is not in standard form, which the question demands. 12.8 must become 1.28, and the power goes up by one."
+        },
+        {
+          "text": "3.2 × 4 = 12.8\n10⁵ × 10⁻² = 10⁻¹⁰\n12.8 × 10⁻¹⁰",
+          "marks": 0,
+          "explanation": "Zero. When multiplying powers of 10 you add the indices (5 + −2 = 3); you don't multiply them."
+        }
+      ],
+      "tip": "Multiply the numbers, add the powers, then check the first number is between 1 and 10. Adjust the power if it isn't."
+    },
+    {
+      "id": "maths-008",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Non-calculator paper · Foundation and Higher",
+      "topic": "Circles: exact answers",
+      "skill": "'Give your answer in terms of π' means don't use a decimal for π",
+      "marks": 2,
+      "prompt": "A circle has a radius of 6 cm.\n\nWork out the area of the circle.\nGive your answer in terms of π.",
+      "answers": [
+        {
+          "text": "Area = πr²\n= π × 6²\n= 36π cm²",
+          "marks": 2,
+          "explanation": "Full marks: correct formula and an exact answer left in terms of π, with units."
+        },
+        {
+          "text": "Area = π × 6²\n= 113.1 cm²",
+          "marks": 1,
+          "explanation": "One method mark, but the answer is a rounded decimal. 'In terms of π' means leave π as a symbol: the exact answer is 36π."
+        },
+        {
+          "text": "2 × π × 6 = 12π cm",
+          "marks": 0,
+          "explanation": "Zero: this is the circumference formula. Learn which formula is which: area uses r², circumference uses 2πr."
+        }
+      ],
+      "tip": "Look for 'exact' or 'in terms of π' in the question. If you see it, leave π (or a surd) in your answer."
+    },
+    {
+      "id": "maths-009",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Non-calculator paper · Foundation and Higher",
+      "topic": "Factorising",
+      "skill": "'Factorise fully' means take out the highest common factor",
+      "marks": 2,
+      "prompt": "Factorise fully\n\n6x² + 9x",
+      "answers": [
+        {
+          "text": "3x(2x + 3)",
+          "marks": 2,
+          "explanation": "Full marks: the highest common factor, 3x, has been taken out, leaving nothing further that can be factorised."
+        },
+        {
+          "text": "x(6x + 9)",
+          "marks": 1,
+          "explanation": "One mark for a correct partial factorisation. 6 and 9 still share a factor of 3, so it isn't 'fully' factorised."
+        },
+        {
+          "text": "15x³",
+          "marks": 0,
+          "explanation": "Zero. 6x² and 9x are not like terms, so they can't be added. Factorising means rewriting as a product using brackets."
+        }
+      ],
+      "tip": "After factorising, check the bracket: if the terms inside still share a factor, you haven't finished. Expand to check your answer."
+    },
+    {
+      "id": "maths-010",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Non-calculator paper · Foundation and Higher",
+      "topic": "Angles in parallel lines",
+      "skill": "Angle reasons must name the exact angle fact",
+      "marks": 2,
+      "prompt": "Two parallel lines are crossed by a straight line.\nOne of the angles formed is 65°.\nAngle x is co-interior with the 65° angle.\n\nWork out the size of angle x.\nGive a reason for your answer.",
+      "answers": [
+        {
+          "text": "x = 180 − 65 = 115°\n\nCo-interior angles add up to 180°.",
+          "marks": 2,
+          "explanation": "Full marks: correct angle and the correct geometric reason, using the proper name for the angle fact."
+        },
+        {
+          "text": "x = 115° because they add up to 180",
+          "marks": 1,
+          "explanation": "One mark for the angle. The reason is too vague: examiners need the angle fact named ('co-interior angles add up to 180°'), not just the arithmetic."
+        },
+        {
+          "text": "x = 65° (alternate angles)",
+          "marks": 0,
+          "explanation": "Zero. Alternate angles are equal, but x is co-interior, not alternate. Draw on the diagram to identify the pair before choosing a fact."
+        }
+      ],
+      "tip": "Reasons are marked on wording: 'alternate angles are equal', 'co-interior angles add up to 180°', 'angles on a straight line add up to 180°'. Learn the exact phrases."
+    },
+    {
+      "id": "maths-011",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Calculator paper · Higher",
+      "topic": "Probability without replacement",
+      "skill": "Without replacement, the second fraction changes",
+      "marks": 3,
+      "prompt": "A bag contains 3 red counters and 5 blue counters.\nTwo counters are taken at random from the bag, without replacement.\n\nWork out the probability that both counters are red.",
+      "answers": [
+        {
+          "text": "3/8 × 2/7 = 6/56 = 3/28",
+          "marks": 3,
+          "explanation": "Full marks: correct first probability, the second probability adjusted because one red counter has gone (M1 M1), and the correct answer (A1). 6/56 unsimplified would also score full marks."
+        },
+        {
+          "text": "3/8 × 2/7 = 5/15",
+          "marks": 2,
+          "explanation": "Two method marks: the right fractions are multiplied, but the arithmetic is wrong. Multiply numerators and denominators: 3 × 2 = 6 and 8 × 7 = 56."
+        },
+        {
+          "text": "3/8 × 3/8 = 9/64",
+          "marks": 1,
+          "explanation": "One mark for multiplying probabilities, but this treats the counter as replaced. 'Without replacement' means there are only 2 red out of 7 left for the second pick."
+        },
+        {
+          "text": "3/8 + 2/7",
+          "marks": 0,
+          "explanation": "Zero. 'Both' means one event AND the other, so the probabilities are multiplied, not added."
+        }
+      ],
+      "tip": "Circle 'without replacement'. Then reduce both the numerator and the denominator for the second pick. AND means multiply, OR means add."
+    },
+    {
+      "id": "maths-012",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Non-calculator paper · Foundation and Higher",
+      "topic": "Simultaneous equations",
+      "skill": "Show each step and substitute back to find the second value",
+      "marks": 3,
+      "prompt": "Solve the simultaneous equations\n\n2x + y = 11\nx − y = 1",
+      "answers": [
+        {
+          "text": "Add the equations: 3x = 12\nx = 4\nSubstitute: 2(4) + y = 11\ny = 3\n\nCheck: 4 − 3 = 1 ✓",
+          "marks": 3,
+          "explanation": "Full marks: eliminates y (M1), finds x (A1), substitutes to find y (A1). Checking in the other equation is excellent practice."
+        },
+        {
+          "text": "3x = 12\nx = 4\ny = 11 − 4 = 7",
+          "marks": 2,
+          "explanation": "Two marks: correct elimination and x = 4, but the substitution forgot that the equation has 2x, not x. Substituting back into the other equation would have shown 4 − 7 ≠ 1."
+        },
+        {
+          "text": "3x = 12\nx = 4",
+          "marks": 1,
+          "explanation": "One mark for eliminating y correctly, but the student stopped. 'Solve' means find both values."
+        },
+        {
+          "text": "2x + y − x − y = 11 − 1\nx = 10",
+          "marks": 0,
+          "explanation": "Zero. Subtracting the equations here doesn't eliminate a letter because the y terms have opposite signs. Add when signs are different, subtract when they are the same."
+        }
+      ],
+      "tip": "Choose add or subtract so that one letter disappears. After finding both values, check them in the equation you didn't substitute into."
+    },
+    {
+      "id": "maths-013",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Non-calculator paper · Higher",
+      "topic": "Quadratics: 'Hence'",
+      "skill": "'Hence' means use the result of the previous part",
+      "marks": 2,
+      "prompt": "(a) Factorise x² + 5x + 6\n(b) Hence solve x² + 5x + 6 = 0\n\nThis question is about part (b).",
+      "answers": [
+        {
+          "text": "(x + 2)(x + 3) = 0\nx = −2 or x = −3",
+          "marks": 2,
+          "explanation": "Full marks: uses the factorised form from part (a), as 'hence' asks, and gives both solutions with the correct signs."
+        },
+        {
+          "text": "(x + 2)(x + 3) = 0\nx = −2",
+          "marks": 1,
+          "explanation": "One mark: one correct solution. A quadratic usually has two solutions, so check you've found both."
+        },
+        {
+          "text": "(x + 2)(x + 3) = 0\nx = 2 or x = 3",
+          "marks": 0,
+          "explanation": "Zero: the signs are wrong. If x + 2 = 0 then x = −2. Substituting x = 2 back in gives 4 + 10 + 6 = 20, not 0, which would have revealed the error."
+        }
+      ],
+      "tip": "'Hence' is a gift: the previous answer is the method. For solutions, set each bracket equal to 0 and check by substituting."
+    },
+    {
+      "id": "maths-014",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Calculator paper · Foundation and Higher",
+      "topic": "Area and unit conversion",
+      "skill": "Convert all lengths to the units of the answer before you calculate",
+      "marks": 2,
+      "prompt": "A rectangle is 2.5 m long and 80 cm wide.\n\nWork out the area of the rectangle in m².",
+      "answers": [
+        {
+          "text": "80 cm = 0.8 m\nArea = 2.5 × 0.8 = 2 m²",
+          "marks": 2,
+          "explanation": "Full marks: units made consistent before multiplying, and the answer in the units asked for."
+        },
+        {
+          "text": "250 × 80 = 20 000 cm²\n20 000 cm² = 200 m²",
+          "marks": 1,
+          "explanation": "One mark for a correct area in cm², but area conversions use 100² = 10 000, not 100. 20 000 cm² is 2 m²."
+        },
+        {
+          "text": "2.5 × 80 = 200 m²",
+          "marks": 0,
+          "explanation": "Zero. Multiplying metres by centimetres gives a meaningless answer. A 200 m² area for a small rectangle should look wrong."
+        }
+      ],
+      "tip": "Convert lengths first, then calculate. Remember 1 m² = 10 000 cm², not 100 cm²."
+    },
+    {
+      "id": "maths-015",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Calculator paper · Foundation and Higher",
+      "topic": "Calculator skills and rounding",
+      "skill": "Round only at the end, to the accuracy the question asks for",
+      "marks": 2,
+      "prompt": "Work out\n\n√(17.3² − 4.2²)\n\nGive your answer correct to 3 significant figures.",
+      "answers": [
+        {
+          "text": "17.3² − 4.2² = 299.29 − 17.64 = 281.65\n√281.65 = 16.782…\n= 16.8 (3 s.f.)",
+          "marks": 2,
+          "explanation": "Full marks: correct calculation, with the unrounded value shown before rounding to 3 significant figures."
+        },
+        {
+          "text": "√281.65 = 16.78",
+          "marks": 1,
+          "explanation": "One mark: correct method but rounded to 4 significant figures. The accuracy instruction is worth a mark of its own."
+        },
+        {
+          "text": "√(17.3² − 4.2²) = 17.3 − 4.2 = 13.1",
+          "marks": 0,
+          "explanation": "Zero. You can't 'cancel' the square root and the squares; you must work out inside the root first. Use brackets on your calculator."
+        }
+      ],
+      "tip": "Write down the full calculator display, then round. Counting significant figures starts at the first non-zero digit."
+    },
+    {
+      "id": "maths-016",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Non-calculator paper · Foundation and Higher",
+      "topic": "Ratio",
+      "skill": "Read the last line again: answer the question actually asked",
+      "marks": 3,
+      "prompt": "Amy and Ben share £240 in the ratio 3 : 5.\n\nHow much more money does Ben get than Amy?",
+      "answers": [
+        {
+          "text": "3 + 5 = 8 parts\n240 ÷ 8 = 30\nAmy: 3 × 30 = £90\nBen: 5 × 30 = £150\n150 − 90 = £60",
+          "marks": 3,
+          "explanation": "Full marks: total parts (M1), value of one part and each share (M1), and the difference that the question asks for (A1). Quicker: Ben has 2 more parts, 2 × 30 = £60."
+        },
+        {
+          "text": "240 ÷ 8 = 30\nAmy = £90, Ben = £150\n\nAnswer: £150",
+          "marks": 2,
+          "explanation": "Two marks for correct shares, but the question asked how much more Ben gets. Underline the final question so you don't stop one step early."
+        },
+        {
+          "text": "240 ÷ 8 = 30",
+          "marks": 1,
+          "explanation": "One mark for finding the value of one part. Keep going: each correct step earns credit."
+        },
+        {
+          "text": "240 ÷ 3 = 80\n240 ÷ 5 = 48",
+          "marks": 0,
+          "explanation": "Zero. A ratio 3 : 5 means 8 equal parts in total, so you divide by 8, not by each number separately."
+        }
+      ],
+      "tip": "Parts → one part → shares → answer. Then re-read the question: 'how much more', 'what fraction' and 'how much each' all need different final steps."
+    },
+    {
+      "id": "maths-017",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Calculator paper · Foundation and Higher",
+      "topic": "Estimating the mean from grouped data",
+      "skill": "Use midpoints, and divide by the total frequency",
+      "marks": 3,
+      "stimulus": {
+        "label": "Table 1",
+        "caption": "Time spent on homework last night.",
+        "table": {
+          "headers": [
+            "Time, t (minutes)",
+            "Frequency"
+          ],
+          "rows": [
+            [
+              "0 < t ≤ 10",
+              "4"
+            ],
+            [
+              "10 < t ≤ 20",
+              "10"
+            ],
+            [
+              "20 < t ≤ 30",
+              "6"
+            ]
+          ]
+        }
+      },
+      "prompt": "The table shows the times, t minutes, that 20 students spent on homework.",
+      "answers": [
+        {
+          "text": "Midpoints: 5, 15, 25\nfx: 20 + 150 + 150 = 320\n320 ÷ 20 = 16\n\nEstimated mean = 16 minutes",
+          "marks": 3,
+          "explanation": "Full marks: midpoints × frequency (M1), divided by the total frequency (M1), correct estimate (A1)."
+        },
+        {
+          "text": "Using 10, 20, 30:\n40 + 200 + 180 = 420\n420 ÷ 20 = 21 minutes",
+          "marks": 2,
+          "explanation": "Two marks: consistent values within each group and the correct division, but upper bounds give an overestimate. Midpoints are needed for the accuracy mark."
+        },
+        {
+          "text": "20 + 150 + 150 = 320\n320 ÷ 3 = 106.7",
+          "marks": 1,
+          "explanation": "One mark for the fx column. Dividing by the number of groups (3) instead of the number of students (20) gives an impossible mean: larger than every time in the table."
+        },
+        {
+          "text": "(5 + 15 + 25) ÷ 3 = 15",
+          "marks": 0,
+          "explanation": "Zero. This ignores the frequencies, so every group counts equally even though 10 students were in the middle group."
+        }
+      ],
+      "tip": "Midpoint × frequency, add up, divide by the total frequency. Check the mean lies inside the range of the data."
+    },
+    {
+      "id": "maths-018",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Non-calculator paper · Foundation and Higher",
+      "topic": "Linear inequalities",
+      "skill": "Keep the inequality sign all the way through",
+      "marks": 2,
+      "prompt": "Solve 3x − 7 > 11",
+      "answers": [
+        {
+          "text": "3x > 18\nx > 6",
+          "marks": 2,
+          "explanation": "Full marks: correct steps and the answer written as an inequality."
+        },
+        {
+          "text": "3x = 18\nx = 6",
+          "marks": 1,
+          "explanation": "One mark for the correct critical value, but the answer must be an inequality. Replacing > with = changes the meaning: the solution is every number greater than 6."
+        },
+        {
+          "text": "3x > 11 − 7\n3x > 4\nx > 4/3",
+          "marks": 0,
+          "explanation": "Zero. To undo −7 you add 7 to both sides, not subtract it."
+        }
+      ],
+      "tip": "Solve an inequality exactly like an equation, but keep the sign. (Only flip it if you multiply or divide by a negative number.)"
     }
   ]
 }

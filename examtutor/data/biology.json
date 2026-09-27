@@ -184,6 +184,403 @@
         }
       ],
       "tip": "For 'evaluate': give pros and cons of each option, compare them directly, and finish with a conclusion that says which is better and why, or in which situations."
+    },
+    {
+      "id": "bio-005",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Osmosis: percentage change",
+      "skill": "Percentage change = change ÷ starting value × 100, with the sign",
+      "marks": 2,
+      "prompt": "A potato cylinder had a mass of 2.50 g.\nAfter 30 minutes in a sugar solution its mass was 2.15 g.\n\nCalculate the percentage change in mass.",
+      "answers": [
+        {
+          "text": "Change = 2.15 − 2.50 = −0.35 g\n−0.35 ÷ 2.50 × 100 = −14%",
+          "marks": 2,
+          "explanation": "Full marks: the change divided by the starting mass, and the negative sign shows it is a decrease (mass was lost by osmosis)."
+        },
+        {
+          "text": "0.35 ÷ 2.15 × 100 = 16.3%",
+          "marks": 1,
+          "explanation": "One mark for the correct change, but it was divided by the final mass. Percentage change always compares with the starting value."
+        },
+        {
+          "text": "2.15 ÷ 2.50 × 100 = 86%",
+          "marks": 0,
+          "explanation": "Zero. This is the new mass as a percentage of the old one, not the percentage change."
+        }
+      ],
+      "tip": "Change ÷ original × 100. Keep the minus sign for a decrease; it tells the examiner which way water moved."
+    },
+    {
+      "id": "bio-006",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Cells",
+      "skill": "'Compare' needs both sides in each point: similarities and differences",
+      "marks": 4,
+      "prompt": "Compare the structure of a plant cell with the structure of an animal cell.",
+      "answers": [
+        {
+          "text": "Both plant and animal cells have a nucleus, cytoplasm, a cell membrane and mitochondria. However, only plant cells have a cell wall made of cellulose, chloroplasts for photosynthesis, and a permanent vacuole containing cell sap.",
+          "marks": 4,
+          "explanation": "Full marks: a similarity plus three differences, each written as a comparison ('both…', 'only plant cells…')."
+        },
+        {
+          "text": "Both have a nucleus and a cell membrane. Plant cells have a cell wall and chloroplasts but animal cells do not.",
+          "marks": 3,
+          "explanation": "Three marks: one similarity and two clear differences. A third difference (permanent vacuole) would complete the answer."
+        },
+        {
+          "text": "Plant cells have chloroplasts and animal cells don't. Plant cells are rectangular.",
+          "marks": 2,
+          "explanation": "Two marks: one valid comparison and a shape comment that gets limited credit. Structures (organelles) are what the question is about."
+        },
+        {
+          "text": "Plant cells: cell wall, chloroplasts, vacuole, nucleus.\nAnimal cells: nucleus, cytoplasm, membrane.",
+          "marks": 1,
+          "explanation": "One mark at most: two separate lists aren't a comparison. The examiner shouldn't have to work out the similarities and differences for you."
+        }
+      ],
+      "tip": "In 'compare' questions, every sentence should mention both things: 'both…', 'whereas…', 'only… have…'."
+    },
+    {
+      "id": "bio-007",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Working with data: anomalies",
+      "skill": "Leave out the anomaly and divide by the number of values you kept",
+      "marks": 2,
+      "prompt": "A student counted the number of bubbles produced by pondweed in one minute, repeated four times.\n\nResults: 12, 13, 25, 11\n\nCalculate the mean. Do not include the anomalous result.",
+      "answers": [
+        {
+          "text": "Anomaly = 25\n(12 + 13 + 11) ÷ 3 = 12 bubbles per minute",
+          "marks": 2,
+          "explanation": "Full marks: the anomaly is excluded and the total is divided by the three remaining results."
+        },
+        {
+          "text": "12 + 13 + 11 = 36\n36 ÷ 4 = 9",
+          "marks": 1,
+          "explanation": "One mark for excluding the anomaly, but the total must be divided by 3 (the number of values used), not 4. A mean smaller than every value should look wrong."
+        },
+        {
+          "text": "(12 + 13 + 25 + 11) ÷ 4 = 15.25",
+          "marks": 0,
+          "explanation": "Zero. The question tells you to leave the anomaly out. Including it drags the mean upwards."
+        }
+      ],
+      "tip": "Identify the anomaly (it doesn't fit the pattern), cross it out, then divide by how many values are left. Sense-check: the mean must lie between the smallest and largest values used."
+    },
+    {
+      "id": "bio-008",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Evolution: antibiotic resistance",
+      "skill": "Use the sequence mutation, survival, reproduction, inheritance",
+      "marks": 6,
+      "prompt": "Explain how a population of bacteria can become resistant to an antibiotic.",
+      "answers": [
+        {
+          "text": "A random mutation in a bacterium's DNA can make it resistant to the antibiotic. When the antibiotic is used, the non-resistant bacteria are killed, but the resistant ones survive. The resistant bacteria reproduce rapidly, passing the resistance allele on to their offspring. Over time, the proportion of resistant bacteria in the population increases, so the antibiotic no longer works. This is natural selection.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): a complete, logically ordered chain: random mutation, selection by the antibiotic, survival, reproduction, inheritance, and the population changing over time."
+        },
+        {
+          "text": "Some bacteria have a mutation that makes them resistant. The antibiotic kills the other bacteria but the resistant ones survive and reproduce, so there are more resistant bacteria.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): the key idea is right, but it misses that the mutation is random, that the resistance is inherited by offspring, and how the population changes over generations."
+        },
+        {
+          "text": "Antibiotics kill bacteria, but if you don't finish the course the bacteria that are left get resistant.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): relevant context (finishing the course), but no mention of mutation, selection or inheritance, so it doesn't explain how resistance develops."
+        },
+        {
+          "text": "The bacteria get used to the antibiotic and become immune to it, like how you get immune to a disease.",
+          "marks": 1,
+          "explanation": "Level 1, low: a common misconception. Bacteria don't 'get used to' antibiotics or become 'immune'; resistance comes from random mutations being selected."
+        }
+      ],
+      "tip": "For any natural selection question, run through: variation (mutation) → selection pressure → survival → reproduction → inheritance → population changes."
+    },
+    {
+      "id": "bio-009",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Inheritance",
+      "skill": "Probability is 'out of all offspring', not a ratio",
+      "marks": 3,
+      "prompt": "Cystic fibrosis is caused by a recessive allele, f.\nBoth parents are carriers (Ff).\n\nUse a Punnett square to find the probability that their child will have cystic fibrosis.",
+      "answers": [
+        {
+          "text": "     F    f\nF   FF   Ff\nf   Ff   ff\n\nOnly ff has cystic fibrosis: 1 out of 4\nProbability = 0.25 (25%)",
+          "marks": 3,
+          "explanation": "Full marks: correct gametes (1), correct offspring genotypes (1), and the probability expressed as 1/4, 0.25 or 25% (1)."
+        },
+        {
+          "text": "     F    f\nF   FF   Ff\nf   Ff   ff\n\n1 : 3",
+          "marks": 2,
+          "explanation": "Two marks for the Punnett square, but 1 : 3 is a ratio, not a probability. The question asks for a probability: 1 in 4 (0.25)."
+        },
+        {
+          "text": "Ff × Ff\nProbability = 50%",
+          "marks": 1,
+          "explanation": "One mark for recognising both parents are Ff, but without a Punnett square the offspring have been guessed. 50% is the probability of a child being a carrier (Ff), not having the disease."
+        },
+        {
+          "text": "They both have the allele so the child will definitely have it.",
+          "marks": 0,
+          "explanation": "Zero. Carriers have one dominant allele, so each child only has cystic fibrosis if they inherit f from both parents."
+        }
+      ],
+      "tip": "Draw the Punnett square every time, even if you can do it in your head. Then answer in the form asked: probability (fraction, decimal or %) or ratio."
+    },
+    {
+      "id": "bio-010",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Vaccination",
+      "skill": "Explain the full chain: antigen → white blood cells → antibodies → memory cells",
+      "marks": 4,
+      "prompt": "Explain how a vaccine protects a person against a disease.",
+      "answers": [
+        {
+          "text": "A vaccine contains dead or inactive forms of the pathogen, which carry antigens. White blood cells (lymphocytes) recognise the antigens and produce specific antibodies. Memory cells are also made. If the person is later infected by the real pathogen, the memory cells produce the right antibodies much faster and in greater numbers, so the pathogen is destroyed before it causes illness.",
+          "marks": 4,
+          "explanation": "Full marks: all four linked ideas: inactive pathogen/antigens, antibody production by white blood cells, memory cells, and a faster, larger secondary response."
+        },
+        {
+          "text": "The vaccine has a dead version of the virus in it. Your white blood cells make antibodies against it. Then if you catch the real virus, your body makes antibodies quickly.",
+          "marks": 3,
+          "explanation": "Three marks: good, but it doesn't mention memory cells, which are the reason the second response is faster."
+        },
+        {
+          "text": "The vaccine makes your body produce antibodies, which fight the disease so you don't get ill.",
+          "marks": 2,
+          "explanation": "Two marks: antibodies are relevant, but it doesn't say what triggers them (antigens) or why protection lasts (memory cells)."
+        },
+        {
+          "text": "A vaccine puts antibodies into your body so you are protected from the disease.",
+          "marks": 1,
+          "explanation": "One mark at most. Vaccines contain antigens (from inactive pathogens), not antibodies; your own body makes the antibodies."
+        }
+      ],
+      "tip": "4-mark 'explain' questions usually want a four-step chain. Use key words: antigen, lymphocyte, antibody, memory cell, faster response."
+    },
+    {
+      "id": "bio-011",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Limiting factors",
+      "skill": "Name what is limiting now, not just that light isn't",
+      "marks": 2,
+      "prompt": "A graph shows the rate of photosynthesis increasing as light intensity increases, then levelling off at high light intensities.\n\nExplain why the rate of photosynthesis stops increasing at high light intensities.",
+      "answers": [
+        {
+          "text": "Light intensity is no longer the limiting factor. Another factor, such as carbon dioxide concentration or temperature, is now limiting the rate.",
+          "marks": 2,
+          "explanation": "Full marks: states that light is no longer limiting (1) and names another factor that is now limiting (1)."
+        },
+        {
+          "text": "Something else is limiting the rate.",
+          "marks": 1,
+          "explanation": "One mark: the idea is right, but a named factor is needed for the second mark."
+        },
+        {
+          "text": "Because the plant has had enough light and doesn't need any more.",
+          "marks": 0,
+          "explanation": "Zero. Plants don't 'need' a set amount of light; the rate is held back by a different factor. Use the term 'limiting factor'."
+        }
+      ],
+      "tip": "When a graph levels off, the factor on the x-axis is no longer limiting. Name what is limiting instead."
+    },
+    {
+      "id": "bio-012",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Practical skills: variables",
+      "skill": "Independent is what you change, dependent is what you measure, control is what you keep the same",
+      "marks": 3,
+      "prompt": "A student investigates how pH affects the time taken for amylase to break down starch. She tests pH 5, 6, 7 and 8, and times how long until iodine stops turning blue-black.\n\nIdentify the independent variable, the dependent variable and one control variable.",
+      "answers": [
+        {
+          "text": "Independent: pH\nDependent: the time taken for the starch to be broken down\nControl: the temperature of the solutions (or volume/concentration of amylase or starch)",
+          "marks": 3,
+          "explanation": "Full marks: all three correct and specific."
+        },
+        {
+          "text": "Independent: pH\nDependent: time\nControl: the amount",
+          "marks": 2,
+          "explanation": "Two marks. 'Time' is acceptable but 'the amount' is too vague: amount of what? Name the substance and the quantity (e.g. volume of amylase)."
+        },
+        {
+          "text": "Independent: time\nDependent: pH\nControl: temperature",
+          "marks": 1,
+          "explanation": "One mark for the control variable, but the independent and dependent variables are swapped. The student chooses the pH (independent) and measures the time (dependent)."
+        }
+      ],
+      "tip": "Independent = what you change; dependent = what you measure; control = what you keep the same. Be specific: 'volume of amylase', not 'amount'."
+    },
+    {
+      "id": "bio-013",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Practical skills: improving a method",
+      "skill": "'Suggest an improvement' needs the improvement and the reason",
+      "marks": 2,
+      "prompt": "In an investigation, a student counted the bubbles of gas given off by pondweed.\n\nSuggest one improvement to the method that would make the results more accurate. Give a reason for your answer.",
+      "answers": [
+        {
+          "text": "Collect the gas in a gas syringe or measuring cylinder and measure its volume, because bubbles can be different sizes so counting them is not accurate.",
+          "marks": 2,
+          "explanation": "Full marks: a specific improvement (1) and a reason linked to accuracy (1)."
+        },
+        {
+          "text": "Use a gas syringe.",
+          "marks": 1,
+          "explanation": "One mark for the improvement, but no reason. 'Suggest' questions with 'give a reason' have a mark for the 'because'."
+        },
+        {
+          "text": "Repeat the experiment more times.",
+          "marks": 0,
+          "explanation": "Zero. Repeating improves repeatability (and lets you spot anomalies), but it doesn't make each measurement more accurate. Accuracy means closer to the true value."
+        }
+      ],
+      "tip": "Know the difference: accurate (close to the true value), precise (little spread), repeatable (same result when repeated). Match your improvement to the word in the question."
+    },
+    {
+      "id": "bio-014",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "The heart",
+      "skill": "Describe the pathway in order, naming each chamber and vessel",
+      "marks": 4,
+      "prompt": "Describe the path taken by blood from the vena cava to the aorta.",
+      "answers": [
+        {
+          "text": "Blood enters the right atrium from the vena cava, then passes into the right ventricle. It is pumped through the pulmonary artery to the lungs, where it picks up oxygen. It returns in the pulmonary vein to the left atrium, then the left ventricle, which pumps it out through the aorta.",
+          "marks": 4,
+          "explanation": "Full marks: every structure in the correct order, including the trip to the lungs and back."
+        },
+        {
+          "text": "Vena cava → right atrium → right ventricle → pulmonary artery → pulmonary vein → left atrium → left ventricle → aorta.",
+          "marks": 3,
+          "explanation": "Three marks: correct order, but it misses out the lungs between the pulmonary artery and pulmonary vein, which is the reason for that loop."
+        },
+        {
+          "text": "Blood goes into the right side of the heart, then to the lungs, then back to the left side and out of the aorta.",
+          "marks": 2,
+          "explanation": "Two marks: the overall route is right but too general. Name the chambers and vessels."
+        },
+        {
+          "text": "The blood goes in through the vena cava and the heart pumps it out through the aorta to the body.",
+          "marks": 1,
+          "explanation": "One mark: this repeats the start and end given in the question without describing the path in between."
+        }
+      ],
+      "tip": "For sequences, give every step in order with the correct names. A quick sketch of the heart in the margin helps you keep left and right straight."
+    },
+    {
+      "id": "bio-015",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Homeostasis",
+      "skill": "Link temperature to enzymes and explain what happens to the active site",
+      "marks": 2,
+      "prompt": "Explain why it is important that human body temperature is kept at about 37 °C.",
+      "answers": [
+        {
+          "text": "Enzymes work best at their optimum temperature, about 37 °C. If the temperature gets too high, enzymes denature because the shape of the active site changes, so reactions in cells slow down or stop.",
+          "marks": 2,
+          "explanation": "Full marks: the link to enzymes working at an optimum (1) and the consequence of denaturing (1)."
+        },
+        {
+          "text": "So that enzymes can work properly.",
+          "marks": 1,
+          "explanation": "One mark for linking temperature to enzymes, but it doesn't explain what happens if the temperature changes."
+        },
+        {
+          "text": "Because if you get too hot you will feel ill and sweat a lot.",
+          "marks": 0,
+          "explanation": "Zero. This describes symptoms, not the biological reason. Most homeostasis questions come back to enzymes and cells."
+        }
+      ],
+      "tip": "When a question asks why a condition must be controlled, think: which enzymes or cells are affected, and what exactly happens to them?"
+    },
+    {
+      "id": "bio-016",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Foundation and Higher tier",
+      "topic": "Non-communicable disease",
+      "skill": "'Suggest' means apply your knowledge to explain a trend, with a link",
+      "marks": 2,
+      "prompt": "The number of people in the UK with type 2 diabetes has increased over the last 30 years.\n\nSuggest two reasons for this increase.",
+      "answers": [
+        {
+          "text": "More people are obese, which is a risk factor for type 2 diabetes. People also do less exercise, so they are more likely to become overweight.",
+          "marks": 2,
+          "explanation": "Full marks: two valid risk factors, each clearly linked to type 2 diabetes."
+        },
+        {
+          "text": "People eat more sugary food. People eat more junk food.",
+          "marks": 1,
+          "explanation": "One mark: these are really the same reason (diet) written twice. 'Two reasons' means two different ideas."
+        },
+        {
+          "text": "People are born with it more often now.",
+          "marks": 0,
+          "explanation": "Zero. Type 2 diabetes develops mainly because of lifestyle risk factors (it is not something you are born with), so this does not explain the trend."
+        }
+      ],
+      "tip": "For 'suggest two reasons', make sure the reasons are genuinely different and link each one to the outcome."
     }
   ]
 }

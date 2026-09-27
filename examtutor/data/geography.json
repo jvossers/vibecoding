@@ -163,6 +163,429 @@
         }
       ],
       "tip": "Skills questions appear on every paper and are quick marks. Learn: % change = (new − original) ÷ original × 100. Show each step and include the unit."
+    },
+    {
+      "id": "geog-005",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Geographical skills",
+      "topic": "Map skills: grid references",
+      "skill": "Eastings first ('along the corridor'), then northings ('up the stairs')",
+      "marks": 2,
+      "prompt": "On an Ordnance Survey map, a church is in grid square 4317.\nIt is three-tenths of the way across the square from the western edge, and six-tenths of the way up from the southern edge.\n\nGive the six-figure grid reference of the church.",
+      "answers": [
+        {
+          "text": "433176",
+          "marks": 2,
+          "explanation": "Full marks: easting 43 plus 3 tenths (433), then northing 17 plus 6 tenths (176)."
+        },
+        {
+          "text": "4317",
+          "marks": 1,
+          "explanation": "One mark at most: this is the four-figure reference for the square. The question asks for six figures, which pinpoint the church within the square."
+        },
+        {
+          "text": "176433",
+          "marks": 0,
+          "explanation": "Zero: the northing has been given first. Always read along the corridor (eastings) before going up the stairs (northings)."
+        }
+      ],
+      "tip": "Along the corridor, then up the stairs. For six figures, estimate tenths across the square, then tenths up it."
+    },
+    {
+      "id": "geog-006",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Geographical skills",
+      "topic": "Statistics: range and median",
+      "skill": "Put the data in order before finding the median; the range is a single value",
+      "marks": 2,
+      "prompt": "A student measured river velocity at five sites (m/s):\n\n0.3, 0.5, 0.2, 0.8, 0.4\n\nCalculate the range and the median.",
+      "answers": [
+        {
+          "text": "In order: 0.2, 0.3, 0.4, 0.5, 0.8\nRange = 0.8 − 0.2 = 0.6 m/s\nMedian = 0.4 m/s",
+          "marks": 2,
+          "explanation": "Full marks: the range as the difference between the highest and lowest values (1), and the median found after ordering the data (1)."
+        },
+        {
+          "text": "Range = 0.8 − 0.2 = 0.6 m/s\nMedian = 0.2 m/s (the middle number in the list)",
+          "marks": 1,
+          "explanation": "One mark for the range. The median is the middle value after putting the data in order; here the middle of the unordered list was used."
+        },
+        {
+          "text": "Range = 0.2 to 0.8\nMedian = 0.44 m/s",
+          "marks": 0,
+          "explanation": "Zero. The range is one number (the difference), not two end points, and 0.44 is the mean, not the median."
+        }
+      ],
+      "tip": "Median: order the data first. Range: highest minus lowest, as one number with units. Mean: add up and divide."
+    },
+    {
+      "id": "geog-007",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Geographical skills",
+      "topic": "Describing a trend",
+      "skill": "Describe the overall trend, use data with units, and note changes in the rate",
+      "marks": 3,
+      "stimulus": {
+        "label": "Figure 1",
+        "caption": "Average atmospheric CO₂ concentration measured at Mauna Loa, Hawaii.",
+        "table": {
+          "headers": [
+            "Year",
+            "CO₂ (parts per million)"
+          ],
+          "rows": [
+            [
+              "1960",
+              "317"
+            ],
+            [
+              "1980",
+              "339"
+            ],
+            [
+              "2000",
+              "370"
+            ],
+            [
+              "2020",
+              "414"
+            ]
+          ]
+        }
+      },
+      "prompt": "Using Figure 1, describe the changes in atmospheric carbon dioxide concentration between 1960 and 2020.",
+      "answers": [
+        {
+          "text": "CO₂ concentration increased throughout the period, from about 317 ppm in 1960 to about 414 ppm in 2020, an increase of nearly 100 ppm. The rate of increase has sped up: it rose by 22 ppm from 1960 to 1980 but by 44 ppm from 2000 to 2020.",
+          "marks": 3,
+          "explanation": "Full marks: the overall trend (1), data with units (1), and the change in the rate of increase (1)."
+        },
+        {
+          "text": "CO₂ went up from 317 ppm in 1960 to 414 ppm in 2020.",
+          "marks": 2,
+          "explanation": "Two marks: the trend with data. Look for a third point: here, the increase is accelerating."
+        },
+        {
+          "text": "It went up.",
+          "marks": 1,
+          "explanation": "One mark for the basic trend, but 'describe' questions using a figure expect specific data."
+        },
+        {
+          "text": "Carbon dioxide increased because people burn more fossil fuels and cut down rainforests.",
+          "marks": 0,
+          "explanation": "Zero. This explains rather than describes, and uses no data from the figure."
+        }
+      ],
+      "tip": "Trend → data (with units and years) → anomaly or change in rate. Don't explain unless asked."
+    },
+    {
+      "id": "geog-008",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Geographical skills",
+      "topic": "Using a photograph: suggest",
+      "skill": "Use evidence from the photo and link each feature to flood risk",
+      "marks": 4,
+      "stimulus": {
+        "label": "Figure 2",
+        "caption": "[Photograph: a town centre on flat, low-lying land beside a river. Buildings, car parks and roads cover most of the ground right up to the river bank. There are few trees or open green spaces.]"
+      },
+      "prompt": "Figure 2 shows part of a town centre next to a river.\n\nSuggest two reasons why this area may be at risk of flooding.",
+      "answers": [
+        {
+          "text": "Most of the ground is covered by concrete, tarmac and roofs, which are impermeable, so rainwater runs off quickly into drains and the river instead of soaking in. The buildings are also built right up to the river on low, flat land, so if the river overtops its banks there is nowhere for the water to go except into the buildings.",
+          "marks": 4,
+          "explanation": "Full marks: two reasons, each based on evidence visible in the photo and developed into a clear link to flood risk."
+        },
+        {
+          "text": "There are lots of roads and buildings. It is near the river.",
+          "marks": 2,
+          "explanation": "Two marks: two relevant features, but neither is explained. Add 'which means…' to link each one to flooding."
+        },
+        {
+          "text": "It might rain a lot.",
+          "marks": 1,
+          "explanation": "One mark at most: rain is relevant everywhere, so this isn't a reason based on the photo."
+        }
+      ],
+      "tip": "'Suggest' + photo: point to something you can see, then explain how it increases the risk."
+    },
+    {
+      "id": "geog-009",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Fieldwork",
+      "topic": "Fieldwork: data collection",
+      "skill": "Give an advantage and a disadvantage, each explained in the context of your enquiry",
+      "marks": 4,
+      "prompt": "Explain one advantage and one disadvantage of using a questionnaire to collect data in a human geography enquiry.",
+      "answers": [
+        {
+          "text": "An advantage is that a questionnaire collects people's opinions directly, for example asking residents how safe they feel in a regenerated area, which can't be measured any other way. A disadvantage is that people may not answer honestly or may misunderstand a question, so the data may not be reliable, especially if the sample is small or only includes people who were willing to stop.",
+          "marks": 4,
+          "explanation": "Full marks: an advantage and a disadvantage, each explained and linked to the reliability or usefulness of the data."
+        },
+        {
+          "text": "Advantage: you can get people's opinions. Disadvantage: people might lie.",
+          "marks": 2,
+          "explanation": "Two marks: valid points, but neither is explained. Develop each with 'because' or 'which means'."
+        },
+        {
+          "text": "It is easy to do.",
+          "marks": 1,
+          "explanation": "One mark at most: a vague advantage and no disadvantage."
+        }
+      ],
+      "tip": "Fieldwork questions reward reasons: why is this useful, and how does it affect the reliability or accuracy of the results?"
+    },
+    {
+      "id": "geog-010",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Fieldwork",
+      "topic": "Fieldwork: justifying a method",
+      "skill": "'Justify' means give reasons why your choice was appropriate",
+      "marks": 3,
+      "prompt": "Justify the sampling method you used to choose sites for your river fieldwork.",
+      "answers": [
+        {
+          "text": "We used systematic sampling, choosing a site every 200 m along the river. This was appropriate because it gave an even spread of sites from upstream to downstream, so we could see how the channel changed with distance. It also reduced bias, because we couldn't just pick the easiest spots.",
+          "marks": 3,
+          "explanation": "Full marks: the method named and described (1), with two reasons why it suited this enquiry (2)."
+        },
+        {
+          "text": "We used systematic sampling every 200 m.",
+          "marks": 1,
+          "explanation": "One mark for naming and describing the method, but 'justify' needs reasons why it was a good choice."
+        },
+        {
+          "text": "We went to the river and measured the width, depth and velocity.",
+          "marks": 0,
+          "explanation": "Zero. This describes what was measured, not how the sites were chosen or why."
+        }
+      ],
+      "tip": "Justify = 'I chose X because…'. Link the reason to your enquiry question, and to reducing bias or improving reliability."
+    },
+    {
+      "id": "geog-011",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Geographical skills",
+      "topic": "Population pyramids",
+      "skill": "Link the shape of the pyramid to birth rate, death rate or migration",
+      "marks": 2,
+      "prompt": "A population pyramid for Country A has a very wide base and narrows quickly towards the top.\n\nSuggest one reason why the pyramid has this shape.",
+      "answers": [
+        {
+          "text": "Country A probably has a high birth rate, perhaps because of limited access to contraception or children being needed to work on farms, which makes the base wide. It narrows quickly because life expectancy is low, so few people live to old age.",
+          "marks": 2,
+          "explanation": "Full marks: a valid reason (1) developed with an explanation of how it produces the shape (1)."
+        },
+        {
+          "text": "It has a high birth rate.",
+          "marks": 1,
+          "explanation": "One mark: correct, but not developed. Explain why, or link it to the shape."
+        },
+        {
+          "text": "Because it is a big country with lots of people.",
+          "marks": 0,
+          "explanation": "Zero. The size of the population doesn't determine the shape of the pyramid."
+        }
+      ],
+      "tip": "Wide base = high birth rate. Narrow top = low life expectancy. Bulges = migration or baby booms."
+    },
+    {
+      "id": "geog-012",
+      "boards": [
+        "AQA",
+        "Edexcel",
+        "OCR"
+      ],
+      "paper": "Geographical skills",
+      "topic": "Describing location",
+      "skill": "Use continents, compass directions, lines of latitude and neighbouring places",
+      "marks": 3,
+      "prompt": "Using an atlas map of South America, describe the location of Brazil.",
+      "answers": [
+        {
+          "text": "Brazil is in eastern South America, with a long coastline on the Atlantic Ocean. The Equator passes through the north of the country and the Tropic of Capricorn crosses the south. It borders most other South American countries, including Argentina to the south-west and Colombia to the north-west.",
+          "marks": 3,
+          "explanation": "Full marks: continent and position within it (1), a line of latitude (1), and neighbouring countries or oceans with compass directions (1)."
+        },
+        {
+          "text": "Brazil is in South America, on the east coast next to the Atlantic Ocean.",
+          "marks": 2,
+          "explanation": "Two marks: good, but add a line of latitude or neighbouring countries for the third mark."
+        },
+        {
+          "text": "Brazil is in South America.",
+          "marks": 1,
+          "explanation": "One mark: correct, but too basic for 3 marks."
+        },
+        {
+          "text": "Brazil is hot and has the Amazon rainforest.",
+          "marks": 0,
+          "explanation": "Zero. This describes Brazil's climate and features, not its location."
+        }
+      ],
+      "tip": "Location = where it is: continent, compass position, lines of latitude, oceans, neighbours. Features and climate are not location."
+    },
+    {
+      "id": "geog-013",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 2: Challenges in the human environment",
+      "number": "1",
+      "topic": "Urban regeneration",
+      "skill": "Use a named example with specific detail, and link each change to quality of life",
+      "marks": 6,
+      "prompt": "Using an example, explain how urban regeneration can improve quality of life.",
+      "answers": [
+        {
+          "text": "The regeneration of Stratford in East London for the 2012 Olympics improved quality of life in several ways. The athletes' village was converted into the East Village, providing thousands of new homes, some of them affordable, for people who had lived in overcrowded housing. Westfield Stratford City shopping centre created thousands of jobs, raising incomes in one of London's most deprived boroughs. Transport links improved, so residents can reach jobs across London more easily, and the Queen Elizabeth Olympic Park gave the area large green spaces for leisure and health. However, rising house prices mean some original residents have been priced out.",
+          "marks": 6,
+          "explanation": "Level 3 (5–6 marks): a named example with specific detail, several ways quality of life improved (housing, jobs, transport, green space), each clearly explained, and some balance."
+        },
+        {
+          "text": "In Stratford, London, the Olympic Park was built. It gave people new houses and jobs, and there is a big shopping centre. There are also parks, which make it nicer to live there.",
+          "marks": 4,
+          "explanation": "Level 2 (3–4 marks): a named example with relevant changes, but explanations of how quality of life improved are brief and the detail is limited."
+        },
+        {
+          "text": "Regeneration can improve quality of life because it makes areas nicer, with new houses and shops and fewer crimes.",
+          "marks": 2,
+          "explanation": "Level 1 (1–2 marks): relevant general points, but no named example, which caps the mark."
+        },
+        {
+          "text": "Urban regeneration is when an old area is improved.",
+          "marks": 1,
+          "explanation": "Level 1, low: a definition only, with no explanation of quality of life."
+        }
+      ],
+      "tip": "Name your example in the first sentence. Give 2–3 specific changes, and for each say how it improved people's lives."
+    },
+    {
+      "id": "geog-014",
+      "boards": [
+        "AQA"
+      ],
+      "paper": "Paper 1: Living with the physical environment",
+      "number": "2",
+      "topic": "9-mark evaluation: rainforests",
+      "skill": "Weigh benefits against limits using an example, then reach a justified judgement",
+      "marks": 9,
+      "prompt": "'Ecotourism is the best way to manage tropical rainforests sustainably.'\n\nTo what extent do you agree with this statement?",
+      "answers": [
+        {
+          "text": "I agree to a large extent. In Costa Rica, around a quarter of the land is protected in national parks and reserves, and ecotourism brings in income that gives local people and the government a reason to keep forests standing rather than cut them down. Small-scale lodges employ local guides, so communities benefit directly, and visitor numbers can be limited to reduce damage.\n\nHowever, ecotourism has limits. It only works in accessible, attractive areas, it relies on tourists flying long distances, which adds to climate change, and income can fall suddenly, as it did during the pandemic. Other strategies, such as international debt-for-nature swaps, selective logging and national protection laws, are also needed.\n\nOverall, ecotourism is one of the best ways because it makes conservation profitable for local people, but it is most sustainable when combined with legal protection.",
+          "marks": 9,
+          "explanation": "Level 3 (7–9 marks): a thorough evaluation using a named example with specific detail, considering advantages, limits and alternatives, and reaching a clear, justified conclusion. Up to 3 more marks are available for spelling, punctuation and grammar."
+        },
+        {
+          "text": "Ecotourism is sustainable because it brings money into the area without destroying the rainforest. For example, in Costa Rica tourists come to see wildlife, and local people get jobs as guides. However, tourists travel by plane, which causes pollution. There are other ways to manage rainforests, like selective logging.",
+          "marks": 6,
+          "explanation": "Level 2 (4–6 marks): a named example and some balance, but the detail is limited and there's no clear judgement about 'to what extent'."
+        },
+        {
+          "text": "I agree because ecotourism doesn't damage the rainforest and it makes money for people.",
+          "marks": 3,
+          "explanation": "Level 1 (1–3 marks): a simple, one-sided opinion with no example."
+        },
+        {
+          "text": "Tropical rainforests have lots of biodiversity and are being cut down for farming and logging.",
+          "marks": 1,
+          "explanation": "Level 1, low: background knowledge that doesn't address the statement."
+        }
+      ],
+      "tip": "About 12 minutes. For: example and detail. Against: limits and alternatives. Then 'Overall, I agree to a large extent because…'. Leave time to check your spelling, punctuation and grammar."
+    },
+    {
+      "id": "geog-015",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Component 1: The physical environment",
+      "topic": "Assess (8 marks)",
+      "skill": "'Assess' means weigh the importance of factors and reach a judgement",
+      "marks": 8,
+      "prompt": "Assess the importance of physical factors in causing river flooding.",
+      "answers": [
+        {
+          "text": "Physical factors are often the main trigger. Prolonged or intense rainfall is the most important, because it supplies the water; if the ground is already saturated, infiltration stops and surface runoff increases rapidly. Impermeable rock such as clay, steep slopes and a small, circular drainage basin also shorten the lag time, so water reaches the channel quickly.\n\nHowever, human factors can be just as important. Urbanisation replaces soil with impermeable surfaces, and deforestation reduces interception, both increasing runoff. In many towns, flooding happens because human changes make the effects of heavy rain worse.\n\nOverall, physical factors, especially intense rainfall, are usually the cause, but their importance depends on human land use.",
+          "marks": 8,
+          "explanation": "Top level (6–8 marks): several physical factors explained, weighed against human factors, with a clear, supported judgement about their relative importance."
+        },
+        {
+          "text": "Heavy rainfall is an important physical factor because it provides lots of water. If the ground is saturated the water can't soak in and runs off into the river. Steep slopes make water reach the river quickly. Human factors like urbanisation also cause flooding because concrete is impermeable.",
+          "marks": 6,
+          "explanation": "Middle level (3–5 marks), high: good explanation of physical factors and a human counter-point, but there is no judgement about their relative importance."
+        },
+        {
+          "text": "Rain, steep slopes and impermeable rock cause flooding. Building towns also causes flooding.",
+          "marks": 3,
+          "explanation": "Lower middle: relevant factors listed, but none is explained."
+        },
+        {
+          "text": "Flooding is when a river bursts its banks.",
+          "marks": 1,
+          "explanation": "Level 1: a definition only."
+        }
+      ],
+      "tip": "'Assess': explain the factors, compare their importance, and finish with a judgement ('the most important factor is… because…')."
+    },
+    {
+      "id": "geog-016",
+      "boards": [
+        "Edexcel"
+      ],
+      "paper": "Component 1: The physical environment",
+      "topic": "Explain one reason (2 marks)",
+      "skill": "One reason, developed into a two-step explanation",
+      "marks": 2,
+      "prompt": "Explain one reason why tropical storms weaken when they reach land.",
+      "answers": [
+        {
+          "text": "Tropical storms get their energy from warm, moist air rising from the ocean surface. Over land this supply of heat and moisture is cut off, so the storm loses its energy source and weakens.",
+          "marks": 2,
+          "explanation": "Full marks: the reason (loss of the warm ocean energy supply) (1), developed to explain how this weakens the storm (1)."
+        },
+        {
+          "text": "Because there is no warm sea.",
+          "marks": 1,
+          "explanation": "One mark for the idea, but it isn't developed. Explain why the warm sea matters (it supplies the heat and moisture)."
+        },
+        {
+          "text": "Because the land stops the wind.",
+          "marks": 0,
+          "explanation": "Zero. Friction does slow the winds a little, but this isn't explained, and the main reason is the loss of the ocean energy supply."
+        }
+      ],
+      "tip": "Two-mark 'explain one' questions: make one point, then develop it with 'so' or 'which means'. Don't list several reasons."
     }
   ]
 }
