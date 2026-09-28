@@ -27,3 +27,11 @@ Everything lives in `index.html`. The phone screen is drawn entirely on a `<canv
 - **GIF export**: built-in encoder, no library. Median-cut palette sampled from key frames, then each frame is diffed against the previous one. Unchanged pixels become transparent and the frame is cropped to the changed box, and identical frames just extend the previous delay. That keeps a 30-second chat to about 100–300 KB.
 - **Video export**: WebCodecs `VideoEncoder` plus `mp4-muxer` / `webm-muxer`, loaded on demand from jsdelivr. Renders offline at 30 fps. If WebCodecs or the codec is unavailable, it falls back to `MediaRecorder` on `canvas.captureStream()`, which records in real time.
 - **Persistence**: settings and the transcript are saved in `localStorage` (`chatreel`, `chatreel.text`).
+
+## UI design ("Bubblegum")
+
+- Light, candy palette defined as CSS variables on `:root` (`--bg`, `--pink`, `--mint`, `--butter`, `--blush` …). Fonts: Bagel Fat One (logo + export button) and Rubik (UI).
+- Controls borrow chat-bubble shapes: one tail corner (`--bubble`), and the selected tab / "whose phone" chip flips to a "sent" bubble (`--bubble-sent`) in dark ink.
+- Buttons feel like toy keys: a solid bottom shadow that disappears when pressed (`:active` moves the button down).
+- Selected choices turn mint. Speed choices are tilted emoji "stickers" and turn butter-yellow when picked.
+- The preview progress bar has one segment per message (`renderSegs` / `updateSegs`). Each segment's width matches that message's share of the timeline, so the invisible range input on top still scrubs linearly. Segments that end in one of my messages are green, others pink.
