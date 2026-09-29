@@ -1142,7 +1142,8 @@ function timeline(S, msgs) {
     m.read = Math.max(m.delivered + 100, read);
   });
   const last = msgs[msgs.length - 1];
-  S.duration = (last ? last.appear : 0) + 2800 * k;
+  S.chatEnd = (last ? last.appear : 0) + 2800 * k;
+  S.duration = S.chatEnd + END_MS;
 
   // --- scroll keyframes: target changes whenever a message appears or typing toggles
   const events = new Set([0]);
@@ -1963,8 +1964,102 @@ function canvasSize(S) {
   return { w: S.W, h: S.H };
 }
 
+/* ---------- Branding: subtle watermark + end card ---------- */
+// Shown on the end card. Switch to the short domain once it's live.
+const BRAND_URL = 'labs.vossers.com/fauxreel';
+const END_MS = 2600;
+const brandFont = px => `400 ${px}px "Bagel Fat One", Rubik, system-ui, sans-serif`;
+const uiFont = (px, w = 500) => `${w} ${px}px Rubik, system-ui, sans-serif`;
+
+// "faux" in ink + "reel" in pink, centred on cx.
+function drawWordmark(ctx, cx, cy, px, ink, pink) {
+  const f = brandFont(px);
+  const a = measure(f, 'faux'), b = measure(f, 'reel');
+  ctx.font = f; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+  ctx.fillStyle = ink; ctx.fillText('faux', cx - (a + b) / 2, cy);
+  ctx.fillStyle = pink; ctx.fillText('reel', cx - (a + b) / 2 + a, cy);
+}
+
+// Tiny, low-contrast wordmark, placed where it never covers messages:
+// the home-indicator strip on the screen, or the backdrop under the phone.
+function drawWatermark(ctx, S, x, y, px, color) {
+  ctx.save();
+  const f = brandFont(px);
+  ctx.font = f; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+  ctx.fillStyle = color;
+  ctx.fillText('fauxreel', x, y);
+  ctx.restore();
+}
+
+function drawEndCard(ctx, S, e) {
+  const { w: W, h: H } = canvasSize(S);
+  const u = W / 390;
+  ctx.save();
+  ctx.globalAlpha = ease(e / 350);
+  ctx.fillStyle = '#FFF4F8'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#FFD6E8'; ctx.beginPath(); ctx.arc(W * 0.98, H * 0.07, W * 0.46, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#D9F2FF'; ctx.beginPath(); ctx.arc(W * 0.02, H * 0.93, W * 0.4, 0, Math.PI * 2); ctx.fill();
+  const alpha = ctx.globalAlpha;
+
+  const pop = (at, fn) => {
+    const p = clamp((e - at) / 320, 0, 1);
+    if (p <= 0) return;
+    ctx.save();
+    ctx.globalAlpha = alpha * clamp(p * 2, 0, 1);
+    fn(0.6 + 0.4 * easeOutBack(p));
+    ctx.restore();
+  };
+  const bubble = (text, mine, y, at) => pop(at, k => {
+    const f = uiFont(17 * u, 500);
+    const tw = measure(f, text), bw = tw + 30 * u, bh = 40 * u;
+    const x = mine ? W / 2 + 70 * u - bw : W / 2 - 70 * u;
+    const ax = mine ? x + bw : x;
+    ctx.translate(ax, y + bh); ctx.scale(k, k); ctx.translate(-ax, -(y + bh));
+    const r = 20 * u, t = 6 * u;
+    ctx.fillStyle = mine ? '#D63F82' : '#F3D5E3';
+    rr(ctx, x, y + 3 * u, bw, bh, mine ? [r, r, t, r] : [r, r, r, t]); ctx.fill();
+    ctx.fillStyle = mine ? '#FF5FA2' : '#FFFFFF';
+    rr(ctx, x, y, bw, bh, mine ? [r, r, t, r] : [r, r, r, t]); ctx.fill();
+    ctx.font = f; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    ctx.fillStyle = mine ? '#FFFFFF' : '#2B1B3A';
+    ctx.fillText(text, x + 15 * u, y + bh / 2 + 1);
+  });
+  const top = H * 0.3;
+  bubble('wait… is this real? 👀', false, top, 250);
+  bubble('faux real 😏', true, top + 54 * u, 700);
+
+  pop(1100, k => {
+    const cy = top + 160 * u;
+    ctx.translate(W / 2, cy); ctx.scale(k, k); ctx.translate(-W / 2, -cy);
+    drawWordmark(ctx, W / 2, cy, 58 * u, '#2B1B3A', '#FF5FA2');
+  });
+  pop(1450, () => {
+    const y = top + 222 * u;
+    ctx.font = uiFont(16 * u, 500); ctx.fillStyle = '#8A6F99';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('make your own chat video', W / 2, y);
+    const f = uiFont(15 * u, 600);
+    const pw = measure(f, BRAND_URL) + 32 * u, ph = 36 * u, px = W / 2 - pw / 2, py = y + 22 * u;
+    ctx.fillStyle = '#F3D5E3'; rr(ctx, px, py + 3 * u, pw, ph, ph / 2); ctx.fill();
+    ctx.fillStyle = '#FFFFFF'; rr(ctx, px, py, pw, ph, ph / 2); ctx.fill();
+    ctx.font = f; ctx.fillStyle = '#2B1B3A';
+    ctx.fillText(BRAND_URL, W / 2, py + ph / 2 + 1);
+    ctx.textAlign = 'left';
+  });
+  ctx.restore();
+}
+
 function drawFrame(ctx, S, t) {
-  if (S.opts.frame !== 'phone') { drawScreen(ctx, S, t); return; }
+  drawChatFrame(ctx, S, Math.min(t, S.chatEnd));
+  if (t > S.chatEnd) drawEndCard(ctx, S, t - S.chatEnd);
+}
+
+function drawChatFrame(ctx, S, t) {
+  if (S.opts.frame !== 'phone') {
+    drawScreen(ctx, S, t);
+    drawWatermark(ctx, S, 16, S.H - (S.ios ? 10 : 11), 10, S.T.dark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.24)');
+    return;
+  }
   const CW = 540, CH = 960;
   const [c1, c2] = BACKDROPS[S.opts.backdrop] || BACKDROPS[0];
   const bg = ctx.createLinearGradient(0, 0, CW, CH);
@@ -2001,6 +2096,13 @@ function drawFrame(ctx, S, t) {
   rr(ctx, 0, 0, S.W, S.H, outerR - bezel); ctx.clip();
   drawScreen(ctx, S, t);
   ctx.restore();
+  ctx.restore();
+  // watermark on the backdrop, centred under the phone
+  ctx.save();
+  const light = S.opts.backdrop === 5;
+  const f = brandFont(13);
+  ctx.font = f;
+  drawWatermark(ctx, S, CW / 2 - measure(f, 'fauxreel') / 2, py + ph + (CH - py - ph) / 2, 13, light ? 'rgba(43,27,58,0.35)' : 'rgba(255,255,255,0.55)');
   ctx.restore();
 }
 
@@ -2840,7 +2942,8 @@ window.addEventListener('resize', () => { sizePreview(); drawPreview(); });
   // Canvas text needs the web fonts actually loaded before we measure anything.
   try {
     await Promise.race([
-      Promise.all(['400 16px Inter', '600 16px Inter', '400 16px Roboto', '500 16px Roboto', '700 16px Roboto']
+      Promise.all(['400 16px Inter', '600 16px Inter', '400 16px Roboto', '500 16px Roboto', '700 16px Roboto',
+        '400 16px "Bagel Fat One"', '500 16px Rubik', '600 16px Rubik']
         .map(f => document.fonts.load(f, 'Aa'))),
       new Promise(r => setTimeout(r, 2500)),
     ]);

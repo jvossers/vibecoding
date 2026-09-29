@@ -43,3 +43,10 @@ Everything lives in `index.html`. The phone screen is drawn entirely on a `<canv
 - The sheet has search (title + transcript, all words must match), one tag filter at a time, and infinite scroll in pages of 40 (IntersectionObserver).
 - A chat's id is its index in the array. `#chat=N` in the URL opens that chat, so **only append new chats at the end** or old share links will point at the wrong chat.
 - When adding chats, every line must be `Name: message` (or `(pause N)`), `me` must be one of the speakers, and there should be at least two speakers.
+
+## Branding in exports
+
+- Every render (preview and export) has a tiny, low-contrast "fauxreel" wordmark (`drawWatermark`). On the screen it sits in the home-indicator strip at the bottom-left. With the phone on a backdrop, it sits on the backdrop under the phone. It never covers messages.
+- After the chat ends (`S.chatEnd`), a 2.6 s end card (`END_MS`, `drawEndCard`) fades in: two bubbles ("wait… is this real? 👀" / "faux real 😏"), the wordmark and a pill with `BRAND_URL`. `S.duration` includes the end card; drawing clamps the chat itself to `chatEnd`.
+- `BRAND_URL` is currently `labs.vossers.com/fauxreel`. Change it to the short domain once that's live.
+- There's no switch to turn either off. Removing them is a candidate Pro feature.
