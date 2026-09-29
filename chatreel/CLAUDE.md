@@ -35,3 +35,11 @@ Everything lives in `index.html`. The phone screen is drawn entirely on a `<canv
 - Buttons feel like toy keys: a solid bottom shadow that disappears when pressed (`:active` moves the button down).
 - Selected choices turn mint. Speed choices are tilted emoji "stickers" and turn butter-yellow when picked.
 - The preview progress bar has one segment per message (`renderSegs` / `updateSegs`). Each segment's width matches that message's share of the timeline, so the invisible range input on top still scrubs linearly. Segments that end in one of my messages are green, others pink.
+
+## Chat library
+
+- `library.js` holds ~500 funny sample chats as `window.CHAT_LIBRARY` entries `{t, g, a, me, x}` (title, comma-separated tags, app letter, whose phone, transcript). It's only loaded (script tag) the first time the library sheet or 🎲 is used, so first page load stays light.
+- Tags are fixed in `LIB_TAGS` in `index.html` (history, celebs, news, traditions, culture, family, friends, dating, work, school, tech, food, sport, travel, pets, fantasy). A new tag needs an entry there to get a label.
+- The sheet has search (title + transcript, all words must match), one tag filter at a time, and infinite scroll in pages of 40 (IntersectionObserver).
+- A chat's id is its index in the array. `#chat=N` in the URL opens that chat, so **only append new chats at the end** or old share links will point at the wrong chat.
+- When adding chats, every line must be `Name: message` (or `(pause N)`), `me` must be one of the speakers, and there should be at least two speakers.

@@ -282,6 +282,79 @@
 
   .rec-canvas { position: fixed; left: -10000px; top: 0; pointer-events: none; }
 
+  /* ---------- Library ---------- */
+  .lib-actions { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 12px; }
+  .lib-open {
+    border: none; background: var(--ink); color: #fff; border-radius: var(--bubble-sent);
+    padding: 12px 16px; font-weight: 600; font-size: 15px; text-align: left;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    box-shadow: 0 3px 0 var(--ink-deep); transition: transform .08s, box-shadow .08s;
+  }
+  .lib-open small { font-weight: 500; opacity: .7; font-size: 13px; }
+  .lib-open:active, .dice:active { transform: translateY(3px); box-shadow: none; }
+  .dice {
+    border: none; background: var(--butter); border-radius: 18px; padding: 0 16px;
+    font-size: 22px; box-shadow: 0 3px 0 var(--butter-deep); transition: transform .08s, box-shadow .08s;
+  }
+
+  body.sheet-open { overflow: hidden; }
+  .sheet {
+    position: fixed; inset: 0; z-index: 50; display: none;
+    background: rgba(43, 27, 58, .35);
+  }
+  .sheet.open { display: block; }
+  .sheet-panel {
+    position: absolute; inset: 0; margin: 0 auto; max-width: 760px;
+    background: var(--bg); display: flex; flex-direction: column;
+    padding-top: env(safe-area-inset-top);
+    animation: slideUp .35s cubic-bezier(.2,1.2,.4,1) both;
+  }
+  @media (min-width: 800px) { .sheet-panel { inset: 24px auto; left: 0; right: 0; border-radius: 28px; overflow: hidden; box-shadow: 0 30px 80px -20px rgba(43,27,58,.5); } }
+  @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } }
+  .sheet-head { padding: 14px 16px 10px; display: flex; align-items: center; gap: 10px; }
+  .sheet-head h2 { font-family: 'Bagel Fat One', Rubik, sans-serif; font-weight: 400; font-size: 26px; line-height: 1; flex: 1; }
+  .sheet-head h2 span { color: var(--pink); }
+  .sheet-close {
+    width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--card);
+    font-size: 20px; line-height: 1; box-shadow: 0 3px 0 var(--blush);
+  }
+  .lib-search { margin: 0 16px; position: relative; }
+  .lib-search input {
+    width: 100%; border: 2px solid var(--blush); background: var(--card); border-radius: 18px;
+    padding: 11px 14px 11px 40px; font-size: 16px; min-height: 46px;
+  }
+  .lib-search input:focus { outline: none; border-color: var(--pink); }
+  .lib-search::before { content: '🔍'; position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 16px; }
+  .lib-tags { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 12px 16px 10px; flex: none; }
+  .lib-tags::-webkit-scrollbar { display: none; }
+  .lib-tag {
+    flex: none; border: none; background: var(--card); border-radius: var(--bubble);
+    padding: 8px 12px; font-weight: 600; font-size: 14px; white-space: nowrap;
+    box-shadow: 0 3px 0 var(--blush);
+  }
+  .lib-tag small { color: var(--muted); font-weight: 500; margin-left: 3px; }
+  .lib-tag.active { background: var(--ink); color: #fff; border-radius: var(--bubble-sent); box-shadow: 0 3px 0 var(--ink-deep); }
+  .lib-tag.active small { color: rgba(255,255,255,.65); }
+  .lib-count { padding: 0 18px 8px; font-size: 13px; color: var(--muted); font-weight: 500; }
+  .lib-list { flex: 1; overflow-y: auto; padding: 4px 16px calc(24px + env(safe-area-inset-bottom)); display: grid; gap: 12px; align-content: start; }
+  @media (min-width: 600px) { .lib-list { grid-template-columns: 1fr 1fr; } }
+  .lib-card {
+    border: none; text-align: left; background: var(--card); border-radius: 22px 22px 22px 8px;
+    padding: 13px 14px; box-shadow: 0 4px 0 var(--blush); display: flex; flex-direction: column; gap: 7px;
+    transition: transform .08s, box-shadow .08s;
+  }
+  .lib-card:active { transform: translateY(4px); box-shadow: none; }
+  .lib-card .top { display: flex; align-items: center; gap: 8px; }
+  .lib-card .top i { width: 12px; height: 12px; border-radius: 4px; flex: none; }
+  .lib-card b { font-size: 15.5px; font-weight: 600; line-height: 1.25; }
+  .lib-card .peek { font-size: 13px; color: var(--muted); line-height: 1.4; min-width: 0; }
+  .lib-card .peek div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lib-card .peek em { font-style: normal; color: var(--ink); font-weight: 500; }
+  .lib-card .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .lib-card .chips span { font-size: 11.5px; background: var(--blush-soft); border-radius: 8px; padding: 2px 7px; color: var(--ink); }
+  .lib-empty { text-align: center; color: var(--muted); padding: 40px 10px; grid-column: 1 / -1; }
+  .lib-loading { text-align: center; color: var(--muted); padding: 40px; grid-column: 1 / -1; }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
@@ -323,6 +396,10 @@
         <div class="card">
           <h3>Try an example</h3>
           <div class="examples" id="examples"></div>
+          <div class="lib-actions">
+            <button class="lib-open" id="libOpen">📚 Browse the chat library <small>500+ chats</small></button>
+            <button class="dice" id="libRandom" aria-label="Random chat from the library">🎲</button>
+          </div>
         </div>
         <div class="card">
           <h3>Your chat</h3>
@@ -443,6 +520,20 @@
         </div>
       </div>
     </section>
+  </div>
+</div>
+
+<div class="sheet" id="libSheet" aria-hidden="true">
+  <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="libTitle">
+    <div class="sheet-head">
+      <h2 id="libTitle">chat <span>library</span></h2>
+      <button class="dice" id="libRandom2" aria-label="Random chat">🎲</button>
+      <button class="sheet-close" id="libClose" aria-label="Close">✕</button>
+    </div>
+    <label class="lib-search"><input id="libSearch" type="search" placeholder="Search chats, people, topics…" autocomplete="off"></label>
+    <div class="lib-tags" id="libTags"></div>
+    <div class="lib-count" id="libCount"></div>
+    <div class="lib-list" id="libList"><div class="lib-loading">Loading chats…</div></div>
   </div>
 </div>
 
@@ -2255,6 +2346,149 @@ function renderExamples() {
   }
 }
 
+/* =====================================================================
+   Chat library (library.js, loaded on first use)
+   ===================================================================== */
+const LIB_TAGS = {
+  history: '🏛️ History', celebs: '⭐ Famous faces', news: '📰 In the news', traditions: '🎉 Traditions',
+  culture: '🌍 Culture clash', family: '👪 Family', friends: '🍻 Friends', dating: '💘 Dating',
+  work: '💼 Work', school: '🎓 School', tech: '🤖 Tech', food: '🍕 Food', sport: '⚽ Sport',
+  travel: '✈️ Travel', pets: '🐾 Pets', fantasy: '🐉 Myths & fantasy',
+};
+const LIB_APPS = { w: 'whatsapp', t: 'telegram', m: 'messenger', i: 'imessage', s: 'signal' };
+const lib = { items: null, promise: null, tag: '', query: '', shown: 0, matches: [], observer: null };
+
+function loadLibrary() {
+  if (lib.promise) return lib.promise;
+  lib.promise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'library.js';
+    s.onload = () => {
+      lib.items = (window.CHAT_LIBRARY || []).map((c, id) => ({
+        id, title: c.t, tags: c.g.split(','), app: LIB_APPS[c.a] || 'whatsapp', me: c.me, text: c.x,
+        hay: (c.t + '\n' + c.x).toLowerCase(),
+      }));
+      resolve(lib.items);
+    };
+    s.onerror = () => { lib.promise = null; reject(new Error('Could not load the chat library.')); };
+    document.head.appendChild(s);
+  });
+  return lib.promise;
+}
+
+function loadChat(c) {
+  state.example = ''; state.me = c.me; state.app = c.app; state.title = '';
+  $('transcript').value = c.text;
+  $('chatTitle').value = '';
+  renderExamples(); syncSegs();
+  rebuild(false);
+  setPlaying(true);
+}
+
+function openLibrary() {
+  $('libSheet').classList.add('open');
+  $('libSheet').setAttribute('aria-hidden', 'false');
+  document.body.classList.add('sheet-open');
+  loadLibrary().then(() => { renderLibTags(); filterLibrary(); })
+    .catch(e => { $('libList').innerHTML = `<div class="lib-empty">${e.message}</div>`; });
+}
+function closeLibrary() {
+  $('libSheet').classList.remove('open');
+  $('libSheet').setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('sheet-open');
+}
+
+function renderLibTags() {
+  const counts = {};
+  for (const c of lib.items) for (const g of c.tags) counts[g] = (counts[g] || 0) + 1;
+  const box = $('libTags');
+  box.innerHTML = '';
+  const add = (key, label, n) => {
+    const b = document.createElement('button');
+    b.className = 'lib-tag' + (lib.tag === key ? ' active' : '');
+    b.textContent = label;
+    const sm = document.createElement('small'); sm.textContent = n; b.appendChild(sm);
+    b.onclick = () => { lib.tag = key; renderLibTags(); filterLibrary(); $('libList').scrollTop = 0; };
+    box.appendChild(b);
+  };
+  add('', '✨ All', lib.items.length);
+  for (const [key, label] of Object.entries(LIB_TAGS)) if (counts[key]) add(key, label, counts[key]);
+}
+
+function filterLibrary() {
+  const q = lib.query.trim().toLowerCase();
+  const words = q ? q.split(/\s+/) : [];
+  lib.matches = lib.items.filter(c => (!lib.tag || c.tags.includes(lib.tag)) && words.every(w => c.hay.includes(w)));
+  const n = lib.matches.length;
+  $('libCount').textContent = `${n} chat${n === 1 ? '' : 's'}${lib.tag ? ' in ' + LIB_TAGS[lib.tag].replace(/^\S+\s/, '') : ''}${q ? ` matching “${lib.query.trim()}”` : ''}`;
+  $('libList').innerHTML = n ? '' : '<div class="lib-empty">No chats found. Try another word or tag.</div>';
+  lib.shown = 0;
+  renderMoreLib();
+}
+
+function libCard(c) {
+  const b = document.createElement('button');
+  b.className = 'lib-card';
+  const top = document.createElement('div'); top.className = 'top';
+  const dot = document.createElement('i'); dot.style.background = APPS[c.app].dot;
+  const title = document.createElement('b'); title.textContent = c.title;
+  top.append(dot, title);
+  const peek = document.createElement('div'); peek.className = 'peek';
+  for (const line of c.text.split('\n').filter(l => !/^\(/.test(l)).slice(0, 2)) {
+    const i = line.indexOf(':');
+    const row = document.createElement('div');
+    const who = document.createElement('em'); who.textContent = line.slice(0, i) + ':';
+    row.append(who, document.createTextNode(line.slice(i + 1)));
+    peek.appendChild(row);
+  }
+  const chips = document.createElement('div'); chips.className = 'chips';
+  for (const g of c.tags) { const s = document.createElement('span'); s.textContent = LIB_TAGS[g] || g; chips.appendChild(s); }
+  b.append(top, peek, chips);
+  b.onclick = () => { closeLibrary(); loadChat(c); try { history.replaceState(null, '', '#chat=' + c.id); } catch (e) {} window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  return b;
+}
+
+function renderMoreLib() {
+  const list = $('libList');
+  const next = lib.matches.slice(lib.shown, lib.shown + 40);
+  const old = list.querySelector('.lib-sentinel');
+  if (old) old.remove();
+  for (const c of next) list.appendChild(libCard(c));
+  lib.shown += next.length;
+  if (lib.shown < lib.matches.length) {
+    const s = document.createElement('div');
+    s.className = 'lib-sentinel';
+    s.style.height = '1px';
+    list.appendChild(s);
+    if (!lib.observer) lib.observer = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) renderMoreLib(); }, { root: list, rootMargin: '400px' });
+    lib.observer.observe(s);
+  }
+}
+
+async function randomChat() {
+  try {
+    await loadLibrary();
+    const pool = $('libSheet').classList.contains('open') && lib.matches.length ? lib.matches : lib.items;
+    const c = pool[Math.floor(Math.random() * pool.length)];
+    closeLibrary();
+    loadChat(c);
+    try { history.replaceState(null, '', '#chat=' + c.id); } catch (e) {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) { showError(e.message); }
+}
+
+$('libOpen').onclick = openLibrary;
+$('libClose').onclick = closeLibrary;
+$('libRandom').onclick = randomChat;
+$('libRandom2').onclick = randomChat;
+$('libSheet').addEventListener('click', e => { if (e.target === $('libSheet')) closeLibrary(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('libSheet').classList.contains('open')) closeLibrary(); });
+let libDebounce = 0;
+$('libSearch').addEventListener('input', e => {
+  clearTimeout(libDebounce);
+  libDebounce = setTimeout(() => { lib.query = e.target.value; if (lib.items) filterLibrary(); }, 150);
+});
+
 function renderWho() {
   const box = $('who');
   box.innerHTML = '';
@@ -2613,6 +2847,15 @@ window.addEventListener('resize', () => { sizePreview(); drawPreview(); });
   } catch (e) {}
   measureCache.clear();
   rebuild(false);
+  // Shared link to a library chat: #chat=123
+  const hm = /#chat=(\d+)/.exec(location.hash);
+  if (hm) {
+    try {
+      const items = await loadLibrary();
+      const c = items[+hm[1]];
+      if (c) { loadChat(c); setPlaying(false); }
+    } catch (e) {}
+  }
   // Show a representative frame rather than an empty chat.
   player.t = Math.min(scene.duration, (scene.msgs[Math.min(3, scene.msgs.length - 1)] || { appear: 0 }).appear + 400);
   drawPreview();
