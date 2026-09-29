@@ -1,0 +1,2866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FFF4F8">
+<title>Faux Reel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Bagel+Fat+One&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #FFF4F8;
+    --ink: #2B1B3A;
+    --ink-deep: #120A19;
+    --muted: #8A6F99;
+    --card: #FFFFFF;
+    --blush: #F3D5E3;
+    --blush-soft: #FBE7F0;
+    --pink: #FF5FA2;
+    --pink-deep: #D63F82;
+    --mint: #C9F7D8;
+    --mint-deep: #7FD69C;
+    --butter: #FFE9A8;
+    --butter-deep: #E8C85A;
+    --sky: #D9F2FF;
+    --danger: #E0245E;
+    --bubble: 20px 20px 20px 6px;
+    --bubble-sent: 20px 20px 6px 20px;
+  }
+
+  html, body { background: var(--bg); color: var(--ink); }
+  body {
+    font-family: Rubik, system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom);
+    overflow-x: hidden;
+  }
+  /* soft candy blobs behind everything */
+  body::before, body::after {
+    content: ''; position: fixed; border-radius: 50%; z-index: -1; pointer-events: none;
+  }
+  body::before { width: 340px; height: 340px; background: #FFD6E8; top: -150px; right: -120px; }
+  body::after { width: 260px; height: 260px; background: var(--sky); bottom: -90px; left: -120px; }
+
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+
+  /* pressable "toy key" feel shared by buttons */
+  .press { box-shadow: 0 3px 0 var(--blush); transition: transform .08s, box-shadow .08s; }
+  .press:active { transform: translateY(3px); box-shadow: 0 0 0 var(--blush); }
+
+  .app { max-width: 1180px; margin: 0 auto; padding: 0 16px 36px; }
+
+  /* ---------- Top bar ---------- */
+  .topbar { padding: 16px 0 12px; }
+  .brand {
+    font-family: 'Bagel Fat One', Rubik, sans-serif;
+    font-size: 34px; line-height: 1; letter-spacing: .01em; color: var(--ink);
+  }
+  .brand span { color: var(--pink); }
+  .hello {
+    display: inline-block; margin-top: 8px;
+    background: var(--card); border-radius: var(--bubble);
+    padding: 7px 13px; font-size: 14px; box-shadow: 0 3px 0 var(--blush);
+    animation: pop .5s cubic-bezier(.3,1.6,.5,1) .15s both;
+  }
+  @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.9); } }
+
+  /* ---------- Layout ---------- */
+  .layout { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+  .layout > * { min-width: 0; }
+  @media (min-width: 900px) {
+    .layout { grid-template-columns: minmax(340px, 440px) 1fr; align-items: start; gap: 28px; }
+    .stage { position: sticky; top: 12px; }
+  }
+
+  /* ---------- Stage ---------- */
+  .stage {
+    background: var(--card);
+    border-radius: 28px;
+    padding: 14px 14px 12px;
+    box-shadow: 0 6px 0 var(--blush);
+  }
+  .canvas-wrap {
+    position: relative;
+    display: flex; justify-content: center; align-items: center;
+    height: min(56vh, 640px);
+  }
+  @media (min-width: 900px) { .canvas-wrap { height: min(74vh, 760px); } }
+  #preview {
+    display: block; max-width: 100%; max-height: 100%;
+    border-radius: 18px; cursor: pointer;
+    box-shadow: 0 14px 34px -16px rgba(43, 27, 58, .45);
+  }
+  .big-play {
+    position: absolute; inset: 0; margin: auto;
+    width: 76px; height: 76px; border-radius: 50%;
+    border: none; background: var(--pink);
+    display: grid; place-items: center;
+    box-shadow: 0 5px 0 var(--pink-deep), 0 14px 30px -8px rgba(214, 63, 130, .6);
+    transition: opacity .2s, transform .2s;
+  }
+  .big-play svg { width: 32px; height: 32px; margin-left: 4px; fill: #fff; }
+  .big-play:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--pink-deep); }
+  .big-play.hidden { opacity: 0; transform: scale(.6); pointer-events: none; }
+
+  .transport { display: flex; align-items: center; gap: 10px; padding-top: 12px; }
+  .icon-btn {
+    width: 46px; height: 46px; border-radius: 50%; flex: none; border: none;
+    background: var(--pink); display: grid; place-items: center;
+    box-shadow: 0 4px 0 var(--pink-deep);
+    transition: transform .08s, box-shadow .08s;
+  }
+  .icon-btn svg { width: 22px; height: 22px; fill: #fff; }
+  .icon-btn:active { transform: translateY(4px); box-shadow: 0 0 0 var(--pink-deep); }
+  .icon-btn.soft { width: 38px; height: 38px; background: var(--blush-soft); box-shadow: 0 3px 0 var(--blush); }
+  .icon-btn.soft svg { width: 18px; height: 18px; fill: var(--ink); }
+  .icon-btn.soft:active { box-shadow: 0 0 0 var(--blush); }
+
+  /* per-message progress: one segment per message, width ∝ its share of the timeline */
+  .reel { position: relative; flex: 1; height: 30px; display: flex; align-items: center; }
+  .segs { display: flex; gap: 4px; width: 100%; height: 10px; }
+  .segs i { position: relative; flex: 1 1 0; min-width: 3px; border-radius: 6px; background: var(--blush); overflow: hidden; }
+  .segs i b { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--pink); border-radius: 6px; }
+  .segs i.mine b { background: var(--mint-deep); }
+  .scrub { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; margin: 0; }
+  .clock { font-variant-numeric: tabular-nums; font-size: 12.5px; font-weight: 500; color: var(--muted); min-width: 70px; text-align: right; }
+
+  /* ---------- Tabs: chat bubbles, the active one is "sent" ---------- */
+  .tabs {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    position: sticky; top: 0; z-index: 5;
+    padding: 8px 0 10px; background: var(--bg);
+  }
+  @media (max-width: 899px) { .tabs { top: env(safe-area-inset-top); } }
+  .tab {
+    border: none; background: var(--card); padding: 11px 6px;
+    border-radius: var(--bubble); font-weight: 600; font-size: 15px;
+    box-shadow: 0 3px 0 var(--blush);
+    transition: transform .08s, box-shadow .08s, border-radius .2s;
+  }
+  .tab:active { transform: translateY(3px); box-shadow: none; }
+  .tab.active { background: var(--ink); color: #fff; border-radius: var(--bubble-sent); box-shadow: 0 3px 0 var(--ink-deep); }
+
+  .panel { display: none; padding-top: 6px; }
+  .panel.active { display: block; animation: pop .35s cubic-bezier(.3,1.4,.5,1) both; }
+
+  .card {
+    background: var(--card); border-radius: 24px; padding: 16px;
+    margin-bottom: 14px; box-shadow: 0 5px 0 var(--blush);
+  }
+  .card h3 { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 10px; }
+  .hint { font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .hint code { background: var(--blush-soft); padding: 1px 6px; border-radius: 6px; color: var(--ink); font-size: 12.5px; }
+
+  .examples { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 2px 16px 8px; }
+  .examples::-webkit-scrollbar { display: none; }
+  .ex {
+    flex: none; border: none; background: var(--blush-soft);
+    border-radius: var(--bubble); padding: 10px 14px; text-align: left; min-width: 150px;
+    box-shadow: 0 3px 0 var(--blush); transition: transform .08s, box-shadow .08s;
+  }
+  .ex:active { transform: translateY(3px); box-shadow: none; }
+  .ex b { display: block; font-size: 15px; font-weight: 600; }
+  .ex span { font-size: 12.5px; color: var(--muted); }
+  .ex.active { background: var(--mint); box-shadow: 0 3px 0 var(--mint-deep); border-radius: var(--bubble-sent); }
+
+  textarea {
+    width: 100%; min-height: 220px; resize: vertical;
+    background: var(--bg); border: 2px solid var(--blush); border-radius: 18px;
+    padding: 12px 14px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 13.5px; line-height: 1.55;
+  }
+  textarea:focus, input:focus, select:focus { outline: none; border-color: var(--pink); }
+  button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
+
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .field { flex: 1 1 140px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .field label { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .field input, .field select {
+    background: var(--bg); border: 2px solid var(--blush); border-radius: 14px;
+    padding: 9px 12px; width: 100%; min-height: 44px; appearance: none; -webkit-appearance: none;
+  }
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23FF5FA2' stroke-width='2.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
+  }
+
+  /* ---------- Choice pills ---------- */
+  .seg { display: flex; flex-wrap: wrap; gap: 8px; }
+  .seg button {
+    border: none; background: var(--blush-soft);
+    padding: 9px 14px; border-radius: 16px; font-weight: 600; font-size: 14.5px;
+    display: inline-flex; align-items: center; gap: 8px; min-height: 42px;
+    box-shadow: 0 3px 0 var(--blush); transition: transform .08s, box-shadow .08s, background .15s;
+  }
+  .seg button:active { transform: translateY(3px); box-shadow: none; }
+  .seg button.active { background: var(--mint); box-shadow: 0 3px 0 var(--mint-deep); }
+  .seg button:disabled { opacity: .4; cursor: not-allowed; }
+  .seg .dot { width: 18px; height: 18px; border-radius: 6px; flex: none; }
+
+  /* speed as tilted stickers */
+  .seg.stickers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .seg.stickers button { justify-content: center; flex-direction: column; gap: 0; padding: 8px 4px; border-radius: 16px; font-size: 13.5px; line-height: 1.2; }
+  .seg.stickers button .e { font-size: 20px; }
+  .seg.stickers button:nth-child(1) { transform: rotate(-2deg); }
+  .seg.stickers button:nth-child(2) { transform: rotate(1.5deg); }
+  .seg.stickers button:nth-child(3) { transform: rotate(-1deg); }
+  .seg.stickers button:nth-child(4) { transform: rotate(2deg); }
+  .seg.stickers button:active { transform: translateY(3px); }
+  .seg.stickers button.active { background: var(--butter); box-shadow: 0 3px 0 var(--butter-deep); }
+
+  .swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+  .sw { width: 40px; height: 40px; border-radius: 14px 14px 14px 4px; border: 3px solid #fff; box-shadow: 0 3px 0 var(--blush); }
+  .sw.active { outline: 3px solid var(--ink); outline-offset: 1px; }
+
+  .toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 0; font-weight: 500; }
+  .toggle input { appearance: none; -webkit-appearance: none; width: 52px; height: 30px; border-radius: 20px; background: var(--blush); position: relative; transition: background .2s; flex: none; cursor: pointer; }
+  .toggle input::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 2px 0 rgba(43,27,58,.15); transition: transform .25s cubic-bezier(.3,1.6,.5,1); }
+  .toggle input:checked { background: var(--pink); }
+  .toggle input:checked::after { transform: translateX(22px); }
+  .toggle + .toggle { border-top: 2px dashed var(--blush-soft); margin-top: 8px; padding-top: 12px; }
+
+  /* ---------- Export ---------- */
+  .cta {
+    width: 100%; border: none; padding: 16px;
+    border-radius: 24px 24px 24px 8px;
+    background: var(--pink); color: #fff;
+    font-family: 'Bagel Fat One', Rubik, sans-serif; font-size: 22px; letter-spacing: .02em;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 6px 0 var(--pink-deep);
+    transition: transform .08s, box-shadow .08s;
+  }
+  .cta:active { transform: translateY(6px); box-shadow: 0 0 0 var(--pink-deep); }
+  .cta:disabled { opacity: .55; }
+  .ghost {
+    border: none; background: var(--blush-soft);
+    border-radius: 18px; padding: 13px 14px; font-weight: 600;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    text-decoration: none; color: var(--ink); flex: 1;
+    box-shadow: 0 3px 0 var(--blush);
+  }
+  .ghost svg { width: 18px; height: 18px; fill: currentColor; }
+  .ghost.primary { background: var(--mint); box-shadow: 0 3px 0 var(--mint-deep); }
+
+  .progress { margin-top: 16px; display: none; }
+  .progress.show { display: block; }
+  .bar { height: 14px; border-radius: 10px; background: var(--blush); overflow: hidden; }
+  .bar i {
+    display: block; height: 100%; width: 0; border-radius: 10px;
+    background: repeating-linear-gradient(-45deg, var(--pink) 0 10px, #FF86BA 10px 20px);
+    background-size: 28px 28px; animation: stripes .6s linear infinite; transition: width .15s;
+  }
+  @keyframes stripes { to { background-position: 28px 0; } }
+  .progress-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 13px; color: var(--muted); }
+  .link-btn { background: none; border: none; color: var(--danger); font-weight: 600; font-size: 13px; }
+
+  .result { display: none; margin-top: 16px; }
+  .result.show { display: block; animation: pop .4s cubic-bezier(.3,1.5,.5,1) both; }
+  .result-media { background: var(--card); border-radius: 24px; padding: 12px; display: flex; justify-content: center; box-shadow: 0 5px 0 var(--blush); }
+  .result-media img, .result-media video { max-height: 50vh; max-width: 100%; border-radius: 14px; display: block; }
+  .result-meta { font-size: 13px; color: var(--muted); margin: 10px 4px; }
+  .result-actions { display: flex; gap: 10px; }
+
+  .error { color: var(--danger); font-size: 13.5px; margin-top: 12px; display: none; }
+  .error.show { display: block; }
+
+  .who { display: flex; flex-wrap: wrap; gap: 8px; }
+  .who button {
+    border: none; background: var(--blush-soft); border-radius: var(--bubble);
+    padding: 8px 14px; font-size: 14.5px; font-weight: 500; box-shadow: 0 3px 0 var(--blush);
+  }
+  .who button.active { background: var(--ink); color: #fff; font-weight: 600; border-radius: var(--bubble-sent); box-shadow: 0 3px 0 var(--ink-deep); }
+
+  .stats { font-size: 13px; color: var(--muted); margin-top: 8px; font-weight: 500; }
+
+  .rec-canvas { position: fixed; left: -10000px; top: 0; pointer-events: none; }
+
+  /* ---------- Library ---------- */
+  .lib-actions { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 12px; }
+  .lib-open {
+    border: none; background: var(--ink); color: #fff; border-radius: var(--bubble-sent);
+    padding: 12px 16px; font-weight: 600; font-size: 15px; text-align: left;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    box-shadow: 0 3px 0 var(--ink-deep); transition: transform .08s, box-shadow .08s;
+  }
+  .lib-open small { font-weight: 500; opacity: .7; font-size: 13px; }
+  .lib-open:active, .dice:active { transform: translateY(3px); box-shadow: none; }
+  .dice {
+    border: none; background: var(--butter); border-radius: 18px; padding: 0 16px;
+    font-size: 22px; box-shadow: 0 3px 0 var(--butter-deep); transition: transform .08s, box-shadow .08s;
+  }
+
+  body.sheet-open { overflow: hidden; }
+  .sheet {
+    position: fixed; inset: 0; z-index: 50; display: none;
+    background: rgba(43, 27, 58, .35);
+  }
+  .sheet.open { display: block; }
+  .sheet-panel {
+    position: absolute; inset: 0; margin: 0 auto; max-width: 760px;
+    background: var(--bg); display: flex; flex-direction: column;
+    padding-top: env(safe-area-inset-top);
+    animation: slideUp .35s cubic-bezier(.2,1.2,.4,1) both;
+  }
+  @media (min-width: 800px) { .sheet-panel { inset: 24px auto; left: 0; right: 0; border-radius: 28px; overflow: hidden; box-shadow: 0 30px 80px -20px rgba(43,27,58,.5); } }
+  @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } }
+  .sheet-head { padding: 14px 16px 10px; display: flex; align-items: center; gap: 10px; }
+  .sheet-head h2 { font-family: 'Bagel Fat One', Rubik, sans-serif; font-weight: 400; font-size: 26px; line-height: 1; flex: 1; }
+  .sheet-head h2 span { color: var(--pink); }
+  .sheet-close {
+    width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--card);
+    font-size: 20px; line-height: 1; box-shadow: 0 3px 0 var(--blush);
+  }
+  .lib-search { margin: 0 16px; position: relative; }
+  .lib-search input {
+    width: 100%; border: 2px solid var(--blush); background: var(--card); border-radius: 18px;
+    padding: 11px 14px 11px 40px; font-size: 16px; min-height: 46px;
+  }
+  .lib-search input:focus { outline: none; border-color: var(--pink); }
+  .lib-search::before { content: '🔍'; position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 16px; }
+  .lib-tags { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 12px 16px 10px; flex: none; }
+  .lib-tags::-webkit-scrollbar { display: none; }
+  .lib-tag {
+    flex: none; border: none; background: var(--card); border-radius: var(--bubble);
+    padding: 8px 12px; font-weight: 600; font-size: 14px; white-space: nowrap;
+    box-shadow: 0 3px 0 var(--blush);
+  }
+  .lib-tag small { color: var(--muted); font-weight: 500; margin-left: 3px; }
+  .lib-tag.active { background: var(--ink); color: #fff; border-radius: var(--bubble-sent); box-shadow: 0 3px 0 var(--ink-deep); }
+  .lib-tag.active small { color: rgba(255,255,255,.65); }
+  .lib-count { padding: 0 18px 8px; font-size: 13px; color: var(--muted); font-weight: 500; }
+  .lib-list { flex: 1; overflow-y: auto; padding: 4px 16px calc(24px + env(safe-area-inset-bottom)); display: grid; gap: 12px; align-content: start; }
+  @media (min-width: 600px) { .lib-list { grid-template-columns: 1fr 1fr; } }
+  .lib-card {
+    border: none; text-align: left; background: var(--card); border-radius: 22px 22px 22px 8px;
+    padding: 13px 14px; box-shadow: 0 4px 0 var(--blush); display: flex; flex-direction: column; gap: 7px;
+    transition: transform .08s, box-shadow .08s;
+  }
+  .lib-card:active { transform: translateY(4px); box-shadow: none; }
+  .lib-card .top { display: flex; align-items: center; gap: 8px; }
+  .lib-card .top i { width: 12px; height: 12px; border-radius: 4px; flex: none; }
+  .lib-card b { font-size: 15.5px; font-weight: 600; line-height: 1.25; }
+  .lib-card .peek { font-size: 13px; color: var(--muted); line-height: 1.4; min-width: 0; }
+  .lib-card .peek div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lib-card .peek em { font-style: normal; color: var(--ink); font-weight: 500; }
+  .lib-card .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .lib-card .chips span { font-size: 11.5px; background: var(--blush-soft); border-radius: 8px; padding: 2px 7px; color: var(--ink); }
+  .lib-empty { text-align: center; color: var(--muted); padding: 40px 10px; grid-column: 1 / -1; }
+  .lib-loading { text-align: center; color: var(--muted); padding: 40px; grid-column: 1 / -1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">faux<span>reel</span></div>
+    <div class="hello">paste a chat, get a video 🎬</div>
+  </header>
+
+  <div class="layout">
+    <section class="stage">
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="preview" aria-label="Chat animation preview"></canvas>
+        <button class="big-play" id="bigPlay" aria-label="Play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+      </div>
+      <div class="transport">
+        <button class="icon-btn" id="playBtn" aria-label="Play or pause"></button>
+        <button class="icon-btn soft" id="restartBtn" aria-label="Restart"><svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg></button>
+        <div class="reel">
+          <div class="segs" id="segs"></div>
+          <input class="scrub" id="scrub" type="range" min="0" max="1000" value="0" step="1" aria-label="Scrub">
+        </div>
+        <span class="clock" id="clock">0:00 / 0:00</span>
+      </div>
+    </section>
+
+    <section>
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="script">Script</button>
+        <button class="tab" data-tab="style">Style</button>
+        <button class="tab" data-tab="export">Export</button>
+      </nav>
+
+      <!-- Script -->
+      <div class="panel active" id="panel-script">
+        <div class="card">
+          <h3>Try an example</h3>
+          <div class="examples" id="examples"></div>
+          <div class="lib-actions">
+            <button class="lib-open" id="libOpen">📚 Browse the chat library <small>500+ chats</small></button>
+            <button class="dice" id="libRandom" aria-label="Random chat from the library">🎲</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Your chat</h3>
+          <textarea id="transcript" spellcheck="false" placeholder="Alex: hey, you up?&#10;Sam: always 😅"></textarea>
+          <p class="hint">One message per line as <code>Name: message</code>. Lines without a name continue the previous message. Add <code>(pause 3)</code> on its own line for a dramatic pause. WhatsApp “Export chat” text works too, timestamps and all.</p>
+          <p class="stats" id="stats"></p>
+        </div>
+        <div class="card">
+          <h3>Whose phone is this?</h3>
+          <div class="who" id="who"></div>
+          <p class="hint">Their messages show up on the right, in the “sent” colour.</p>
+          <div class="row" style="margin-top:12px">
+            <div class="field">
+              <label for="chatTitle">Chat name</label>
+              <input id="chatTitle" type="text" placeholder="Auto" maxlength="40">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Style -->
+      <div class="panel" id="panel-style">
+        <div class="card">
+          <h3>Which app?</h3>
+          <div class="seg apps" id="appSeg"></div>
+        </div>
+        <div class="card">
+          <h3>Which phone?</h3>
+          <div class="seg" id="deviceSeg">
+            <button data-v="ios">iPhone</button>
+            <button data-v="android">Android</button>
+          </div>
+          <div style="height:12px"></div>
+          <div class="seg" id="themeSeg">
+            <button data-v="light">☀️ Light</button>
+            <button data-v="dark">🌙 Dark</button>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <div class="field">
+              <label for="startTime">Clock starts at</label>
+              <input id="startTime" type="time" value="21:37">
+            </div>
+            <div class="field">
+              <label for="battery">Battery</label>
+              <select id="battery">
+                <option value="92">92%</option>
+                <option value="64">64%</option>
+                <option value="31">31%</option>
+                <option value="8">8% 🪫</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="clock12">Time format</label>
+              <select id="clock12">
+                <option value="24">24-hour</option>
+                <option value="12">12-hour</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>How fast?</h3>
+          <div class="seg stickers" id="speedSeg">
+            <button data-v="slow"><span class="e">🐢</span>chill</button>
+            <button data-v="normal"><span class="e">🙂</span>normal</button>
+            <button data-v="fast"><span class="e">⚡</span>fast</button>
+            <button data-v="turbo"><span class="e">🚀</span>turbo</button>
+          </div>
+          <div style="height:10px"></div>
+          <label class="toggle"><span>Type out my messages in the input box</span><input type="checkbox" id="typeOut" checked></label>
+          <label class="toggle"><span>Show “typing…” before their messages</span><input type="checkbox" id="showTyping" checked></label>
+        </div>
+        <div class="card">
+          <h3>How should it be framed?</h3>
+          <div class="seg" id="frameSeg">
+            <button data-v="none">Screen only</button>
+            <button data-v="phone">Phone on backdrop</button>
+          </div>
+          <div id="backdropBox" style="margin-top:12px">
+            <div class="swatches" id="swatches"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export -->
+      <div class="panel" id="panel-export">
+        <div class="card">
+          <h3>What kind of file?</h3>
+          <div class="seg" id="formatSeg">
+            <button data-v="gif">GIF</button>
+            <button data-v="mp4">MP4</button>
+            <button data-v="webm">WebM</button>
+          </div>
+          <p class="hint" id="formatHint"></p>
+        </div>
+        <div class="card">
+          <h3>How big?</h3>
+          <div class="seg" id="sizeSeg">
+            <button data-v="s">Small</button>
+            <button data-v="m">Medium</button>
+            <button data-v="l">Large</button>
+          </div>
+          <p class="hint" id="sizeHint"></p>
+        </div>
+        <button class="cta" id="exportBtn"><span id="exportLabel">make my gif!</span></button>
+        <div class="progress" id="progress">
+          <div class="bar"><i id="progressBar"></i></div>
+          <div class="progress-row"><span id="progressText">Rendering…</span><button class="link-btn" id="cancelBtn">Cancel</button></div>
+        </div>
+        <p class="error" id="error"></p>
+        <div class="result" id="result">
+          <div class="result-media" id="resultMedia"></div>
+          <p class="result-meta" id="resultMeta"></p>
+          <div class="result-actions">
+            <a class="ghost primary" id="downloadBtn" download><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>Download</a>
+            <button class="ghost" id="shareBtn" hidden><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>Share</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="sheet" id="libSheet" aria-hidden="true">
+  <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="libTitle">
+    <div class="sheet-head">
+      <h2 id="libTitle">chat <span>library</span></h2>
+      <button class="dice" id="libRandom2" aria-label="Random chat">🎲</button>
+      <button class="sheet-close" id="libClose" aria-label="Close">✕</button>
+    </div>
+    <label class="lib-search"><input id="libSearch" type="search" placeholder="Search chats, people, topics…" autocomplete="off"></label>
+    <div class="lib-tags" id="libTags"></div>
+    <div class="lib-count" id="libCount"></div>
+    <div class="lib-list" id="libList"><div class="lib-loading">Loading chats…</div></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* =====================================================================
+   Example transcripts
+   ===================================================================== */
+const EXAMPLES = [
+  {
+    id: 'pizza', title: 'Pizza night', sub: '1-on-1 · friends', me: 'Sam', app: 'whatsapp',
+    text:
+`Jess: are we still on for tonight??
+Sam: obviously
+Sam: pizza or pizza
+Jess: hmm tough one 🤔
+Jess: pizza
+Sam: correct answer 🍕
+Jess: pineapple?
+(pause 1.5)
+Sam: I'm going to pretend you didn't ask that
+Jess: 🍍🍍🍍
+Sam: blocked
+Jess: see you at 8 😘
+Sam: 8 it is. bring the good dip`
+  },
+  {
+    id: 'family', title: 'Family group', sub: 'group · 4 people', me: 'Me', app: 'whatsapp',
+    text:
+`Mum: Hello everyone this is Mum
+Dad: We know. It says your name
+Mum: How do I make the little yellow faces
+Emma: which ones mum
+Mum: The one that is crying but happy
+Me: 😂
+Mum: YES THAT ONE 😂😂😂😂😂
+Mum: Thank you darling
+Dad: Now she'll never stop
+Emma: dinner Sunday still happening?
+Mum: Yes roast at 1. Bring Tupperware 👍
+Me: I'll bring dessert
+Dad: Not the burnt one from last time
+Me: it was "caramelised" dad`
+  },
+  {
+    id: 'job', title: 'The job offer', sub: '1-on-1 · big news', me: 'You', app: 'imessage',
+    text:
+`Priya: did they call???
+You: they called
+Priya: AND?????
+(pause 2)
+You: I GOT IT 🎉
+Priya: NO WAY
+Priya: I KNEW IT
+Priya: I literally screamed on the bus
+You: haha the whole bus knows now
+Priya: the whole bus is happy for you
+Priya: drinks this weekend, my treat 🥂
+You: deal. couldn't have done it without the 11pm mock interviews tbh`
+  },
+  {
+    id: 'cat', title: 'Lost cat', sub: 'group · neighbours', me: 'Tom', app: 'telegram',
+    text:
+`Linda (No. 12): Has anyone seen a grey cat with one white paw? Answers to Biscuit
+Raj: Is Biscuit quite round
+Linda (No. 12): He is big boned
+Raj: I think Biscuit is currently asleep on my car
+Tom: can confirm, walked past, very round cat on a silver Golf
+Linda (No. 12): On my way!!!
+(pause 2)
+Linda (No. 12): Found him. He did not want to leave
+Raj: The car is warm, I don't blame him
+Tom: welcome home Biscuit 🐈‍⬛`
+  },
+  {
+    id: 'date', title: 'First date?', sub: '1-on-1 · nervous', me: 'Leo', app: 'messenger',
+    text:
+`Mia: so this is weird to ask over text but
+Mia: would you maybe want to get coffee sometime
+Leo: I was literally typing the exact same message
+Mia: no you weren't 😂
+Leo: I was!! I deleted it four times
+Mia: ok ok. Saturday?
+Leo: Saturday is perfect ☕
+Mia: it's a date then
+Leo: it's a date 😊`
+  },
+  {
+    id: 'dad', title: 'Tech support', sub: '1-on-1 · parents', me: 'Chris', app: 'signal',
+    text:
+`Dad: The internet is broken
+Chris: have you tried turning the router off and on again
+Dad: Which one is the router
+Chris: the black box with the blinking lights
+Dad: There are three black boxes
+Chris: the one that says router on it
+(pause 1.5)
+Dad: Ok it's working now
+Dad: What did you do
+Chris: I'm a professional dad 😎`
+  },
+];
+
+/* =====================================================================
+   Material-style icon paths (24×24)
+   ===================================================================== */
+const ICONS = {
+  back: 'M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z',
+  chevron: 'M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z',
+  chevronRight: 'M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z',
+  video: 'M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z',
+  call: 'M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z',
+  more: 'M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z',
+  send: 'M2.01 21L23 12 2.01 3 2 10l15 2-15 2z',
+  mic: 'M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z',
+  attach: 'M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z',
+  camera: 'M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8.2a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4z',
+  mood: 'M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z',
+  add: 'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z',
+  image: 'M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z',
+  thumb: 'M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.3c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z',
+  up: 'M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z',
+  sticker: 'M18 4H6C4.9 4 4 4.9 4 6v12c0 1.1.9 2 2 2h8l6-6V6c0-1.1-.9-2-2-2zm-4 14v-2c0-1.1.9-2 2-2h2l-4 4z',
+};
+const PATHS = {};
+function icon(name) { return PATHS[name] || (PATHS[name] = new Path2D(ICONS[name])); }
+function drawIcon(ctx, name, x, y, size, color) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(size / 24, size / 24);
+  ctx.fillStyle = color;
+  ctx.fill(icon(name));
+  ctx.restore();
+}
+
+/* =====================================================================
+   Transcript parsing
+   ===================================================================== */
+function parseClock(h, m, ampm) {
+  h = +h; m = +m;
+  if (ampm) {
+    const pm = /p/i.test(ampm);
+    if (h === 12) h = pm ? 12 : 0; else if (pm) h += 12;
+  }
+  return (h % 24) * 60 + (m % 60);
+}
+
+function validName(n) {
+  n = n.trim();
+  if (!n || n.length > 32) return false;
+  if (/^https?$/i.test(n)) return false;
+  if (n.split(/\s+/).length > 5) return false;
+  if (/^[\d\s.,:/-]+$/.test(n)) return false;
+  return true;
+}
+
+function parseTranscript(src) {
+  const lines = src.replace(/\r/g, '').replace(/[‎‏‪-‮]/g, '').split('\n');
+  // WhatsApp exports: "[12/03/2024, 14:02:11] Name: msg" or "12/03/2024, 14:02 - Name: msg"
+  const waRe = /^\[?\d{1,4}[/.-]\d{1,2}[/.-]\d{1,4},?\s+(\d{1,2})[:.](\d{2})(?:[:.]\d{2})?\s*([AaPp]\.?\s?[Mm]\.?)?\]?\s*(?:[-–]\s*)?(.*)$/;
+  const timeRe = /^\[(\d{1,2}):(\d{2})(?::\d{2})?\s*([AaPp][Mm])?\]\s*(.*)$/;
+  const speakerRe = /^([^:]{1,40}?)\s*:\s?(.*)$/;
+  const pauseRe = /^\(\s*(?:pause|wait)\s*(\d+(?:\.\d+)?)\s*s?\s*\)$/i;
+  const msgs = [];
+  let pendingPause = 0;
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (/^(#|\/\/)/.test(line)) continue;
+    const pm = pauseRe.exec(line);
+    if (pm) { pendingPause += Math.min(20, +pm[1]); continue; }
+    let time = null, rest = line, stamped = false;
+    let m = waRe.exec(line) || timeRe.exec(line);
+    if (m) { time = parseClock(m[1], m[2], m[3]); rest = m[4]; stamped = true; }
+    const sm = speakerRe.exec(rest);
+    if (sm && validName(sm[1]) && !/^\s*\/\//.test(sm[2])) {
+      msgs.push({ sender: sm[1].trim(), text: sm[2], time, pause: pendingPause });
+      pendingPause = 0;
+    } else if (stamped) {
+      continue; // system line ("Alex joined", "Messages are end-to-end encrypted")
+    } else if (msgs.length) {
+      const last = msgs[msgs.length - 1];
+      last.text = last.text ? last.text + '\n' + rest : rest;
+    }
+  }
+  const out = msgs.filter(m => m.text.trim().length).map(m => ({ ...m, text: m.text.trim() }));
+  const participants = [];
+  for (const m of out) if (!participants.includes(m.sender)) participants.push(m.sender);
+  return { messages: out, participants };
+}
+
+/* =====================================================================
+   Helpers
+   ===================================================================== */
+function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rng(seed) { let s = seed >>> 0 || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; }
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const ease = p => p < 0 ? 0 : p > 1 ? 1 : 1 - Math.pow(1 - p, 3);
+const easeOutBack = p => { p = clamp(p, 0, 1); const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+
+const segmenter = typeof Intl !== 'undefined' && Intl.Segmenter ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
+function graphemes(s) { return segmenter ? Array.from(segmenter.segment(s), x => x.segment) : Array.from(s); }
+
+const EMOJI_ONLY = /^(?:\p{Extended_Pictographic}|\p{Emoji_Modifier}|\p{Regional_Indicator}|‍|️|\s)+$/u;
+function isJumbo(text) {
+  if (!EMOJI_ONLY.test(text)) return false;
+  const g = graphemes(text.replace(/\s+/g, ''));
+  return g.length >= 1 && g.length <= 3;
+}
+
+function initials(name) {
+  const clean = name.replace(/\(.*?\)/g, '').trim();
+  const parts = clean.split(/\s+/).filter(Boolean);
+  const g = parts.map(p => graphemes(p)[0] || '');
+  return ((g[0] || '?') + (parts.length > 1 ? g[parts.length - 1] : '')).toUpperCase();
+}
+
+function rr(ctx, x, y, w, h, r) {
+  let [tl, tr, br, bl] = Array.isArray(r) ? r : [r, r, r, r];
+  const m = Math.min(w, h) / 2;
+  tl = Math.min(tl, m); tr = Math.min(tr, m); br = Math.min(br, m); bl = Math.min(bl, m);
+  ctx.beginPath();
+  ctx.moveTo(x + tl, y);
+  ctx.lineTo(x + w - tr, y);
+  ctx.arcTo(x + w, y, x + w, y + tr, tr);
+  ctx.lineTo(x + w, y + h - br);
+  ctx.arcTo(x + w, y + h, x + w - br, y + h, br);
+  ctx.lineTo(x + bl, y + h);
+  ctx.arcTo(x, y + h, x, y + h - bl, bl);
+  ctx.lineTo(x, y + tl);
+  ctx.arcTo(x, y, x + tl, y, tl);
+  ctx.closePath();
+}
+
+const measureCanvas = document.createElement('canvas').getContext('2d');
+const measureCache = new Map();
+function measure(font, text) {
+  const k = font + '\u0000' + text;
+  let w = measureCache.get(k);
+  if (w === undefined) {
+    measureCanvas.font = font;
+    w = measureCanvas.measureText(text).width;
+    if (measureCache.size > 20000) measureCache.clear();
+    measureCache.set(k, w);
+  }
+  return w;
+}
+
+function wrapText(font, text, maxW) {
+  const out = [];
+  for (const para of text.split('\n')) {
+    const tokens = para.split(/(\s+)/).filter(t => t.length);
+    let line = '';
+    for (const tok of tokens) {
+      const cand = line + tok;
+      if (measure(font, cand.trimEnd()) <= maxW) { line = cand; continue; }
+      if (/^\s+$/.test(tok)) continue;
+      if (line.trim()) out.push(line.trimEnd());
+      line = '';
+      if (measure(font, tok) <= maxW) { line = tok; continue; }
+      // break long word by grapheme
+      let chunk = '';
+      for (const g of graphemes(tok)) {
+        if (measure(font, chunk + g) > maxW && chunk) { out.push(chunk); chunk = g; }
+        else chunk += g;
+      }
+      line = chunk;
+    }
+    out.push(line.trimEnd());
+  }
+  return out.map(s => ({ s, w: measure(font, s) }));
+}
+
+function fmtTime(mins, h12) {
+  mins = ((mins % 1440) + 1440) % 1440;
+  const h = Math.floor(mins / 60), m = mins % 60;
+  const mm = String(m).padStart(2, '0');
+  if (h12) return `${(h % 12) || 12}:${mm} ${h < 12 ? 'AM' : 'PM'}`;
+  return `${String(h).padStart(2, '0')}:${mm}`;
+}
+function fmtStatusTime(mins, h12) {
+  mins = ((mins % 1440) + 1440) % 1440;
+  const h = Math.floor(mins / 60), m = mins % 60;
+  return `${h12 ? ((h % 12) || 12) : h}:${String(m).padStart(2, '0')}`;
+}
+
+/* =====================================================================
+   App themes
+   ===================================================================== */
+const APPS = {
+  whatsapp: { name: 'WhatsApp', dot: '#25D366' },
+  telegram: { name: 'Telegram', dot: '#2AABEE' },
+  messenger: { name: 'Messenger', dot: 'linear-gradient(135deg,#A033FF,#0A7CFF)' },
+  imessage: { name: 'iMessage', dot: '#0A84FF' },
+  signal: { name: 'Signal', dot: '#3A76F0' },
+};
+
+const NAME_COLORS_LIGHT = ['#E542A3', '#1F7AEC', '#C4610B', '#008069', '#7C3AED', '#D43A3A', '#0E7490', '#6D8B00'];
+const NAME_COLORS_DARK  = ['#FF72C6', '#53A6FF', '#FFB35C', '#25D366', '#B18CFF', '#FF7A7A', '#4DD4F0', '#B9D84A'];
+const AVATAR_COLORS = ['#F59E0B', '#10B981', '#3B82F6', '#EC4899', '#8B5CF6', '#EF4444', '#14B8A6', '#F97316'];
+
+function theme(app, dark, ios) {
+  const T = { app, dark, ios };
+  const L = !dark;
+  switch (app) {
+    case 'whatsapp':
+      Object.assign(T, {
+        wall: L ? '#EFEAE2' : '#0B141A', doodle: L ? 'rgba(84,72,50,0.10)' : 'rgba(255,255,255,0.045)',
+        headerBg: ios ? (L ? '#F6F5F3' : '#1F2C34') : (L ? '#008069' : '#1F2C34'),
+        headerFg: ios ? (L ? '#111B21' : '#E9EDEF') : (L ? '#FFFFFF' : '#E9EDEF'),
+        headerSub: ios ? (L ? '#667781' : '#8696A0') : (L ? 'rgba(255,255,255,0.8)' : '#8696A0'),
+        headerIcon: ios ? (L ? '#007AFF' : '#00A884') : (L ? '#FFFFFF' : '#AEBAC1'),
+        statusLight: ios ? dark : true,
+        me: L ? '#D9FDD3' : '#005C4B', them: L ? '#FFFFFF' : '#202C33',
+        meText: L ? '#111B21' : '#E9EDEF', themText: L ? '#111B21' : '#E9EDEF',
+        meMeta: L ? '#667781' : 'rgba(233,237,239,0.6)', themMeta: L ? '#667781' : 'rgba(233,237,239,0.6)',
+        tick: L ? '#8696A0' : 'rgba(233,237,239,0.6)', tickRead: '#53BDEB',
+        radius: 8, tail: 'top', font: 16, lineH: 21, padX: 9, padTop: 6, padBot: 7,
+        gapSame: 2, gapDiff: 9, shadow: L ? 'rgba(11,20,26,0.13)' : null,
+        chipBg: L ? '#FFFFFF' : '#182229', chipFg: L ? '#54656F' : '#8696A0',
+        inputBarBg: ios ? (L ? '#F6F5F3' : '#1F2C34') : null,
+        fieldBg: ios ? (L ? '#FFFFFF' : '#2A3942') : (L ? '#FFFFFF' : '#1F2C34'),
+        fieldFg: L ? '#111B21' : '#E9EDEF', placeholder: L ? '#8696A0' : '#8696A0',
+        inputIcon: ios ? (L ? '#007AFF' : '#8696A0') : (L ? '#54656F' : '#8696A0'),
+        accent: '#00A884', typing: 'header', timeInside: true, nameInside: true,
+        avatarAt: 'first',
+      });
+      break;
+    case 'telegram':
+      Object.assign(T, {
+        wall: L ? null : '#0E1621', doodle: L ? 'rgba(40,70,30,0.13)' : 'rgba(255,255,255,0.04)',
+        headerBg: ios ? (L ? '#F7F7F7' : '#1C242F') : (L ? '#517DA2' : '#212D3B'),
+        headerFg: ios ? (L ? '#000000' : '#FFFFFF') : '#FFFFFF',
+        headerSub: ios ? (L ? '#8E8E93' : '#7F91A4') : (L ? '#D2E3F1' : '#7F91A4'),
+        headerIcon: ios ? (L ? '#037EE5' : '#5DB1F5') : '#FFFFFF',
+        headerAccentSub: ios ? (L ? '#037EE5' : '#5DB1F5') : (L ? '#FFFFFF' : '#73B9F5'),
+        statusLight: ios ? dark : true,
+        me: L ? '#EFFDDE' : '#2B5278', them: L ? '#FFFFFF' : '#182533',
+        meText: L ? '#000000' : '#FFFFFF', themText: L ? '#000000' : '#FFFFFF',
+        meMeta: L ? '#5DAE59' : '#7DA8D3', themMeta: L ? '#A1AAB3' : '#6D7F8F',
+        tick: L ? '#5DAE59' : '#7DA8D3', tickRead: L ? '#5DAE59' : '#7DA8D3',
+        radius: 16, tail: 'bottom', font: 16, lineH: 21, padX: 10, padTop: 7, padBot: 7,
+        gapSame: 3, gapDiff: 8, shadow: L ? 'rgba(0,0,0,0.12)' : null,
+        chipBg: L ? 'rgba(66,110,58,0.35)' : 'rgba(30,44,58,0.8)', chipFg: '#FFFFFF',
+        inputBarBg: ios ? (L ? '#F7F7F7' : '#1C242F') : (L ? '#FFFFFF' : '#17212B'),
+        fieldBg: ios ? (L ? '#FFFFFF' : '#242F3D') : null,
+        fieldFg: L ? '#000000' : '#FFFFFF', placeholder: L ? '#A0A6AB' : '#6D7F8F',
+        inputIcon: L ? '#8A959E' : '#6D7F8F',
+        accent: L ? '#3A95D5' : '#5DB1F5', typing: 'header', timeInside: true, nameInside: true,
+        avatarAt: 'last',
+      });
+      break;
+    case 'messenger':
+      Object.assign(T, {
+        wall: L ? '#FFFFFF' : '#000000', doodle: null,
+        headerBg: L ? '#FFFFFF' : '#000000', headerFg: L ? '#050505' : '#E4E6EB',
+        headerSub: L ? '#65676B' : '#B0B3B8', headerIcon: '#A033FF', headerLine: L ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.1)',
+        statusLight: dark,
+        me: 'grad', meGrad: ['#A033FF', '#6E4BFF', '#0A7CFF'], them: L ? '#F0F0F0' : '#303030',
+        meText: '#FFFFFF', themText: L ? '#050505' : '#E4E6EB',
+        radius: 18, groupRadius: 4, tail: 'none', font: 15.5, lineH: 20, padX: 12, padTop: 8, padBot: 8,
+        gapSame: 2, gapDiff: 10,
+        inputBarBg: L ? '#FFFFFF' : '#000000', fieldBg: L ? '#F0F2F5' : '#242526',
+        fieldFg: L ? '#050505' : '#E4E6EB', placeholder: L ? '#65676B' : '#B0B3B8',
+        inputIcon: '#A033FF', accent: '#A033FF',
+        typing: 'bubble', timeInside: false, nameInside: false, avatarAt: 'last', avatarAlways: true,
+        nameColor: L ? '#65676B' : '#B0B3B8',
+      });
+      break;
+    case 'imessage':
+      Object.assign(T, {
+        wall: L ? '#FFFFFF' : '#000000', doodle: null,
+        headerBg: L ? '#F6F6F6' : '#1C1C1E', headerFg: L ? '#000000' : '#FFFFFF',
+        headerSub: L ? '#8E8E93' : '#8E8E93', headerIcon: '#007AFF', headerLine: L ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.12)',
+        statusLight: dark,
+        me: '#0B84FE', them: L ? '#E9E9EB' : '#262628',
+        meText: '#FFFFFF', themText: L ? '#000000' : '#FFFFFF',
+        radius: 18, tail: 'bottom', font: 17, lineH: 22, padX: 12, padTop: 7, padBot: 7,
+        gapSame: 2, gapDiff: 10,
+        inputBarBg: L ? '#FFFFFF' : '#000000', fieldBg: L ? '#FFFFFF' : '#000000', fieldBorder: L ? '#C6C6C8' : '#3A3A3C',
+        fieldFg: L ? '#000000' : '#FFFFFF', placeholder: L ? '#B8B8BD' : '#6B6B70',
+        inputIcon: L ? '#8E8E93' : '#8E8E93', accent: '#0B84FE',
+        typing: 'bubble', timeInside: false, nameInside: false, avatarAt: 'last',
+        nameColor: '#8E8E93', metaColor: '#8E8E93',
+      });
+      break;
+    case 'signal':
+      Object.assign(T, {
+        wall: L ? '#FFFFFF' : '#121212', doodle: null,
+        headerBg: L ? '#FFFFFF' : '#121212', headerFg: L ? '#1B1B1B' : '#E9E9E9',
+        headerSub: L ? '#5E5E5E' : '#A8A8A8', headerIcon: L ? '#1B1B1B' : '#E9E9E9',
+        statusLight: dark,
+        me: '#2C6BED', them: L ? '#E9E9E9' : '#3B3B3B',
+        meText: '#FFFFFF', themText: L ? '#1B1B1B' : '#E9E9E9',
+        meMeta: 'rgba(255,255,255,0.8)', themMeta: L ? '#5E5E5E' : '#A8A8A8',
+        tick: 'rgba(255,255,255,0.8)', tickRead: '#FFFFFF',
+        radius: 18, groupRadius: 4, tail: 'none', font: 16, lineH: 21, padX: 12, padTop: 7, padBot: 7,
+        gapSame: 2, gapDiff: 10,
+        chipFg: L ? '#5E5E5E' : '#A8A8A8',
+        inputBarBg: L ? '#FFFFFF' : '#121212', fieldBg: L ? '#F0F0F0' : '#2A2A2A',
+        fieldFg: L ? '#1B1B1B' : '#E9E9E9', placeholder: L ? '#7A7A7A' : '#8A8A8A',
+        inputIcon: L ? '#3B3B3B' : '#CFCFCF', accent: '#2C6BED',
+        typing: 'bubble', timeInside: true, nameInside: true, avatarAt: 'last',
+      });
+      break;
+  }
+  return T;
+}
+
+/* =====================================================================
+   Scene building: layout + timeline
+   ===================================================================== */
+const SPEEDS = { slow: 1.45, normal: 1, fast: 0.65, turbo: 0.42 };
+
+function buildScene(opts, parsed) {
+  const ios = opts.device === 'ios';
+  const T = theme(opts.app, opts.theme === 'dark', ios);
+  const W = ios ? 390 : 412;
+  const H = ios ? 844 : 892;
+  const S = { opts, T, ios, W, H, app: opts.app };
+  S.family = ios ? '-apple-system, "SF Pro Text", Inter, "Helvetica Neue", Arial, sans-serif'
+                 : 'Roboto, "Segoe UI", Inter, Arial, sans-serif';
+  S.font = (size, weight = 400) => `${weight} ${size}px ${S.family}`;
+
+  // --- geometry
+  S.statusH = ios ? 54 : 34;
+  S.headerH = ({ imessage: 78, telegram: ios ? 50 : 56, whatsapp: ios ? 52 : 58 })[opts.app] || 58;
+  S.bottomInset = ios ? 30 : 22;
+  S.inputH = ({ imessage: 50, messenger: 54 })[opts.app] || 58;
+  S.chatTop = S.statusH + S.headerH;
+  S.chatBottom = H - S.bottomInset - S.inputH;
+  S.viewH = S.chatBottom - S.chatTop;
+
+  // --- participants
+  const me = opts.me && parsed.participants.includes(opts.me) ? opts.me : parsed.participants[0];
+  const others = parsed.participants.filter(p => p !== me);
+  S.me = me;
+  S.group = others.length > 1;
+  S.title = (opts.title || '').trim() || (S.group ? 'The Group Chat' : (others[0] || 'Chat'));
+  S.others = others;
+  const colorFor = {};
+  others.forEach((p, i) => { colorFor[p] = i; });
+  S.colorIndex = p => (colorFor[p] !== undefined ? colorFor[p] : (hash(p) % 8));
+
+  // --- timestamps
+  let clock = opts.startTime;
+  const msgs = parsed.messages.map((m, i) => {
+    if (m.time !== null && m.time !== undefined) clock = m.time;
+    else if (i > 0) clock += (i % 3 === 0 ? 1 : 0);
+    return { ...m, idx: i, mine: m.sender === me, clockMin: clock };
+  });
+  S.startClock = msgs.length && parsed.messages[0].time != null ? parsed.messages[0].time : opts.startTime;
+
+  // grouping
+  msgs.forEach((m, i) => {
+    const p = msgs[i - 1], n = msgs[i + 1];
+    m.first = !p || p.sender !== m.sender;
+    m.last = !n || n.sender !== m.sender;
+  });
+
+  S.msgs = msgs;
+  layout(S, msgs);
+  timeline(S, msgs);
+  return S;
+}
+
+function layout(S, msgs) {
+  const T = S.T, W = S.W;
+  const items = [];
+  let y = 10;
+
+  // --- top-of-chat furniture
+  if (S.app === 'whatsapp') {
+    const label = S.ios ? 'Today' : 'TODAY';
+    items.push({ kind: 'chip', text: label, y, h: 28, font: S.font(12.5, 500) });
+    y += 28 + 10;
+    const noticeFont = S.font(12.5, 400);
+    const lines = wrapText(noticeFont, '🔒 Messages and calls are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to them.', W * 0.78 - 24);
+    const h = lines.length * 17 + 14;
+    items.push({ kind: 'notice', lines, y, h, font: noticeFont });
+    y += h + 12;
+  } else if (S.app === 'telegram') {
+    items.push({ kind: 'chip', text: 'Today', y, h: 24, font: S.font(13.5, 500) });
+    y += 24 + 10;
+  } else if (S.app === 'imessage') {
+    items.push({ kind: 'center', lines: [['iMessage', S.font(11.5, 500)], ['Today ' + fmtTime(S.startClock, S.opts.clock12), S.font(11.5, 400)]], y, h: 34 });
+    y += 34 + 8;
+  } else if (S.app === 'messenger') {
+    const h = S.group ? 176 : 196;
+    items.push({ kind: 'intro', y, h });
+    y += h + 8;
+    items.push({ kind: 'center', lines: [[fmtTime(S.startClock, S.opts.clock12), S.font(12, 500)]], y, h: 18 });
+    y += 18 + 10;
+  } else if (S.app === 'signal') {
+    items.push({ kind: 'center', lines: [['Today', S.font(12.5, 500)]], y, h: 18 });
+    y += 18 + 12;
+  }
+  S.furniture = items.slice();
+
+  // --- bubbles
+  const hasAvatars = S.group || T.avatarAlways;
+  S.avatarSize = S.app === 'messenger' ? 28 : 32;
+  const leftBase = 10 + (T.tail !== 'none' ? 6 : 0);
+  S.themX = hasAvatars ? 10 + S.avatarSize + 8 : leftBase;
+  S.meRight = W - (T.tail !== 'none' ? 16 : 12);
+  const maxBubble = Math.round(W * (S.app === 'whatsapp' ? 0.8 : 0.74));
+  const textFont = S.font(T.font, 400);
+  const metaFont = S.font(11, 400);
+  const nameFontInside = S.font(S.app === 'telegram' ? 14 : 13.5, 600);
+
+  msgs.forEach((m, i) => {
+    const prev = msgs[i - 1];
+    const gap = i === 0 ? 0 : (m.first ? T.gapDiff : T.gapSame);
+    y += gap;
+    m.hasAvatar = !m.mine && hasAvatars && (T.avatarAt === 'first' ? m.first : m.last);
+    m.showName = !m.mine && S.group && m.first;
+    m.jumbo = isJumbo(m.text);
+    let bx, bw, bh, lines, nameAbove = 0;
+
+    if (m.showName && !T.nameInside) { nameAbove = 17; }
+    const metaText = fmtTime(m.clockMin, S.opts.clock12);
+    const tickW = m.mine && S.app !== 'signal' ? 18 : (m.mine ? 16 : 0);
+    const metaW = T.timeInside ? measure(metaFont, metaText) + tickW + 4 : 0;
+    m.metaText = metaText;
+
+    if (m.jumbo) {
+      const f = S.font(44, 400);
+      lines = [{ s: m.text.replace(/\s+/g, ''), w: measure(f, m.text.replace(/\s+/g, '')) }];
+      bw = Math.max(lines[0].w, T.timeInside ? metaW + 16 : 0);
+      bh = 54 + (T.timeInside ? 18 : 0);
+      m.font = f;
+    } else {
+      const inner = maxBubble - T.padX * 2;
+      lines = wrapText(textFont, m.text, inner);
+      let tw = Math.max(...lines.map(l => l.w));
+      let th = lines.length * T.lineH;
+      let nameH = 0;
+      if (m.showName && T.nameInside) {
+        nameH = 20;
+        tw = Math.max(tw, Math.min(inner, measure(nameFontInside, m.sender)));
+      }
+      let extraMetaLine = false;
+      if (T.timeInside) {
+        const lastW = lines[lines.length - 1].w;
+        if (lastW + metaW + 10 <= inner) tw = Math.max(tw, lastW + metaW + 10);
+        else { extraMetaLine = true; tw = Math.max(tw, metaW); }
+      }
+      bw = Math.ceil(tw + T.padX * 2);
+      bh = Math.ceil(T.padTop + nameH + th + T.padBot + (extraMetaLine ? 15 : 0));
+      m.nameH = nameH;
+      m.font = textFont;
+    }
+    bx = m.mine ? S.meRight - bw : S.themX;
+    m.bubble = { x: bx, y: y + nameAbove, w: bw, h: bh };
+    m.lines = lines;
+    m.nameAbove = nameAbove;
+    m.metaW = metaW;
+    m.y = y;
+    m.h = nameAbove + bh;
+    y += m.h;
+  });
+  S.contentEnd = y;
+  S.metaFont = metaFont;
+  S.nameFontInside = nameFontInside;
+}
+
+function timeline(S, msgs) {
+  const k = SPEEDS[S.opts.speed] || 1;
+  const typeOut = S.opts.typeOut;
+  const showTyping = S.opts.showTyping;
+  let t = 800 * k;
+  msgs.forEach((m, i) => {
+    const prev = msgs[i - 1];
+    const len = graphemes(m.text).length;
+    if (prev) {
+      const prevLen = graphemes(prev.text).length;
+      t += (prev.sender === m.sender ? 350 + Math.min(700, len * 8) : 600 + Math.min(1500, prevLen * 22)) * k;
+    }
+    t += m.pause * 1000;
+    if (m.mine) {
+      if (typeOut) {
+        m.inputStart = t;
+        const dur = Math.min(3000, 250 + len * 55) * k;
+        m.inputEnd = t + dur;
+        t = m.inputEnd + 280 * k;
+      }
+      m.appear = t;
+    } else {
+      if (showTyping) {
+        const dur = clamp(350 + len * 38, 900, 2800) * k * (prev && prev.sender === m.sender ? 0.7 : 1);
+        m.typingStart = t;
+        t += dur;
+      }
+      m.appear = t;
+    }
+  });
+  // receipts
+  msgs.forEach((m, i) => {
+    if (!m.mine) return;
+    m.delivered = m.appear + 400 * k;
+    let read = m.appear + 1700 * k;
+    for (let j = i + 1; j < msgs.length; j++) {
+      if (!msgs[j].mine) { read = Math.min(read, msgs[j].typingStart ?? msgs[j].appear); break; }
+    }
+    m.read = Math.max(m.delivered + 100, read);
+  });
+  const last = msgs[msgs.length - 1];
+  S.duration = (last ? last.appear : 0) + 2800 * k;
+
+  // --- scroll keyframes: target changes whenever a message appears or typing toggles
+  const events = new Set([0]);
+  msgs.forEach(m => { events.add(m.appear); if (m.typingStart !== undefined) events.add(m.typingStart); });
+  const times = [...events].sort((a, b) => a - b);
+  const kf = [];
+  let prevVal = 0;
+  const SCROLL_MS = 380;
+  for (let i = 0; i < times.length; i++) {
+    const at = times[i];
+    let from = prevVal;
+    if (kf.length) {
+      const p = kf[kf.length - 1];
+      from = p.from + (p.to - p.from) * ease((at - p.at) / SCROLL_MS);
+    }
+    const to = scrollTarget(S, msgs, at + 0.5);
+    kf.push({ at, from, to });
+    prevVal = from;
+  }
+  S.scrollKF = kf;
+}
+
+function visibleState(S, msgs, t) {
+  let count = 0;
+  while (count < msgs.length && msgs[count].appear <= t) count++;
+  let typing = null, input = null;
+  const next = msgs[count];
+  if (next && !next.mine && next.typingStart !== undefined && t >= next.typingStart) typing = next;
+  if (next && next.mine && next.inputStart !== undefined && t >= next.inputStart) {
+    const g = graphemes(next.text);
+    const p = clamp((t - next.inputStart) / (next.inputEnd - next.inputStart), 0, 1);
+    input = g.slice(0, Math.ceil(g.length * p)).join('');
+  }
+  return { count, typing, input };
+}
+
+function typingBubbleGeom(S, msgs, count, typer) {
+  const last = msgs[count - 1];
+  const base = last ? last.y + last.h : (msgs.length ? msgs[0].y : 10);
+  const gap = last ? (last.sender === typer.sender ? S.T.gapSame : S.T.gapDiff) : 0;
+  const nameAbove = (S.group && !S.T.nameInside && (!last || last.sender !== typer.sender)) ? 17 : 0;
+  const y = base + gap;
+  return { x: S.themX, y: y + nameAbove, w: 58, h: 36, nameAbove, top: y, bottom: y + nameAbove + 36 };
+}
+
+function scrollTarget(S, msgs, t) {
+  const st = visibleState(S, msgs, t);
+  let bottom;
+  if (st.count) bottom = msgs[st.count - 1].y + msgs[st.count - 1].h;
+  else bottom = msgs.length ? msgs[0].y : 0;
+  if (S.app === 'imessage' && st.count && msgs[st.count - 1].mine) bottom += 18;
+  if (st.typing && S.T.typing === 'bubble') {
+    bottom = typingBubbleGeom(S, msgs, st.count, st.typing).bottom;
+  }
+  return Math.max(0, bottom + 10 - S.viewH);
+}
+
+function scrollAt(S, t) {
+  const kf = S.scrollKF;
+  let k = kf[0];
+  for (let i = kf.length - 1; i >= 0; i--) if (kf[i].at <= t) { k = kf[i]; break; }
+  return k.from + (k.to - k.from) * ease((t - k.at) / 380);
+}
+
+/* =====================================================================
+   Drawing
+   ===================================================================== */
+const wallCache = new Map();
+
+function drawDoodles(g, w, h, color, seed) {
+  const r = rng(seed);
+  g.strokeStyle = color;
+  g.fillStyle = color;
+  g.lineWidth = 1.4;
+  g.lineCap = 'round';
+  g.lineJoin = 'round';
+  const cell = 46;
+  for (let gy = -cell; gy < h + cell; gy += cell) {
+    for (let gx = -cell; gx < w + cell; gx += cell) {
+      const x = gx + (r() * 0.6 + 0.2) * cell + ((gy / cell) % 2 ? cell / 2 : 0);
+      const y = gy + (r() * 0.6 + 0.2) * cell;
+      const s = 7 + r() * 6;
+      const kind = Math.floor(r() * 9);
+      g.save();
+      g.translate(x, y);
+      g.rotate((r() - 0.5) * 1.2);
+      g.beginPath();
+      switch (kind) {
+        case 0: g.arc(0, 0, s * 0.7, 0, Math.PI * 2); break;
+        case 1: // heart
+          g.moveTo(0, s * 0.6);
+          g.bezierCurveTo(-s, -s * 0.1, -s * 0.5, -s * 0.9, 0, -s * 0.3);
+          g.bezierCurveTo(s * 0.5, -s * 0.9, s, -s * 0.1, 0, s * 0.6);
+          break;
+        case 2: // star
+          for (let i = 0; i < 10; i++) {
+            const a = -Math.PI / 2 + i * Math.PI / 5, rad = i % 2 ? s * 0.4 : s;
+            g.lineTo(Math.cos(a) * rad, Math.sin(a) * rad);
+          }
+          g.closePath(); break;
+        case 3: // squiggle
+          g.moveTo(-s, 0);
+          g.bezierCurveTo(-s / 2, -s, 0, s, s / 2, 0);
+          g.quadraticCurveTo(s * 0.8, -s * 0.5, s, 0); break;
+        case 4: // cloud
+          g.arc(-s * 0.4, 0, s * 0.4, Math.PI * 0.5, Math.PI * 1.5);
+          g.arc(0, -s * 0.3, s * 0.5, Math.PI, 0);
+          g.arc(s * 0.45, 0, s * 0.4, Math.PI * 1.5, Math.PI * 0.5);
+          g.closePath(); break;
+        case 5: // chat bubble
+          rr(g, -s, -s * 0.7, s * 2, s * 1.2, 4);
+          g.moveTo(-s * 0.3, s * 0.5); g.lineTo(-s * 0.6, s); g.lineTo(0, s * 0.5); break;
+        case 6: // music note
+          g.arc(-s * 0.3, s * 0.5, s * 0.3, 0, Math.PI * 2);
+          g.moveTo(0, s * 0.5); g.lineTo(0, -s * 0.7); g.lineTo(s * 0.6, -s * 0.4); break;
+        case 7: // dots
+          g.arc(-s * 0.5, 0, 1.4, 0, Math.PI * 2); g.moveTo(1.4, 0);
+          g.arc(0, 0, 1.4, 0, Math.PI * 2); g.moveTo(s * 0.5 + 1.4, 0);
+          g.arc(s * 0.5, 0, 1.4, 0, Math.PI * 2);
+          g.fill(); break;
+        default: // leaf
+          g.moveTo(-s, 0); g.quadraticCurveTo(0, -s, s, 0); g.quadraticCurveTo(0, s, -s, 0);
+          g.moveTo(-s, 0); g.lineTo(s * 0.6, 0);
+      }
+      g.stroke();
+      g.restore();
+    }
+  }
+}
+
+function getWallpaper(S, pr) {
+  const T = S.T;
+  const key = [S.app, T.dark, S.W, S.H, pr].join('|');
+  if (wallCache.has(key)) return wallCache.get(key);
+  const c = document.createElement('canvas');
+  c.width = Math.round(S.W * pr); c.height = Math.round(S.H * pr);
+  const g = c.getContext('2d');
+  g.scale(pr, pr);
+  if (S.app === 'telegram' && !T.dark) {
+    g.fillStyle = '#C5D6A0'; g.fillRect(0, 0, S.W, S.H);
+    const blobs = [['#DBDDBB', 0.1, 0.15], ['#6BA587', 0.85, 0.3], ['#D5D88D', 0.2, 0.75], ['#88B884', 0.9, 0.9]];
+    for (const [col, fx, fy] of blobs) {
+      const gr = g.createRadialGradient(fx * S.W, fy * S.H, 0, fx * S.W, fy * S.H, S.H * 0.6);
+      gr.addColorStop(0, col); gr.addColorStop(1, col + '00');
+      g.fillStyle = gr; g.fillRect(0, 0, S.W, S.H);
+    }
+  } else {
+    g.fillStyle = T.wall; g.fillRect(0, 0, S.W, S.H);
+  }
+  if (T.doodle) drawDoodles(g, S.W, S.H, T.doodle, 1337);
+  if (wallCache.size > 12) wallCache.clear();
+  wallCache.set(key, c);
+  return c;
+}
+
+function drawAvatar(ctx, S, name, cx, cy, r) {
+  const col = AVATAR_COLORS[hash(name) % AVATAR_COLORS.length];
+  const gr = ctx.createLinearGradient(cx, cy - r, cx, cy + r);
+  gr.addColorStop(0, col);
+  gr.addColorStop(1, shade(col, -0.18));
+  ctx.fillStyle = gr;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = S.font(Math.round(r * 0.8), 600);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(initials(name), cx, cy + r * 0.04);
+  ctx.textAlign = 'left';
+}
+
+function drawGroupAvatar(ctx, S, cx, cy, r) {
+  const names = S.others.slice(0, 2);
+  if (names.length < 2) return drawAvatar(ctx, S, names[0] || S.title, cx, cy, r);
+  drawAvatar(ctx, S, names[1], cx + r * 0.3, cy - r * 0.3, r * 0.68);
+  ctx.save();
+  ctx.fillStyle = S.T.headerBg;
+  ctx.beginPath(); ctx.arc(cx - r * 0.3, cy + r * 0.3, r * 0.68 + 1.5, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  drawAvatar(ctx, S, names[0], cx - r * 0.3, cy + r * 0.3, r * 0.68);
+}
+
+function shade(hex, amt) {
+  const n = parseInt(hex.slice(1), 16);
+  let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const f = v => clamp(Math.round(amt < 0 ? v * (1 + amt) : v + (255 - v) * amt), 0, 255);
+  return '#' + ((1 << 24) + (f(r) << 16) + (f(g) << 8) + f(b)).toString(16).slice(1);
+}
+
+function ellipsize(font, text, maxW) {
+  if (measure(font, text) <= maxW) return text;
+  const g = graphemes(text);
+  while (g.length && measure(font, g.join('') + '…') > maxW) g.pop();
+  return g.join('') + '…';
+}
+
+/* ---------- Status bar & system UI ---------- */
+function drawStatusBar(ctx, S, clockMin, bgColor) {
+  const light = S.T.statusLight;
+  const fg = light ? '#FFFFFF' : '#000000';
+  const W = S.W;
+  if (bgColor) { ctx.fillStyle = bgColor; ctx.fillRect(0, 0, W, S.statusH); }
+  const batt = S.opts.battery;
+  const time = fmtStatusTime(clockMin, S.opts.clock12);
+  if (S.ios) {
+    // Dynamic Island
+    ctx.fillStyle = '#000';
+    rr(ctx, W / 2 - 62, 11, 124, 36, 18); ctx.fill();
+    const cy = 30;
+    ctx.fillStyle = fg;
+    ctx.font = S.font(17, 600);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(time, (W / 2 - 62) / 2 + 6, cy);
+    ctx.textAlign = 'left';
+    const rx = W / 2 + 62 + ((W / 2 - 62) - 78) / 2;
+    // signal bars
+    for (let i = 0; i < 4; i++) { const h = 4 + i * 2.4; rr(ctx, rx + i * 4.6, cy + 5.5 - h, 3.1, h, 1); ctx.fill(); }
+    // wifi
+    drawWifi(ctx, rx + 30, cy + 5, 7.5, fg);
+    // battery
+    drawBattery(ctx, rx + 45, cy - 6, 27, 13, batt, fg, light, true);
+  } else {
+    const cy = 18;
+    ctx.fillStyle = fg;
+    ctx.font = S.font(14, 500);
+    ctx.textBaseline = 'middle';
+    ctx.fillText(time, 18, cy);
+    // punch hole
+    ctx.fillStyle = '#000';
+    ctx.beginPath(); ctx.arc(W / 2, cy, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#1a1a2a';
+    ctx.beginPath(); ctx.arc(W / 2 - 1.5, cy - 1.5, 2, 0, Math.PI * 2); ctx.fill();
+    // right icons
+    const rx = W - 18;
+    ctx.fillStyle = fg;
+    ctx.font = S.font(13, 500);
+    ctx.textAlign = 'right';
+    ctx.fillText(batt + '%', rx, cy + 0.5);
+    ctx.textAlign = 'left';
+    const pw = measure(S.font(13, 500), batt + '%');
+    drawBattery(ctx, rx - pw - 22, cy - 5.5, 18, 11, batt, fg, light, false);
+    // signal triangle
+    ctx.beginPath(); ctx.moveTo(rx - pw - 30, cy + 6); ctx.lineTo(rx - pw - 30, cy - 6); ctx.lineTo(rx - pw - 42, cy + 6); ctx.closePath(); ctx.fill();
+    drawWifi(ctx, rx - pw - 55, cy + 6, 7.5, fg);
+  }
+}
+
+function drawWifi(ctx, cx, by, r, fg) {
+  ctx.save();
+  ctx.fillStyle = fg;
+  ctx.beginPath();
+  ctx.moveTo(cx, by);
+  ctx.arc(cx, by, r * 1.5, -Math.PI * 0.75, -Math.PI * 0.25);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawBattery(ctx, x, y, w, h, level, fg, light, ios) {
+  ctx.save();
+  const low = level <= 15;
+  ctx.globalAlpha = 0.4;
+  ctx.strokeStyle = fg; ctx.lineWidth = 1;
+  rr(ctx, x + 0.5, y + 0.5, w - 1, h - 1, ios ? 4 : 2.5); ctx.stroke();
+  ctx.fillStyle = fg;
+  rr(ctx, x + w + 1, y + h * 0.32, 1.8, h * 0.36, 1); ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = low ? '#FF3B30' : fg;
+  rr(ctx, x + 2, y + 2, (w - 4) * level / 100, h - 4, ios ? 2.5 : 1.5); ctx.fill();
+  ctx.restore();
+}
+
+function drawHomeBar(ctx, S, bg) {
+  const dark = S.T.dark;
+  if (bg) { ctx.fillStyle = bg; ctx.fillRect(0, S.H - S.bottomInset, S.W, S.bottomInset); }
+  ctx.fillStyle = dark ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.85)';
+  if (S.ios) { rr(ctx, S.W / 2 - 67, S.H - 9, 134, 5, 3); ctx.fill(); }
+  else { rr(ctx, S.W / 2 - 54, S.H - 12, 108, 4, 2); ctx.fill(); }
+}
+
+/* ---------- Header ---------- */
+function headerSubtitle(S, st) {
+  const T = S.T;
+  if (st.typing && T.typing === 'header') {
+    const first = st.typing.sender.split(/\s+/)[0];
+    return { text: S.group ? `${first} is typing…` : 'typing…', accent: true };
+  }
+  if (S.app === 'whatsapp') {
+    if (S.group) return { text: [...S.others, 'You'].join(', ') };
+    return { text: 'online' };
+  }
+  if (S.app === 'telegram') return { text: S.group ? `${S.others.length + 1} members` : 'online' };
+  if (S.app === 'messenger') return { text: S.group ? `${S.others.length + 1} people` : 'Active now' };
+  if (S.app === 'signal') return null;
+  return null;
+}
+
+function drawHeader(ctx, S, st, clockMin) {
+  const T = S.T, W = S.W, top = S.statusH, h = S.headerH;
+  const sub = headerSubtitle(S, st);
+  ctx.fillStyle = T.headerBg;
+  ctx.fillRect(0, 0, W, top + h);
+  if (T.headerLine) { ctx.fillStyle = T.headerLine; ctx.fillRect(0, top + h - 0.5, W, 0.5); }
+  else if (S.ios && (S.app === 'whatsapp' || S.app === 'telegram')) { ctx.fillStyle = T.dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.12)'; ctx.fillRect(0, top + h - 0.5, W, 0.5); }
+  drawStatusBar(ctx, S, clockMin, null);
+  const cy = top + h / 2;
+  const avatar = (cx, r) => (S.group ? drawGroupAvatar(ctx, S, cx, cy, r) : drawAvatar(ctx, S, S.title, cx, cy, r));
+  ctx.textBaseline = 'middle';
+
+  if (S.app === 'imessage') {
+    drawIcon(ctx, 'chevron', 2, cy - 18, 36, T.headerIcon);
+    ctx.fillStyle = T.headerIcon; ctx.font = S.font(17, 400);
+    const cx = W / 2;
+    (S.group ? drawGroupAvatar : (c, s, x, y, r) => drawAvatar(c, s, S.title, x, y, r))(ctx, S, cx, top + 26, 25);
+    ctx.font = S.font(11.5, 400); ctx.fillStyle = T.headerFg; ctx.textAlign = 'center';
+    const t = ellipsize(ctx.font, S.title, W * 0.5);
+    ctx.fillText(t, cx - 3, top + 63);
+    const tw = measure(ctx.font, t);
+    drawIcon(ctx, 'chevronRight', cx + tw / 2 - 5, top + 57, 12, T.headerSub);
+    ctx.textAlign = 'left';
+    drawIcon(ctx, 'video', W - 44, cy - 13, 27, T.headerIcon);
+    return;
+  }
+
+  if (S.app === 'telegram' && S.ios) {
+    drawIcon(ctx, 'chevron', 0, cy - 17, 34, T.headerIcon);
+    ctx.fillStyle = T.headerIcon; ctx.font = S.font(17, 400);
+    ctx.fillText('Chats', 26, cy);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = T.headerFg; ctx.font = S.font(16.5, 600);
+    ctx.fillText(ellipsize(ctx.font, S.title, W * 0.5), W / 2, cy - 9);
+    ctx.font = S.font(13, 400);
+    ctx.fillStyle = sub && sub.accent ? T.headerAccentSub : T.headerSub;
+    ctx.fillText(sub ? sub.text : '', W / 2, cy + 10);
+    ctx.textAlign = 'left';
+    avatar(W - 30, 19);
+    return;
+  }
+
+  // Generic "left-aligned" header: back, avatar, name/sub, actions
+  let x = 4;
+  if (S.ios) { drawIcon(ctx, 'chevron', x - 4, cy - 17, 34, T.headerIcon); x += 26; }
+  else { drawIcon(ctx, 'back', x + 6, cy - 12, 24, T.headerIcon); x += 36; }
+  const ar = S.app === 'messenger' ? 19 : 19;
+  avatar(x + ar, ar);
+  if (S.app === 'messenger' && !S.group) {
+    ctx.fillStyle = '#31A24C';
+    ctx.beginPath(); ctx.arc(x + ar * 1.7, cy + ar * 0.7, 5.5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = T.headerBg; ctx.lineWidth = 2.5; ctx.stroke();
+  }
+  x += ar * 2 + 10;
+  const actions = S.app === 'whatsapp' ? (S.ios ? ['video', 'call'] : ['video', 'call', 'more'])
+    : S.app === 'telegram' ? ['call', 'more'] : S.app === 'messenger' ? ['call', 'video'] : ['video', 'call'];
+  const actW = actions.length * 42 + 4;
+  const nameW = W - x - actW - 4;
+  ctx.fillStyle = T.headerFg;
+  ctx.font = S.font(S.ios ? 16.5 : 17.5, S.ios ? 600 : 500);
+  if (S.app === 'messenger' || S.app === 'signal') ctx.font = S.font(16.5, 700);
+  const title = ellipsize(ctx.font, S.title, nameW);
+  if (sub) {
+    ctx.fillText(title, x, cy - 9);
+    ctx.font = S.font(13, 400);
+    ctx.fillStyle = sub.accent && T.headerAccentSub ? T.headerAccentSub : T.headerSub;
+    ctx.fillText(ellipsize(ctx.font, sub.text, nameW), x, cy + 11);
+  } else {
+    ctx.fillText(title, x, cy);
+  }
+  let ax = W - 8 - actions.length * 42;
+  for (const a of actions) {
+    drawIcon(ctx, a, ax + 9, cy - 12, 24, T.headerIcon);
+    ax += 42;
+  }
+}
+
+/* ---------- Input bar ---------- */
+function drawInputBar(ctx, S, st) {
+  const T = S.T, W = S.W;
+  const y = S.chatBottom, h = S.inputH;
+  const text = st.input || '';
+  const has = text.length > 0;
+  const cy = y + h / 2;
+  const caretOn = has || false;
+
+  if (T.inputBarBg) {
+    ctx.fillStyle = T.inputBarBg;
+    ctx.fillRect(0, y, W, h + S.bottomInset);
+    if (S.app !== 'whatsapp' || S.ios) {
+      ctx.fillStyle = T.dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)';
+      if (S.app !== 'messenger' && S.app !== 'signal') ctx.fillRect(0, y, W, 0.5);
+    }
+  }
+
+  const drawFieldText = (fx, fw, placeholder, font) => {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(fx, y, fw, h); ctx.clip();
+    ctx.font = font; ctx.textBaseline = 'middle';
+    if (has) {
+      ctx.fillStyle = T.fieldFg;
+      const tw = measure(font, text.replace(/\n/g, ' '));
+      const tx = tw > fw - 4 ? fx + fw - 4 - tw : fx;
+      ctx.fillText(text.replace(/\n/g, ' '), tx, cy + 0.5);
+      ctx.fillStyle = T.accent;
+      ctx.fillRect(Math.min(fx + fw - 3, tx + tw + 1.5), cy - 10, 2, 20);
+    } else {
+      ctx.fillStyle = T.placeholder;
+      ctx.fillText(placeholder, fx, cy + 0.5);
+    }
+    ctx.restore();
+  };
+
+  if (S.app === 'whatsapp') {
+    if (S.ios) {
+      drawIcon(ctx, 'add', 8, cy - 14, 28, T.inputIcon);
+      const fx = 44, fw = W - 44 - (has ? 58 : 92);
+      ctx.fillStyle = T.fieldBg; rr(ctx, fx, cy - 17, fw, 34, 17); ctx.fill();
+      if (!T.dark) { ctx.strokeStyle = 'rgba(0,0,0,0.1)'; ctx.lineWidth = 0.7; ctx.stroke(); }
+      drawFieldText(fx + 12, fw - 44, '', S.font(16.5));
+      drawIcon(ctx, 'sticker', fx + fw - 32, cy - 11, 22, T.inputIcon);
+      if (has) {
+        ctx.fillStyle = T.accent; ctx.beginPath(); ctx.arc(W - 28, cy, 17, 0, Math.PI * 2); ctx.fill();
+        drawIcon(ctx, 'send', W - 38, cy - 10, 20, '#FFFFFF');
+      } else {
+        drawIcon(ctx, 'camera', W - 84, cy - 12, 24, T.inputIcon);
+        drawIcon(ctx, 'mic', W - 42, cy - 13, 26, T.inputIcon);
+      }
+    } else {
+      const fw = W - 8 - 8 - 48 - 6;
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.12)'; ctx.shadowBlur = 2; ctx.shadowOffsetY = 1;
+      ctx.fillStyle = T.fieldBg; rr(ctx, 8, cy - 23, fw, 46, 23); ctx.fill();
+      ctx.restore();
+      drawIcon(ctx, 'mood', 18, cy - 12, 24, T.inputIcon);
+      drawFieldText(52, fw - 52 - (has ? 40 : 76), 'Message', S.font(17));
+      drawIcon(ctx, 'attach', 8 + fw - (has ? 40 : 76), cy - 12, 24, T.inputIcon);
+      if (!has) drawIcon(ctx, 'camera', 8 + fw - 38, cy - 12, 23, T.inputIcon);
+      ctx.fillStyle = T.accent; ctx.beginPath(); ctx.arc(W - 32, cy, 23, 0, Math.PI * 2); ctx.fill();
+      if (has) drawIcon(ctx, 'send', W - 43, cy - 11, 22, '#FFFFFF');
+      else drawIcon(ctx, 'mic', W - 44, cy - 12, 24, '#FFFFFF');
+    }
+    return;
+  }
+
+  if (S.app === 'telegram') {
+    if (S.ios) {
+      drawIcon(ctx, 'attach', 10, cy - 13, 26, T.inputIcon);
+      const fx = 46, fw = W - 46 - 48;
+      ctx.fillStyle = T.fieldBg; rr(ctx, fx, cy - 17, fw, 34, 17); ctx.fill();
+      ctx.strokeStyle = T.dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.12)'; ctx.lineWidth = 0.7; ctx.stroke();
+      drawFieldText(fx + 13, fw - 44, 'Message', S.font(16.5));
+      drawIcon(ctx, 'sticker', fx + fw - 32, cy - 11, 22, T.inputIcon);
+      if (has) {
+        ctx.fillStyle = T.accent; ctx.beginPath(); ctx.arc(W - 25, cy, 16, 0, Math.PI * 2); ctx.fill();
+        drawIcon(ctx, 'up', W - 36, cy - 11, 22, '#FFFFFF');
+      } else drawIcon(ctx, 'mic', W - 38, cy - 13, 26, T.inputIcon);
+    } else {
+      drawIcon(ctx, 'mood', 12, cy - 13, 26, T.inputIcon);
+      drawFieldText(52, W - 52 - (has ? 60 : 96), 'Message', S.font(17));
+      if (has) drawIcon(ctx, 'send', W - 44, cy - 13, 26, T.accent);
+      else { drawIcon(ctx, 'attach', W - 86, cy - 13, 26, T.inputIcon); drawIcon(ctx, 'mic', W - 44, cy - 13, 26, T.inputIcon); }
+    }
+    return;
+  }
+
+  if (S.app === 'messenger') {
+    let x = 10;
+    if (has) { drawIcon(ctx, 'chevronRight', x, cy - 15, 30, T.inputIcon); x += 34; }
+    else {
+      ctx.fillStyle = T.inputIcon; ctx.beginPath(); ctx.arc(x + 12, cy, 11, 0, Math.PI * 2); ctx.fill();
+      drawIcon(ctx, 'add', x + 3, cy - 9, 18, T.inputBarBg);
+      x += 32;
+      for (const n of ['camera', 'image', 'mic']) { drawIcon(ctx, n, x, cy - 12, 24, T.inputIcon); x += 34; }
+    }
+    const fw = W - x - 48;
+    ctx.fillStyle = T.fieldBg; rr(ctx, x, cy - 18, fw, 36, 18); ctx.fill();
+    drawFieldText(x + 13, fw - 46, 'Aa', S.font(16));
+    drawIcon(ctx, 'mood', x + fw - 32, cy - 12, 24, T.inputIcon);
+    if (has) drawIcon(ctx, 'send', W - 40, cy - 12, 25, T.inputIcon);
+    else drawIcon(ctx, 'thumb', W - 40, cy - 13, 26, T.inputIcon);
+    return;
+  }
+
+  if (S.app === 'imessage') {
+    ctx.fillStyle = T.dark ? '#2C2C2E' : '#E9E9EB';
+    ctx.beginPath(); ctx.arc(26, cy, 16, 0, Math.PI * 2); ctx.fill();
+    drawIcon(ctx, 'add', 15, cy - 11, 22, T.dark ? '#AEAEB2' : '#7C7C80');
+    const fx = 50, fw = W - 50 - 12;
+    ctx.strokeStyle = T.fieldBorder; ctx.lineWidth = 1;
+    rr(ctx, fx, cy - 17, fw, 34, 17); ctx.stroke();
+    drawFieldText(fx + 13, fw - 50, 'iMessage', S.font(17));
+    if (has) {
+      ctx.fillStyle = T.accent; ctx.beginPath(); ctx.arc(fx + fw - 17, cy, 13.5, 0, Math.PI * 2); ctx.fill();
+      drawIcon(ctx, 'up', fx + fw - 27, cy - 10, 20, '#FFFFFF');
+    } else drawIcon(ctx, 'mic', fx + fw - 30, cy - 11, 22, T.inputIcon);
+    return;
+  }
+
+  // signal
+  const fw = W - 12 - 60;
+  ctx.fillStyle = T.fieldBg; rr(ctx, 12, cy - 20, fw, 40, 20); ctx.fill();
+  drawIcon(ctx, 'mood', 22, cy - 12, 24, T.inputIcon);
+  drawFieldText(54, fw - 54 - (has ? 8 : 70), 'Signal message', S.font(16.5));
+  if (!has) { drawIcon(ctx, 'camera', 12 + fw - 70, cy - 12, 24, T.inputIcon); drawIcon(ctx, 'mic', 12 + fw - 36, cy - 12, 24, T.inputIcon); }
+  if (has) { ctx.fillStyle = T.accent; ctx.beginPath(); ctx.arc(W - 30, cy, 20, 0, Math.PI * 2); ctx.fill(); drawIcon(ctx, 'send', W - 41, cy - 11, 22, '#FFFFFF'); }
+  else { ctx.fillStyle = T.dark ? '#2A2A2A' : '#F0F0F0'; ctx.beginPath(); ctx.arc(W - 30, cy, 20, 0, Math.PI * 2); ctx.fill(); drawIcon(ctx, 'add', W - 42, cy - 12, 24, T.inputIcon); }
+}
+
+/* ---------- Bubbles ---------- */
+// Builds the bubble body path; returns a function that builds the tail path (or null).
+function bubbleShape(ctx, S, m, x, y, w, h) {
+  const T = S.T;
+  const R = T.radius;
+  if (T.tail === 'none') {
+    const gr = T.groupRadius || R;
+    let tl = R, tr = R, br = R, bl = R;
+    if (m.mine) { if (!m.first) tr = gr; if (!m.last) br = gr; }
+    else { if (!m.first) tl = gr; if (!m.last) bl = gr; }
+    rr(ctx, x, y, w, h, [tl, tr, br, bl]);
+    return null;
+  }
+  if (T.tail === 'top') {
+    const tail = m.first;
+    rr(ctx, x, y, w, h, m.mine ? [R, tail ? 0 : R, R, R] : [tail ? 0 : R, R, R, R]);
+    if (!tail) return null;
+    return () => {
+      ctx.beginPath();
+      if (m.mine) { ctx.moveTo(x + w - 2, y); ctx.lineTo(x + w + 7, y); ctx.quadraticCurveTo(x + w + 9.5, y + 1, x + w + 7.5, y + 3.5); ctx.lineTo(x + w - 2, y + 12); }
+      else { ctx.moveTo(x + 2, y); ctx.lineTo(x - 7, y); ctx.quadraticCurveTo(x - 9.5, y + 1, x - 7.5, y + 3.5); ctx.lineTo(x + 2, y + 12); }
+      ctx.closePath();
+    };
+  }
+  // bottom tail (iMessage / Telegram) on the last bubble of a run
+  const small = S.app === 'imessage' ? R : 6;
+  if (!m.last) {
+    rr(ctx, x, y, w, h, m.mine ? [R, m.first ? R : small, small, R] : [m.first ? R : small, R, R, small]);
+    return null;
+  }
+  const sharp = S.app === 'telegram' ? 0 : R;
+  rr(ctx, x, y, w, h, m.mine ? [R, m.first ? R : small, sharp, R] : [m.first ? R : small, R, R, sharp]);
+  return () => {
+    ctx.beginPath();
+    const d = m.mine ? 1 : -1;            // outward direction
+    const ex = m.mine ? x + w : x;        // bubble edge
+    const by = y + h;
+    if (S.app === 'telegram') {
+      ctx.moveTo(ex - d * 1, by - 16);
+      ctx.quadraticCurveTo(ex + d * 1, by - 3, ex + d * 8, by);
+      ctx.lineTo(ex - d * 6, by);
+    } else {
+      ctx.moveTo(ex - d * 18, by - 20);
+      ctx.lineTo(ex, by - 20);
+      ctx.bezierCurveTo(ex, by - 7, ex + d * 2, by - 2, ex + d * 7, by);
+      ctx.bezierCurveTo(ex + d * 1, by + 0.8, ex - d * 4, by, ex - d * 9, by - 2.5);
+      ctx.lineTo(ex - d * 18, by);
+    }
+    ctx.closePath();
+  };
+}
+
+function paintBubble(ctx, S, m, x, y, w, h, fill) {
+  ctx.fillStyle = fill;
+  const tail = bubbleShape(ctx, S, m, x, y, w, h);
+  ctx.fill();
+  if (tail) { tail(); ctx.fill(); }
+}
+
+function bubbleFill(ctx, S, m) {
+  const T = S.T;
+  if (m.mine && T.me === 'grad') {
+    const g = ctx.createLinearGradient(0, S.chatTop, 0, S.chatBottom);
+    T.meGrad.forEach((c, i) => g.addColorStop(i / (T.meGrad.length - 1), c));
+    return g;
+  }
+  return m.mine ? T.me : T.them;
+}
+
+function drawTicks(ctx, x, y, state, S) {
+  const T = S.T;
+  const col = state === 'read' ? T.tickRead : T.tick;
+  ctx.save();
+  ctx.strokeStyle = col; ctx.lineWidth = 1.35; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  const check = ox => { ctx.beginPath(); ctx.moveTo(x + ox, y + 0.5); ctx.lineTo(x + ox + 3.2, y + 3.6); ctx.lineTo(x + ox + 9, y - 3.6); ctx.stroke(); };
+  if (S.app === 'signal') {
+    ctx.lineWidth = 1.1;
+    const circ = cx => {
+      ctx.beginPath(); ctx.arc(cx, y, 4.6, 0, Math.PI * 2);
+      if (state === 'read') { ctx.fillStyle = col; ctx.fill(); } else ctx.stroke();
+      ctx.strokeStyle = state === 'read' ? S.T.me : col;
+      ctx.beginPath(); ctx.moveTo(cx - 2.2, y + 0.2); ctx.lineTo(cx - 0.6, y + 1.8); ctx.lineTo(cx + 2.3, y - 1.4); ctx.stroke();
+      ctx.strokeStyle = col;
+    };
+    circ(x + 5);
+    if (state !== 'sent') circ(x + 13);
+    ctx.restore();
+    return;
+  }
+  if (state === 'sent') check(1);
+  else {
+    check(0);
+    ctx.beginPath(); ctx.moveTo(x + 5.8, y + 2.6); ctx.lineTo(x + 6.6, y + 3.6); ctx.lineTo(x + 12.4, y - 3.6); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawMessage(ctx, S, m, t, oy) {
+  const T = S.T;
+  const b = m.bubble;
+  const x = b.x, y = oy + b.y, w = b.w, h = b.h;
+  const age = t - m.appear;
+  const p = clamp(age / 260, 0, 1);
+
+  ctx.save();
+  if (p < 1) {
+    const s = 0.82 + 0.18 * easeOutBack(p);
+    const ox = m.mine ? x + w : x, oyy = y + h;
+    ctx.globalAlpha = clamp(p * 2.2, 0, 1);
+    ctx.translate(ox, oyy + (1 - ease(p)) * 10);
+    ctx.scale(s, s);
+    ctx.translate(-ox, -oyy);
+  }
+
+  // name above bubble (messenger / imessage groups)
+  if (m.nameAbove) {
+    ctx.fillStyle = T.nameColor; ctx.font = S.font(12, 400); ctx.textBaseline = 'middle';
+    ctx.fillText(m.sender, x + 12, oy + m.y + 8);
+  }
+
+  if (m.jumbo) {
+    ctx.font = m.font; ctx.textBaseline = 'middle';
+    ctx.textAlign = m.mine ? 'right' : 'left';
+    ctx.fillText(m.lines[0].s, m.mine ? x + w : x, y + 28);
+    ctx.textAlign = 'left';
+    if (T.timeInside) drawMeta(ctx, S, m, t, x, y, w, h, true);
+  } else {
+    // shadow + fill
+    if (T.shadow) {
+      ctx.save();
+      ctx.translate(0, 1);
+      paintBubble(ctx, S, m, x, y, w, h, T.shadow);
+      ctx.restore();
+    }
+    paintBubble(ctx, S, m, x, y, w, h, bubbleFill(ctx, S, m));
+
+    let ty = y + T.padTop;
+    if (m.nameH) {
+      const pal = T.dark ? NAME_COLORS_DARK : NAME_COLORS_LIGHT;
+      ctx.fillStyle = pal[S.colorIndex(m.sender) % pal.length];
+      ctx.font = S.nameFontInside; ctx.textBaseline = 'middle';
+      ctx.fillText(ellipsize(S.nameFontInside, m.sender, w - T.padX * 2), x + T.padX, ty + 9);
+      ty += m.nameH;
+    }
+    ctx.fillStyle = m.mine ? T.meText : T.themText;
+    ctx.font = m.font; ctx.textBaseline = 'middle';
+    for (const l of m.lines) {
+      ctx.fillText(l.s, x + T.padX, ty + T.lineH / 2 + 0.5);
+      ty += T.lineH;
+    }
+    if (T.timeInside) drawMeta(ctx, S, m, t, x, y, w, h, false);
+  }
+  ctx.restore();
+
+  // avatar
+  if (m.hasAvatar) {
+    const r = S.avatarSize / 2;
+    const ay = T.avatarAt === 'first' ? y + r : y + h - r;
+    drawAvatar(ctx, S, m.sender, 10 + r, ay, r);
+  }
+}
+
+function drawMeta(ctx, S, m, t, x, y, w, h, jumbo) {
+  const T = S.T;
+  const my = y + h - (jumbo ? 8 : 10);
+  let mx = x + w - T.padX - m.metaW + 4;
+  if (jumbo) {
+    mx = m.mine ? x + w - m.metaW - 4 : x + 4;
+    ctx.fillStyle = T.dark ? 'rgba(0,0,0,0.45)' : 'rgba(11,20,26,0.38)';
+    rr(ctx, mx - 6, my - 8, m.metaW + 8, 16, 8); ctx.fill();
+  }
+  ctx.font = S.metaFont; ctx.textBaseline = 'middle';
+  ctx.fillStyle = jumbo ? '#FFFFFF' : (m.mine ? T.meMeta : T.themMeta);
+  ctx.fillText(m.metaText, mx, my);
+  if (m.mine) {
+    const state = t >= m.read ? 'read' : t >= m.delivered ? 'delivered' : 'sent';
+    drawTicks(ctx, mx + measure(S.metaFont, m.metaText) + 4, my, state, S);
+  }
+}
+
+function drawTyping(ctx, S, typer, t, oy) {
+  const T = S.T;
+  const g = typingBubbleGeom(S, S.msgs, S.msgs.indexOf(typer), typer);
+  const p = clamp((t - typer.typingStart) / 220, 0, 1);
+  const x = g.x, y = oy + g.y, w = g.w, h = g.h;
+  ctx.save();
+  ctx.globalAlpha = p;
+  if (g.nameAbove) {
+    ctx.fillStyle = T.nameColor; ctx.font = S.font(12, 400); ctx.textBaseline = 'middle';
+    ctx.fillText(typer.sender, x + 12, oy + g.top + 8);
+  }
+  const fake = { mine: false, first: true, last: true };
+  paintBubble(ctx, S, S.app === 'imessage' ? { mine: false, first: true, last: false } : fake, x, y, w, h, T.them);
+  if (S.app === 'imessage') {
+    ctx.beginPath(); ctx.arc(x - 3, y + h - 3, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x - 9, y + h + 3, 2.5, 0, Math.PI * 2); ctx.fill();
+  }
+  const dotCol = T.dark ? '#9A9A9F' : '#8E8E93';
+  for (let i = 0; i < 3; i++) {
+    const phase = ((t - typer.typingStart) / 1000 * 1.4 - i * 0.18) % 1;
+    const a = phase < 0.4 ? Math.sin(phase / 0.4 * Math.PI) : 0;
+    ctx.globalAlpha = p * (0.45 + 0.55 * a);
+    ctx.fillStyle = dotCol;
+    ctx.beginPath(); ctx.arc(x + 17 + i * 12, y + h / 2 - a * 2.5, 4, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+  if (S.group || T.avatarAlways) {
+    const r = S.avatarSize / 2;
+    ctx.save(); ctx.globalAlpha = p;
+    drawAvatar(ctx, S, typer.sender, 10 + r, y + h - r, r);
+    ctx.restore();
+  }
+}
+
+function drawFurniture(ctx, S, it, oy) {
+  const T = S.T, W = S.W;
+  const y = oy + it.y;
+  ctx.textBaseline = 'middle';
+  if (it.kind === 'chip') {
+    ctx.font = it.font;
+    const tw = measure(it.font, it.text);
+    const w = tw + 24;
+    ctx.fillStyle = T.chipBg;
+    if (T.shadow && S.app === 'whatsapp') {
+      ctx.save(); ctx.fillStyle = T.shadow; rr(ctx, W / 2 - w / 2, y + 1, w, it.h, 8); ctx.fill(); ctx.restore();
+      ctx.fillStyle = T.chipBg;
+    }
+    rr(ctx, W / 2 - w / 2, y, w, it.h, S.app === 'telegram' ? it.h / 2 : 8); ctx.fill();
+    ctx.fillStyle = T.chipFg; ctx.textAlign = 'center';
+    ctx.fillText(it.text, W / 2, y + it.h / 2 + 0.5);
+    ctx.textAlign = 'left';
+  } else if (it.kind === 'notice') {
+    const w = W * 0.78;
+    ctx.fillStyle = T.dark ? '#182229' : '#FFEECD';
+    rr(ctx, W / 2 - w / 2, y, w, it.h, 8); ctx.fill();
+    ctx.fillStyle = T.dark ? '#FFD279' : '#54656F';
+    ctx.font = it.font; ctx.textAlign = 'center';
+    it.lines.forEach((l, i) => ctx.fillText(l.s, W / 2, y + 7 + 8.5 + i * 17));
+    ctx.textAlign = 'left';
+  } else if (it.kind === 'center') {
+    ctx.textAlign = 'center';
+    ctx.fillStyle = T.metaColor || T.chipFg || T.headerSub;
+    it.lines.forEach(([txt, f], i) => { ctx.font = f; ctx.fillText(txt, W / 2, y + 8 + i * 16); });
+    ctx.textAlign = 'left';
+  } else if (it.kind === 'intro') {
+    const cx = W / 2;
+    if (S.group) drawGroupAvatarAt(ctx, S, cx, y + 46, 42);
+    else drawAvatar(ctx, S, S.title, cx, y + 46, 42);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = T.headerFg; ctx.font = S.font(19, 700);
+    ctx.fillText(ellipsize(ctx.font, S.title, W - 60), cx, y + 110);
+    ctx.fillStyle = T.headerSub; ctx.font = S.font(13.5, 400);
+    ctx.fillText(S.group ? `You created this group` : 'Messenger', cx, y + 134);
+    if (!S.group) ctx.fillText("You're friends on Facebook", cx, y + 154);
+    const bw = 116, by = y + (S.group ? 150 : 170);
+    ctx.fillStyle = T.dark ? '#303030' : '#E4E6EB';
+    rr(ctx, cx - bw / 2, by, bw, 26, 7); ctx.fill();
+    ctx.fillStyle = T.headerFg; ctx.font = S.font(13.5, 600);
+    ctx.fillText(S.group ? 'Add people' : 'View profile', cx, by + 13.5);
+    ctx.textAlign = 'left';
+  }
+}
+function drawGroupAvatarAt(ctx, S, cx, cy, r) {
+  const saved = S.T.headerBg;
+  S.T.headerBg = S.T.wall;
+  drawGroupAvatar(ctx, S, cx, cy, r);
+  S.T.headerBg = saved;
+}
+
+function drawScreen(ctx, S, t) {
+  const T = S.T, msgs = S.msgs;
+  const st = visibleState(S, msgs, t);
+  const scroll = scrollAt(S, t);
+  const oy = S.chatTop - scroll;
+  const pr = ctx.getTransform().a;
+
+  ctx.drawImage(getWallpaper(S, pr), 0, 0, S.W, S.H);
+
+  ctx.save();
+  ctx.beginPath(); ctx.rect(0, S.chatTop, S.W, S.viewH); ctx.clip();
+  for (const it of S.furniture) if (oy + it.y + it.h > S.chatTop - 20) drawFurniture(ctx, S, it, oy);
+  for (let i = 0; i < st.count; i++) {
+    const m = msgs[i];
+    if (oy + m.y + m.h < S.chatTop - 40 || oy + m.y > S.chatBottom + 10) continue;
+    drawMessage(ctx, S, m, t, oy);
+  }
+  // iMessage delivered/read label under my last message
+  if (S.app === 'imessage' && st.count && msgs[st.count - 1].mine) {
+    const m = msgs[st.count - 1];
+    const label = t >= m.read ? 'Read ' + fmtTime(m.clockMin, S.opts.clock12) : t >= m.delivered ? 'Delivered' : '';
+    if (label) {
+      ctx.font = S.font(11.5, 500); ctx.fillStyle = T.metaColor; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, S.meRight - 4, oy + m.y + m.h + 10);
+      ctx.textAlign = 'left';
+    }
+  }
+  if (st.typing && T.typing === 'bubble') drawTyping(ctx, S, st.typing, t, oy);
+  ctx.restore();
+
+  const shownClock = st.count ? msgs[st.count - 1].clockMin : S.startClock;
+  drawHeader(ctx, S, st, shownClock);
+  drawInputBar(ctx, S, st);
+  drawHomeBar(ctx, S, T.inputBarBg || null);
+}
+
+/* ---------- Framing: screen only or phone on a backdrop ---------- */
+const BACKDROPS = [
+  ['#FF7EB3', '#7A5CFF'], ['#43E97B', '#38F9D7'], ['#FAD961', '#F76B1C'],
+  ['#4FACFE', '#00F2FE'], ['#1F1C2C', '#928DAB'], ['#F5F0E6', '#E2D6C2'], ['#0F2027', '#2C5364'],
+];
+
+function canvasSize(S) {
+  if (S.opts.frame === 'phone') return { w: 540, h: 960 };
+  return { w: S.W, h: S.H };
+}
+
+function drawFrame(ctx, S, t) {
+  if (S.opts.frame !== 'phone') { drawScreen(ctx, S, t); return; }
+  const CW = 540, CH = 960;
+  const [c1, c2] = BACKDROPS[S.opts.backdrop] || BACKDROPS[0];
+  const bg = ctx.createLinearGradient(0, 0, CW, CH);
+  bg.addColorStop(0, c1); bg.addColorStop(1, c2);
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, CW, CH);
+
+  const bezel = 12;
+  const scale = (CH - 72) / (S.H + bezel * 2);
+  const pw = (S.W + bezel * 2) * scale, ph = (S.H + bezel * 2) * scale;
+  const px = (CW - pw) / 2, py = (CH - ph) / 2;
+
+  ctx.save();
+  ctx.translate(px, py);
+  ctx.scale(scale, scale);
+  const bw = S.W + bezel * 2, bh = S.H + bezel * 2;
+  const outerR = S.ios ? 64 : 50;
+  // shadow
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 18;
+  ctx.fillStyle = '#0c0c0e'; rr(ctx, 0, 0, bw, bh, outerR); ctx.fill();
+  ctx.restore();
+  // side buttons
+  ctx.fillStyle = '#2a2a2e';
+  if (S.ios) { rr(ctx, -3, 170, 4, 34, 2); ctx.fill(); rr(ctx, -3, 230, 4, 62, 2); ctx.fill(); rr(ctx, -3, 305, 4, 62, 2); ctx.fill(); rr(ctx, bw - 1, 250, 4, 96, 2); ctx.fill(); }
+  else { rr(ctx, bw - 1, 200, 4, 70, 2); ctx.fill(); rr(ctx, bw - 1, 300, 4, 40, 2); ctx.fill(); }
+  // body rim
+  const rim = ctx.createLinearGradient(0, 0, bw, 0);
+  rim.addColorStop(0, '#3a3a40'); rim.addColorStop(0.5, '#18181b'); rim.addColorStop(1, '#3a3a40');
+  ctx.fillStyle = rim; rr(ctx, 0, 0, bw, bh, outerR); ctx.fill();
+  ctx.fillStyle = '#050505'; rr(ctx, 3, 3, bw - 6, bh - 6, outerR - 3); ctx.fill();
+  // screen
+  ctx.translate(bezel, bezel);
+  ctx.save();
+  rr(ctx, 0, 0, S.W, S.H, outerR - bezel); ctx.clip();
+  drawScreen(ctx, S, t);
+  ctx.restore();
+  ctx.restore();
+}
+
+/* =====================================================================
+   GIF encoder (median-cut palette, LZW, frame-diff transparency)
+   ===================================================================== */
+class ByteWriter {
+  constructor(size = 1 << 20) { this.buf = new Uint8Array(size); this.len = 0; }
+  ensure(n) { if (this.len + n > this.buf.length) { let s = this.buf.length * 2; while (s < this.len + n) s *= 2; const b = new Uint8Array(s); b.set(this.buf.subarray(0, this.len)); this.buf = b; } }
+  byte(b) { this.ensure(1); this.buf[this.len++] = b; }
+  bytes(arr) { this.ensure(arr.length); this.buf.set(arr, this.len); this.len += arr.length; }
+  u16(v) { this.byte(v & 255); this.byte((v >> 8) & 255); }
+  str(s) { for (let i = 0; i < s.length; i++) this.byte(s.charCodeAt(i)); }
+  result() { return this.buf.subarray(0, this.len); }
+}
+
+function buildPalette(samples, maxColors) {
+  // samples: array of Uint8ClampedArray RGBA. Histogram on 5-5-5 bits, then median cut.
+  const hist = new Uint32Array(32768);
+  for (const d of samples) for (let i = 0; i < d.length; i += 8) hist[((d[i] >> 3) << 10) | ((d[i + 1] >> 3) << 5) | (d[i + 2] >> 3)]++;
+  const colors = [];
+  for (let k = 0; k < 32768; k++) if (hist[k]) colors.push(k);
+  const boxOf = arr => {
+    let rmin = 31, rmax = 0, gmin = 31, gmax = 0, bmin = 31, bmax = 0, count = 0;
+    for (const k of arr) {
+      const r = k >> 10, g = (k >> 5) & 31, b = k & 31;
+      if (r < rmin) rmin = r; if (r > rmax) rmax = r;
+      if (g < gmin) gmin = g; if (g > gmax) gmax = g;
+      if (b < bmin) bmin = b; if (b > bmax) bmax = b;
+      count += hist[k];
+    }
+    return { arr, count, range: Math.max(rmax - rmin, gmax - gmin, bmax - bmin), dims: [rmax - rmin, gmax - gmin, bmax - bmin] };
+  };
+  const boxes = [boxOf(colors)];
+  while (boxes.length < maxColors) {
+    // split box with largest (range * sqrt(count))
+    let bi = -1, best = 0;
+    boxes.forEach((b, i) => { const score = b.range * Math.sqrt(b.count); if (b.arr.length > 1 && score > best) { best = score; bi = i; } });
+    if (bi < 0) break;
+    const box = boxes[bi];
+    const dim = box.dims.indexOf(Math.max(...box.dims));
+    const sh = dim === 0 ? 10 : dim === 1 ? 5 : 0;
+    box.arr.sort((a, b) => ((a >> sh) & 31) - ((b >> sh) & 31));
+    let half = box.count / 2, acc = 0, cut = 1;
+    for (let i = 0; i < box.arr.length - 1; i++) { acc += hist[box.arr[i]]; if (acc >= half) { cut = i + 1; break; } }
+    boxes.splice(bi, 1, boxOf(box.arr.slice(0, cut)), boxOf(box.arr.slice(cut)));
+  }
+  const pal = [];
+  for (const b of boxes) {
+    let r = 0, g = 0, bl = 0, n = 0;
+    for (const k of b.arr) { const c = hist[k]; r += (k >> 10) * c; g += ((k >> 5) & 31) * c; bl += (k & 31) * c; n += c; }
+    pal.push([Math.round(r / n * 8.226), Math.round(g / n * 8.226), Math.round(bl / n * 8.226)]);
+  }
+  return pal;
+}
+
+class GifWriter {
+  constructor(w, h, palette) {
+    this.w = w; this.h = h;
+    this.pal = palette.slice(0, 255);
+    while (this.pal.length < 256) this.pal.push([0, 0, 0]);
+    this.trans = 255;
+    this.lut = new Int16Array(32768).fill(-1);
+    this.out = new ByteWriter(w * h * 4);
+    this.prev = null;
+    this.pending = null;
+    const o = this.out;
+    o.str('GIF89a'); o.u16(w); o.u16(h);
+    o.byte(0xF7); o.byte(0); o.byte(0);
+    for (const [r, g, b] of this.pal) { o.byte(r); o.byte(g); o.byte(b); }
+    o.byte(0x21); o.byte(0xFF); o.byte(11); o.str('NETSCAPE2.0'); o.byte(3); o.byte(1); o.u16(0); o.byte(0);
+  }
+  nearest(k) {
+    let v = this.lut[k];
+    if (v >= 0) return v;
+    const r = (k >> 10) * 8.226, g = ((k >> 5) & 31) * 8.226, b = (k & 31) * 8.226;
+    let best = 0, bd = Infinity;
+    for (let i = 0; i < 255; i++) {
+      const p = this.pal[i];
+      const dr = p[0] - r, dg = p[1] - g, db = p[2] - b;
+      const d = dr * dr * 0.3 + dg * dg * 0.59 + db * db * 0.11;
+      if (d < bd) { bd = d; best = i; }
+    }
+    this.lut[k] = best;
+    return best;
+  }
+  addFrame(rgba, delayMs) {
+    const n = this.w * this.h;
+    const idx = new Uint8Array(n);
+    for (let i = 0, j = 0; i < n; i++, j += 4) idx[i] = this.nearest(((rgba[j] >> 3) << 10) | ((rgba[j + 1] >> 3) << 5) | (rgba[j + 2] >> 3));
+    if (this.prev) {
+      // identical frame → just extend the previous frame's delay
+      let same = true;
+      for (let i = 0; i < n; i++) if (idx[i] !== this.prev[i]) { same = false; break; }
+      if (same) { this.pending.delay += delayMs; return; }
+    }
+    this.flush();
+    this.pending = { idx, delay: delayMs, prev: this.prev };
+    this.prev = idx;
+  }
+  flush() {
+    const f = this.pending;
+    if (!f) return;
+    const { w, h } = this;
+    let x0 = 0, y0 = 0, x1 = w - 1, y1 = h - 1, data = f.idx, transparent = false;
+    if (f.prev) {
+      x0 = w; y0 = h; x1 = -1; y1 = -1;
+      for (let y = 0; y < h; y++) {
+        const row = y * w;
+        for (let x = 0; x < w; x++) {
+          if (f.idx[row + x] !== f.prev[row + x]) {
+            if (x < x0) x0 = x; if (x > x1) x1 = x;
+            if (y < y0) y0 = y; if (y > y1) y1 = y;
+          }
+        }
+      }
+      const cw = x1 - x0 + 1, ch = y1 - y0 + 1;
+      data = new Uint8Array(cw * ch);
+      for (let y = 0; y < ch; y++) {
+        const src = (y + y0) * w + x0;
+        for (let x = 0; x < cw; x++) {
+          const v = f.idx[src + x];
+          data[y * cw + x] = v === f.prev[src + x] ? this.trans : v;
+        }
+      }
+      transparent = true;
+    }
+    const o = this.out;
+    const cs = Math.max(2, Math.round(f.delay / 10));
+    o.byte(0x21); o.byte(0xF9); o.byte(4);
+    o.byte((1 << 2) | (transparent ? 1 : 0));
+    o.u16(cs); o.byte(this.trans); o.byte(0);
+    o.byte(0x2C); o.u16(x0); o.u16(y0); o.u16(x1 - x0 + 1); o.u16(y1 - y0 + 1); o.byte(0);
+    lzw(o, data, 8);
+    this.pending = null;
+  }
+  finish() { this.flush(); this.out.byte(0x3B); return this.out.result(); }
+}
+
+function lzw(o, pixels, minCode) {
+  o.byte(minCode);
+  const clear = 1 << minCode, eoi = clear + 1;
+  let codeSize = minCode + 1, next = eoi + 1;
+  const table = new Map();
+  let cur = 0, bits = 0;
+  const block = new Uint8Array(255); let bl = 0;
+  const emitByte = b => { block[bl++] = b; if (bl === 255) { o.byte(255); o.bytes(block); bl = 0; } };
+  const emit = code => { cur |= code << bits; bits += codeSize; while (bits >= 8) { emitByte(cur & 255); cur >>>= 8; bits -= 8; } };
+  emit(clear);
+  let prefix = pixels[0];
+  for (let i = 1; i < pixels.length; i++) {
+    const k = pixels[i];
+    const key = (prefix << 8) | k;
+    const c = table.get(key);
+    if (c !== undefined) { prefix = c; continue; }
+    emit(prefix);
+    if (next === 4096) {
+      emit(clear);
+      table.clear(); next = eoi + 1; codeSize = minCode + 1;
+    } else {
+      if (next >= (1 << codeSize)) codeSize++;
+      table.set(key, next++);
+    }
+    prefix = k;
+  }
+  emit(prefix);
+  emit(eoi);
+  if (bits > 0) emitByte(cur & 255);
+  if (bl) { o.byte(bl); o.bytes(block.subarray(0, bl)); }
+  o.byte(0);
+}
+
+/* =====================================================================
+   App state & UI
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const DEFAULTS = {
+  example: 'pizza', app: 'whatsapp', device: 'ios', theme: 'light', speed: 'normal',
+  typeOut: true, showTyping: true, frame: 'none', backdrop: 0, format: 'gif', size: 's',
+  startTime: '21:37', battery: 92, clock12: false, me: 'Sam', title: '',
+};
+const state = { ...DEFAULTS };
+try { Object.assign(state, JSON.parse(localStorage.getItem('chatreel') || '{}')); } catch (e) {}
+let transcriptText = null;
+try { transcriptText = localStorage.getItem('chatreel.text'); } catch (e) {}
+function save() {
+  try {
+    localStorage.setItem('chatreel', JSON.stringify(state));
+    localStorage.setItem('chatreel.text', $('transcript').value);
+  } catch (e) {}
+}
+
+let parsed = { messages: [], participants: [] };
+let scene = null;
+const player = { playing: false, t: 0, last: 0, raf: 0 };
+
+function sceneOpts() {
+  const [h, m] = (state.startTime || '21:37').split(':').map(Number);
+  return {
+    app: state.app, device: state.device, theme: state.theme, speed: state.speed,
+    typeOut: state.typeOut, showTyping: state.showTyping, frame: state.frame, backdrop: state.backdrop,
+    startTime: (h || 0) * 60 + (m || 0), battery: +state.battery, clock12: !!state.clock12,
+    me: state.me, title: state.title,
+  };
+}
+
+function rebuild(keepTime = true) {
+  parsed = parseTranscript($('transcript').value);
+  if (!parsed.participants.includes(state.me)) {
+    state.me = parsed.participants.find(p => /^(me|you|ik|moi|ich|yo)$/i.test(p)) || parsed.participants[0] || '';
+  }
+  renderWho();
+  scene = buildScene(sceneOpts(), parsed);
+  const n = parsed.messages.length;
+  $('stats').textContent = n
+    ? `${n} message${n === 1 ? '' : 's'} · ${parsed.participants.length} people · ${(scene.duration / 1000).toFixed(1)}s long`
+    : 'No messages found yet. Use the Name: message format.';
+  if (!keepTime) player.t = 0;
+  player.t = Math.min(player.t, scene.duration);
+  sizePreview();
+  renderSegs();
+  drawPreview();
+  updateSizeHint();
+  save();
+}
+
+/* ---------- per-message progress ---------- */
+// Segment i covers the time from the previous message appearing to message i appearing;
+// the last segment is the hold at the end. Widths are proportional, so the invisible
+// range input on top maps linearly onto the same timeline.
+let segSpans = [];
+function renderSegs() {
+  const box = $('segs');
+  box.innerHTML = '';
+  segSpans = [];
+  if (!scene) return;
+  let prev = 0;
+  const add = (end, mine) => {
+    const i = document.createElement('i');
+    i.style.flexGrow = Math.max(1, end - prev);
+    if (mine) i.className = 'mine';
+    i.appendChild(document.createElement('b'));
+    box.appendChild(i);
+    segSpans.push([prev, end, i.firstChild]);
+    prev = end;
+  };
+  for (const m of scene.msgs) add(m.appear, m.mine);
+  add(scene.duration, false);
+}
+function updateSegs() {
+  const t = player.t;
+  for (const [a, b, fill] of segSpans) {
+    const p = b <= a ? (t >= b ? 1 : 0) : clamp((t - a) / (b - a), 0, 1);
+    fill.style.width = (p * 100).toFixed(1) + '%';
+  }
+}
+
+/* ---------- preview ---------- */
+const preview = $('preview');
+const pctx = preview.getContext('2d');
+
+function sizePreview() {
+  if (!scene) return;
+  const wrap = $('canvasWrap');
+  const { w, h } = canvasSize(scene);
+  const maxW = wrap.clientWidth, maxH = wrap.clientHeight;
+  const s = Math.min(maxW / w, maxH / h);
+  const cw = Math.floor(w * s), ch = Math.floor(h * s);
+  preview.style.width = cw + 'px';
+  preview.style.height = ch + 'px';
+  const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  preview.width = Math.round(cw * dpr);
+  preview.height = Math.round(ch * dpr);
+}
+
+function drawPreview() {
+  if (!scene) return;
+  const { w } = canvasSize(scene);
+  const k = preview.width / w;
+  pctx.setTransform(k, 0, 0, k, 0, 0);
+  pctx.clearRect(0, 0, preview.width, preview.height);
+  drawFrame(pctx, scene, player.t);
+  const d = scene.duration;
+  $('scrub').value = Math.round(player.t / d * 1000);
+  updateSegs();
+  $('clock').textContent = `${fmtDur(player.t)} / ${fmtDur(d)}`;
+}
+const fmtDur = ms => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+
+const PLAY_SVG = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+const PAUSE_SVG = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+function setPlaying(on) {
+  player.playing = on;
+  $('playBtn').innerHTML = on ? PAUSE_SVG : PLAY_SVG;
+  $('bigPlay').classList.toggle('hidden', on);
+  cancelAnimationFrame(player.raf);
+  if (on) {
+    if (player.t >= scene.duration) player.t = 0;
+    player.last = performance.now();
+    const loop = now => {
+      player.t += now - player.last;
+      player.last = now;
+      if (player.t >= scene.duration) {
+        player.t = scene.duration; drawPreview(); setPlaying(false); return;
+      }
+      drawPreview();
+      player.raf = requestAnimationFrame(loop);
+    };
+    player.raf = requestAnimationFrame(loop);
+  }
+}
+
+$('playBtn').onclick = () => setPlaying(!player.playing);
+$('bigPlay').onclick = () => setPlaying(true);
+preview.onclick = () => setPlaying(!player.playing);
+$('restartBtn').onclick = () => { player.t = 0; setPlaying(true); };
+$('scrub').oninput = e => { setPlaying(false); $('bigPlay').classList.add('hidden'); player.t = e.target.value / 1000 * scene.duration; drawPreview(); };
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === b));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + b.dataset.tab));
+});
+
+/* ---------- examples ---------- */
+function renderExamples() {
+  $('examples').innerHTML = '';
+  for (const ex of EXAMPLES) {
+    const b = document.createElement('button');
+    b.className = 'ex' + (state.example === ex.id ? ' active' : '');
+    b.innerHTML = `<b></b><span></span>`;
+    b.querySelector('b').textContent = ex.title;
+    b.querySelector('span').textContent = `${ex.sub} · ${APPS[ex.app].name}`;
+    b.onclick = () => {
+      state.example = ex.id; state.me = ex.me; state.app = ex.app; state.title = '';
+      $('transcript').value = ex.text;
+      $('chatTitle').value = '';
+      renderExamples(); syncSegs();
+      rebuild(false);
+      setPlaying(true);
+    };
+    $('examples').appendChild(b);
+  }
+}
+
+/* =====================================================================
+   Chat library (library.js, loaded on first use)
+   ===================================================================== */
+const LIB_TAGS = {
+  history: '🏛️ History', celebs: '⭐ Famous faces', news: '📰 In the news', traditions: '🎉 Traditions',
+  culture: '🌍 Culture clash', family: '👪 Family', friends: '🍻 Friends', dating: '💘 Dating',
+  work: '💼 Work', school: '🎓 School', tech: '🤖 Tech', food: '🍕 Food', sport: '⚽ Sport',
+  travel: '✈️ Travel', pets: '🐾 Pets', fantasy: '🐉 Myths & fantasy',
+};
+const LIB_APPS = { w: 'whatsapp', t: 'telegram', m: 'messenger', i: 'imessage', s: 'signal' };
+const lib = { items: null, promise: null, tag: '', query: '', shown: 0, matches: [], observer: null };
+
+function loadLibrary() {
+  if (lib.promise) return lib.promise;
+  lib.promise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'library.js';
+    s.onload = () => {
+      lib.items = (window.CHAT_LIBRARY || []).map((c, id) => ({
+        id, title: c.t, tags: c.g.split(','), app: LIB_APPS[c.a] || 'whatsapp', me: c.me, text: c.x,
+        hay: (c.t + '\n' + c.x).toLowerCase(),
+      }));
+      resolve(lib.items);
+    };
+    s.onerror = () => { lib.promise = null; reject(new Error('Could not load the chat library.')); };
+    document.head.appendChild(s);
+  });
+  return lib.promise;
+}
+
+function loadChat(c) {
+  state.example = ''; state.me = c.me; state.app = c.app; state.title = '';
+  $('transcript').value = c.text;
+  $('chatTitle').value = '';
+  renderExamples(); syncSegs();
+  rebuild(false);
+  setPlaying(true);
+}
+
+function openLibrary() {
+  $('libSheet').classList.add('open');
+  $('libSheet').setAttribute('aria-hidden', 'false');
+  document.body.classList.add('sheet-open');
+  loadLibrary().then(() => { renderLibTags(); filterLibrary(); })
+    .catch(e => { $('libList').innerHTML = `<div class="lib-empty">${e.message}</div>`; });
+}
+function closeLibrary() {
+  $('libSheet').classList.remove('open');
+  $('libSheet').setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('sheet-open');
+}
+
+function renderLibTags() {
+  const counts = {};
+  for (const c of lib.items) for (const g of c.tags) counts[g] = (counts[g] || 0) + 1;
+  const box = $('libTags');
+  box.innerHTML = '';
+  const add = (key, label, n) => {
+    const b = document.createElement('button');
+    b.className = 'lib-tag' + (lib.tag === key ? ' active' : '');
+    b.textContent = label;
+    const sm = document.createElement('small'); sm.textContent = n; b.appendChild(sm);
+    b.onclick = () => { lib.tag = key; renderLibTags(); filterLibrary(); $('libList').scrollTop = 0; };
+    box.appendChild(b);
+  };
+  add('', '✨ All', lib.items.length);
+  for (const [key, label] of Object.entries(LIB_TAGS)) if (counts[key]) add(key, label, counts[key]);
+}
+
+function filterLibrary() {
+  const q = lib.query.trim().toLowerCase();
+  const words = q ? q.split(/\s+/) : [];
+  lib.matches = lib.items.filter(c => (!lib.tag || c.tags.includes(lib.tag)) && words.every(w => c.hay.includes(w)));
+  const n = lib.matches.length;
+  $('libCount').textContent = `${n} chat${n === 1 ? '' : 's'}${lib.tag ? ' in ' + LIB_TAGS[lib.tag].replace(/^\S+\s/, '') : ''}${q ? ` matching “${lib.query.trim()}”` : ''}`;
+  $('libList').innerHTML = n ? '' : '<div class="lib-empty">No chats found. Try another word or tag.</div>';
+  lib.shown = 0;
+  renderMoreLib();
+}
+
+function libCard(c) {
+  const b = document.createElement('button');
+  b.className = 'lib-card';
+  const top = document.createElement('div'); top.className = 'top';
+  const dot = document.createElement('i'); dot.style.background = APPS[c.app].dot;
+  const title = document.createElement('b'); title.textContent = c.title;
+  top.append(dot, title);
+  const peek = document.createElement('div'); peek.className = 'peek';
+  for (const line of c.text.split('\n').filter(l => !/^\(/.test(l)).slice(0, 2)) {
+    const i = line.indexOf(':');
+    const row = document.createElement('div');
+    const who = document.createElement('em'); who.textContent = line.slice(0, i) + ':';
+    row.append(who, document.createTextNode(line.slice(i + 1)));
+    peek.appendChild(row);
+  }
+  const chips = document.createElement('div'); chips.className = 'chips';
+  for (const g of c.tags) { const s = document.createElement('span'); s.textContent = LIB_TAGS[g] || g; chips.appendChild(s); }
+  b.append(top, peek, chips);
+  b.onclick = () => { closeLibrary(); loadChat(c); try { history.replaceState(null, '', '#chat=' + c.id); } catch (e) {} window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  return b;
+}
+
+function renderMoreLib() {
+  const list = $('libList');
+  const next = lib.matches.slice(lib.shown, lib.shown + 40);
+  const old = list.querySelector('.lib-sentinel');
+  if (old) old.remove();
+  for (const c of next) list.appendChild(libCard(c));
+  lib.shown += next.length;
+  if (lib.shown < lib.matches.length) {
+    const s = document.createElement('div');
+    s.className = 'lib-sentinel';
+    s.style.height = '1px';
+    list.appendChild(s);
+    if (!lib.observer) lib.observer = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) renderMoreLib(); }, { root: list, rootMargin: '400px' });
+    lib.observer.observe(s);
+  }
+}
+
+async function randomChat() {
+  try {
+    await loadLibrary();
+    const pool = $('libSheet').classList.contains('open') && lib.matches.length ? lib.matches : lib.items;
+    const c = pool[Math.floor(Math.random() * pool.length)];
+    closeLibrary();
+    loadChat(c);
+    try { history.replaceState(null, '', '#chat=' + c.id); } catch (e) {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) { showError(e.message); }
+}
+
+$('libOpen').onclick = openLibrary;
+$('libClose').onclick = closeLibrary;
+$('libRandom').onclick = randomChat;
+$('libRandom2').onclick = randomChat;
+$('libSheet').addEventListener('click', e => { if (e.target === $('libSheet')) closeLibrary(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('libSheet').classList.contains('open')) closeLibrary(); });
+let libDebounce = 0;
+$('libSearch').addEventListener('input', e => {
+  clearTimeout(libDebounce);
+  libDebounce = setTimeout(() => { lib.query = e.target.value; if (lib.items) filterLibrary(); }, 150);
+});
+
+function renderWho() {
+  const box = $('who');
+  box.innerHTML = '';
+  for (const p of parsed.participants) {
+    const b = document.createElement('button');
+    b.textContent = p;
+    b.className = p === state.me ? 'active' : '';
+    b.onclick = () => { state.me = p; rebuild(); };
+    box.appendChild(b);
+  }
+  $('chatTitle').placeholder = scene ? `Auto: ${autoTitle()}` : 'Auto';
+}
+function autoTitle() {
+  const others = parsed.participants.filter(p => p !== state.me);
+  return others.length > 1 ? 'The Group Chat' : (others[0] || 'Chat');
+}
+
+/* ---------- segmented controls ---------- */
+function bindSeg(id, key, cast = v => v, after) {
+  const el = $(id);
+  el.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b || b.disabled) return;
+    state[key] = cast(b.dataset.v);
+    syncSegs();
+    if (after) after(); else rebuild();
+  });
+}
+function syncSegs() {
+  const map = { appSeg: 'app', deviceSeg: 'device', themeSeg: 'theme', speedSeg: 'speed', frameSeg: 'frame', formatSeg: 'format', sizeSeg: 'size' };
+  for (const [id, key] of Object.entries(map)) {
+    $(id).querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.v === String(state[key])));
+  }
+  $('swatches').querySelectorAll('.sw').forEach((s, i) => s.classList.toggle('active', i === state.backdrop));
+  $('backdropBox').style.display = state.frame === 'phone' ? '' : 'none';
+  const label = { gif: 'make my gif!', mp4: 'make my mp4!', webm: 'make my webm!' }[state.format];
+  $('exportLabel').textContent = label;
+  $('typeOut').checked = state.typeOut;
+  $('showTyping').checked = state.showTyping;
+  $('startTime').value = state.startTime;
+  $('battery').value = String(state.battery);
+  $('clock12').value = state.clock12 ? '12' : '24';
+}
+
+function renderApps() {
+  const seg = $('appSeg');
+  for (const [id, a] of Object.entries(APPS)) {
+    const b = document.createElement('button');
+    b.dataset.v = id;
+    b.innerHTML = `<span class="dot" style="background:${a.dot}"></span>${a.name}`;
+    seg.appendChild(b);
+  }
+}
+function renderSwatches() {
+  BACKDROPS.forEach(([a, b], i) => {
+    const s = document.createElement('button');
+    s.className = 'sw';
+    s.style.background = `linear-gradient(135deg, ${a}, ${b})`;
+    s.setAttribute('aria-label', 'Backdrop ' + (i + 1));
+    s.onclick = () => { state.backdrop = i; syncSegs(); rebuild(); };
+    $('swatches').appendChild(s);
+  });
+}
+
+/* =====================================================================
+   Export
+   ===================================================================== */
+const SIZES = { s: 640, m: 1280, l: 1920 };
+const MUXERS = {
+  mp4: 'https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.2/build/mp4-muxer.mjs',
+  webm: 'https://cdn.jsdelivr.net/npm/webm-muxer@5.1.4/build/webm-muxer.mjs',
+};
+const support = { mp4: null, webm: null };
+let exportJob = null;
+let resultUrl = null;
+
+function exportDims() {
+  const { w, h } = canvasSize(scene);
+  let target = SIZES[state.size];
+  if (state.format === 'gif') target = Math.min(target, 1280);
+  const k = target / h;
+  const even = v => Math.max(2, Math.round(v / 2) * 2);
+  return { W: even(w * k), H: even(h * k), k: even(h * k) / h };
+}
+
+function updateSizeHint() {
+  if (!scene) return;
+  const { W, H } = exportDims();
+  const secs = (scene.duration / 1000).toFixed(1);
+  let hint = `${W}×${H}px · ${secs}s`;
+  if (state.format === 'gif') hint += state.size === 's' ? ' · best for sharing' : ' · bigger file, slower to make';
+  if (state.format === 'gif' && state.size === 'l') hint = `${W}×${H}px · ${secs}s · GIFs are capped at 1280px tall`;
+  $('sizeHint').textContent = hint;
+  const fh = {
+    gif: 'Plays everywhere and loops on its own. Files get big for long chats.',
+    mp4: support.mp4 === false ? 'This browser cannot record MP4. Try GIF or WebM.' : 'The best one for WhatsApp, Instagram, TikTok and friends.',
+    webm: support.webm === false ? 'This browser cannot record WebM. Try GIF or MP4.' : 'Small and sharp. Works on Android and in Chrome, but not everywhere on iPhone.',
+  }[state.format];
+  $('formatHint').textContent = fh;
+}
+
+async function detectSupport() {
+  const mr = typeof MediaRecorder !== 'undefined' && HTMLCanvasElement.prototype.captureStream;
+  const mrType = list => mr ? list.find(t => MediaRecorder.isTypeSupported(t)) : null;
+  const wc = async list => {
+    if (typeof VideoEncoder === 'undefined') return null;
+    for (const codec of list) {
+      try {
+        const cfg = { codec, width: 720, height: 1280, bitrate: 4e6, framerate: 30 };
+        const r = await VideoEncoder.isConfigSupported(cfg);
+        if (r.supported) return codec;
+      } catch (e) {}
+    }
+    return null;
+  };
+  support.mp4wc = await wc(['avc1.640028', 'avc1.4d0028', 'avc1.42e028', 'avc1.42e01f']);
+  support.webmwc = await wc(['vp09.00.40.08', 'vp09.00.10.08', 'vp8']);
+  support.mp4mr = mrType(['video/mp4;codecs=avc1', 'video/mp4;codecs=avc1.42E01E', 'video/mp4']);
+  support.webmmr = mrType(['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm']);
+  support.mp4 = !!(support.mp4wc || support.mp4mr);
+  support.webm = !!(support.webmwc || support.webmmr);
+  $('formatSeg').querySelector('[data-v=mp4]').disabled = !support.mp4;
+  $('formatSeg').querySelector('[data-v=webm]').disabled = !support.webm;
+  if ((state.format === 'mp4' && !support.mp4) || (state.format === 'webm' && !support.webm)) { state.format = 'gif'; syncSegs(); }
+  updateSizeHint();
+}
+
+function showError(msg) { $('error').textContent = msg; $('error').classList.toggle('show', !!msg); }
+function setProgress(p, text) {
+  $('progressBar').style.width = Math.round(p * 100) + '%';
+  if (text) $('progressText').textContent = text;
+}
+const tick = () => new Promise(r => setTimeout(r, 0));
+
+async function startExport() {
+  if (exportJob || !scene || !parsed.messages.length) {
+    if (!parsed.messages.length) showError('Add some messages to the transcript first.');
+    return;
+  }
+  setPlaying(false);
+  showError('');
+  $('result').classList.remove('show');
+  $('progress').classList.add('show');
+  $('exportBtn').disabled = true;
+  const job = exportJob = { cancelled: false };
+  const S = buildScene(sceneOpts(), parsed);
+  const { W, H, k } = exportDims();
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  canvas.className = 'rec-canvas';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d', { willReadFrequently: state.format === 'gif' });
+  const render = t => { ctx.setTransform(k, 0, 0, k, 0, 0); drawFrame(ctx, S, t); };
+  try {
+    let blob, ext;
+    if (state.format === 'gif') { blob = await exportGif(S, ctx, render, W, H, job); ext = 'gif'; }
+    else {
+      const fmt = state.format;
+      blob = null;
+      if (support[fmt + 'wc']) {
+        try { blob = await exportWebCodecs(fmt, S, canvas, render, W, H, job); }
+        catch (e) { if (job.cancelled) throw e; console.warn('WebCodecs export failed, falling back to MediaRecorder', e); blob = null; }
+      }
+      if (!blob) {
+        if (!support[fmt + 'mr']) throw new Error(`This browser can't record ${fmt.toUpperCase()}.`);
+        blob = await exportRecorder(fmt, S, canvas, render, job);
+      }
+      ext = fmt;
+    }
+    if (job.cancelled) return;
+    showResult(blob, ext, W, H);
+  } catch (e) {
+    if (!job.cancelled) { console.error(e); showError(e.message || String(e)); }
+  } finally {
+    canvas.remove();
+    exportJob = null;
+    $('progress').classList.remove('show');
+    $('exportBtn').disabled = false;
+  }
+}
+
+async function exportGif(S, ctx, render, W, H, job) {
+  const FRAME = 70; // ms → ~14 fps
+  const frames = Math.ceil(S.duration / FRAME) + 1;
+  setProgress(0, 'Picking colours…');
+  await tick();
+  const samples = [];
+  const picks = [0.08, 0.2, 0.35, 0.5, 0.65, 0.8, 0.92, 1];
+  for (const p of picks) { render(S.duration * p); samples.push(ctx.getImageData(0, 0, W, H).data); }
+  // include the moments right after each message appears so emoji and bubbles get palette slots
+  for (const m of S.msgs) if (samples.length < 24) { render(m.appear + 300); samples.push(ctx.getImageData(0, 0, W, H).data); }
+  const gif = new GifWriter(W, H, buildPalette(samples, 255));
+  samples.length = 0;
+  let lastYield = performance.now();
+  for (let i = 0; i < frames; i++) {
+    if (job.cancelled) throw new Error('cancelled');
+    const t = Math.min(S.duration, i * FRAME);
+    render(t);
+    gif.addFrame(ctx.getImageData(0, 0, W, H).data, FRAME);
+    if (performance.now() - lastYield > 40) {
+      setProgress(i / frames, `Rendering frame ${i + 1} of ${frames}…`);
+      await tick();
+      lastYield = performance.now();
+    }
+  }
+  setProgress(1, 'Finishing…');
+  await tick();
+  return new Blob([gif.finish()], { type: 'image/gif' });
+}
+
+async function exportWebCodecs(fmt, S, canvas, render, W, H, job) {
+  setProgress(0, 'Loading video encoder…');
+  const lib = await import(MUXERS[fmt]);
+  const FPS = 30;
+  const codecs = fmt === 'mp4' ? ['avc1.640028', 'avc1.4d0028', 'avc1.42e028', 'avc1.42e01f'] : ['vp09.00.40.08', 'vp09.00.10.08', 'vp8'];
+  const bitrate = Math.round(W * H * FPS * 0.12);
+  let config = null;
+  for (const codec of codecs) {
+    const cfg = { codec, width: W, height: H, bitrate, framerate: FPS };
+    if (fmt === 'mp4') cfg.avc = { format: 'avc' };
+    try { if ((await VideoEncoder.isConfigSupported(cfg)).supported) { config = cfg; break; } } catch (e) {}
+  }
+  if (!config) throw new Error('No supported encoder config');
+  const target = new lib.ArrayBufferTarget();
+  const muxer = fmt === 'mp4'
+    ? new lib.Muxer({ target, video: { codec: 'avc', width: W, height: H }, fastStart: 'in-memory', firstTimestampBehavior: 'offset' })
+    : new lib.Muxer({ target, video: { codec: config.codec.startsWith('vp09') ? 'V_VP9' : 'V_VP8', width: W, height: H, frameRate: FPS }, firstTimestampBehavior: 'offset' });
+  let encError = null;
+  const encoder = new VideoEncoder({
+    output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+    error: e => { encError = e; },
+  });
+  encoder.configure(config);
+  const frames = Math.ceil(S.duration / 1000 * FPS) + 1;
+  const dur = Math.round(1e6 / FPS);
+  for (let i = 0; i < frames; i++) {
+    if (job.cancelled) { try { encoder.close(); } catch (e) {} throw new Error('cancelled'); }
+    if (encError) throw encError;
+    render(Math.min(S.duration, i * 1000 / FPS));
+    const frame = new VideoFrame(canvas, { timestamp: i * dur, duration: dur });
+    encoder.encode(frame, { keyFrame: i % (FPS * 2) === 0 });
+    frame.close();
+    while (encoder.encodeQueueSize > 6) await new Promise(r => setTimeout(r, 4));
+    if (i % 6 === 0) { setProgress(i / frames, `Encoding frame ${i + 1} of ${frames}…`); await tick(); }
+  }
+  await encoder.flush();
+  if (encError) throw encError;
+  encoder.close();
+  muxer.finalize();
+  return new Blob([target.buffer], { type: fmt === 'mp4' ? 'video/mp4' : 'video/webm' });
+}
+
+function exportRecorder(fmt, S, canvas, render, job) {
+  return new Promise((resolve, reject) => {
+    const mime = support[fmt + 'mr'];
+    render(0);
+    const stream = canvas.captureStream(30);
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 6e6 });
+    const chunks = [];
+    rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+    rec.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      if (job.cancelled) reject(new Error('cancelled'));
+      else resolve(new Blob(chunks, { type: mime.split(';')[0] }));
+    };
+    rec.onerror = e => reject(e.error || new Error('Recording failed'));
+    setProgress(0, 'Recording in real time — keep this tab open…');
+    rec.start(250);
+    const start = performance.now();
+    const loop = () => {
+      const t = performance.now() - start;
+      if (job.cancelled) { rec.stop(); return; }
+      render(Math.min(t, S.duration));
+      setProgress(Math.min(1, t / S.duration));
+      if (t >= S.duration + 200) { rec.stop(); return; }
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  });
+}
+
+function fileName(ext) {
+  const slug = (scene.title || 'chat').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'chat';
+  return `fauxreel-${state.app}-${slug}.${ext}`;
+}
+
+function showResult(blob, ext, W, H) {
+  if (resultUrl) URL.revokeObjectURL(resultUrl);
+  resultUrl = URL.createObjectURL(blob);
+  const media = $('resultMedia');
+  media.innerHTML = '';
+  let el;
+  if (ext === 'gif') { el = document.createElement('img'); el.alt = 'Exported GIF'; }
+  else { el = document.createElement('video'); el.controls = true; el.loop = true; el.muted = true; el.playsInline = true; el.autoplay = true; }
+  el.src = resultUrl;
+  media.appendChild(el);
+  const name = fileName(ext);
+  $('resultMeta').textContent = `${name} · ${W}×${H} · ${(blob.size / 1024 / 1024).toFixed(2)} MB`;
+  const dl = $('downloadBtn');
+  dl.href = resultUrl; dl.download = name;
+  const file = new File([blob], name, { type: blob.type });
+  const share = $('shareBtn');
+  share.hidden = !(navigator.canShare && navigator.canShare({ files: [file] }));
+  share.onclick = async () => {
+    try { await navigator.share({ files: [file], title: 'Faux Reel' }); }
+    catch (e) { if (e.name !== 'AbortError') showError('Sharing failed: ' + e.message); }
+  };
+  $('result').classList.add('show');
+  $('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+$('exportBtn').onclick = startExport;
+$('cancelBtn').onclick = () => { if (exportJob) exportJob.cancelled = true; };
+
+/* =====================================================================
+   Boot
+   ===================================================================== */
+renderApps();
+renderSwatches();
+bindSeg('appSeg', 'app');
+bindSeg('deviceSeg', 'device');
+bindSeg('themeSeg', 'theme');
+bindSeg('speedSeg', 'speed');
+bindSeg('frameSeg', 'frame');
+bindSeg('formatSeg', 'format', v => v, () => { updateSizeHint(); save(); });
+bindSeg('sizeSeg', 'size', v => v, () => { updateSizeHint(); save(); });
+
+let debounce = 0;
+$('transcript').addEventListener('input', () => {
+  clearTimeout(debounce);
+  debounce = setTimeout(() => { state.example = ''; renderExamples(); rebuild(); }, 250);
+});
+$('chatTitle').addEventListener('input', e => { state.title = e.target.value; rebuild(); });
+$('typeOut').onchange = e => { state.typeOut = e.target.checked; rebuild(); };
+$('showTyping').onchange = e => { state.showTyping = e.target.checked; rebuild(); };
+$('startTime').onchange = e => { state.startTime = e.target.value || '21:37'; rebuild(); };
+$('battery').onchange = e => { state.battery = +e.target.value; rebuild(); };
+$('clock12').onchange = e => { state.clock12 = e.target.value === '12'; rebuild(); };
+window.addEventListener('resize', () => { sizePreview(); drawPreview(); });
+
+(async function boot() {
+  const ex = EXAMPLES.find(e => e.id === state.example);
+  $('transcript').value = transcriptText != null && transcriptText.trim() ? transcriptText : (ex || EXAMPLES[0]).text;
+  $('chatTitle').value = state.title || '';
+  renderExamples();
+  syncSegs();
+  $('playBtn').innerHTML = PLAY_SVG;
+  rebuild(false);
+  // Canvas text needs the web fonts actually loaded before we measure anything.
+  try {
+    await Promise.race([
+      Promise.all(['400 16px Inter', '600 16px Inter', '400 16px Roboto', '500 16px Roboto', '700 16px Roboto']
+        .map(f => document.fonts.load(f, 'Aa'))),
+      new Promise(r => setTimeout(r, 2500)),
+    ]);
+  } catch (e) {}
+  measureCache.clear();
+  rebuild(false);
+  // Shared link to a library chat: #chat=123
+  const hm = /#chat=(\d+)/.exec(location.hash);
+  if (hm) {
+    try {
+      const items = await loadLibrary();
+      const c = items[+hm[1]];
+      if (c) { loadChat(c); setPlaying(false); }
+    } catch (e) {}
+  }
+  // Show a representative frame rather than an empty chat.
+  player.t = Math.min(scene.duration, (scene.msgs[Math.min(3, scene.msgs.length - 1)] || { appear: 0 }).appear + 400);
+  drawPreview();
+  detectSupport();
+})();
+</script>
+</body>
+</html>

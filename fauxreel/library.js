@@ -1,4 +1,4 @@
-// ChatReel sample library: funny chats for the library browser in index.html.
+// Faux Reel sample library: funny chats for the library browser in index.html.
 // Each entry: t = title, g = comma-separated tags, a = app (w WhatsApp, t Telegram,
 // m Messenger, i iMessage, s Signal), me = whose phone it is, x = transcript.
 // Loaded on demand the first time the library is opened. Entry order is the chat id

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ChatReel — paste a chat transcript and get it replayed as a fake phone screen recording (WhatsApp, Telegram, Messenger, iMessage or Signal, on an iPhone or Android frame), exported as GIF, MP4 or WebM. Single-file vanilla HTML/CSS/JS, no build tools. Mobile-first.
+Faux Reel ("for real", but faux) — paste a chat transcript and get it replayed as a fake phone screen recording (WhatsApp, Telegram, Messenger, iMessage or Signal, on an iPhone or Android frame), exported as GIF, MP4 or WebM. Single-file vanilla HTML/CSS/JS, no build tools. Mobile-first.
 
 ## Running Locally
 
@@ -13,7 +13,7 @@ Open `index.html` directly in a browser, or use any static file server:
 npx serve .
 ```
 
-Deployed via GitHub Pages at labs.vossers.com/chatreel/
+Deployed via GitHub Pages at labs.vossers.com/fauxreel/ (the old `/chatreel/` path redirects here, keeping `#chat=` links)
 
 ## Architecture
 
@@ -26,7 +26,7 @@ Everything lives in `index.html`. The phone screen is drawn entirely on a `<canv
 - **Coordinates**: the logical screen is 390×844 (iPhone) or 412×892 (Android). "Phone on backdrop" framing uses a 540×960 canvas with the phone scaled inside. Callers scale the context for DPR or export size.
 - **GIF export**: built-in encoder, no library. Median-cut palette sampled from key frames, then each frame is diffed against the previous one. Unchanged pixels become transparent and the frame is cropped to the changed box, and identical frames just extend the previous delay. That keeps a 30-second chat to about 100–300 KB.
 - **Video export**: WebCodecs `VideoEncoder` plus `mp4-muxer` / `webm-muxer`, loaded on demand from jsdelivr. Renders offline at 30 fps. If WebCodecs or the codec is unavailable, it falls back to `MediaRecorder` on `canvas.captureStream()`, which records in real time.
-- **Persistence**: settings and the transcript are saved in `localStorage` (`chatreel`, `chatreel.text`).
+- **Persistence**: settings and the transcript are saved in `localStorage` (`chatreel`, `chatreel.text`). The keys keep the app's old name on purpose, so people who used it before the rename keep their settings.
 
 ## UI design ("Bubblegum")
 
