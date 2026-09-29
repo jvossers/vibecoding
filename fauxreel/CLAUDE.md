@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Faux Reel ("for real", but faux) — paste a chat transcript and get it replayed as a fake phone screen recording (WhatsApp, Telegram, Messenger, iMessage or Signal, on an iPhone or Android frame), exported as GIF, MP4 or WebM. Single-file vanilla HTML/CSS/JS, no build tools. Mobile-first.
+Faux Reel ("for real", but faux) — paste a chat transcript and get it replayed as a fake phone screen recording (WhatsApp, Telegram, Messenger, iMessage, Instagram or Signal, on an iPhone or Android frame), exported as GIF, MP4 or WebM. Single-file vanilla HTML/CSS/JS, no build tools. Mobile-first.
 
 ## Running Locally
 

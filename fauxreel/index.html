@@ -830,6 +830,7 @@ const APPS = {
   telegram: { name: 'Telegram', dot: '#2AABEE' },
   messenger: { name: 'Messenger', dot: 'linear-gradient(135deg,#A033FF,#0A7CFF)' },
   imessage: { name: 'iMessage', dot: '#0A84FF' },
+  instagram: { name: 'Instagram', dot: 'linear-gradient(45deg,#FEDA75,#FA7E1E,#D62976,#962FBF,#4F5BD5)' },
   signal: { name: 'Signal', dot: '#3A76F0' },
 };
 
@@ -905,6 +906,23 @@ function theme(app, dark, ios) {
         nameColor: L ? '#65676B' : '#B0B3B8',
       });
       break;
+    case 'instagram':
+      Object.assign(T, {
+        wall: L ? '#FFFFFF' : '#000000', doodle: null,
+        headerBg: L ? '#FFFFFF' : '#000000', headerFg: L ? '#000000' : '#F5F5F5',
+        headerSub: L ? '#737373' : '#A8A8A8', headerIcon: L ? '#000000' : '#F5F5F5',
+        statusLight: dark,
+        me: 'grad', meGrad: ['#A030E8', '#6A46F2', '#3797F0'], them: L ? '#EFEFEF' : '#262626',
+        meText: '#FFFFFF', themText: L ? '#000000' : '#F5F5F5',
+        radius: 22, groupRadius: 6, tail: 'none', font: 15.5, lineH: 20, padX: 13, padTop: 9, padBot: 9,
+        gapSame: 2, gapDiff: 10,
+        inputBarBg: L ? '#FFFFFF' : '#000000', fieldBg: L ? '#EFEFEF' : '#262626',
+        fieldFg: L ? '#000000' : '#F5F5F5', placeholder: L ? '#737373' : '#A8A8A8',
+        inputIcon: L ? '#000000' : '#F5F5F5', accent: '#3797F0',
+        typing: 'bubble', timeInside: false, nameInside: false, avatarAt: 'last', avatarAlways: true,
+        nameColor: L ? '#737373' : '#A8A8A8', metaColor: L ? '#737373' : '#A8A8A8',
+      });
+      break;
     case 'imessage':
       Object.assign(T, {
         wall: L ? '#FFFFFF' : '#000000', doodle: null,
@@ -964,7 +982,7 @@ function buildScene(opts, parsed) {
   S.statusH = ios ? 54 : 34;
   S.headerH = ({ imessage: 78, telegram: ios ? 50 : 56, whatsapp: ios ? 52 : 58 })[opts.app] || 58;
   S.bottomInset = ios ? 30 : 22;
-  S.inputH = ({ imessage: 50, messenger: 54 })[opts.app] || 58;
+  S.inputH = ({ imessage: 50, messenger: 54, instagram: 60 })[opts.app] || 58;
   S.chatTop = S.statusH + S.headerH;
   S.chatBottom = H - S.bottomInset - S.inputH;
   S.viewH = S.chatBottom - S.chatTop;
@@ -976,6 +994,8 @@ function buildScene(opts, parsed) {
   S.group = others.length > 1;
   S.title = (opts.title || '').trim() || (S.group ? 'The Group Chat' : (others[0] || 'Chat'));
   S.others = others;
+  // Instagram shows a handle under the name, derived from the chat name
+  S.handle = S.title.toLowerCase().replace(/[^a-z0-9]+/g, '.').replace(/^\.+|\.+$/g, '') || 'user';
   const colorFor = {};
   others.forEach((p, i) => { colorFor[p] = i; });
   S.colorIndex = p => (colorFor[p] !== undefined ? colorFor[p] : (hash(p) % 8));
@@ -1023,7 +1043,7 @@ function layout(S, msgs) {
   } else if (S.app === 'imessage') {
     items.push({ kind: 'center', lines: [['iMessage', S.font(11.5, 500)], ['Today ' + fmtTime(S.startClock, S.opts.clock12), S.font(11.5, 400)]], y, h: 34 });
     y += 34 + 8;
-  } else if (S.app === 'messenger') {
+  } else if (S.app === 'messenger' || S.app === 'instagram') {
     const h = S.group ? 176 : 196;
     items.push({ kind: 'intro', y, h });
     y += h + 8;
@@ -1037,7 +1057,7 @@ function layout(S, msgs) {
 
   // --- bubbles
   const hasAvatars = S.group || T.avatarAlways;
-  S.avatarSize = S.app === 'messenger' ? 28 : 32;
+  S.avatarSize = S.app === 'messenger' || S.app === 'instagram' ? 28 : 32;
   const leftBase = 10 + (T.tail !== 'none' ? 6 : 0);
   S.themX = hasAvatars ? 10 + S.avatarSize + 8 : leftBase;
   S.meRight = W - (T.tail !== 'none' ? 16 : 12);
@@ -1195,7 +1215,7 @@ function scrollTarget(S, msgs, t) {
   let bottom;
   if (st.count) bottom = msgs[st.count - 1].y + msgs[st.count - 1].h;
   else bottom = msgs.length ? msgs[0].y : 0;
-  if (S.app === 'imessage' && st.count && msgs[st.count - 1].mine) bottom += 18;
+  if ((S.app === 'imessage' || S.app === 'instagram') && st.count && msgs[st.count - 1].mine) bottom += 18;
   if (st.typing && S.T.typing === 'bubble') {
     bottom = typingBubbleGeom(S, msgs, st.count, st.typing).bottom;
   }
@@ -1436,6 +1456,7 @@ function headerSubtitle(S, st) {
   }
   if (S.app === 'telegram') return { text: S.group ? `${S.others.length + 1} members` : 'online' };
   if (S.app === 'messenger') return { text: S.group ? `${S.others.length + 1} people` : 'Active now' };
+  if (S.app === 'instagram') return { text: S.group ? `${S.others.length + 1} members` : S.handle };
   if (S.app === 'signal') return null;
   return null;
 }
@@ -1486,8 +1507,15 @@ function drawHeader(ctx, S, st, clockMin) {
   let x = 4;
   if (S.ios) { drawIcon(ctx, 'chevron', x - 4, cy - 17, 34, T.headerIcon); x += 26; }
   else { drawIcon(ctx, 'back', x + 6, cy - 12, 24, T.headerIcon); x += 36; }
-  const ar = S.app === 'messenger' ? 19 : 19;
-  avatar(x + ar, ar);
+  const ar = 19;
+  if (S.app === 'instagram' && !S.group) {
+    // story ring
+    const g = ctx.createLinearGradient(x, cy + ar, x + ar * 2, cy - ar);
+    g.addColorStop(0, '#FEDA75'); g.addColorStop(0.35, '#FA7E1E'); g.addColorStop(0.6, '#D62976'); g.addColorStop(1, '#962FBF');
+    ctx.strokeStyle = g; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(x + ar, cy, ar + 1, 0, Math.PI * 2); ctx.stroke();
+    avatar(x + ar, ar - 3);
+  } else avatar(x + ar, ar);
   if (S.app === 'messenger' && !S.group) {
     ctx.fillStyle = '#31A24C';
     ctx.beginPath(); ctx.arc(x + ar * 1.7, cy + ar * 0.7, 5.5, 0, Math.PI * 2); ctx.fill();
@@ -1495,12 +1523,12 @@ function drawHeader(ctx, S, st, clockMin) {
   }
   x += ar * 2 + 10;
   const actions = S.app === 'whatsapp' ? (S.ios ? ['video', 'call'] : ['video', 'call', 'more'])
-    : S.app === 'telegram' ? ['call', 'more'] : S.app === 'messenger' ? ['call', 'video'] : ['video', 'call'];
+    : S.app === 'telegram' ? ['call', 'more'] : S.app === 'messenger' || S.app === 'instagram' ? ['call', 'video'] : ['video', 'call'];
   const actW = actions.length * 42 + 4;
   const nameW = W - x - actW - 4;
   ctx.fillStyle = T.headerFg;
   ctx.font = S.font(S.ios ? 16.5 : 17.5, S.ios ? 600 : 500);
-  if (S.app === 'messenger' || S.app === 'signal') ctx.font = S.font(16.5, 700);
+  if (S.app === 'messenger' || S.app === 'signal' || S.app === 'instagram') ctx.font = S.font(16.5, 700);
   const title = ellipsize(ctx.font, S.title, nameW);
   if (sub) {
     ctx.fillText(title, x, cy - 9);
@@ -1621,6 +1649,24 @@ function drawInputBar(ctx, S, st) {
     drawIcon(ctx, 'mood', x + fw - 32, cy - 12, 24, T.inputIcon);
     if (has) drawIcon(ctx, 'send', W - 40, cy - 12, 25, T.inputIcon);
     else drawIcon(ctx, 'thumb', W - 40, cy - 13, 26, T.inputIcon);
+    return;
+  }
+
+  if (S.app === 'instagram') {
+    const fx = 10, fw = W - 20, fh = 44;
+    ctx.fillStyle = T.fieldBg; rr(ctx, fx, cy - fh / 2, fw, fh, fh / 2); ctx.fill();
+    ctx.fillStyle = T.accent; ctx.beginPath(); ctx.arc(fx + 22, cy, 17, 0, Math.PI * 2); ctx.fill();
+    drawIcon(ctx, 'camera', fx + 12, cy - 10, 20, '#FFFFFF');
+    const right = has ? 60 : 118;
+    drawFieldText(fx + 48, fw - 48 - right, 'Message...', S.font(16));
+    if (has) {
+      ctx.font = S.font(16, 700); ctx.fillStyle = T.accent; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      ctx.fillText('Send', fx + fw - 16, cy + 0.5);
+      ctx.textAlign = 'left';
+    } else {
+      let ix = fx + fw - 112;
+      for (const n of ['mic', 'image', 'sticker']) { drawIcon(ctx, n, ix, cy - 12, 24, T.inputIcon); ix += 36; }
+    }
     return;
   }
 
@@ -1901,8 +1947,9 @@ function drawFurniture(ctx, S, it, oy) {
     ctx.fillStyle = T.headerFg; ctx.font = S.font(19, 700);
     ctx.fillText(ellipsize(ctx.font, S.title, W - 60), cx, y + 110);
     ctx.fillStyle = T.headerSub; ctx.font = S.font(13.5, 400);
-    ctx.fillText(S.group ? `You created this group` : 'Messenger', cx, y + 134);
-    if (!S.group) ctx.fillText("You're friends on Facebook", cx, y + 154);
+    const ig = S.app === 'instagram';
+    ctx.fillText(S.group ? `You created this group` : ig ? `${S.handle} · Instagram` : 'Messenger', cx, y + 134);
+    if (!S.group) ctx.fillText(ig ? 'You follow each other on Instagram' : "You're friends on Facebook", cx, y + 154);
     const bw = 116, by = y + (S.group ? 150 : 170);
     ctx.fillStyle = T.dark ? '#303030' : '#E4E6EB';
     rr(ctx, cx - bw / 2, by, bw, 26, 7); ctx.fill();
@@ -1935,10 +1982,11 @@ function drawScreen(ctx, S, t) {
     if (oy + m.y + m.h < S.chatTop - 40 || oy + m.y > S.chatBottom + 10) continue;
     drawMessage(ctx, S, m, t, oy);
   }
-  // iMessage delivered/read label under my last message
-  if (S.app === 'imessage' && st.count && msgs[st.count - 1].mine) {
+  // iMessage "Delivered"/"Read", Instagram "Seen", under my last message
+  if ((S.app === 'imessage' || S.app === 'instagram') && st.count && msgs[st.count - 1].mine) {
     const m = msgs[st.count - 1];
-    const label = t >= m.read ? 'Read ' + fmtTime(m.clockMin, S.opts.clock12) : t >= m.delivered ? 'Delivered' : '';
+    const label = S.app === 'instagram' ? (t >= m.read ? 'Seen' : '')
+      : t >= m.read ? 'Read ' + fmtTime(m.clockMin, S.opts.clock12) : t >= m.delivered ? 'Delivered' : '';
     if (label) {
       ctx.font = S.font(11.5, 500); ctx.fillStyle = T.metaColor; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
       ctx.fillText(label, S.meRight - 4, oy + m.y + m.h + 10);
@@ -2458,7 +2506,7 @@ const LIB_TAGS = {
   work: '💼 Work', school: '🎓 School', tech: '🤖 Tech', food: '🍕 Food', sport: '⚽ Sport',
   travel: '✈️ Travel', pets: '🐾 Pets', fantasy: '🐉 Myths & fantasy',
 };
-const LIB_APPS = { w: 'whatsapp', t: 'telegram', m: 'messenger', i: 'imessage', s: 'signal' };
+const LIB_APPS = { w: 'whatsapp', t: 'telegram', m: 'messenger', i: 'imessage', s: 'signal', g: 'instagram' };
 const lib = { items: null, promise: null, tag: '', query: '', shown: 0, matches: [], observer: null };
 
 function loadLibrary() {

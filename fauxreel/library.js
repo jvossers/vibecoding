@@ -1,6 +1,6 @@
 // Faux Reel sample library: funny chats for the library browser in index.html.
 // Each entry: t = title, g = comma-separated tags, a = app (w WhatsApp, t Telegram,
-// m Messenger, i iMessage, s Signal), me = whose phone it is, x = transcript.
+// m Messenger, i iMessage, g Instagram, s Signal), me = whose phone it is, x = transcript.
 // Loaded on demand the first time the library is opened. Entry order is the chat id
 // used in share links (#chat=N), so append new chats at the end.
 window.CHAT_LIBRARY = [];
@@ -578,7 +578,7 @@ Björn: the avatars can do 8 shows a week
 Benny: can my avatar be younger
 Björn: that's the entire point
 Agnetha: take a chance on me 😏`},
-{t:"Swifties group chat",g:"celebs,friends",a:"w",me:"Jade",x:`Jade: TICKETS ARE LIVE
+{t:"Swifties group chat",g:"celebs,friends",a:"g",me:"Jade",x:`Jade: TICKETS ARE LIVE
 Maya: queue position 1,904,338
 Priya: 2,400,012
 Jade: 41 😎
@@ -601,7 +601,7 @@ Stranger: you also bought my coffee
 Keanu: you looked tired too
 Stranger: marry me
 Keanu: you're breathtaking`},
-{t:"Celebrity chef critique",g:"celebs,food",a:"w",me:"Tom",x:`Chef Gordon: what is this
+{t:"Celebrity chef critique",g:"celebs,food",a:"g",me:"Tom",x:`Chef Gordon: what is this
 Tom: risotto chef
 Chef Gordon: it's RAW
 Tom: it's al dente
@@ -617,7 +617,7 @@ Tour manager: it was a 65 inch smart TV
 Rock star: it was heavy actually
 Tour manager: and?
 Rock star: I've pulled a muscle. I'm getting old`},
-{t:"Influencer at the Louvre",g:"celebs,travel",a:"w",me:"Chloé",x:`Chloé: at the Louvre!!!
+{t:"Influencer at the Louvre",g:"celebs,travel",a:"g",me:"Chloé",x:`Chloé: at the Louvre!!!
 Mum: take in the art darling
 Chloé: the Mona Lisa is SO small
 Mum: it's a masterpiece
@@ -964,7 +964,7 @@ Manager: but not the extras
 Jamie: I stopped doing the 11pm emails
 Manager: that's a red flag
 Jamie: it's a work life balance flag`},
-{t:"Viral dance challenge",g:"news,family",a:"w",me:"Teen",x:`Mum: I learned the dance!
+{t:"Viral dance challenge",g:"news,family",a:"g",me:"Teen",x:`Mum: I learned the dance!
 Teen: please no
 Mum: I posted it
 Teen: WHERE
@@ -1036,7 +1036,7 @@ Grandma: I can't trust anything
 Josh: that's healthy
 Grandma: are YOU real
 Josh: …yes`},
-{t:"Labubu obsession",g:"news,friends",a:"w",me:"Zoe",x:`Zoe: I got a Labubu!!
+{t:"Labubu obsession",g:"news,friends",a:"g",me:"Zoe",x:`Zoe: I got a Labubu!!
 Kim: which one
 Zoe: blind box. it's the one I already have
 Kim: again?
@@ -1100,7 +1100,7 @@ Liam: I don't know that password
 Kai: I'm working in a copy of a copy
 Sara: now there are 3 versions
 Liam: welcome to the workplace`},
-{t:"Dating app algorithm",g:"tech,dating",a:"m",me:"Nora",x:`Nora: the app matched me with my ex
+{t:"Dating app algorithm",g:"tech,dating",a:"g",me:"Nora",x:`Nora: the app matched me with my ex
 Friend: lol
 Nora: and my ex's new partner
 Friend: the algorithm has a sense of humour
@@ -1108,7 +1108,7 @@ Nora: and my dentist
 Friend: at least he has good teeth
 Nora: I'm deleting the app
 Friend: for the 9th time`},
-{t:"Influencer baby names",g:"news,family",a:"w",me:"Aunt",x:`Cousin: we named the baby Xylo-Starr
+{t:"Influencer baby names",g:"news,family",a:"g",me:"Aunt",x:`Cousin: we named the baby Xylo-Starr
 Aunt: lovely
 Cousin: with a hyphen
 Aunt: of course
@@ -1172,7 +1172,7 @@ Josh: SELL
 Max: I'm holding
 (pause 1.5)
 Max: I have 12 pounds left`},
-{t:"Barbenheimer double feature",g:"news,friends",a:"i",me:"Kat",x:`Kat: seeing both today
+{t:"Barbenheimer double feature",g:"news,friends",a:"g",me:"Kat",x:`Kat: seeing both today
 Jo: in which order
 Kat: Barbie then Oppenheimer
 Jo: from pink to atomic bomb
@@ -1412,7 +1412,7 @@ Tourist: a grandma got me with a water gun
 Friend: they're the best shots
 Tourist: I'm buying a bigger gun
 Friend: welcome to the war 🔫💦`},
-{t:"Holi colours",g:"traditions,friends",a:"w",me:"Riya",x:`Riya: coming to Holi?
+{t:"Holi colours",g:"traditions,friends",a:"g",me:"Riya",x:`Riya: coming to Holi?
 Tom: yes! what do I wear
 Riya: white. something you never want again
 Tom: my wedding suit?
@@ -1863,7 +1863,7 @@ Mike: braai time then
 Thabo: we braai when there's power
 Mike: and when there's not?
 Thabo: we braai harder 🔥`},
-{t:"Korean skincare routine",g:"culture,friends",a:"i",me:"Sophie",x:`Ji-woo: how many steps in your skincare
+{t:"Korean skincare routine",g:"culture,friends",a:"g",me:"Sophie",x:`Ji-woo: how many steps in your skincare
 Sophie: 1. soap
 Ji-woo: 😱
 Sophie: sometimes 2 if I use moisturiser
@@ -1956,7 +1956,7 @@ Gemma: a whole cheese?
 Kev: a small wheel
 Gemma: it's a 2 hour drive
 Kev: things can go wrong 🧀`},
-{t:"Holiday photo overload",g:"travel,friends",a:"w",me:"Friend",x:`Beth: back from Greece! want to see photos?
+{t:"Holiday photo overload",g:"travel,friends",a:"g",me:"Friend",x:`Beth: back from Greece! want to see photos?
 Friend: sure
 Beth: 📷📷📷📷📷📷📷📷
 Beth: 📷📷📷📷📷📷📷📷
@@ -2471,7 +2471,7 @@ Sophie: saving it for what
 Nina: to be the first message today
 Sophie: that's not how it works
 Nina: happy late birthday then 🎂`},
-{t:"Ex texting again",g:"friends,dating",a:"w",me:"Tia",x:`Tia: my ex just texted "hey"
+{t:"Ex texting again",g:"friends,dating",a:"g",me:"Tia",x:`Tia: my ex just texted "hey"
 Jo: DON'T
 Tia: I'm not
 Jo: what are you typing
@@ -2526,7 +2526,7 @@ Emma: sorry that was meant for someone else
 Rachel: 😂 same
 Emma: see you never?
 Rachel: see you never 💛`},
-{t:"Secret crush",g:"friends,dating",a:"w",me:"Maya",x:`Maya: he liked my Instagram story
+{t:"Secret crush",g:"friends,dating",a:"g",me:"Maya",x:`Maya: he liked my Instagram story
 Lily: which one
 Maya: the one from 2019
 Lily: he's scrolling deep
@@ -2564,7 +2564,7 @@ Rob: lol
 Chris: I'm in bed
 Kat: last one I promise
 Chris: it's 3am`},
-{t:"Friend's DIY haircut",g:"friends",a:"i",me:"Leon",x:`Leon: I cut my own hair
+{t:"Friend's DIY haircut",g:"friends",a:"g",me:"Leon",x:`Leon: I cut my own hair
 Ruby: pics?
 Leon: 📷
 Ruby: oh
@@ -2580,7 +2580,7 @@ Sophie: which sock
 Anna: yours, from your bag
 Sophie: that's why I only have one
 Anna: he's happy though 🐶`},
-{t:"Festival planning",g:"friends",a:"w",me:"Jade",x:`Jade: Glastonbury tickets!!
+{t:"Festival planning",g:"friends",a:"g",me:"Jade",x:`Jade: Glastonbury tickets!!
 Mo: what's the plan
 Jade: tent, wellies, glitter
 Mo: toilets?
@@ -2594,7 +2594,7 @@ Lara: what kind of car
 Priya: that's not the point
 Lara: call you with a fake emergency?
 Priya: in 10 minutes. make it dramatic`},
-{t:"Rizz attempt",g:"dating",a:"m",me:"Sam",x:`Jake: are you a parking ticket?
+{t:"Rizz attempt",g:"dating",a:"g",me:"Sam",x:`Jake: are you a parking ticket?
 Sam: ?
 Jake: because you've got fine written all over you
 Sam: 😐
@@ -2602,14 +2602,14 @@ Jake: are you a WiFi signal
 Sam: stop
 Jake: because I'm feeling a connection
 Sam: blocked`},
-{t:"Online dating profile",g:"dating",a:"m",me:"Chloe",x:`Chloe: your profile says you're 6ft
+{t:"Online dating profile",g:"dating",a:"g",me:"Chloe",x:`Chloe: your profile says you're 6ft
 Tom: yes
 Chloe: I'm 5'9 and taller than you
 Tom: I'm 6ft in spirit
 Chloe: and you said you love hiking
 Tom: I walked to this pub
 Chloe: honestly, funny enough for a second drink`},
-{t:"Accidental like",g:"dating,tech",a:"i",me:"Ben",x:`Ben: oh no
+{t:"Accidental like",g:"dating,tech",a:"g",me:"Ben",x:`Ben: oh no
 Friend: what
 Ben: I accidentally liked her photo from 2016
 Friend: unlike it
@@ -2632,7 +2632,7 @@ Sarah: what are we doing tonight
 Tom: it's a surprise
 Sarah: what kind of surprise
 Tom: a surprise for me too`},
-{t:"Ghosted",g:"dating",a:"m",me:"Rosie",x:`Rosie: hey, fun night on Saturday!
+{t:"Ghosted",g:"dating",a:"g",me:"Rosie",x:`Rosie: hey, fun night on Saturday!
 Rosie: hello?
 Rosie: ok then
 (pause 2)
@@ -2640,7 +2640,7 @@ Dan: hey sorry, been busy
 Rosie: 4 months?
 Dan: very busy
 Rosie: were you in space?`},
-{t:"Texting back too fast",g:"dating,friends",a:"w",me:"Lily",x:`Lily: he texted!!
+{t:"Texting back too fast",g:"dating,friends",a:"g",me:"Lily",x:`Lily: he texted!!
 Kate: wait 10 minutes before replying
 Lily: why
 Kate: so you don't look desperate
@@ -2656,7 +2656,7 @@ Ella: sushi?
 Josh: not sushi
 Ella: you said anything
 Josh: anything except those`},
-{t:"Cute or creepy",g:"dating",a:"m",me:"Ana",x:`Leo: I've memorised your coffee order
+{t:"Cute or creepy",g:"dating",a:"g",me:"Ana",x:`Leo: I've memorised your coffee order
 Ana: aww
 Leo: and your bus route
 Ana: oh
@@ -2672,7 +2672,7 @@ Mark: both lamps are identical
 Friend: then why
 Mark: principle
 Friend: relationships die in IKEA`},
-{t:"Long distance",g:"dating,travel",a:"i",me:"Clara",x:`Clara: good morning ☀️
+{t:"Long distance",g:"dating,travel",a:"g",me:"Clara",x:`Clara: good morning ☀️
 Ben: good night 🌙
 Clara: time zones are hard
 Ben: what are you doing
@@ -2742,7 +2742,7 @@ Sophie: Tom is very competitive
 Ella: so is Dan
 Sophie: this will end in tears
 Ella: 🎳`},
-{t:"Friendship bracelet",g:"friends",a:"w",me:"Ivy",x:`Ivy: I made us friendship bracelets
+{t:"Friendship bracelet",g:"friends",a:"g",me:"Ivy",x:`Ivy: I made us friendship bracelets
 Nell: omg
 Ivy: they say BEST FRENDS
 Nell: missing an i
@@ -3213,7 +3213,7 @@ Tom: still wine
 Sommelier: from a 2012 vintage
 Tom: the vintage is wine
 Sommelier: 😐`},
-{t:"Brunch queue",g:"food",a:"w",me:"Kim",x:`Kim: queue for brunch is 1 hour
+{t:"Brunch queue",g:"food",a:"g",me:"Kim",x:`Kim: queue for brunch is 1 hour
 Liz: for eggs?
 Kim: avocado toast with edible flowers
 Liz: I have eggs at home
@@ -3328,7 +3328,7 @@ Friend: that's 40p per strawberry
 Guest: I've eaten 3 bowls
 Friend: and the tennis?
 Guest: what tennis`},
-{t:"Gym influencer",g:"sport",a:"w",me:"Jake",x:`Jake: someone's filming themselves on every machine
+{t:"Gym influencer",g:"sport",a:"g",me:"Jake",x:`Jake: someone's filming themselves on every machine
 Friend: influencer?
 Jake: he's done 1 rep per machine
 Friend: and the rest?
@@ -3384,7 +3384,7 @@ Grandson: who taught him
 Grandma: your grandfather
 Grandson: when
 Grandma: during the football`},
-{t:"Dog's Instagram",g:"pets,tech",a:"w",me:"Owner",x:`Owner: Biscuit has 10k followers
+{t:"Dog's Instagram",g:"pets,tech",a:"g",me:"Owner",x:`Owner: Biscuit has 10k followers
 Friend: more than you
 Owner: much more
 Friend: what does he post
@@ -3479,7 +3479,7 @@ Hera: WORK?
 Zeus: it's complicated
 Hera: it's always complicated
 Zeus: I'll bring ambrosia`},
-{t:"Medusa's selfie",g:"fantasy",a:"w",me:"Medusa",x:`Medusa: new profile pic
+{t:"Medusa's selfie",g:"fantasy",a:"g",me:"Medusa",x:`Medusa: new profile pic
 Friend: can't look
 Medusa: why
 Friend: last time I looked I became a garden statue
@@ -3659,7 +3659,7 @@ Dracula: design choice
 Guest: and the curtains are always closed
 Dracula: I'm sensitive to light
 Guest: 4 stars. host was a bit bitey`},
-{t:"Mermaid dating",g:"fantasy,dating",a:"m",me:"Ariel",x:`Eric: dinner at the beach?
+{t:"Mermaid dating",g:"fantasy,dating",a:"g",me:"Ariel",x:`Eric: dinner at the beach?
 Ariel: I'd love to
 Eric: seafood restaurant
 Ariel: …
@@ -3745,7 +3745,7 @@ Parent: the book one sparkles too much
 Kid: glitter is fine
 Parent: we're still finding glitter from 2019
 Kid: 🦄`},
-{t:"Ancient god on social media",g:"fantasy,tech",a:"w",me:"Poseidon",x:`Zeus: I've joined Instagram
+{t:"Ancient god on social media",g:"fantasy,tech",a:"g",me:"Poseidon",x:`Zeus: I've joined Instagram
 Poseidon: why
 Zeus: people need to see my lightning
 Poseidon: how many followers
