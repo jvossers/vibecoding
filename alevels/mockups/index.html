@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<meta name="description" content="Mockups for an A level combination picker: score a combination for university access and careers, and get the best next subject suggested.">
+<title>Trio mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TRIO — A level combination picker (MOCKUP)
+   Aesthetic: a careers-office options form, marked up in
+   highlighter. Paper, navy ink, three highlighter colours.
+   ============================================================ */
+:root {
+  --paper: #F4F0E6;
+  --paper-2: #EBE5D6;
+  --card: #FFFDF8;
+  --ink: #1B2233;
+  --ink-2: #4A5266;
+  --ink-3: #8A8F9C;
+  --rule: #D9D1BE;
+  --navy: #22305A;
+  --hi-yellow: #F6DC5C;
+  --hi-green: #9FDDB0;
+  --hi-pink: #F5B5C8;
+  --open: #2E7D4F;
+  --close: #B7791F;
+  --closed: #A64234;
+  --mock: #E2572B;
+  --radius: 10px;
+  --shadow: 0 1px 0 rgba(27,34,51,.06), 0 8px 24px -14px rgba(27,34,51,.25);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--paper);
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(34,48,90,.045) 31px 32px);
+  color: var(--ink);
+  font: 15px/1.5 "Hanken Grotesk", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+.mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+.serif { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; }
+
+/* ---------- mockup chrome (not part of the product) ---------- */
+.mockbar {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--ink); color: #F4F0E6;
+  padding: 10px 16px;
+  display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center;
+}
+.mockbar .tag {
+  font: 600 11px/1 "JetBrains Mono", monospace; letter-spacing: .08em;
+  background: var(--mock); color: #fff; padding: 5px 7px; border-radius: 4px;
+}
+.mockbar .label { font-size: 13px; opacity: .75; }
+.story { display: flex; gap: 6px; flex-wrap: wrap; }
+.story button {
+  background: transparent; border: 1px solid rgba(244,240,230,.25); color: #F4F0E6;
+  border-radius: 999px; padding: 5px 11px; font-size: 13px;
+}
+.story button:hover { border-color: rgba(244,240,230,.6); }
+.story button[aria-pressed="true"] { background: var(--hi-yellow); color: var(--ink); border-color: var(--hi-yellow); }
+.story button b { font-family: "JetBrains Mono", monospace; font-weight: 600; margin-right: 4px; }
+
+.note {
+  max-width: 1180px; margin: 18px auto 0; padding: 14px 18px 14px 16px;
+  border: 1.5px dashed var(--mock); border-radius: var(--radius);
+  background: rgba(226,87,43,.05);
+  display: grid; grid-template-columns: auto 1fr; gap: 4px 14px;
+}
+.note .num {
+  grid-row: span 2; width: 34px; height: 34px; border-radius: 50%;
+  background: var(--mock); color: #fff; display: grid; place-items: center;
+  font: 600 14px "JetBrains Mono", monospace;
+}
+.note h2 { margin: 0; font: 400 24px/1.2 "Instrument Serif", serif; }
+.note ul { margin: 2px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 14px; }
+.note li { margin: 2px 0; }
+.note li strong { color: var(--ink); }
+.note .q { color: var(--mock); font-weight: 600; }
+@media (max-width: 1212px) { .note { margin-left: 16px; margin-right: 16px; } }
+
+/* ---------- product ---------- */
+.app { max-width: 1180px; margin: 18px auto 60px; padding: 0 16px; }
+.brand { display: flex; align-items: end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.brand h1 { margin: 0; font: 400 52px/0.95 "Instrument Serif", serif; letter-spacing: -.01em; }
+.brand h1 em { font-style: italic; background: linear-gradient(transparent 58%, var(--hi-yellow) 58% 92%, transparent 92%); padding: 0 4px; }
+.brand p { margin: 6px 0 0; color: var(--ink-2); max-width: 520px; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--navy); text-decoration: underline; text-underline-offset: 3px; font-weight: 600; font-size: 14px; }
+
+.controls {
+  display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center;
+  padding: 12px 14px; background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius);
+  margin-bottom: 16px;
+}
+.controls label, .ctl-label { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.ctl { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+select {
+  font: 500 15px "Hanken Grotesk", sans-serif; color: var(--ink);
+  padding: 7px 30px 7px 10px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%231B2233'/%3E%3C/svg%3E") no-repeat right 10px center;
+  appearance: none;
+}
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: var(--paper); }
+.seg button { border: 0; background: none; padding: 7px 12px; font-size: 14px; font-weight: 500; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); box-shadow: var(--shadow); }
+.card-h { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 14px 16px 0; }
+.card-h h3 { margin: 0; font: 400 26px/1.1 "Instrument Serif", serif; }
+.card-h .sub { font-size: 13px; color: var(--ink-3); }
+.card-b { padding: 12px 16px 16px; }
+
+/* slots */
+.slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (max-width: 560px) { .slots { grid-template-columns: 1fr; } }
+.slot {
+  min-height: 116px; border-radius: 9px; padding: 10px 12px; position: relative;
+  border: 1.5px dashed var(--rule); background: var(--paper);
+  display: flex; flex-direction: column;
+}
+.slot .n { font: 600 11px "JetBrains Mono", monospace; color: var(--ink-3); letter-spacing: .06em; }
+.slot.filled { border: 1.5px solid var(--ink); background: var(--card); }
+.slot.filled .name { font: 400 26px/1.05 "Instrument Serif", serif; margin-top: 6px; }
+.slot.filled .cat { font-size: 12px; color: var(--ink-3); margin-top: auto; }
+.slot .x {
+  position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 50%;
+  border: 0; background: transparent; color: var(--ink-3); font-size: 18px; line-height: 1;
+}
+.slot .x:hover { background: var(--paper-2); color: var(--ink); }
+.slot.filled .hl { position: absolute; left: 12px; right: 12px; bottom: 30px; height: 10px; border-radius: 2px; opacity: .8; }
+.slot.ghost { border-color: var(--navy); background: repeating-linear-gradient(135deg, rgba(34,48,90,.035) 0 8px, transparent 8px 16px); }
+.slot.ghost .sugg { font-size: 12px; font-weight: 700; color: var(--navy); letter-spacing: .05em; text-transform: uppercase; margin-top: 6px; }
+.slot.ghost .name { font: italic 400 24px/1.05 "Instrument Serif", serif; color: var(--navy); margin-top: 2px; }
+.slot.ghost .why { font-size: 12.5px; color: var(--ink-2); margin-top: 4px; }
+.slot.ghost .add {
+  margin-top: auto; align-self: flex-start; border: 0; background: var(--navy); color: #fff;
+  font-size: 13px; font-weight: 600; border-radius: 6px; padding: 5px 10px;
+}
+.slot.empty .hint { margin: auto 0; color: var(--ink-3); font-size: 14px; }
+
+/* palette */
+.search { width: 100%; font: 15px "Hanken Grotesk", sans-serif; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.cats { margin-top: 12px; display: grid; gap: 12px; }
+.cat-h { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  border: 1px solid var(--rule); background: var(--card); border-radius: 8px;
+  padding: 6px 10px 7px; font-size: 14px; font-weight: 500; position: relative;
+  display: inline-flex; align-items: center; gap: 7px; transition: transform .12s, border-color .12s;
+}
+.chip:hover:not(:disabled) { border-color: var(--ink); transform: translateY(-1px); }
+.chip:disabled { opacity: .38; cursor: not-allowed; }
+.chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.chip .meter { display: inline-flex; gap: 2px; }
+.chip .meter i { width: 4px; height: 10px; border-radius: 1px; background: var(--rule); }
+.chip .meter i.f { background: var(--open); }
+.chip.top { border-color: var(--navy); box-shadow: inset 0 -4px 0 var(--hi-yellow); }
+.chip .star { font-size: 11px; font-weight: 700; color: var(--navy); }
+.legend { font-size: 12.5px; color: var(--ink-3); margin-top: 12px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.legend .chip { pointer-events: none; padding: 2px 7px; font-size: 12px; }
+
+/* scorecard */
+.overall { display: flex; align-items: center; gap: 16px; }
+.big { font: 400 78px/0.9 "Instrument Serif", serif; letter-spacing: -.02em; }
+.big small { font-size: 22px; color: var(--ink-3); }
+.verdict { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.verdict-sub { color: var(--ink-2); font-size: 14px; margin-top: 2px; }
+.upto { display: inline-block; font: 600 11px "JetBrains Mono", monospace; color: var(--navy); background: rgba(34,48,90,.08); padding: 3px 6px; border-radius: 4px; margin-bottom: 4px; }
+.bars { margin-top: 14px; display: grid; gap: 10px; }
+.bar-row { display: grid; grid-template-columns: 148px 1fr 34px; gap: 10px; align-items: center; font-size: 14px; }
+.bar-row .lbl { font-weight: 600; }
+.bar-row .lbl span { display: block; font-weight: 400; font-size: 12px; color: var(--ink-3); line-height: 1.2; }
+.track { height: 12px; background: var(--paper-2); border-radius: 3px; overflow: hidden; position: relative; }
+.fill { height: 100%; border-radius: 3px; transition: width .45s cubic-bezier(.2,.8,.2,1); }
+.fill.partial { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.55) 0 4px, transparent 4px 8px); }
+.bar-row .v { font: 600 14px "JetBrains Mono", monospace; text-align: right; }
+
+/* recommendations */
+.recs { display: grid; gap: 8px; }
+.rec {
+  display: grid; grid-template-columns: 26px 1fr auto; gap: 10px; align-items: center;
+  border: 1px solid var(--rule); border-radius: 9px; padding: 9px 10px; background: var(--paper);
+  text-align: left; width: 100%;
+}
+.rec:hover { border-color: var(--ink); }
+.rec .rank { font: 600 13px "JetBrains Mono", monospace; color: var(--ink-3); text-align: center; }
+.rec:first-child .rank { color: var(--ink); background: var(--hi-yellow); border-radius: 4px; padding: 2px 0; }
+.rec .t { font-weight: 700; font-size: 15px; }
+.rec .r { font-size: 12.5px; color: var(--ink-2); margin-top: 1px; }
+.rec .s { font: 600 15px "JetBrains Mono", monospace; text-align: right; }
+.rec .s small { display: block; font-size: 11px; font-weight: 400; color: var(--open); }
+.rec .s small.neg { color: var(--closed); }
+.pill { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 6px; border-radius: 4px; margin: 2px 4px 0 0; background: rgba(46,125,79,.12); color: var(--open); }
+.pill.uni { background: rgba(34,48,90,.08); color: var(--navy); }
+
+/* watch-outs */
+.watch { display: grid; gap: 8px; }
+.w { display: grid; grid-template-columns: 22px 1fr; gap: 8px; font-size: 14px; color: var(--ink-2); }
+.w .ic { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font: 700 12px "JetBrains Mono", monospace; color: #fff; background: var(--close); margin-top: 1px; }
+.w.good .ic { background: var(--open); }
+.w strong { color: var(--ink); }
+
+/* doors */
+.doors { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+.door { border-radius: 8px; padding: 8px 10px; border: 1px solid var(--rule); background: var(--paper); font-size: 14px; position: relative; overflow: hidden; }
+.door b { display: block; font-weight: 600; }
+.door span { font-size: 12px; color: var(--ink-3); }
+.door.open { background: color-mix(in srgb, var(--hi-green) 45%, var(--card)); border-color: color-mix(in srgb, var(--open) 40%, var(--rule)); }
+.door.close { background: color-mix(in srgb, var(--hi-yellow) 35%, var(--card)); border-color: color-mix(in srgb, var(--close) 40%, var(--rule)); }
+.door.closed b { color: var(--ink-3); font-weight: 500; }
+.door.goal { outline: 2px solid var(--navy); outline-offset: 1px; }
+.door.changed { animation: pop .6s ease; }
+@keyframes pop { 0% { transform: scale(.96); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+.key { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-2); }
+.key i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; border: 1px solid var(--rule); }
+
+/* universities */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tabs button { border: 1px solid var(--rule); background: var(--paper); border-radius: 999px; padding: 4px 11px; font-size: 13px; font-weight: 500; }
+.tabs button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tbl-wrap { overflow-x: auto; margin-top: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 640px; }
+th { text-align: left; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-weight: 700; padding: 6px 8px; border-bottom: 1.5px solid var(--ink); }
+td { padding: 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+td.uni { font-weight: 700; white-space: nowrap; }
+td.offer { font-family: "JetBrains Mono", monospace; white-space: nowrap; }
+td .req { color: var(--ink-2); font-size: 13px; }
+.fit { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; white-space: nowrap; }
+.fit i { width: 10px; height: 10px; border-radius: 50%; }
+.fit.open { color: var(--open); } .fit.open i { background: var(--open); }
+.fit.close { color: var(--close); } .fit.close i { background: var(--close); }
+.fit.closed { color: var(--closed); } .fit.closed i { background: var(--closed); }
+td .miss { font-size: 12.5px; color: var(--ink-2); display: block; margin-top: 1px; }
+.tier { font: 600 10.5px "JetBrains Mono", monospace; color: var(--ink-3); border: 1px solid var(--rule); border-radius: 3px; padding: 0 4px; margin-left: 4px; }
+
+.stack { display: grid; gap: 16px; }
+.full { margin-top: 16px; }
+.disclaimer { margin-top: 18px; font-size: 12.5px; color: var(--ink-3); max-width: 780px; }
+
+/* how-it-works dialog */
+dialog { border: 1px solid var(--rule); border-radius: 12px; padding: 0; max-width: 640px; width: calc(100% - 32px); background: var(--card); color: var(--ink); box-shadow: 0 30px 60px -20px rgba(0,0,0,.35); }
+dialog::backdrop { background: rgba(27,34,51,.4); }
+dialog .in { padding: 20px 22px; }
+dialog h3 { margin: 0 0 8px; font: 400 30px "Instrument Serif", serif; }
+dialog p, dialog li { color: var(--ink-2); font-size: 14.5px; }
+dialog .close-d { float: right; border: 0; background: var(--paper-2); border-radius: 6px; padding: 4px 10px; }
+
+.fade-in { animation: fade .35s ease both; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<div class="mockbar">
+  <span class="tag">MOCKUP v0.1</span>
+  <span class="label">Storyboard — click a state, or just use the prototype:</span>
+  <div class="story" id="story"></div>
+</div>
+
+<section class="note" id="note" aria-live="polite"></section>
+
+<main class="app">
+  <div class="brand">
+    <div>
+      <h1>Pick your <em>three</em>.</h1>
+      <p>Choose one, two or three A levels. We'll score the combination for university entry and careers, and suggest what to add next.</p>
+    </div>
+    <button class="linkbtn" id="howBtn">How the scores work</button>
+  </div>
+
+  <div class="controls">
+    <div class="ctl">
+      <label for="goal">I'd like to study</label>
+      <select id="goal"></select>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label">Prioritise</span>
+      <div class="seg" id="prio" role="group" aria-label="Prioritise">
+        <button data-p="balanced" aria-pressed="true">Balanced</button>
+        <button data-p="uni">University</button>
+        <button data-p="career">Careers</button>
+        <button data-p="flex">Keep options open</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="stack">
+      <section class="card">
+        <div class="card-h"><h3>Your combination</h3><span class="sub" id="slotSub"></span></div>
+        <div class="card-b"><div class="slots" id="slots"></div></div>
+      </section>
+      <section class="card">
+        <div class="card-h"><h3>Subjects</h3><span class="sub">tap to add · tap again to remove</span></div>
+        <div class="card-b">
+          <input class="search" id="search" type="search" placeholder="Search subjects…" autocomplete="off">
+          <div class="cats" id="cats"></div>
+          <div class="legend" id="legend"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="card">
+        <div class="card-h"><h3>Score</h3><span class="sub" id="scoreSub"></span></div>
+        <div class="card-b" id="score"></div>
+      </section>
+      <section class="card">
+        <div class="card-h"><h3 id="recTitle">Suggestions</h3><span class="sub" id="recSub"></span></div>
+        <div class="card-b"><div class="recs" id="recs"></div></div>
+      </section>
+      <section class="card">
+        <div class="card-h"><h3>Things to know</h3></div>
+        <div class="card-b"><div class="watch" id="watch"></div></div>
+      </section>
+    </div>
+  </div>
+
+  <section class="card full">
+    <div class="card-h"><h3>Doors this opens</h3><span class="sub" id="doorSub"></span></div>
+    <div class="card-b">
+      <div class="key" style="margin-bottom:10px">
+        <span><i style="background:color-mix(in srgb, var(--hi-green) 45%, #fff)"></i>Meets subject requirements</span>
+        <span><i style="background:color-mix(in srgb, var(--hi-yellow) 35%, #fff)"></i>Possible, missing a recommended subject</span>
+        <span><i style="background:var(--paper)"></i>Missing a required subject</span>
+      </div>
+      <div class="doors" id="doors"></div>
+    </div>
+  </section>
+
+  <section class="card full">
+    <div class="card-h"><h3>University courses</h3><span class="sub" id="uniSub"></span></div>
+    <div class="card-b">
+      <div class="tabs" id="uniTabs">
+        <button data-f="all" aria-pressed="true">All</button>
+        <button data-f="open">Meets</button>
+        <button data-f="close">Close</button>
+        <button data-f="closed">Not yet</button>
+        <button data-f="goal">My goal only</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>University</th><th>Course</th><th>Typical offer</th><th>Subject requirements</th><th>Your fit</th></tr></thead>
+          <tbody id="uniBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <p class="disclaimer">Mockup data. Course requirements and typical offers here are simplified illustrations to show how the page would behave, not admissions advice. The real version would source them from UCAS and each university's course pages, and show when each was last checked.</p>
+</main>
+
+<dialog id="how">
+  <div class="in">
+    <button class="close-d" id="howClose">Close</button>
+    <h3>How the scores work</h3>
+    <p>Every number is relative: <strong>100 means the best combination of three in our data</strong> for that measure.</p>
+    <ul>
+      <li><strong>University access</strong> — how many of the listed university courses your subjects satisfy. Missing a <em>required</em> subject shuts a course; missing a <em>recommended</em> one counts as partly open. The most selective courses count for more.</li>
+      <li><strong>Career prospects</strong> — which degree areas are open to you, weighted by graduate outcomes for that area (in the real version: the government's LEO earnings and employment data).</li>
+      <li><strong>Keeps options open</strong> — how many degree areas stay open, whatever they lead to.</li>
+      <li><strong>Fits together</strong> — of the degrees your subjects specifically point towards, how many you fully qualify for. Stops the tool recommending a random subject just because it opens an unrelated door.</li>
+      <li><strong>Overall</strong> — a blend of these, with the first three weighted by <em>Prioritise</em>. If you choose a goal, 40% of the overall score is how well you fit that goal.</li>
+    </ul>
+    <p>With fewer than three subjects, the score shows the best you can still reach (“up to”).</p>
+    <p>The score can't know what you enjoy or are good at — and grades matter more than combinations. Pick subjects you'll do well in.</p>
+  </div>
+</dialog>
+
+<script>
+/* ============================================================
+   DATA (illustrative — to be sourced before launch)
+   Rules: req = list of groups; each group is satisfied by a
+   DIFFERENT chosen subject from that group. pref = groups that
+   are recommended but not required.
+   ============================================================ */
+const SUBJECTS = [
+  { id: 'maths', name: 'Mathematics', cat: 'Maths' },
+  { id: 'fm', name: 'Further Maths', cat: 'Maths', needs: 'maths' },
+  { id: 'phys', name: 'Physics', cat: 'Sciences' },
+  { id: 'chem', name: 'Chemistry', cat: 'Sciences' },
+  { id: 'bio', name: 'Biology', cat: 'Sciences' },
+  { id: 'cs', name: 'Computer Science', cat: 'Sciences' },
+  { id: 'psych', name: 'Psychology', cat: 'Social sciences' },
+  { id: 'econ', name: 'Economics', cat: 'Social sciences' },
+  { id: 'pol', name: 'Politics', cat: 'Social sciences' },
+  { id: 'soc', name: 'Sociology', cat: 'Social sciences', soft: true },
+  { id: 'bus', name: 'Business', cat: 'Social sciences', soft: true },
+  { id: 'law', name: 'Law', cat: 'Social sciences', soft: true },
+  { id: 'hist', name: 'History', cat: 'Humanities' },
+  { id: 'geog', name: 'Geography', cat: 'Humanities' },
+  { id: 'englit', name: 'English Literature', cat: 'Humanities' },
+  { id: 'englang', name: 'English Language', cat: 'Humanities' },
+  { id: 'rs', name: 'Religious Studies', cat: 'Humanities' },
+  { id: 'classics', name: 'Classical Civilisation', cat: 'Humanities' },
+  { id: 'fr', name: 'French', cat: 'Languages' },
+  { id: 'es', name: 'Spanish', cat: 'Languages' },
+  { id: 'de', name: 'German', cat: 'Languages' },
+  { id: 'latin', name: 'Latin', cat: 'Languages' },
+  { id: 'art', name: 'Art & Design', cat: 'Creative & other' },
+  { id: 'music', name: 'Music', cat: 'Creative & other' },
+  { id: 'drama', name: 'Drama & Theatre', cat: 'Creative & other' },
+  { id: 'dt', name: 'Design & Technology', cat: 'Creative & other' },
+  { id: 'media', name: 'Media Studies', cat: 'Creative & other', soft: true },
+  { id: 'pe', name: 'Physical Education', cat: 'Creative & other', soft: true },
+];
+const S = Object.fromEntries(SUBJECTS.map(s => [s.id, s]));
+const SCI = ['maths', 'phys', 'chem', 'bio'];
+const LANGS = ['fr', 'es', 'de', 'latin'];
+const ESSAY = ['hist', 'englit', 'englang', 'rs', 'pol', 'classics', 'geog', 'econ', ...LANGS];
+const CAT_COLOR = { 'Maths': '--hi-yellow', 'Sciences': '--hi-green', 'Social sciences': '--hi-pink', 'Humanities': '--hi-pink', 'Languages': '--hi-green', 'Creative & other': '--hi-yellow' };
+
+// career: illustrative graduate-outcome index (0-100); pop: share of applicants
+const AREAS = [
+  { id: 'med', name: 'Medicine', career: 96, pop: 1.2, req: [['chem'], ['bio', 'phys', 'maths']], pref: [['bio']] },
+  { id: 'dent', name: 'Dentistry', career: 92, pop: .5, req: [['chem'], ['bio']] },
+  { id: 'vet', name: 'Veterinary Science', career: 76, pop: .5, req: [['chem'], ['bio']] },
+  { id: 'pharm', name: 'Pharmacy', career: 74, pop: .6, req: [['chem'], ['bio', 'maths', 'phys']] },
+  { id: 'eng', name: 'Engineering', career: 88, pop: 1.2, req: [['maths'], ['phys']], pref: [['fm']] },
+  { id: 'cs', name: 'Computer Science', career: 90, pop: 1.2, req: [['maths']], pref: [['fm', 'cs']] },
+  { id: 'math', name: 'Mathematics', career: 86, pop: .8, req: [['maths']], pref: [['fm']] },
+  { id: 'physics', name: 'Physics', career: 80, pop: .6, req: [['maths'], ['phys']], pref: [['fm']] },
+  { id: 'chemd', name: 'Chemistry', career: 72, pop: .6, req: [['chem'], ['maths', 'phys', 'bio']] },
+  { id: 'natsci', name: 'Natural Sciences', career: 84, pop: .5, req: [SCI, SCI] },
+  { id: 'biosci', name: 'Biological Sciences', career: 62, pop: 1.0, req: [['bio'], ['chem', 'maths', 'phys', 'psych', 'geog']], pref: [['chem']] },
+  { id: 'econ', name: 'Economics', career: 90, pop: 1.1, req: [['maths']], pref: [['fm', 'econ']] },
+  { id: 'acc', name: 'Accounting & Finance', career: 78, pop: .8, req: [], pref: [['maths']] },
+  { id: 'ppe', name: 'PPE', career: 86, pop: .4, req: [], pref: [['maths'], ['hist', 'pol', 'econ', 'englit', 'rs', 'classics']] },
+  { id: 'law', name: 'Law', career: 80, pop: 1.2, req: [], pref: [ESSAY] },
+  { id: 'polir', name: 'Politics & IR', career: 66, pop: .8, req: [], pref: [ESSAY] },
+  { id: 'psy', name: 'Psychology', career: 58, pop: 1.1, req: [], pref: [['bio', 'chem', 'maths', 'phys', 'psych']] },
+  { id: 'arch', name: 'Architecture', career: 64, pop: .5, req: [], pref: [['art', 'dt'], ['maths', 'phys']], note: 'portfolio' },
+  { id: 'hist', name: 'History', career: 62, pop: .8, req: [['hist']] },
+  { id: 'english', name: 'English', career: 56, pop: .8, req: [['englit', 'englang']], pref: [['englit']] },
+  { id: 'lang', name: 'Modern Languages', career: 64, pop: .6, req: [['fr', 'es', 'de']] },
+  { id: 'classicsd', name: 'Classics', career: 66, pop: .3, req: [], pref: [['latin', 'classics']] },
+  { id: 'geo', name: 'Geography', career: 64, pop: .7, req: [], pref: [['geog']] },
+  { id: 'bm', name: 'Business & Management', career: 70, pop: 1.0, req: [], pref: [] },
+  { id: 'music', name: 'Music', career: 46, pop: .3, req: [['music']] },
+  { id: 'artd', name: 'Art & Design', career: 44, pop: .5, req: [['art', 'dt']], note: 'portfolio' },
+];
+const A = Object.fromEntries(AREAS.map(a => [a.id, a]));
+
+// tier 3 = most selective. Requirements simplified for the mockup.
+const COURSES = [
+  ['Cambridge', 'Engineering', 'A*A*A', 3, 'eng', [['maths'], ['phys']], [['fm']]],
+  ['Cambridge', 'Computer Science', 'A*A*A', 3, 'cs', [['maths'], ['fm']], []],
+  ['Cambridge', 'Natural Sciences', 'A*A*A', 3, 'natsci', [SCI, SCI], []],
+  ['Cambridge', 'Medicine', 'A*A*A', 3, 'med', [['chem'], ['bio', 'phys', 'maths']], [['bio']]],
+  ['Oxford', 'PPE', 'AAA', 3, 'ppe', [], [['maths']]],
+  ['Oxford', 'Law', 'AAA', 3, 'law', [], []],
+  ['Oxford', 'History', 'AAA', 3, 'hist', [], [['hist']]],
+  ['Oxford', 'Medicine', 'A*AA', 3, 'med', [['chem'], ['bio', 'phys', 'maths']], []],
+  ['Imperial', 'Computing', 'A*A*A', 3, 'cs', [['maths']], [['fm']]],
+  ['Imperial', 'Medicine', 'A*AA', 3, 'med', [['chem'], ['bio']], []],
+  ['LSE', 'Economics', 'A*AA', 3, 'econ', [['maths']], [['fm']]],
+  ['LSE', 'Law', 'A*AA', 3, 'law', [], []],
+  ['Warwick', 'Mathematics', 'A*A*A', 3, 'math', [['maths'], ['fm']], []],
+  ['Warwick', 'Economics', 'A*AA', 2, 'econ', [['maths']], []],
+  ['UCL', 'Psychology', 'A*AA', 2, 'psy', [], []],
+  ['UCL', 'Architecture', 'A*AA', 2, 'arch', [], [['art', 'dt']]],
+  ["King's College London", 'Dentistry', 'A*AA', 2, 'dent', [['chem'], ['bio']], []],
+  ['Edinburgh', 'Veterinary Medicine', 'AAA', 2, 'vet', [['chem'], ['bio']], []],
+  ['Durham', 'English Literature', 'A*AA', 2, 'english', [['englit']], []],
+  ['Durham', 'Law', 'A*AA', 2, 'law', [], []],
+  ['Bristol', 'Aerospace Engineering', 'A*AA', 2, 'eng', [['maths'], ['phys']], []],
+  ['Southampton', 'Computer Science', 'A*AA', 2, 'cs', [['maths']], []],
+  ['St Andrews', 'International Relations', 'AAA', 2, 'polir', [], []],
+  ['Bath', 'Accounting & Finance', 'AAA', 2, 'acc', [], [['maths']]],
+  ['Manchester', 'Pharmacy', 'AAB', 1, 'pharm', [['chem'], ['bio', 'maths', 'phys']], []],
+  ['Nottingham', 'Biology', 'AAB', 1, 'biosci', [['bio'], ['chem', 'maths', 'phys', 'psych', 'geog']], []],
+  ['Exeter', 'Geography', 'AAA', 1, 'geo', [], [['geog']]],
+  ['Leeds', 'Modern Languages', 'ABB', 1, 'lang', [['fr', 'es', 'de']], []],
+  ['Sheffield', 'Architecture', 'AAA', 1, 'arch', [], []],
+].map(([uni, course, offer, tier, area, req, pref]) => ({ uni, course, offer, tier, area, req, pref }));
+const TIER_W = { 1: .8, 2: 1, 3: 1.3 };
+const PRIO = {
+  balanced: { uni: .4, career: .35, flex: .25 },
+  uni: { uni: .65, career: .2, flex: .15 },
+  career: { uni: .2, career: .65, flex: .15 },
+  flex: { uni: .25, career: .15, flex: .6 },
+};
+
+/* ============================================================
+   ENGINE
+   ============================================================ */
+// Largest matching of groups to distinct chosen subjects; returns unmatched groups.
+function unmatched(groups, sel) {
+  let best = null;
+  (function rec(i, used, miss) {
+    if (best && miss.length >= best.length) return;
+    if (i === groups.length) { best = miss.slice(); return; }
+    for (const s of groups[i]) {
+      if (sel.includes(s) && !used.has(s)) {
+        used.add(s); rec(i + 1, used, miss); used.delete(s);
+        if (best && best.length === 0) return;
+      }
+    }
+    miss.push(groups[i]); rec(i + 1, used, miss); miss.pop();
+  })(0, new Set(), []);
+  return best;
+}
+function evalRule(rule, sel, selective) {
+  const missReq = unmatched(rule.req || [], sel);
+  if (missReq.length) return { s: 'closed', v: 0, missReq, missPref: [] };
+  const missPref = (rule.pref || []).filter(g => !g.some(x => sel.includes(x)));
+  const soft = sel.filter(x => S[x].soft).length;
+  const softFlag = selective && soft >= 2;
+  if (missPref.length || softFlag) return { s: 'close', v: .6, missReq: [], missPref, softFlag };
+  return { s: 'open', v: 1, missReq: [], missPref: [] };
+}
+const VALUE = { open: 1, close: .6, closed: 0 };
+
+const cache = new Map();
+function raw(sel) {
+  const key = sel.slice().sort().join('+');
+  if (cache.has(key)) return cache.get(key);
+  let uni = 0, career = 0, flex = 0, cohN = 0, cohD = 0;
+  for (const c of COURSES) uni += TIER_W[c.tier] * evalRule(c, sel, c.tier === 3).v;
+  const areas = {};
+  for (const a of AREAS) {
+    const r = evalRule(a, sel, false); areas[a.id] = r;
+    career += r.v * a.pop * (a.career / 100) ** 2;
+    flex += r.v * a.pop;
+    if (related(a, sel)) { cohD += a.career; cohN += r.v * a.career; }
+  }
+  // coherence: of the degrees your subjects point towards, how many do you fully qualify for?
+  const coh = cohD ? 100 * cohN / cohD : 50;
+  const out = { uni, career, flex, coh, areas };
+  cache.set(key, out);
+  return out;
+}
+// an area is "related" if one of your subjects is named specifically in its requirements
+const related = (a, sel) => [...(a.req || []), ...(a.pref || [])].some(g => g.length <= 2 && g.some(x => sel.includes(x)));
+const valid = sel => !sel.some(x => S[x].needs && !sel.includes(S[x].needs));
+
+// all valid triples, and the per-measure maximum used to normalise to 100
+const TRIPLES = [];
+for (let i = 0; i < SUBJECTS.length; i++)
+  for (let j = i + 1; j < SUBJECTS.length; j++)
+    for (let k = j + 1; k < SUBJECTS.length; k++) {
+      const t = [SUBJECTS[i].id, SUBJECTS[j].id, SUBJECTS[k].id];
+      if (valid(t)) TRIPLES.push(t);
+    }
+const MAX = { uni: 0, career: 0, flex: 0 };
+for (const t of TRIPLES) { const r = raw(t); for (const m in MAX) MAX[m] = Math.max(MAX[m], r[m]); }
+
+function goalFit(sel, goal) {
+  if (!goal) return null;
+  const a = evalRule(A[goal], sel, false).v;
+  const cs = COURSES.filter(c => c.area === goal);
+  if (!cs.length) return 100 * a;
+  const cv = cs.reduce((s, c) => s + evalRule(c, sel, c.tier === 3).v, 0) / cs.length;
+  return 100 * (.55 * a + .45 * cv);
+}
+function score(sel, st) {
+  const r = raw(sel), w = PRIO[st.prio];
+  const m = { uni: 100 * r.uni / MAX.uni, career: 100 * r.career / MAX.career, flex: 100 * r.flex / MAX.flex };
+  const mix = w.uni * m.uni + w.career * m.career + w.flex * m.flex;
+  const g = goalFit(sel, st.goal);
+  const overall = Math.min(100, g === null ? .6 * mix + .4 * r.coh : .45 * mix + .15 * r.coh + .4 * g);
+  return { ...m, coh: r.coh, goal: g, overall, areas: r.areas };
+}
+// all valid ways to fill the remaining slots
+function completions(sel) {
+  return TRIPLES.filter(t => sel.every(x => t.includes(x)));
+}
+function best(sel, st) {
+  let top = null;
+  for (const t of completions(sel)) {
+    const sc = score(t, st);
+    if (!top || sc.overall > top.sc.overall) top = { t, sc };
+  }
+  return top;
+}
+
+/* ============================================================
+   STATE + STORYBOARD
+   ============================================================ */
+const st = { sel: [], goal: '', prio: 'balanced', q: '', uniFilter: 'all' };
+let prevAreas = {};
+
+const STORY = [
+  {
+    title: 'Blank start', sel: [], goal: '', prio: 'balanced',
+    notes: [
+      '<strong>Three empty slots</strong> make the “pick three” task obvious. The subject list is grouped the way school options booklets group them.',
+      'Even with nothing picked, the right side isn\'t empty: it shows the <strong>strongest starting combinations</strong> and the score ceiling.',
+      'Two ways in: pick a subject you love, or choose a <strong>goal</strong> (“I\'d like to study…”) and let the tool work backwards.',
+      '<span class="q">Question:</span> should we ask for GCSE grades / predicted grades up front? It would sharpen advice but adds friction.',
+    ],
+  },
+  {
+    title: 'One pick: Maths', sel: ['maths'], goal: '', prio: 'balanced',
+    notes: [
+      'With one subject chosen, slots 2 and 3 show a <strong>suggested pair</strong> (dashed, “Add” to accept) — the best way to finish the combination.',
+      'Every subject chip gets a <strong>4-bar fit meter</strong>; the top three are underlined in highlighter. This steers without forcing.',
+      'Scores show <span class="mono">UP TO</span> with striped bars: the ceiling still reachable, not a final mark.',
+      '<strong>Further Maths unlocks</strong> only once Maths is picked (it can\'t be taken alone).',
+    ],
+  },
+  {
+    title: 'Two picks: Maths + CS', sel: ['maths', 'cs'], goal: '', prio: 'balanced',
+    notes: [
+      'Two picks → the tool <strong>auto-suggests the third</strong> in slot 3 and ranks every option below, with the gain over the average choice.',
+      'Each suggestion explains itself in plain words: which degree areas it opens and which <strong>named university courses</strong> it unlocks (e.g. Cambridge Computer Science needs Further Maths).',
+      'Physics edges Further Maths here because it also opens Engineering and Physics degrees — but Further Maths is what Cambridge Computer Science asks for. Set the goal to <strong>Computer Science</strong> and watch Further Maths jump to the top.',
+    ],
+  },
+  {
+    title: 'Medic, full set', sel: ['bio', 'chem', 'psych'], goal: 'med', prio: 'balanced',
+    notes: [
+      'Three picks → a <strong>final score</strong>, and suggestions switch to <strong>“swap one”</strong>: is there a single change that would help a lot?',
+      'With a goal set, that degree area is outlined on the doors map and the university table can be filtered to <strong>“My goal only”</strong>.',
+      'Biology + Chemistry already meets medical school subject requirements, so the third subject is free choice. Swaps that would weaken the goal are never suggested; the ones shown keep “Fit for Medicine” at 100 and just add breadth.',
+    ],
+  },
+  {
+    title: 'Goal-first: Law', sel: ['hist', 'englit'], goal: 'law', prio: 'balanced',
+    notes: [
+      'Law needs no particular A level, so the goal score rewards <strong>essay-based subjects</strong> that admissions tutors recommend.',
+      'The doors map shows that a humanities-only trio still opens many areas, but <strong>closes most STEM</strong> — visible at a glance rather than buried in text.',
+      '<span class="q">Question:</span> should the goal be a single choice, or allow “Law or PPE or History”?',
+    ],
+  },
+  {
+    title: 'Watch-outs', sel: ['media', 'pe', 'bus'], goal: '', prio: 'balanced',
+    notes: [
+      '“Things to know” flags <strong>risky combinations</strong> without lecturing, e.g. the most selective universities often prefer no more than one of certain subjects.',
+      'Courses affected show as <strong>“Close”</strong> with the reason, not “Not yet” — the subjects are acceptable, just weaker for those universities.',
+      'Tone matters: this is for 15–16 year olds and their parents. Copy should be encouraging, never “this combination is bad”.',
+    ],
+  },
+];
+
+function applyStory(i) {
+  const s = STORY[i];
+  Object.assign(st, { sel: s.sel.slice(), goal: s.goal, prio: s.prio, q: '', uniFilter: s.goal ? 'goal' : 'all' });
+  $('#search').value = '';
+  storyIdx = i;
+  render();
+}
+let storyIdx = 0;
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const $ = q => document.querySelector(q);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const names = ids => ids.map(x => S[x].name);
+const listOr = arr => arr.length <= 2 ? arr.join(' or ') : arr.slice(0, -1).join(', ') + ' or ' + arr[arr.length - 1];
+const groupText = g => g === SCI ? 'two of Maths, Physics, Chemistry, Biology' : (g.length === 1 ? S[g[0]].name : 'one of ' + listOr(names(g)));
+function reqText(rule) {
+  const parts = [];
+  if (rule.req.length) {
+    if (rule.req.length === 2 && rule.req[0] === SCI) parts.push('Two of Maths, Physics, Chemistry, Biology');
+    else parts.push(rule.req.map(groupText).join(' + '));
+  } else parts.push('No specific subjects');
+  if (rule.pref.length) parts.push('<em>recommended:</em> ' + rule.pref.map(g => g.length === 1 ? S[g[0]].name : listOr(names(g))).join(', '));
+  return parts.join('; ');
+}
+function verdict(v) {
+  if (v >= 85) return ['Excellent', 'var(--open)', 'Opens a very wide range of strong options.'];
+  if (v >= 70) return ['Strong', 'var(--open)', 'A well-regarded combination with plenty of routes.'];
+  if (v >= 55) return ['Good', 'var(--close)', 'Solid — some routes will need a different subject.'];
+  return ['Focused', 'var(--closed)', 'Narrower: great if it matches your plans.'];
+}
+
+function render() {
+  const n = st.sel.length;
+  const ceiling = best(st.sel, st);
+  const cur = n === 3 ? { t: st.sel, sc: score(st.sel, st) } : ceiling;
+
+  // storyboard + note
+  $('#story').innerHTML = STORY.map((s, i) => `<button data-i="${i}" aria-pressed="${i === storyIdx}"><b>${i + 1}</b>${esc(s.title)}</button>`).join('');
+  const s = STORY[storyIdx];
+  $('#note').innerHTML = `<div class="num">${storyIdx + 1}</div><h2>${esc(s.title)}</h2><ul>${s.notes.map(x => `<li>${x}</li>`).join('')}</ul>`;
+
+  // controls
+  $('#goal').value = st.goal;
+  document.querySelectorAll('#prio button').forEach(b => b.setAttribute('aria-pressed', b.dataset.p === st.prio));
+
+  // ---- suggestion ranking for the palette + recs ----
+  let ranked = [];
+  if (n < 3) {
+    ranked = SUBJECTS.filter(x => !st.sel.includes(x.id)).map(x => {
+      const next = [...st.sel, x.id];
+      const b = valid(next) || (n < 2) ? best(next, st) : null;
+      return { id: x.id, b, ok: !!b && completions(next).length > 0 && (S[x.id].needs ? st.sel.includes(S[x.id].needs) : true) };
+    }).filter(r => r.ok && r.b).sort((a, b) => b.b.sc.overall - a.b.sc.overall);
+  }
+  const topIds = ranked.slice(0, 3).map(r => r.id);
+  const scores = ranked.map(r => r.b.sc.overall);
+  const lo = Math.min(...scores), hi = Math.max(...scores);
+
+  // ---- slots ----
+  const ghostT = n > 0 && n < 3 ? ceiling.t.filter(x => !st.sel.includes(x)) : [];
+  let slotHtml = '';
+  for (let i = 0; i < 3; i++) {
+    const id = st.sel[i];
+    if (id) {
+      slotHtml += `<div class="slot filled fade-in"><span class="n">0${i + 1}</span><button class="x" data-rm="${id}" aria-label="Remove ${esc(S[id].name)}">×</button>
+        <div class="name">${esc(S[id].name)}</div><div class="hl" style="background:var(${CAT_COLOR[S[id].cat]})"></div><div class="cat">${esc(S[id].cat)}</div></div>`;
+    } else if (ghostT.length) {
+      const g = ghostT.shift();
+      const why = reasons(st.sel, g, 1)[0] || 'Best overall fit';
+      slotHtml += `<div class="slot ghost fade-in"><span class="n">0${i + 1}</span><div class="sugg">Suggested</div><div class="name">${esc(S[g].name)}</div>
+        <div class="why">${esc(why)}</div><button class="add" data-add="${g}">Add</button></div>`;
+    } else {
+      slotHtml += `<div class="slot empty"><span class="n">0${i + 1}</span><div class="hint">${i === 0 ? 'Pick your first subject below — or choose a goal above.' : 'Empty'}</div></div>`;
+    }
+  }
+  $('#slots').innerHTML = slotHtml;
+  $('#slotSub').textContent = `${n} of 3 chosen`;
+
+  // ---- palette ----
+  const cats = [...new Set(SUBJECTS.map(x => x.cat))];
+  const q = st.q.toLowerCase();
+  $('#cats').innerHTML = cats.map(c => {
+    const items = SUBJECTS.filter(x => x.cat === c && x.name.toLowerCase().includes(q));
+    if (!items.length) return '';
+    return `<div><div class="cat-h">${esc(c)}</div><div class="chips">${items.map(x => {
+      const on = st.sel.includes(x.id);
+      const r = ranked.find(r => r.id === x.id);
+      const needsBlock = x.needs && !st.sel.includes(x.needs) && !on;
+      const disabled = (!on && n >= 3) || needsBlock;
+      let meter = '';
+      if (!on && r && n > 0 && n < 3) {
+        const bars = hi > lo ? Math.max(1, Math.round(1 + 3 * (r.b.sc.overall - lo) / (hi - lo))) : 4;
+        meter = `<span class="meter" aria-label="fit ${bars} of 4">${[1, 2, 3, 4].map(k => `<i class="${k <= bars ? 'f' : ''}"></i>`).join('')}</span>`;
+      }
+      const top = !on && n > 0 && n < 3 && topIds.includes(x.id);
+      const title = needsBlock ? 'Take with Mathematics' : '';
+      return `<button class="chip ${on ? 'on' : ''} ${top ? 'top' : ''}" data-tog="${x.id}" ${disabled ? 'disabled' : ''} title="${title}">${esc(x.name)}${top ? '<span class="star">★</span>' : ''}${meter}</button>`;
+    }).join('')}</div></div>`;
+  }).join('') || '<p style="color:var(--ink-3)">No subjects match.</p>';
+  $('#legend').innerHTML = n > 0 && n < 3
+    ? `<span><span class="chip top">Subject<span class="star">★</span></span> top suggestions</span><span><span class="chip">fit <span class="meter"><i class="f"></i><i class="f"></i><i class="f"></i><i></i></span></span> how well it fits with what you've picked</span>`
+    : (n === 0 ? '<span>Pick one subject and we\'ll start rating the rest.</span>' : '<span>Three chosen. Remove one to see alternatives.</span>');
+
+  // ---- score ----
+  const sc = cur.sc;
+  const [vt, vc, vs] = verdict(sc.overall);
+  const partial = n < 3;
+  const bar = (lbl, sub, v, color) => `<div class="bar-row"><div class="lbl">${lbl}<span>${sub}</span></div>
+    <div class="track"><div class="fill ${partial ? 'partial' : ''}" style="width:${v.toFixed(0)}%;background:${color}"></div></div><div class="v">${Math.round(v)}</div></div>`;
+  $('#score').innerHTML = `
+    <div class="overall">
+      <div class="big">${Math.round(sc.overall)}<small>/100</small></div>
+      <div>${partial ? `<span class="upto">UP TO</span><br>` : ''}<div class="verdict" style="color:${vc}">${vt}</div>
+        <div class="verdict-sub">${partial ? (n === 0 ? 'The best any three subjects can reach with these priorities.' : `Best reachable by adding ${listOr(names(ceiling.t.filter(x => !st.sel.includes(x))))}.`) : vs}</div></div>
+    </div>
+    <div class="bars">
+      ${bar('University access', 'courses whose requirements you meet', sc.uni, 'var(--navy)')}
+      ${bar('Career prospects', 'graduate outcomes of open degrees', sc.career, 'var(--open)')}
+      ${bar('Keeps options open', 'number of degree areas open', sc.flex, 'var(--close)')}
+      ${bar('Fits together', 'subjects support the same degrees', sc.coh, 'var(--ink-2)')}
+      ${sc.goal !== null ? bar('Fit for ' + esc(A[st.goal].name), 'meets what this degree asks for', sc.goal, 'var(--mock)') : ''}
+    </div>`;
+  $('#scoreSub').textContent = partial ? 'potential' : 'final';
+
+  // ---- recommendations ----
+  renderRecs(n, ranked, cur);
+
+  // ---- watch-outs ----
+  renderWatch(cur.t, n);
+
+  // ---- doors ----
+  const areas = (n === 3 ? sc : raw(st.sel)).areas;
+  const order = { open: 0, close: 1, closed: 2 };
+  const list = AREAS.slice().sort((a, b) => order[areas[a.id].s] - order[areas[b.id].s] || b.career - a.career);
+  $('#doors').innerHTML = list.map(a => {
+    const r = areas[a.id];
+    let sub = r.s === 'open' ? 'Meets requirements' : r.s === 'close' ? 'Add ' + listOr(r.missPref.map(g => g.length === 1 ? S[g[0]].name : 'an essay subject').slice(0, 1)) + ' to strengthen' : 'Needs ' + r.missReq.map(g => g === SCI ? 'two sciences' : (g.length === 1 ? S[g[0]].name : listOr(names(g)))).join(' + ');
+    if (a.note && r.s !== 'closed') sub += ' · ' + a.note;
+    const changed = prevAreas[a.id] && prevAreas[a.id] !== r.s ? 'changed' : '';
+    return `<div class="door ${r.s} ${st.goal === a.id ? 'goal' : ''} ${changed}"><b>${esc(a.name)}</b><span>${esc(sub)}</span></div>`;
+  }).join('');
+  prevAreas = Object.fromEntries(AREAS.map(a => [a.id, areas[a.id].s]));
+  const openN = AREAS.filter(a => areas[a.id].s === 'open').length;
+  $('#doorSub').textContent = n === 0 ? 'pick subjects to see which degree areas open up' : `${openN} of ${AREAS.length} degree areas fully open with ${n === 3 ? 'these three' : 'what you have so far'}`;
+
+  // ---- universities ----
+  document.querySelectorAll('#uniTabs button').forEach(b => {
+    b.setAttribute('aria-pressed', b.dataset.f === st.uniFilter);
+    if (b.dataset.f === 'goal') b.hidden = !st.goal;
+  });
+  if (st.uniFilter === 'goal' && !st.goal) st.uniFilter = 'all';
+  const rows = COURSES.map(c => ({ c, r: evalRule(c, st.sel, c.tier === 3) }))
+    .filter(({ c, r }) => st.uniFilter === 'all' || (st.uniFilter === 'goal' ? c.area === st.goal : r.s === st.uniFilter))
+    .sort((a, b) => order[a.r.s] - order[b.r.s] || b.c.tier - a.c.tier);
+  $('#uniBody').innerHTML = rows.map(({ c, r }) => {
+    const lbl = { open: 'Meets', close: 'Close', closed: 'Not yet' }[r.s];
+    let miss = '';
+    if (r.s === 'closed') miss = 'Needs ' + r.missReq.map(groupText).join(' + ');
+    else if (r.softFlag) miss = 'Prefers at most one of Media, PE, Business, Law, Sociology';
+    else if (r.s === 'close') miss = 'Recommended: ' + r.missPref.map(g => listOr(names(g))).join(', ');
+    return `<tr><td class="uni">${esc(c.uni)}${c.tier === 3 ? '<span class="tier" title="most selective">TOP</span>' : ''}</td><td>${esc(c.course)}</td><td class="offer">${c.offer}</td>
+      <td><span class="req">${reqText(c)}</span></td><td><span class="fit ${r.s}"><i></i>${lbl}</span>${miss ? `<span class="miss">${esc(miss)}</span>` : ''}</td></tr>`;
+  }).join('') || '<tr><td colspan="5" style="color:var(--ink-3)">No courses in this view.</td></tr>';
+  const meets = COURSES.filter(c => evalRule(c, st.sel, c.tier === 3).s === 'open').length;
+  $('#uniSub').textContent = `you meet the subject requirements for ${meets} of ${COURSES.length}`;
+}
+
+// Plain-language reasons why adding `c` to `sel` helps.
+function reasons(sel, c, max = 3) {
+  const before = raw(sel), after = raw([...sel, c]);
+  const opened = AREAS.filter(a => VALUE[after.areas[a.id].s] > VALUE[before.areas[a.id].s]).sort((a, b) => b.career * b.pop - a.career * a.pop);
+  const out = [];
+  if (opened.length) out.push('Opens ' + opened.slice(0, 2).map(a => a.name).join(' & ') + (opened.length > 2 ? ` +${opened.length - 2} more` : ''));
+  return out.slice(0, max);
+}
+function unlockedCourses(sel, c) {
+  return COURSES.filter(k => evalRule(k, [...sel, c], k.tier === 3).v > evalRule(k, sel, k.tier === 3).v)
+    .sort((a, b) => b.tier - a.tier);
+}
+
+function renderRecs(n, ranked, cur) {
+  const el = $('#recs');
+  if (n === 0) {
+    $('#recTitle').textContent = st.goal ? `Best combinations for ${A[st.goal].name}` : 'Strong starting combinations';
+    $('#recSub').textContent = 'tap to use';
+    // skip near-duplicates (sharing two subjects with one already shown) so the list shows real variety
+    const top = [];
+    for (const x of TRIPLES.map(t => ({ t, sc: score(t, st) })).sort((a, b) => b.sc.overall - a.sc.overall)) {
+      if (top.every(y => y.t.filter(s => x.t.includes(s)).length < 2)) top.push(x);
+      if (top.length >= 5) break;
+    }
+    el.innerHTML = top.map((x, i) => `<button class="rec" data-set="${x.t.join(',')}"><span class="rank">${i + 1}</span>
+      <span><span class="t">${esc(names(x.t).join(' · '))}</span><span class="r">${AREAS.filter(a => x.sc.areas[a.id].s === 'open').length} degree areas open</span></span>
+      <span class="s">${Math.round(x.sc.overall)}</span></button>`).join('');
+    return;
+  }
+  if (n < 3) {
+    $('#recTitle').textContent = n === 1 ? 'Best next subject' : 'Best third subject';
+    $('#recSub').textContent = n === 1 ? 'ranked by best score you can still reach' : 'ranked by final score';
+    const avg = ranked.reduce((s, r) => s + r.b.sc.overall, 0) / (ranked.length || 1);
+    el.innerHTML = ranked.slice(0, 6).map((r, i) => {
+      const why = reasons(st.sel, r.id);
+      const unis = unlockedCourses(st.sel, r.id).filter(k => k.tier === 3).slice(0, 2);
+      const d = r.b.sc.overall - avg;
+      const pair = n === 1 ? r.b.t.filter(x => x !== r.id && !st.sel.includes(x)) : [];
+      return `<button class="rec" data-add="${r.id}"><span class="rank">${i + 1}</span><span>
+        <span class="t">${esc(S[r.id].name)}${pair.length ? ` <span style="font-weight:400;color:var(--ink-3)">then ${esc(names(pair).join(''))}</span>` : ''}</span>
+        <span class="r">${why.map(w => `<span class="pill">${esc(w)}</span>`).join('')}${unis.map(k => `<span class="pill uni">${esc(k.uni + ' ' + k.course)}</span>`).join('')}${!why.length && !unis.length ? 'Keeps your current options; little new' : ''}</span></span>
+        <span class="s">${Math.round(r.b.sc.overall)}<small class="${d < 0 ? 'neg' : ''}">${d >= 0 ? '+' : ''}${d.toFixed(0)} vs avg</small></span></button>`;
+    }).join('');
+    return;
+  }
+  // three chosen: swap suggestions
+  $('#recTitle').textContent = 'Swap one?';
+  $('#recSub').textContent = 'single changes that would raise your score';
+  const baseSc = score(st.sel, st), base = baseSc.overall;
+  const swaps = [];
+  for (const out of st.sel) for (const inn of SUBJECTS) {
+    if (st.sel.includes(inn.id)) continue;
+    const t = st.sel.map(x => x === out ? inn.id : x);
+    if (!valid(t)) continue;
+    const sc = score(t, st), v = sc.overall;
+    if (st.goal && sc.goal < baseSc.goal) continue; // never suggest a swap that hurts the goal
+    if (v - base >= 3) swaps.push({ out, inn: inn.id, t, v });
+  }
+  swaps.sort((a, b) => b.v - a.v);
+  const uniq = []; const outs = {};
+  const ins = new Set();
+  for (const sw of swaps) { if ((outs[sw.out] || 0) < 2 && !ins.has(sw.inn)) { uniq.push(sw); ins.add(sw.inn); outs[sw.out] = (outs[sw.out] || 0) + 1; } if (uniq.length >= 4) break; }
+  if (!uniq.length) {
+    el.innerHTML = `<div class="w good"><span class="ic">✓</span><span><strong>No single swap makes a big difference.</strong> This is close to the best combination for your priorities — choose based on what you enjoy and will do well in.</span></div>`;
+    return;
+  }
+  el.innerHTML = uniq.map((sw, i) => {
+    const rest = st.sel.filter(x => x !== sw.out);
+    const why = reasons(rest, sw.inn);
+    return `<button class="rec" data-swap="${sw.out}>${sw.inn}"><span class="rank">${i + 1}</span><span>
+      <span class="t">${esc(S[sw.out].name)} → ${esc(S[sw.inn].name)}</span>
+      <span class="r">${why.map(w => `<span class="pill">${esc(w)}</span>`).join('') || 'Better balance for your priorities'}</span></span>
+      <span class="s">${Math.round(sw.v)}<small>+${(sw.v - base).toFixed(0)}</small></span></button>`;
+  }).join('') + `<p style="font-size:12.5px;color:var(--ink-3);margin:4px 0 0">Only worth it if you'd enjoy the new subject — a higher grade in a subject you like beats a “better” subject.</p>`;
+}
+
+function renderWatch(t, n) {
+  const sel = st.sel, items = [];
+  const has = x => sel.includes(x);
+  if (n === 0) items.push(['good', '<strong>Most students take three A levels.</strong> Universities rarely ask for four; grades matter more than the number.']);
+  const goalMet = st.goal && evalRule(A[st.goal], sel, false).s === 'open';
+  if (!has('maths') && n >= 2 && !goalMet) items.push(['warn', '<strong>No Maths.</strong> Maths is required for Engineering, Computer Science, Economics, Mathematics and Physics at most universities.']);
+  if (has('maths') && has('fm')) items.push(['warn', '<strong>Maths + Further Maths</strong> is a heavy, overlapping pair. A few universities won\'t count both towards an offer outside maths-based courses — check if you might apply for something else.']);
+  const soft = sel.filter(x => S[x].soft);
+  if (soft.length >= 2) items.push(['warn', `<strong>${esc(listOr(names(soft)))}</strong> are fine subjects, but the most selective universities often prefer no more than one of them in a combination.`]);
+  if (has('chem') && !has('bio') && (st.goal === 'med' || st.goal === 'dent' || st.goal === 'vet')) items.push(['warn', '<strong>Most medical, dental and vet schools want Biology</strong> alongside Chemistry.']);
+  if (st.goal && n === 3) {
+    const r = evalRule(A[st.goal], sel, false);
+    if (r.s === 'open') items.push(['good', `<strong>You meet the usual subject requirements for ${esc(A[st.goal].name)}.</strong> Next: grades, admissions tests and work experience.`]);
+    else if (r.s === 'closed') items.push(['warn', `<strong>This combination doesn't meet the usual requirements for ${esc(A[st.goal].name)}</strong> — it needs ${esc(r.missReq.map(groupText).join(' + '))}.`]);
+  }
+  if (['med', 'dent', 'vet'].includes(st.goal)) items.push(['good', 'Medicine, dentistry and vet courses also need an <strong>admissions test</strong> (e.g. UCAT) and relevant work experience.']);
+  if (st.goal === 'law') items.push(['good', 'Many top law schools also set the <strong>LNAT</strong> test. No specific A levels are needed.']);
+  if (st.goal === 'arch' || st.goal === 'artd') items.push(['good', 'You\'ll usually need a <strong>portfolio</strong> — Art or Design & Technology makes that much easier.']);
+  if (has('maths') && has('phys') && has('fm')) items.push(['good', '<strong>Maths, Further Maths and Physics</strong> is the classic route into Engineering and Physics at top universities.']);
+  if (!items.length) items.push(['good', '<strong>No red flags.</strong> This is a well-balanced combination.']);
+  $('#watch').innerHTML = items.map(([k, h]) => `<div class="w ${k}"><span class="ic">${k === 'good' ? 'i' : '!'}</span><span>${h}</span></div>`).join('');
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+$('#goal').innerHTML = '<option value="">Not sure yet</option>' + AREAS.slice().sort((a, b) => a.name.localeCompare(b.name)).map(a => `<option value="${a.id}">${esc(a.name)}</option>`).join('');
+$('#goal').addEventListener('change', e => { st.goal = e.target.value; if (!st.goal && st.uniFilter === 'goal') st.uniFilter = 'all'; render(); });
+$('#prio').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { st.prio = b.dataset.p; render(); } });
+$('#search').addEventListener('input', e => { st.q = e.target.value; render(); });
+$('#uniTabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { st.uniFilter = b.dataset.f; render(); } });
+$('#story').addEventListener('click', e => { const b = e.target.closest('button'); if (b) applyStory(+b.dataset.i); });
+$('#howBtn').addEventListener('click', () => $('#how').showModal());
+$('#howClose').addEventListener('click', () => $('#how').close());
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-tog],[data-add],[data-rm],[data-set],[data-swap]');
+  if (!t) return;
+  const d = t.dataset;
+  if (d.tog) {
+    if (st.sel.includes(d.tog)) remove(d.tog);
+    else if (st.sel.length < 3) st.sel.push(d.tog);
+  } else if (d.add) {
+    if (st.sel.length < 3 && !st.sel.includes(d.add)) st.sel.push(d.add);
+  } else if (d.rm) {
+    remove(d.rm);
+  } else if (d.set) {
+    st.sel = d.set.split(',');
+  } else if (d.swap) {
+    const [o, i] = d.swap.split('>');
+    st.sel = st.sel.map(x => x === o ? i : x);
+  }
+  render();
+});
+// removing Maths also removes Further Maths, which can't stand alone
+function remove(id) {
+  st.sel = st.sel.filter(x => x !== id && !(S[x].needs === id));
+}
+
+applyStory(0);
+</script>
+</body>
+</html>
