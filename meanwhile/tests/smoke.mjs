@@ -275,6 +275,12 @@ try {
   check(await page.locator('#pk-list .pk-card').count() === people, `People tab lists all ${people} people`);
   await page.locator('#pk-tabs [data-tab="places"]').click();
   check(await page.locator('#pk-list [data-toggle="amsterdam"]').count() === 1, 'Places tab includes cities');
+  await page.locator('#pk-tabs [data-tab="comparisons"]').click();
+  const combos = await page.evaluate('COMBOS.map(c => ({ lanes: c.lanes, group: c.group, named: c.lanes.every(id => scopeName(id) !== id || COMBO_NAMES[id]) }))');
+  const known = new Set(data.scopes.map(s => s.id));
+  check(combos.length >= 30 && combos.every(c => c.lanes.every(id => known.has(id)) && c.named), `all ${combos.length} comparisons use real lanes with names`);
+  check(await page.locator('#pk-list .pk-combo').count() === combos.length && await page.locator('#pk-list .pk-sec').count() === new Set(combos.map(c => c.group)).size,
+    'Comparisons tab lists every comparison, by group');
   await page.locator('#pk-search').pressSequentially('fra');
   check(await page.locator('#pk-list [data-toggle="france"]:visible').count() === 1, 'typing "fra" shows France');
   await page.locator('#pk-search').fill('');
@@ -352,6 +358,17 @@ try {
   check((await p2.textContent('#mw-when')) === '44 BCE', 'BCE years display correctly');
   await p2.screenshot({ path: path.join(OUT, 'ancient.png') });
 
+  // a comparison with people whose lane files aren't loaded yet
+  {
+    const pc = await open({ viewport: { width: 1440, height: 900 } });
+    await pc.click('#add-lane');
+    await pc.locator('#pk-tabs [data-tab="comparisons"]').click();
+    await pc.locator('.pk-combo', { hasText: 'The Mongol century' }).click();
+    await pc.waitForFunction(() => document.querySelectorAll('.lane').length === 6 && document.querySelector('.lane .ev-dot'), null, { timeout: 5000 }).catch(() => {});
+    check(await pc.evaluate(() => state.lanes.map(l => l.scope).join()) === 'genghis-khan,marco-polo,mongolia,china,iran,russia' && await pc.locator('.lane').count() === 6,
+      'choosing a comparison with people applies it');
+    await pc.close();
+  }
   // one light theme only, even on a device set to dark mode
   const pd = await browser.newPage({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark' });
   await pd.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());

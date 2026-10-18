@@ -173,7 +173,7 @@ The "Add lane" dialog (`renderPicker()`) has a search box and five tabs. Each la
 - **Places:** the whole place tree, grouped by continent.
 - **People:** grouped by period, with lifespan bars.
 - **Themes.**
-- **Comparisons:** presets from `COMBOS`. Choosing one replaces your lanes and the view.
+- **Comparisons:** presets from `COMBOS` (about 40), listed under the headings in `COMBO_GROUPS`. Choosing one replaces your lanes and the view. The first four also appear under Suggested. People in a comparison need a name in `COMBO_NAMES`, because their lane files may not be loaded yet.
 
 Search matches:
 - names, aliases and roles
