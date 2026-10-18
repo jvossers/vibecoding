@@ -32,14 +32,9 @@ Measures, each normalised so 100 = the best three-subject combination in the dat
 - **Career prospects** — open degree areas weighted by a graduate-outcomes index (popularity
   deliberately left out: it isn't career value)
 - **Keeps options open** — degree areas open, weighted by popularity
-- **Fits together** — does each subject earn its place? A subject scores 1 if it counts towards
-  an open degree that another chosen subject also counts towards, 0.5 if it only counts on its
-  own, 0 if it counts towards nothing. Averaged over the three. "Counts towards" = named in the
-  area's `req`, `pref` or `rel` (relevant but not recommended, e.g. Business → Business degrees).
 - **Goal fit** — when goals are set (average across up to three)
 
-Overall = 60% priority-weighted mix of the first three + 40% fits-together; with goals,
-45% mix + 15% fits-together + 40% goal fit. With fewer than three picks, every score is the best
+Overall = the priority-weighted mix of the three measures; with goals, 60% mix + 40% goal fit. With fewer than three picks, every score is the best
 reachable completion. The verdict label is a rank against all possible combinations
 (Excellent = top 10%, Strong = top 30%, Good = top 60%), shown as "better than N%".
 
@@ -49,6 +44,10 @@ The first "Fits together" only looked at degrees naming a subject in a small gro
 share of them you qualified for. That ignored 15 subjects entirely (Bio + Chem + Business scored
 100) and punished useful ones (Bio + Chem + Maths scored 71). Replaced with the per-subject rule
 above; career no longer double-counts popularity; Sociology & Criminology area added.
+Then **removed "Fits together" altogether**: it was a judgement call that was hard to explain and
+could not be checked against the course table, and goals do the "suits me" steering better. Its
+one useful signal is now a sentence in "Things to know": a subject that opens no extra degree or
+course alongside the other two is named (e.g. Business with Biology + Chemistry).
 
 ## Data needed for the real version
 
