@@ -89,7 +89,7 @@ check(onDisk.v === manifest.v, `data/ is up to date with source/data.json (run n
 // 3. the Wikidata importer turns query results into events correctly. The rows
 // below are a made-up sample in the query service's format, not real data.
 {
-  const { convert, parseTime, importanceOf } = await import('../build/wikidata.mjs');
+  const { convert, parseTime, importanceOf, assignPlaces } = await import('../build/wikidata.mjs');
   check(parseTime('+1574-10-03T00:00:00Z', 11).date === '1574-10-03' && parseTime('+1574-10-01T00:00:00Z', 10).date === '1574-10'
     && parseTime('-0044-01-01T00:00:00Z', 9).date === '-44' && parseTime('+1500-01-01T00:00:00Z', 7).approx === true
     && parseTime('+1500-01-01T00:00:00Z', 5) === null, 'importer reads Wikidata dates (day/month/year/century, BCE, too vague)');
@@ -103,16 +103,34 @@ check(onDisk.v === manifest.v, `data/ is up to date with source/data.json (run n
       row('Q900004', 'Sample war', '+1568-01-01T00:00:00Z', 9, 95, { end: { value: '+1648-01-01T00:00:00Z' }, endPrec: { value: '9' } }),
     ]],
     ['belgium', [row('Q900004', 'Sample war', '+1568-01-01T00:00:00Z', 9, 95)]],
-    ['einstein', [row('Q900005', 'Sample Prize', '+1921-01-01T00:00:00Z', 9, 60, { kind: { value: 'award' } })]],
+    ['einstein', [row('Q900005', 'Sample Prize', '+1921-01-01T00:00:00Z', 9, 60, { kind: { value: 'award' } }),
+      row('Q900006', 'sample field', '+1900-01-01T00:00:00Z', 9, 60, { kind: { value: 'inception' } }),   // a field, not a work
+      row('Q900007', 'sample ceremony', '+1950-01-01T00:00:00Z', 9, 60, { kind: { value: 'event' } })]],
   ]);
   const out = convert(rows, data);
   const byQ = Object.fromEntries(out.map(e => [e.wikidata, e]));
-  check(out.length === 3 && !byQ.Q900002 && !byQ.Q900003, `importer skips unlabelled and already-curated events (${out.length} kept)`);
+  check(out.length === 4 && !byQ.Q900002 && !byQ.Q900003 && !byQ.Q900006, `importer skips unlabelled, already-curated and concept events (${out.length} kept)`);
   check(byQ.Q900001.start === '1421-11-18' && byQ.Q900001.importance === 2 && byQ.Q900001.desc === 'Sample flood in the sample.', 'importer keeps date, importance and description');
   check(byQ.Q900004.end === '1648' && byQ.Q900004.scopes.join() === 'netherlands,belgium' && byQ.Q900004.importance === 1, 'importer merges one item found in two places, with its end date');
-  check(byQ.Q900005.title === 'Albert Einstein receives the Sample Prize' && byQ.Q900005.scopes.join() === 'einstein', 'importer names awards after the person');
+  check(byQ.Q900005.title === 'Albert Einstein receives the Sample Prize' && byQ.Q900005.scopes.join() === 'einstein' && byQ.Q900007.title === "Albert Einstein's sample ceremony", 'importer names awards and generic events after the person');
   const keys = new Set(['title', 'start', 'end', 'scopes', 'importance', 'desc', 'approx', 'ongoing', 'score', 'wikidata']);
   check(out.every(e => /^wd-q\d+/.test(e.id) && Object.keys(e).every(k => k === 'id' || keys.has(k))), 'imported events use the source format with stable wd- ids');
+  // places are sorted into the most specific matching lanes
+  const qid = (id) => data.scopes.find(s => s.id === id).wikidata;
+  const locs = new Map([
+    ['Q900011', [qid('amsterdam'), qid('netherlands'), qid('europe')]],   // city beats its country and continent
+    ['Q900012', [qid('nigeria'), qid('africa'), qid('europe')]],          // a country beats any continent
+    ['Q900013', [qid('africa'), 'Q999999999']],                           // only a continent
+    ['Q900014', ['nigeria', 'kenya', 'ghana', 'egypt', 'china'].map(qid)], // too many places: world, if widely covered
+    ['Q900016', [qid('africa'), qid('asia')]],                            // several continents: likewise
+    ['Q900017', [qid('africa'), qid('asia')]],
+  ]);
+  const placed = assignPlaces(['Q900011', 'Q900012', 'Q900013', 'Q900014', 'Q900015', 'Q900016', 'Q900017']
+    .map(q => row(q, 'x', '+1900-01-01T00:00:00Z', 9, q === 'Q900017' ? 20 : 90)), locs, data);
+  const where = (q) => [...placed].filter(([, rs]) => rs.some(r => r.item.value.endsWith('/' + q))).map(([id]) => id).join();
+  check(where('Q900011') === 'amsterdam' && where('Q900012') === 'nigeria' && where('Q900013') === 'africa' && where('Q900014') === 'world' && where('Q900015') === ''
+    && where('Q900016') === 'world' && where('Q900017') === '',
+    'importer puts place events in the most specific lanes');
   // …and flow through the build like curated ones
   const withImport = build({ ...data, events: [...data.events, ...out] });
   const nlTiles = withImport.get('lanes/netherlands.json').tiles.flatMap(([, , , , f]) => withImport.get(f).events.map(r => r[0]));

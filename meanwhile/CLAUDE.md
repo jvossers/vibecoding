@@ -41,7 +41,7 @@ The test first checks the data:
 - **`data/`:** it is up to date with the source.
 - **Tiles:** every lane's tiles hold exactly the events its roll-up rule selects, and no tile is too big.
 - **Small files:** the manifest stays small, every scope has a lane file, every person is in one people file, and every event has a details record.
-- **Importer:** using a made-up sample response, Wikidata dates, coverage ranking, de-duplication, merging an item found in two places, award titles and the output format, and that imported events reach lane tiles, search and details.
+- **Importer:** using a made-up sample response, Wikidata dates, coverage ranking, de-duplication, skipping concepts posing as works, merging an item found in two places, award and event titles, sorting places into the most specific lanes (and the world lane), the output format, and that imported events reach lane tiles, search and details.
 - **Search:** every event and lane is findable by each word of its title or name, also in a build with tiny search files (`build(src, { searchMax: 20 })`) that forces the three-letter split.
 
 It then drives the app at desktop and phone sizes: lanes render, roll-up toggles, event details open, zoom and pan work, the lane picker and search work, share links restore the view, BCE years display, and there is no horizontal scroll at 390px. It also checks loading: the default view fetches only a few tiles, labels don't move when new tiles arrive, and a shared link to an unloaded event still opens it with its description. The label check serves a build with tiny tiles (`build(src, { maxPerTile: 8 })`) so that panning really fetches new periods. It also checks density: at every detail level, no screen-width (or quarter screen) of any lane holds more than twice the caps. Screenshots go to `tests/out/`, which is gitignored.
@@ -74,12 +74,17 @@ It then drives the app at desktop and phone sizes: lanes render, roll-up toggles
 ## Importing from Wikidata
 
 `build/wikidata.mjs` queries the Wikidata query service for every place and person with a `wikidata` id.
-- **Places:** dated items (point in time, or start/end) whose country (P17), "located in" (P131) or location (P276) is that place. Humans are excluded.
-- **People:** their notable works (P800, dated by publication or inception), dated awards (P166), and significant events (P793).
+- **Places:** asking "what happened in the Netherlands" times out (it scans every street and building), so the importer instead fetches every well-covered item of about 34 event-like classes worldwide (`CLASSES`: battles, wars, treaties, revolutions, disasters, historical periods, former states…) with a date (point in time, start/end, or inception/dissolution), plus where each happened, and sorts them into lanes itself (`assignPlaces`):
+  - locations come from country (P17), continent (P30), "located in" (P131) and location (P276), one hop further (a battle's town → its country), and for former states the country their capital (P36) is in now
+  - an item goes to the most specific matching lanes (Amsterdam, not also the Netherlands; the build rolls it up); continents only count when nothing finer matched
+  - items spanning several continents or more than 4 places go to the world lane only with 80+ sitelinks, and never former states
+  - humans and places that still exist (a population and no end date, e.g. Venice as an "Italian city-state") are excluded
+- **People:** their notable works (P800, dated by publication or inception; titled ones only, not "quantum mechanics"), dated awards (P166; none after their death), and significant events (P793). Titles read "X receives the Nobel Prize…", "X becomes a fellow of…", "Marie Curie's funeral", "Coronation of Elizabeth II". At most 30 per person.
 - **Importance and score:** from how many Wikipedia languages cover the item. 80+ is importance 1, 30+ is importance 2, and the score is links/4.
-- **Kept:** the best-covered 400 per place.
+- **Kept:** the best-covered 400 per place. The first full run gave about 6,200 events.
 - **Skipped:** items without an English label, items already curated (same Wikidata id, or same title within a year), and dates vaguer than a millennium.
-- **Ids:** imported event ids are `wd-<qid>`, stable across re-runs. Awards get the person appended, e.g. `wd-q38104-einstein`.
+- **Ids:** imported event ids are `wd-<qid>`, stable across re-runs. Awards, and person events renamed from the item's label, get the lane appended, e.g. `wd-q38104-einstein`.
+- **Dates:** an item with several dates keeps the earliest start, and an end only if it's later than the start.
 
 ```bash
 node build/wikidata.mjs --check                 # confirm every scope's Wikidata id names the right thing
@@ -88,10 +93,12 @@ node build/build.mjs
 node build/wikidata.mjs --only netherlands,einstein --min-links 30   # re-import some lanes, keep the rest
 ```
 
-- **Requirements:** needs network access to `query.wikidata.org` (and `www.wikidata.org` for `--check`).
+- **Requirements:** needs network access to `query.wikidata.org` (and `www.wikidata.org` for `--check`). Behind an HTTPS proxy, run with `NODE_USE_ENV_PROXY=1` (Node 22.21+), since Node's fetch ignores `HTTPS_PROXY` otherwise.
+- **Rate limits:** the query service limits query time per client; the importer pauses between queries, retries 429s after `Retry-After`, and gives up on a request after 2 minutes.
+- **Person queries:** the sitelinks count is OPTIONAL and filtered in JS; as a FILTER the service evaluates it first, over every item, and times out.
 - **Caching:** responses are cached in `build/.cache/` (gitignored); delete it to refresh.
 - **Failures:** if every query fails, the importer stops without touching `source/wikidata.json`.
-- **Date caveat:** BCE years are taken as Wikidata gives them (`-0044` → 44 BCE). Wikidata's historical year numbering may put some BCE dates one year off.
+- **Date caveat:** BCE years are taken as Wikidata gives them (`-0044` → 44 BCE), the same convention as `source/data.json`.
 - **Licence:** Wikidata is CC0, so no attribution is required, but `source/wikidata.json` records its source.
 
 ## How the data is loaded (tiles)
@@ -114,7 +121,7 @@ Every file is small and fetched only when needed; nothing grows with the total a
 - **`tiles/<scope>/<band>/<from|all>.json`:** one lane, one band of detail levels, one period.
   - Records are compact arrays: `[id, title, start, end|0, importance, lod, flags, scopes, via|0]`. `lod` is this event's detail level *in this lane*.
   - Roll-up is done at build time, so a continent's tiles already include its countries' qualifying events. `via` names the child place an event came from; 0 means it's the lane's own.
-  - Levels are grouped into 4 bands (0–4, 5–7, 8–10, 11–13), so a view needs few requests. A band's period splits 1000 → 100 → 10 → 1 years until a tile has ≤ 120 events. Eras go in every period they overlap.
+  - Levels are grouped into 4 bands (0–4, 5–7, 8–10, 11–15), so a view needs few requests. A band's period splits 1000 → 100 → 10 → 1 years until a tile has ≤ 120 events. Eras go in every period they overlap.
 - **`details/<shard>.json`:** fetched when an event is opened, or for a shared link to an event that isn't loaded (`loadEvent()`).
   - Each entry is `id → [record, description, {personId: name}]`.
   - The shard is a hash of the id; `detailShard()` is the same in the build and the app.
@@ -125,7 +132,7 @@ Every file is small and fetched only when needed; nothing grows with the total a
   - Search covers titles and names, not descriptions.
 
 **Detail levels (`lod`, `assignLods()` in the build):** these guarantee that no screen gets crowded, however much data there is.
-- **Zoom:** level L appears from 2^(L − 3) px per year. Level 0 shows even with ~10,000 years on screen; level 13 needs about a one-year view. There are 14 levels, one per doubling of zoom, matching the app's layout levels.
+- **Zoom:** level L appears from 2^(L − 3) px per year. Level 0 shows even with ~10,000 years on screen; level 15 needs a view of a few months, the deepest the app zooms. There are 16 levels, one per doubling of zoom, matching the app's layout levels.
 - **Order:** within each lane, events are taken best score first. The score is importance, plus small boosts for a description and for links to several places or people, plus the optional `score`.
 - **Placement:** each event gets the coarsest level at which, at that level and every finer one:
   - a screen-width (1200px) around it holds fewer than 30 events

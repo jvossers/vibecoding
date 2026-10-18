@@ -31,13 +31,13 @@ const IMPORTED = path.join(ROOT, 'source', 'wikidata.json'); // from build/wikid
 const OUT = path.join(ROOT, 'data');
 const MAX_PER_TILE = 120;
 // lod L is shown from 2^(L + LOD_BASE) px per year: lod 0 at ≤ 1/8 px/yr (~10,000
-// years on a screen), lod 13 at 1024 px/yr (about a year).
-const LOD_BASE = -3, LOD_COUNT = 14;
+// years on a screen), lod 15 at 4096 px/yr (a few months, the app's deepest zoom).
+const LOD_BASE = -3, LOD_COUNT = 16;
 const SCREEN = 1200;     // px; the width the density cap is measured against
 const CAP = 30;          // at most this many events in a screen-width around any event
 const LOCAL_CAP = 10;    // …and this many in 3/8 of a screen, so they can't bunch up
 const ERA_CAP = 4;       // at most this many eras overlapping at once
-const BANDS = [[0, 4], [5, 7], [8, 10], [11, 13]];
+const BANDS = [[0, 4], [5, 7], [8, 10], [11, 15]];
 const PERIODS = [1000, 100, 10, 1];           // tile sizes in years, coarsest first
 const ALL = [-99999, 99999];                  // the "whole of history" tile
 const HIST_ORIGIN = -4000, HIST_BIN = 25;     // per-lane event counts, for the overview bar
