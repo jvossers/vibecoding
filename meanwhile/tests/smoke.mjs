@@ -1,4 +1,4 @@
-// Meanwhile smoke test: checks data.json, then serves the app and drives it in
+// Meanwhile smoke test: checks source/data.json and the built tiles in data/, then serves the app and drives it in
 // headless Chromium (desktop and phone). Screenshots land in tests/out/.
 //
 //   cd tests && npm install && npm test
@@ -18,8 +18,8 @@ fs.mkdirSync(OUT, { recursive: true });
 let failures = 0;
 const check = (ok, msg) => { console.log(`${ok ? '✓' : '✗'} ${msg}`); if (!ok) failures++; };
 
-// 1. data.json is consistent
-const data = JSON.parse(fs.readFileSync(path.join(APP_DIR, 'data.json'), 'utf8'));
+// 1. source/data.json is consistent
+const data = JSON.parse(fs.readFileSync(path.join(APP_DIR, 'source', 'data.json'), 'utf8'));
 const scopeIds = new Set(data.scopes.map(s => s.id));
 const DATE = /^(-?\d+)(?:-(\d\d))?(?:-(\d\d))?$/;
 const num = s => { const m = DATE.exec(s); return m ? +m[1] + ((+m[2] || 1) - 1) / 12 + ((+m[3] || 1) - 1) / 365 : NaN; };
@@ -32,7 +32,39 @@ const badDate = data.events.filter(e => isNaN(num(e.start)) || (e.end && (isNaN(
 check(!badDate.length, 'every event date parses and ends after it starts' + (badDate.length ? ': ' + badDate.map(e => e.id).join(', ') : ''));
 check(data.events.every(e => [1, 2, 3].includes(e.importance)), 'importance is 1, 2 or 3');
 
-// 2. the app
+// 2. the built tiles (build/build.mjs) hold exactly what each lane should show
+const { build } = await import('../build/build.mjs');
+const built = build(data);
+const manifest = built.get('manifest.json');
+const onDisk = JSON.parse(fs.readFileSync(path.join(APP_DIR, 'data', 'manifest.json'), 'utf8'));
+check(onDisk.v === manifest.v, `data/ is up to date with source/data.json (run node build/build.mjs) — ${onDisk.v} vs ${manifest.v}`);
+{
+  const scopes = new Map(data.scopes.map(s => [s.id, s]));
+  const chainOf = (id) => { const c = []; let x = scopes.get(id); while (x) { c.push(x.id); x = x.parent && scopes.get(x.parent); } return c; };
+  let mismatch = [], oversize = [];
+  for (const s of data.scopes) {
+    // the roll-up rule, written out independently of the build
+    const want = new Set(data.events.filter(e => {
+      const ds = e.scopes.map(id => chainOf(id).indexOf(s.id)).filter(d => d >= 0);
+      if (!ds.length) return false;
+      const d = Math.min(...ds), era = !!(e.end || e.ongoing);
+      return d === 0 || (d === 1 && e.importance <= 2 && (!era || e.importance === 1)) || (d >= 2 && e.importance === 1 && !era);
+    }).map(e => e.id));
+    const got = new Set();
+    for (const [, from, to, file] of manifest.tiles[s.id] || []) {
+      const t = built.get(file);
+      if (t.events.length > 120 && to - from > 1) oversize.push(file);
+      t.events.forEach(r => got.add(r[0]));
+    }
+    if (want.size !== got.size || [...want].some(id => !got.has(id))) mismatch.push(`${s.id} (${got.size}/${want.size})`);
+  }
+  check(!mismatch.length, 'every lane\'s tiles hold exactly its events' + (mismatch.length ? ': ' + mismatch.slice(0, 5).join(', ') : ''));
+  check(!oversize.length, 'no tile over 120 events' + (oversize.length ? ': ' + oversize.join(', ') : ''));
+  const tileCount = [...built.keys()].filter(f => f.startsWith('tiles/')).length;
+  check(tileCount > data.scopes.length, `${tileCount} tiles for ${data.scopes.length} lanes`);
+}
+
+// 3. the app
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json' };
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
@@ -66,6 +98,9 @@ try {
   check(await page.locator('.card').count() === 4, 'a "meanwhile" card per lane');
   check((await page.textContent('#mw-when')) === '1905', 'cursor starts at 1905');
   await page.screenshot({ path: path.join(OUT, 'desktop.png') });
+  const tilesLoaded = await page.evaluate(() => [...tileState.values()].filter(v => v === 'done').length);
+  const tilesTotal = Object.values(manifest.tiles).reduce((n, t) => n + t.length, 0);
+  check(tilesLoaded > 0 && tilesLoaded < tilesTotal / 10, `default view loads only the tiles it needs (${tilesLoaded} of ${tilesTotal})`);
 
   // roll-up: Nigeria's independence (tagged only with Nigeria) shows in the Africa lane only with sub-regions on
   const ghana = data.events.find(e => e.title === 'Nigeria becomes independent').id;
@@ -150,6 +185,36 @@ try {
   await page.fill('#search-input', 'Fall of the Berlin Wall');
   await page.keyboard.press('Enter');
   check((await page.locator('#detail.open h2').textContent()) === 'Fall of the Berlin Wall', 'search jumps to an event');
+
+  // tiles that arrive while panning never move labels that were already placed
+  {
+    const p3 = await open({ viewport: { width: 1440, height: 900 } }, '#lanes=europe,world&from=1700&to=1760&at=1730');
+    await p3.waitForTimeout(800);
+    const rows = () => p3.evaluate(() => { const o = {}; document.querySelectorAll('.ev-label').forEach(l => { o[l.dataset.id] = l.style.top; }); return o; });
+    const before = await rows();
+    const n0 = await p3.evaluate(() => tileState.size);
+    await p3.evaluate(() => { setRange(1300, 1360, true, true); });
+    await p3.waitForTimeout(800);
+    await p3.evaluate(() => { setRange(1700, 1760, true, true); });
+    await p3.waitForTimeout(800);
+    const after = await rows();
+    const n1 = await p3.evaluate(() => tileState.size);
+    const moved = Object.keys(before).filter(id => id in after && after[id] !== before[id]);
+    check(n1 > n0, `panning to another period loads more tiles (${n0} → ${n1})`);
+    check(!moved.length, `labels keep their rows when new tiles arrive (${moved.length} moved)`);
+    await p3.close();
+  }
+
+  // a shared link to an event outside your lanes still opens it, with its description
+  {
+    const p4 = await open({ viewport: { width: 1440, height: 900 } }, '#lanes=netherlands&from=1960&to=1980&at=1969&e=apollo-11-moon-landing');
+    await p4.waitForSelector('#detail.open h2', { timeout: 8000 }).catch(() => {});
+    check((await p4.locator('#detail.open h2').textContent().catch(() => '')) === 'Apollo 11 Moon landing', 'shared link opens an event whose tile isn\'t loaded');
+    await p4.goto(BASE + '#lanes=netherlands&from=1910&to=1925&at=1918.86&e=kaiser-wilhelm-ii-flees-to-the-netherlands');
+    await p4.waitForFunction(() => (document.querySelector('#detail.open p') || {}).textContent?.includes('Huis Doorn'), null, { timeout: 8000 }).catch(() => {});
+    check(((await p4.locator('#detail.open p').first().textContent().catch(() => '')) || '').includes('Huis Doorn'), 'event description is fetched when the event opens');
+    await p4.close();
+  }
 
   // shared link restores the view
   const p2 = await open({ viewport: { width: 1280, height: 800 } }, '#lanes=darwin,lincoln&from=1800&to=1890&at=1809.1');

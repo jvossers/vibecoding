@@ -499,38 +499,94 @@ function textW(s) {
 function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 1800); }
 
 // ---------- data ----------
-let SCOPES = new Map(), EVENTS = [], EVENT_BY_ID = new Map(), CHILDREN = new Map();
-function prepare(data) {
-  data.scopes.forEach((s) => { SCOPES.set(s.id, s); CHILDREN.set(s.id, []); });
-  data.scopes.forEach((s) => { if (s.parent) CHILDREN.get(s.parent).push(s.id); });
-  data.scopes.forEach((s) => {
+// The app starts from data/manifest.json (lanes, per-lane stats, tile index) and
+// loads event tiles for the lanes and period on screen as you go; see build/build.mjs.
+const DATA = 'data/';
+let SCOPES = new Map(), CHILDREN = new Map(), MANIFEST = null;
+const EVENT_BY_ID = new Map();   // every event loaded so far
+const laneData = new Map();      // scope id → Map(event id → { e, rolled, via }), loaded so far
+const laneVersion = new Map();   // scope id → bumps when new events arrive for that lane
+const tileState = new Map();     // tile file → 'loading' | 'done'
+function dataUrl(file) { return DATA + file + '?v=' + MANIFEST.v; }
+
+function prepare(manifest) {
+  MANIFEST = manifest;
+  manifest.scopes.forEach((s) => { SCOPES.set(s.id, s); CHILDREN.set(s.id, []); laneData.set(s.id, new Map()); laneVersion.set(s.id, 0); });
+  manifest.scopes.forEach((s) => { if (s.parent) CHILDREN.get(s.parent).push(s.id); });
+  manifest.scopes.forEach((s) => {
     const chain = []; let c = s;
     while (c) { chain.push(c.id); c = c.parent ? SCOPES.get(c.parent) : null; }
     s.chain = chain; // self → … → root
     s.depth = chain.length - 1;
-  });
-  const people = data.scopes.filter((s) => s.type === 'person');
-  people.forEach((p) => {
-    p.b = parseDate(p.born); p.dd = parseDate(p.died);
-    data.events.push({ id: 'life-' + p.id, title: p.name, start: p.born, end: p.died, scopes: [p.id], importance: 1, life: true,
-      desc: p.role + ', ' + fmtDate(p.b) + ' – ' + fmtDate(p.dd) + '.' });
-  });
-  EVENTS = data.events.map((e) => {
-    const s = parseDate(e.start), en = e.end ? parseDate(e.end) : null;
-    const era = !!(e.end || e.ongoing);
-    const ev = Object.assign({}, e, { s, en, y0: s.n, y1: era ? (en ? en.n : NOW) : s.n, era });
-    if (era && en && en.n === s.n) ev.y1 = s.n + 1 / 365;
-    ev.when = era ? fmtDate(s, e.approx) + ' – ' + (en ? fmtDate(en, e.approx) : 'today') : fmtDate(s, e.approx);
-    ev.search = (e.title + ' ' + (e.desc || '')).toLowerCase();
-    EVENT_BY_ID.set(ev.id, ev);
-    return ev;
-  });
-  SCOPES.forEach((s) => {
-    s.count = 0;
     s.search = [s.name, ...(s.aliases || []), s.role || ''].join(' ').toLowerCase();
   });
-  EVENTS.forEach((e) => e.scopes.forEach((id) => { SCOPES.get(id).count++; }));
+  // a person's lifespan is drawn as an era in their lane; it isn't in the tiles
+  manifest.scopes.filter((s) => s.type === 'person').forEach((p) => {
+    p.b = parseDate(p.born); p.dd = parseDate(p.died);
+    const e = toEvent(['life-' + p.id, p.name, p.born, p.died, 1, 0, 0, [p.id]]);
+    e.life = true; e.desc = p.role + ', ' + fmtDate(p.b) + ' – ' + fmtDate(p.dd) + '.';
+    laneData.get(p.id).set(e.id, { e, rolled: false, via: null });
+  });
 }
+// tile and search records: [id, title, start, end|0, importance, lod, flags, scopes]
+function toEvent(r) {
+  if (EVENT_BY_ID.has(r[0])) return EVENT_BY_ID.get(r[0]);
+  const [id, title, start, end, importance, lod, flags, scopes] = r;
+  const approx = !!(flags & 1), ongoing = !!(flags & 2);
+  const s = parseDate(start), en = end ? parseDate(end) : null, era = !!(end || ongoing);
+  const ev = { id, title, start, end: end || undefined, importance, lod, scopes, approx, ongoing, s, en, era,
+    y0: s.n, y1: era ? (en ? en.n : NOW) : s.n };
+  if (era && en && en.n === s.n) ev.y1 = s.n + 1 / 365;
+  ev.when = era ? fmtDate(s, approx) + ' – ' + (en ? fmtDate(en, approx) : 'today') : fmtDate(s, approx);
+  ev.search = title.toLowerCase();
+  EVENT_BY_ID.set(id, ev);
+  return ev;
+}
+const stats = (id) => SCOPES.get(id).stats;
+
+// Fetch the tiles each lane needs for [from, to] at detail levels up to maxLod.
+// Resolves once they're in; the caller re-renders.
+function loadTiles(scopeIds, from, to, maxLod) {
+  const wanted = [];
+  for (const id of new Set(scopeIds)) {
+    for (const [lod, a, b, file] of MANIFEST.tiles[id] || []) {
+      if (lod <= maxLod && b > from && a < to && !tileState.has(file)) wanted.push(file);
+    }
+  }
+  if (!wanted.length) return Promise.resolve(false);
+  wanted.forEach((f) => tileState.set(f, 'loading'));
+  return Promise.all(wanted.map((file) => fetch(dataUrl(file)).then((r) => r.json()).then((t) => {
+    const lane = laneData.get(t.scope);
+    for (const rec of t.events) {
+      const e = toEvent(rec), via = rec[8] || null;
+      if (!lane.has(e.id)) lane.set(e.id, { e, rolled: !!via, via });
+    }
+    laneVersion.set(t.scope, laneVersion.get(t.scope) + 1);
+    tileState.set(file, 'done');
+  }).catch((err) => { tileState.delete(file); console.error('tile failed', file, err); }))).then(() => true);
+}
+
+// The search index: every event in short form, fetched the first time it's needed.
+let searchIndex = null, searchLoading = null;
+function loadSearch() {
+  if (searchIndex) return Promise.resolve(searchIndex);
+  if (!searchLoading) searchLoading = fetch(dataUrl('search.json')).then((r) => r.json()).then((d) => (searchIndex = d.events.map(toEvent)));
+  return searchLoading;
+}
+// Descriptions live in separate files, fetched when an event is opened.
+const detailFiles = new Map();
+function detailShard(id) {
+  let h = 5381;
+  for (const c of id) h = ((h * 33) ^ c.charCodeAt(0)) >>> 0;
+  return (h % MANIFEST.detailShards).toString(16);
+}
+function loadDetail(e) {
+  if (e.desc !== undefined) return Promise.resolve();
+  const k = detailShard(e.id);
+  if (!detailFiles.has(k)) detailFiles.set(k, fetch(dataUrl('details/' + k + '.json')).then((r) => (r.ok ? r.json() : {})).catch(() => ({})));
+  return detailFiles.get(k).then((d) => { e.desc = d[e.id] || ''; });
+}
+
 function scopeKind(s) {
   if (s.type === 'person') return s.role + ' · ' + fmtYear(s.b.y) + '–' + fmtYear(s.dd.y);
   if (s.type === 'theme') return 'Theme';
@@ -540,29 +596,19 @@ function scopeKind(s) {
   return parent ? parent + t : t;
 }
 
-// Which events show in a lane: the scope's own events, plus events from child
-// scopes (rolled up). The further down the hierarchy, the more important an
-// event must be to bubble up, so a continent lane isn't buried in local detail.
+// The events loaded so far for a lane: its own, plus (with roll-up on) those
+// rolled up from child places — the build already picked which ones qualify.
 const laneCache = new Map();
 function laneItems(scopeId, rollup) {
-  const key = scopeId + '|' + rollup;
-  if (laneCache.has(key)) return laneCache.get(key);
-  const out = [];
-  for (const e of EVENTS) {
-    let best = null;
-    for (const sid of e.scopes) {
-      const d = SCOPES.get(sid).chain.indexOf(scopeId);
-      if (d === 0) { best = { d: 0, via: null }; break; }
-      if (d > 0 && rollup && (!best || d < best.d)) best = { d, via: sid };
-    }
-    if (!best) continue;
-    if (best.d === 1 && e.importance > 2) continue;
-    if (best.d >= 1 && (e.end || e.ongoing) && (best.d > 1 || e.importance > 1)) continue; // eras roll up only one level, and only the big ones
-    if (best.d >= 2 && e.importance > 1) continue;
-    out.push({ e, rolled: best.d > 0, via: best.via });
-  }
-  laneCache.set(key, out);
-  return out;
+  const key = scopeId + '|' + rollup, v = laneVersion.get(scopeId), c = laneCache.get(key);
+  if (c && c.v === v) return c.items;
+  const items = [...laneData.get(scopeId).values()].filter((it) => rollup || !it.rolled);
+  laneCache.set(key, { v, items });
+  return items;
+}
+// Whether an event shows in a lane (without needing its tiles loaded).
+function inLane(e, lane) {
+  return e.scopes.some((id) => id === lane.scope || (lane.rollup && SCOPES.get(id).chain.includes(lane.scope)));
 }
 
 // ---------- state ----------
@@ -629,7 +675,7 @@ function readHash() {
     state.cursor = isNaN(at) ? (state.start + state.end) / 2 : at;
   }
   const e = p.get('e');
-  state.selected = e && EVENT_BY_ID.has(e) ? e : null;
+  state.selected = e || null;
   target.start = state.start; target.end = state.end; velocity = 0;
 }
 let hashTimer;
@@ -679,18 +725,26 @@ function ticks(start, end, w) {
 // zooming in within a level only spreads things apart, so nothing jumps rows
 // while you move around.
 function zoomLevel(pxPerYear) { return Math.floor(Math.log2(pxPerYear)); }
-function maxImportance(pxPerYear) { return pxPerYear < 0.7 ? 1 : pxPerYear < 2.6 ? 2 : 3; }
+// The most detailed level (lod) shown at a scale; lod 0 is the most important.
+function maxLod(pxPerYear) { return pxPerYear < 0.7 ? 0 : pxPerYear < 2.6 ? 1 : 2; }
+// Tiles arrive over time, so layout is incremental: new events are fitted into
+// free rows and never move events already placed. `version` bumps when it grows.
 const layoutCache = new Map();
 function layoutLane(lane, level) {
   const key = lane.scope + '|' + lane.rollup + '|' + level;
-  if (layoutCache.has(key)) return layoutCache.get(key);
+  let L = layoutCache.get(key);
+  if (!L) { L = { eraRowCount: 0, eras: [], points: [], eraRows: [], labelRows: [], placed: new Set(), version: 0, seen: -1 }; layoutCache.set(key, L); }
+  if (L.seen === laneVersion.get(lane.scope)) return L;
+  L.seen = laneVersion.get(lane.scope);
   const s = Math.pow(2, level); // the most zoomed-out scale of this level, in px per year
-  const maxImp = maxImportance(s);
+  const top = maxLod(s);
   const rank = (a, b) => (!!b.e.life - !!a.e.life) || (!!a.rolled - !!b.rolled) || (a.e.importance - b.e.importance) || (a.e.y0 - b.e.y0);
-  const items = laneItems(lane.scope, lane.rollup).filter(({ e }) => e.life || e.importance <= maxImp).sort(rank);
+  const items = laneItems(lane.scope, lane.rollup).filter(({ e }) => !L.placed.has(e.id) && (e.life || e.lod <= top)).sort(rank);
+  if (!items.length) return L;
   const fits = (rows, a, b) => rows.findIndex((row) => row.every(([p, q]) => b <= p || a >= q));
-  const eraRows = [], labelRows = [], eras = [], points = [];
+  const { eraRows, labelRows, eras, points } = L;
   for (const it of items) {
+    L.placed.add(it.e.id);
     const e = it.e;
     if (e.era && (e.y1 - e.y0) * s >= 14) {
       const a = e.y0, b = e.y1 + 3 / s;
@@ -705,8 +759,8 @@ function layoutLane(lane, level) {
     if (r >= 0) labelRows[r].push([a, b]);
     points.push({ it, r });
   }
-  const L = { eraRowCount: eraRows.length, eras, points };
-  layoutCache.set(key, L);
+  L.eraRowCount = eraRows.length;
+  L.version++;
   return L;
 }
 
@@ -849,7 +903,18 @@ function frame() {
   renderView();
   clearTimeout(settleTimer);
   if (moving) requestView();
-  else settleTimer = setTimeout(() => { settleLanes(trackWidth()); renderMeanwhile(colorsFor(), state.end - state.start); renderMinimapBars(trackWidth()); renderMinimapBrush(trackWidth()); }, 120);
+  else settleTimer = setTimeout(() => { settleLanes(trackWidth()); renderMeanwhile(colorsFor(), state.end - state.start); renderMinimapBars(trackWidth()); renderMinimapBrush(trackWidth()); loadVisible(); }, 120);
+}
+
+// Fetch the tiles for the lanes on screen, plus a screen's width either side so
+// panning finds them ready, and full detail around a selected event.
+function loadVisible() {
+  const { start, end } = state, span = end - start, w = trackWidth();
+  const ids = state.lanes.map((l) => l.scope);
+  const jobs = [loadTiles(ids, start - span, end + span, maxLod(Math.pow(2, zoomLevel(w / span))))];
+  const sel = EVENT_BY_ID.get(state.selected);
+  if (sel) jobs.push(loadTiles(ids, sel.y0 - 1.5, sel.y1 + 1.5, 2));
+  return Promise.all(jobs).then((got) => { if (got.some(Boolean)) requestRender(); });
 }
 
 function renderPanels() {
@@ -874,7 +939,7 @@ function renderView() {
   grid.innerHTML = tk.filter((t) => t.major).map((t) => `<div class="gridline" style="left:${t.x}px"></div>`).join('');
   const marks = $('marks'); marks.style.left = lw + 'px'; marks.style.width = w + 'px';
   const level = zoomLevel(w / span);
-  const sig = state.lanes.map((l) => l.scope + (l.rollup ? '' : '!')).join() + '|' + level + '|' + laneTop();
+  const sig = state.lanes.map((l) => l.scope + (l.rollup ? '' : '!') + ':' + layoutLane(l, level).version).join() + '|' + level + '|' + laneTop();
   if (sig !== built.sig) { built.sig = sig; buildLanes(level, colors); positionLanes(w); settleLanes(w); }
   else positionLanes(w);
   const cx = X(cursor), cl = $('cursor-line');
@@ -897,7 +962,7 @@ function renderPresets(span) {
 
 function laneExtent() {
   let a = Infinity, b = -Infinity;
-  state.lanes.forEach((l) => laneItems(l.scope, l.rollup).forEach(({ e }) => { a = Math.min(a, e.y0); b = Math.max(b, e.y1); }));
+  state.lanes.forEach((l) => { const x = stats(l.scope).ext; if (x) { a = Math.min(a, x[0]); b = Math.max(b, x[1]); } });
   if (!isFinite(a)) return [1800, 2025];
   const pad = Math.max(5, (b - a) * 0.03);
   return [Math.max(MIN_Y, a - pad), Math.min(MAX_Y, b + pad)];
@@ -933,11 +998,13 @@ function renderMinimapBars(w) {
   mini = { lo, hi };
   const MX = (y) => (y - lo) / span * w;
   const nb = Math.max(20, Math.floor(w / 8)), bw = span / nb, bins = new Array(nb).fill(0);
-  const seen = new Set();
-  state.lanes.forEach((l) => laneItems(l.scope, l.rollup).forEach(({ e }) => {
-    if (seen.has(e.id)) return; seen.add(e.id);
-    const k = Math.floor((e.y0 - lo) / bw); if (k >= 0 && k < nb) bins[k]++;
-  }));
+  state.lanes.forEach((l) => {
+    const h = l.rollup ? stats(l.scope).hist : stats(l.scope).own;
+    for (const [i, n] of Object.entries(h)) {
+      const k = Math.floor((MANIFEST.histOrigin + (+i + 0.5) * MANIFEST.histBin - lo) / bw);
+      if (k >= 0 && k < nb) bins[k] += n;
+    }
+  });
   const mx = Math.max(1, ...bins);
   let html = '<div class="bg"></div>';
   bins.forEach((n, k) => { if (n) html += `<div class="bar" style="left:${MX(lo + k * bw) + 1}px;width:${Math.max(1, w / nb - 2)}px;height:${3 + n / mx * 28}px"></div>`; });
@@ -956,8 +1023,17 @@ function renderMinimapBrush(w) {
 
 function renderDetail(colors) {
   const el = $('detail'), e = EVENT_BY_ID.get(state.selected);
-  if (!e) { el.classList.remove('open'); el.innerHTML = ''; return; }
+  if (!e) {
+    el.classList.remove('open'); el.innerHTML = '';
+    // an event from a shared link, not loaded yet: look it up in the search index
+    if (state.selected) {
+      const id = state.selected;
+      loadSearch().then(() => { if (state.selected === id) { if (!EVENT_BY_ID.has(id)) state.selected = null; requestRender(); loadVisible(); } });
+    }
+    return;
+  }
   el.classList.add('open');
+  if (e.desc === undefined) loadDetail(e).then(() => { if (state.selected === e.id) requestRender(); });
   const t = e.y0;
   const chips = e.scopes.map((id) => {
     const s = SCOPES.get(id), on = hasLane(id);
@@ -988,7 +1064,7 @@ function renderDetail(colors) {
       <button class="icon-btn ghost" id="detail-close" aria-label="Close details"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg></button></div>
     <div class="date">${esc(e.when)}</div>
     <h2>${esc(e.title)}</h2>
-    ${e.desc ? `<p>${esc(e.desc)}</p>` : ''}
+    ${e.desc ? `<p>${esc(e.desc)}</p>` : e.desc === undefined ? '<p style="color:var(--dim)">Loading…</p>' : ''}
     <div class="actions">
       <button class="btn" data-zoom="${e.era ? (e.y0 + e.y1) / 2 : e.y0}" data-zspan="${zoomSpan}">Zoom in here</button>
       <a class="btn" href="https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(e.life ? SCOPES.get(e.scopes[0]).name : e.title)}" target="_blank" rel="noopener">Read more</a>
@@ -1004,8 +1080,7 @@ let pkTab = 'suggested';
 const THEME_DESC = { science: 'Discoveries and inventions', arts: 'Art, music, writing and buildings', exploration: 'Voyages and firsts', religion: 'Faiths, schisms and thinkers', medicine: 'Vaccines, cures and epidemics', sport: 'Olympics, records and World Cups' };
 const PLUS = '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 2v10M2 7h10"/></svg>';
 const CHECK = '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7"/></svg>';
-const totals = new Map();
-function scopeTotal(id) { if (!totals.has(id)) totals.set(id, laneItems(id, true).length); return totals.get(id); }
+function scopeTotal(id) { return stats(id).n; }
 function lifeSpanText(s) { return fmtYear(s.b.y) + '–' + fmtYear(s.dd.y); }
 function hl(text, q) {
   if (!q) return esc(text);
@@ -1056,13 +1131,7 @@ function suggestions() {
       PEOPLE().filter((p) => p.home === s.id).slice(0, 2).forEach((p) => add(p.id, 'From ' + s.name));
     }
     // places that share the most events with this lane
-    const co = new Map();
-    laneItems(lane.scope, lane.rollup).forEach(({ e }) => e.scopes.forEach((id) => {
-      const o = SCOPES.get(id);
-      if (!isPlace(o) || o.chain.includes(lane.scope) || s.chain.includes(id)) return;
-      co.set(id, (co.get(id) || 0) + 1);
-    }));
-    [...co].sort((a, b) => b[1] - a[1]).slice(0, 2).forEach(([id, n]) => add(id, n + ' shared events with ' + s.name));
+    stats(lane.scope).rel.slice(0, 2).forEach(([id, n]) => add(id, n + ' shared events with ' + s.name));
   }
   return out;
 }
@@ -1075,8 +1144,13 @@ function pickerSuggested() {
   const alive = PEOPLE().filter((p) => !hasLane(p.id) && !shown.has(p.id) && p.dd.n >= start && p.b.n <= end)
     .map((p) => ({ p, o: Math.min(p.dd.n, end) - Math.max(p.b.n, start) })).sort((a, b) => b.o - a.o).slice(0, 8);
   html += pkSection('People alive in ' + rangeTxt, '', grid(alive.map(({ p }) => pkCard(p, p.role + ' · ' + lifeSpanText(p), '', [start - span * 0.1, end + span * 0.1]))));
-  const busy = new Map();
-  EVENTS.forEach((e) => { if (!e.life && e.y0 >= start && e.y0 <= end) e.scopes.forEach((id) => { if (isPlace(SCOPES.get(id)) && id !== 'world') busy.set(id, (busy.get(id) || 0) + 1); }); });
+  const busy = new Map(), { histOrigin, histBin } = MANIFEST;
+  SCOPES.forEach((p) => {
+    if (!isPlace(p) || p.id === 'world') return;
+    let n = 0;
+    for (const [i, c] of Object.entries(p.stats.own)) { const y = histOrigin + (+i + 0.5) * histBin; if (y >= start && y <= end) n += c; }
+    if (n) busy.set(p.id, n);
+  });
   const top = [...busy].filter(([id]) => !hasLane(id) && !shown.has(id)).sort((a, b) => b[1] - a[1]).slice(0, 8);
   html += pkSection('Busiest places in ' + rangeTxt, '', grid(top.map(([id, n]) => pkCard(SCOPES.get(id), n + ' events in this period · ' + scopeKind(SCOPES.get(id))))));
   html += pkSection('Try a comparison', 'replaces your current lanes', comboList(COMBOS.slice(0, 4)));
@@ -1133,9 +1207,12 @@ function pickerSearch(q) {
     return pkSection(title, list.length + ' found', grid(list.slice(0, 24).map(({ s, k }) => pkCard(s, k === 4 ? 'In ' + SCOPES.get(s.parent).name + ' · ' + scopeTotal(s.id) + ' events' : defaultSub(s), q, s.type === 'person' ? [s.b.n, s.dd.n] : null))));
   }).join('');
   // lanes whose events mention the words, e.g. "plague" or "olympics"
-  if (q.length >= 3) {
+  if (q.length >= 3 && !searchIndex) {
+    loadSearch().then(() => { if ($('picker').open && $('pk-search').value.trim().toLowerCase() === q) renderPicker(); });
+    html += pkSection('Lanes with events about “' + q + '”', '', '<div class="pk-empty" style="padding:8px 0">Searching events…</div>');
+  } else if (q.length >= 3) {
     const mention = new Map();
-    EVENTS.forEach((e) => { if (!e.life && e.search.includes(q)) e.scopes.forEach((id) => mention.set(id, (mention.get(id) || 0) + 1)); });
+    searchIndex.forEach((e) => { if (e.search.includes(q)) e.scopes.forEach((id) => mention.set(id, (mention.get(id) || 0) + 1)); });
     const top = [...mention].filter(([id]) => !shown.has(id)).sort((a, b) => b[1] - a[1]).slice(0, 8);
     html += pkSection('Lanes with events about “' + q + '”', '', grid(top.map(([id, n]) => pkCard(SCOPES.get(id), n + (n === 1 ? ' event mentions it' : ' events mention it')))));
   }
@@ -1182,7 +1259,8 @@ function runSearch() {
   if (q.length < 2) { box.classList.remove('open'); searchItems = []; return; }
   const asYear = /^-?\d{1,4}$/.test(q) ? +q : null;
   const scopes = [...SCOPES.values()].filter((s) => s.search.includes(q)).slice(0, 5).map((s) => ({ kind: 'scope', s }));
-  const evs = EVENTS.filter((e) => !e.life && e.search.includes(q))
+  if (!searchIndex) loadSearch().then(() => { if ($('search-input').value.trim().toLowerCase() === q) runSearch(); });
+  const evs = (searchIndex || []).filter((e) => e.search.includes(q))
     .sort((a, b) => (a.title.toLowerCase().includes(q) ? 0 : 1) - (b.title.toLowerCase().includes(q) ? 0 : 1) || a.importance - b.importance)
     .slice(0, 8).map((e) => ({ kind: 'event', e }));
   searchItems = [...(asYear !== null ? [{ kind: 'year', y: asYear }] : []), ...scopes, ...evs];
@@ -1205,7 +1283,7 @@ function pickSearch(i) {
   if (it.kind === 'scope') { addLane(it.s.id); toast(it.s.name + ' added'); }
   if (it.kind === 'event') {
     const e = it.e;
-    if (!e.scopes.some((id) => state.lanes.some((l) => laneItems(l.scope, l.rollup).some((x) => x.e.id === e.id)))) addLane(e.scopes[0]);
+    if (!state.lanes.some((l) => inLane(e, l))) addLane(e.scopes[0]);
     const span = Math.min(Math.max(state.end - state.start, 5), e.era ? Math.max(20, (e.y1 - e.y0) * 2) : 60);
     state.selected = e.id; state.cursor = e.y0;
     centerOn(e.era ? (e.y0 + e.y1) / 2 : e.y0, Math.max(span, e.era ? (e.y1 - e.y0) * 1.3 : 0));
@@ -1392,14 +1470,15 @@ function bind() {
 }
 
 // ---------- boot ----------
-fetch('data.json').then((r) => r.json()).then((data) => {
-  prepare(data);
+fetch(DATA + 'manifest.json', { cache: 'no-cache' }).then((r) => r.json()).then((manifest) => {
+  prepare(manifest);
   readHash();
   bind();
   requestRender();
+  requestAnimationFrame(loadVisible); // start fetching tiles straight away
   document.fonts && document.fonts.ready.then(requestRender);
 }).catch((err) => {
-  $('lanes').innerHTML = '<div class="empty">Could not load data.json. Serve this folder over http (e.g. <code>python3 -m http.server</code>).</div>';
+  $('lanes').innerHTML = '<div class="empty">Could not load the data. Run <code>node build/build.mjs</code>, then serve this folder over http (e.g. <code>python3 -m http.server</code>).</div>';
   console.error(err);
 });
 </script>
