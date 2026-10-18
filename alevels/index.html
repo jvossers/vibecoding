@@ -801,6 +801,15 @@ function renderPalette(n, ranked) {
 }
 
 function renderScore(n, cur, ceiling) {
+  if (n === 0) {
+    // nothing picked yet: an empty card, so a reset visibly clears the score
+    const row = lbl => `<div class="bar-row"><div class="lbl">${lbl}</div><div class="track"></div><div class="v">–</div></div>`;
+    $('#score').innerHTML = `<div class="overall"><div class="big" style="color:var(--ink-3)">–<small>/100</small></div>
+      <div class="verdict-sub">Pick a subject to see your score.</div></div>
+      <div class="bars">${row('University access')}${row('Career prospects')}${row('Keeps options open')}${st.goals.map(g => row('Fit for ' + esc(A[g].name))).join('')}</div>`;
+    $('#scoreSub').textContent = '';
+    return;
+  }
   if (!cur) { $('#score').innerHTML = '<p class="fine">No combination is possible with the subjects you have available.</p>'; return; }
   const sc = cur.sc, partial = n < 3;
   const pct = percentile(sc.overall);
@@ -812,7 +821,7 @@ function renderScore(n, cur, ceiling) {
     <div class="overall">
       <div class="big">${Math.round(sc.overall)}<small>/100</small></div>
       <div>${partial ? '<span class="upto">UP TO</span><br>' : ''}<div class="verdict" style="color:${vc}">${vt} · ${pct >= 100 ? 'the top combination' : `better than ${pct}% of combinations`}</div>
-        <div class="verdict-sub">${partial ? (n === 0 ? 'The best any three subjects can reach with these priorities.' : `Best reached by adding ${esc(listAnd(names(adding)))}.`) : vs}</div></div>
+        <div class="verdict-sub">${partial ? `Best reached by adding ${esc(listAnd(names(adding)))}.` : vs}</div></div>
     </div>
     <div class="bars">
       ${bar('University access', 'courses whose requirements you meet', sc.uni, 'var(--navy)')}
