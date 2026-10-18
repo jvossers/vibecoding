@@ -1,1 +1,1 @@
-{"scope":"armstrong","lod":0,"from":-99999,"to":99999,"events":[["apollo-11-moon-landing","Apollo 11 Moon landing","1969-07-20",0,1,0,0,["usa","world","science","exploration","armstrong"],0]]}
+{"scope":"armstrong","lods":[0,4],"from":-99999,"to":99999,"events":[["gemini-8-first-docking-in-space","Gemini 8: first docking in space","1966-03-16",0,3,0,0,["armstrong","science"],0],["apollo-11-moon-landing","Apollo 11 Moon landing","1969-07-20",0,1,0,0,["usa","world","science","exploration","armstrong"],0]]}

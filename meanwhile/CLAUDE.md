@@ -39,7 +39,7 @@ The test first checks the data:
 - **`data/`:** it is up to date with the source.
 - **Tiles:** every lane's tiles hold exactly the events its roll-up rule selects, and no tile is too big.
 
-It then drives the app at desktop and phone sizes: lanes render, roll-up toggles, event details open, zoom and pan work, the lane picker and search work, share links restore the view, BCE years display, and there is no horizontal scroll at 390px. It also checks loading: the default view fetches only a few tiles, labels don't move when new tiles arrive, and a shared link to an unloaded event still opens it with its description. Screenshots go to `tests/out/`, which is gitignored.
+It then drives the app at desktop and phone sizes: lanes render, roll-up toggles, event details open, zoom and pan work, the lane picker and search work, share links restore the view, BCE years display, and there is no horizontal scroll at 390px. It also checks loading: the default view fetches only a few tiles, labels don't move when new tiles arrive, and a shared link to an unloaded event still opens it with its description. The label check serves a build with tiny tiles (`build(src, { maxPerTile: 8 })`) so that panning really fetches new periods. It also checks density: at every detail level, no screen-width (or quarter screen) of any lane holds more than twice the caps. Screenshots go to `tests/out/`, which is gitignored.
 
 ## Data model (`source/data.json`)
 
@@ -59,7 +59,8 @@ It then drives the app at desktop and phone sizes: lanes render, roll-up toggles
 - **Scope types:** `world`, `continent`, `region`, `country`, `city`, `person`, `theme`. Places form a tree through `parent` (world › continent › region › country › city, e.g. Europe › United Kingdom › Scotland, or Europe › Netherlands › Amsterdam). People and themes have no parent.
 - **Dates:** `YYYY`, `YYYY-MM` or `YYYY-MM-DD`. Negative years are BCE (`-44-03-15`). The precision you write is the precision shown. `approx: true` adds "c.".
 - **Eras** have an `end`, or `ongoing: true` (runs to today). Everything else is a point event.
-- **Importance:** 1 = world-historic, 2 = notable, 3 = local detail. It drives roll-up and level of detail.
+- **Importance:** 1 = world-historic, 2 = notable, 3 = local detail. It decides which events roll up, and is the biggest part of an event's score (see detail levels below).
+- **`score`** (optional number): a manual boost when space is short, added to the computed score. Later this could come from popularity, such as how many Wikipedia languages cover the event.
 - A person's lifespan era is generated from `born`/`died`, so don't add it as an event.
 - An event can belong to several scopes. Tag the most specific place and the people involved; roll-up takes care of the parents.
 - Event ids are slugs of the title (plus `-2` etc. if needed). Keep them stable, because share links use them (`e=`).
@@ -73,17 +74,27 @@ What the build writes to `data/`:
   - every scope, plus per-lane `stats`: event count, time extent, a 25-year histogram for the overview bar and the busiest-places suggestions, and places that share many events with the lane
   - the tile index: `tiles[scope] = [[lod, from, to, file], …]`
   - a content hash `v`, added to every fetch (`?v=`) so caches refresh when the data changes
-- **`tiles/<scope>/<lod>/<from|all>.json`:** one lane, one detail level, one period.
-  - Records are compact arrays: `[id, title, start, end|0, importance, lod, flags, scopes, via|0]`.
+- **`tiles/<scope>/<band>/<from|all>.json`:** one lane, one band of detail levels, one period.
+  - The tile index entries are `[lodFrom, lodTo, from, to, file]`.
+  - Records are compact arrays: `[id, title, start, end|0, importance, lod, flags, scopes, via|0]`. `lod` is this event's detail level *in this lane*.
   - Roll-up is done at build time, so a continent's tiles already include its countries' qualifying events. `via` names the child place an event came from; 0 means it's the lane's own.
-  - Each level holds only the events new at that level. A period splits 1000 → 100 → 10 → 1 years until a tile has ≤ 120 events. Eras go in every period they overlap.
+  - Levels are grouped into 4 bands (0–4, 5–7, 8–10, 11–13), so a view needs few requests. A band's period splits 1000 → 100 → 10 → 1 years until a tile has ≤ 120 events. Eras go in every period they overlap.
 - **`details/<shard>.json`:** descriptions, fetched when an event is opened. The shard is a hash of the id; `detailShard()` is the same in the build and the app.
 - **`search.json`:** every event in short form, fetched on the first event search, or to open a shared link to an event that isn't loaded.
 
-**Detail level (`lod`):** for now this is `importance - 1`. Step 2 of the plan replaces it with a score-based level that caps how many events any screen can show.
+**Detail levels (`lod`, `assignLods()` in the build):** these guarantee that no screen gets crowded, however much data there is.
+- **Zoom:** level L appears from 2^(L − 3) px per year. Level 0 shows even with ~10,000 years on screen; level 13 needs about a one-year view. There are 14 levels, one per doubling of zoom, matching the app's layout levels.
+- **Order:** within each lane, events are taken best score first. The score is importance, plus small boosts for a description and for links to several places or people, plus the optional `score`.
+- **Placement:** each event gets the coarsest level at which, at that level and every finer one:
+  - a screen-width (1200px) around it holds fewer than 30 events
+  - 3/8 of a screen holds fewer than 10, so events can't bunch up in one corner
+- **Eras:** an era counts as a bar only where it's at least 14px long and fewer than 4 eras overlap it. Otherwise it competes for space as a point, as the app then draws it.
+- **Scale:** window counts use bins an eighth of a screen wide, so this stays fast for big lanes.
+- **Ripple effect:** a busy period pushes its lesser events to finer levels. Around 1960, for example, Nigeria's independence only appears in the Africa lane once you zoom in to a few years.
 
 In the app:
 - `loadVisible()` runs when the view comes to rest. It fetches tiles for the lanes on screen, a screen's width either side, and full detail around a selected event.
+- `maxLod(pxPerYear)` gives the finest level to show, using `lodBase` and `lodCount` from the manifest.
 - `layoutLane()` is incremental: new events fill free rows and never move events already placed.
 
 `data/` is committed for now, because GitHub Pages serves this repo straight from `main`. At much larger sizes, build it in a GitHub Action instead and keep it out of git.
@@ -97,7 +108,7 @@ The rule, applied in `build/build.mjs` (the app reads the result with `laneItems
   - two or more levels down: importance 1 only
   - eras roll up only one level, and only at importance 1
 - Rolled-up items are drawn hollow or dashed, and their tooltip says "via X".
-- **Level of detail by zoom (`maxLod()`):** zoomed far out shows lod 0 only, then ≤ 1, then everything (about > 1500 years, > 400 years and closer on a desktop screen).
+- **Level of detail by zoom:** a lane shows events whose per-lane `lod` is at most `maxLod()` for the zoom (see detail levels above).
 
 ## Adding lanes (the picker)
 

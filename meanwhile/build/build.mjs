@@ -1,14 +1,18 @@
 // Builds the files the app loads from source/data.json:
 //
 //   data/manifest.json             scopes (lanes), per-lane stats and the tile index
-//   data/tiles/<scope>/<lod>/*.json events for one lane, one detail level, one period
+//   data/tiles/<scope>/<band>/*.json events for one lane, a band of detail levels, one period
 //   data/details/<shard>.json      event descriptions, fetched when an event is opened
 //   data/search.json               every event in short form, fetched on first search
 //
 // A lane's tiles already include the events rolled up from its child places, so
-// the app never needs the whole data set. Each detail level only holds the events
-// new at that level; a period is split into smaller ones (1000 → 100 → 10 → 1 years)
-// until each tile has at most MAX_PER_TILE events.
+// the app never needs the whole data set.
+//
+// Detail levels (lod): every event gets, per lane, the coarsest zoom at which it
+// can be shown without that screen getting crowded (assignLods). lod 0 shows even
+// when all of history is on screen; each next lod needs twice the zoom. Tiles group
+// levels into BANDS, and a band's period is split into smaller ones
+// (1000 → 100 → 10 → 1 years) until each tile has at most MAX_PER_TILE events.
 //
 //   node build/build.mjs            (from the meanwhile/ folder, or anywhere)
 import fs from 'node:fs';
@@ -20,6 +24,15 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'source', 'data.json');
 const OUT = path.join(ROOT, 'data');
 const MAX_PER_TILE = 120;
+// lod L is shown from 2^(L + LOD_BASE) px per year: lod 0 at ≤ 1/8 px/yr (~10,000
+// years on a screen), lod 13 at 1024 px/yr (about a year).
+const LOD_BASE = -3, LOD_COUNT = 14;
+const SCREEN = 1200;     // px; the width the density cap is measured against
+const CAP = 30;          // at most this many events in a screen-width around any event
+const LOCAL_CAP = 10;    // …and this many in 3/8 of a screen, so they can't bunch up
+const ERA_CAP = 4;       // at most this many eras overlapping at once
+const BANDS = [[0, 4], [5, 7], [8, 10], [11, 13]];
+export const LIMITS = { LOD_BASE, LOD_COUNT, SCREEN, CAP, LOCAL_CAP, ERA_CAP, MAX_PER_TILE };
 const PERIODS = [1000, 100, 10, 1];           // tile sizes in years, coarsest first
 const ALL = [-99999, 99999];                  // the "whole of history" tile
 const HIST_ORIGIN = -4000, HIST_BIN = 25;     // per-lane event counts, for the overview bar
@@ -39,7 +52,8 @@ export function detailShard(id) {
   return (h % DETAIL_SHARDS).toString(16);
 }
 
-export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8'))) {
+// `maxPerTile` can be lowered to exercise period splitting with little data (the tests do).
+export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8')), { maxPerTile = MAX_PER_TILE } = {}) {
   const scopes = new Map(src.scopes.map((s) => [s.id, s]));
   const chain = new Map();
   for (const s of src.scopes) {
@@ -50,11 +64,11 @@ export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8'))) {
   const events = src.events.map((e) => {
     const y0 = year(e.start), era = !!(e.end || e.ongoing);
     const y1 = era ? (e.end ? year(e.end) : NOW) : y0;
-    // Step 1 keeps today's importance tiers as the detail level (lod 0 = most important).
-    return { ...e, y0, y1, era, lod: e.importance - 1 };
+    return { ...e, y0, y1, era, score: score(e) };
   });
   const flags = (e) => (e.approx ? 1 : 0) | (e.ongoing ? 2 : 0);
-  const record = (e) => [e.id, e.title, e.start, e.end || 0, e.importance, e.lod, flags(e), e.scopes];
+  // lod is per lane (it's in the tile record); the search index doesn't need it
+  const record = (e, lod = 0) => [e.id, e.title, e.start, e.end || 0, e.importance, lod, flags(e), e.scopes];
 
   // Roll-up: the same rule the app used to apply on the fly.
   const lanes = new Map(src.scopes.map((s) => [s.id, []]));
@@ -99,18 +113,19 @@ export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8'))) {
       hist, own,
       rel: [...rel].sort((x, y) => y[1] - x[1] || (x[0] < y[0] ? -1 : 1)).slice(0, 6),
     };
-    // tiles, per detail level
+    // tiles, per band of detail levels
+    assignLods(items);
     const entries = [];
-    const byLod = new Map();
-    for (const it of items) { if (!byLod.has(it.e.lod)) byLod.set(it.e.lod, []); byLod.get(it.e.lod).push(it); }
-    for (const lod of [...byLod.keys()].sort()) {
+    for (const [bandLo, bandHi] of BANDS) {
+      const band = items.filter((it) => it.lod >= bandLo && it.lod <= bandHi);
+      if (!band.length) continue;
       const split = (list, from, to, level) => {
-        if (list.length <= MAX_PER_TILE || level >= PERIODS.length) {
+        if (list.length <= maxPerTile || level >= PERIODS.length) {
           const name = from === ALL[0] ? 'all' : String(from);
-          const file = `tiles/${s.id}/${lod}/${name}.json`;
+          const file = `tiles/${s.id}/${bandLo}/${name}.json`;
           list.sort((x, y) => x.e.y0 - y.e.y0 || (x.e.id < y.e.id ? -1 : 1));
-          files.set(file, { scope: s.id, lod, from, to, events: list.map(({ e, via }) => [...record(e), via || 0]) });
-          entries.push([lod, from, to, file]);
+          files.set(file, { scope: s.id, lods: [bandLo, bandHi], from, to, events: list.map(({ e, via, lod }) => [...record(e, lod), via || 0]) });
+          entries.push([bandLo, bandHi, from, to, file]);
           return;
         }
         const size = PERIODS[level];
@@ -123,7 +138,7 @@ export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8'))) {
           if (sub.length) split(sub, f, t, level + 1);
         }
       };
-      split(byLod.get(lod), ALL[0], ALL[1], 0);
+      split(band, ALL[0], ALL[1], 0);
     }
     if (entries.length) tileIndex[s.id] = entries;
   }
@@ -144,6 +159,7 @@ export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8'))) {
   const manifest = {
     v: hash.digest('hex').slice(0, 10),
     histOrigin: HIST_ORIGIN, histBin: HIST_BIN, detailShards: DETAIL_SHARDS,
+    lodBase: LOD_BASE, lodCount: LOD_COUNT,
     scopes: src.scopes.map((s) => ({ ...s, stats: stats[s.id] })),
     tiles: tileIndex,
   };
@@ -151,6 +167,45 @@ export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8'))) {
   return files;
 }
 const round = (y) => Math.round(y * 100) / 100;
+
+// How much an event deserves a place when space is short. Importance dominates;
+// a description and links to several places or people break ties, and an
+// optional `score` in the source data adds a manual boost.
+function score(e) {
+  return (4 - e.importance) * 100 + (e.desc ? 10 : 0) + Math.min(4, e.scopes.length - 1) * 5 + (e.score || 0);
+}
+
+// Give each of a lane's items the coarsest lod at which it fits: best score first,
+// an event takes lod L only if, at every level from L down to the finest, a
+// screen-width around it holds fewer than CAP events and 3/8 of a screen fewer
+// than LOCAL_CAP. An era fits as a bar while
+// it is at least 14px long at that zoom and fewer than ERA_CAP eras overlap it;
+// otherwise it competes for space as a point (the app draws it as a point too). Window counts use
+// bins an eighth of a screen wide, so this is fast for big lanes. Events that fit
+// nowhere get the finest lod.
+export function assignLods(items) {
+  const width = (L) => SCREEN / Math.pow(2, L + LOD_BASE); // years on screen at lod L
+  const bins = Array.from({ length: LOD_COUNT }, () => new Map());
+  const binOf = (L, y) => Math.floor(y / (width(L) / 8));
+  const crowd = (L, y, r) => { const b = binOf(L, y); let n = 0; for (let k = b - r; k <= b + r; k++) n += bins[L].get(k) || 0; return n; };
+  const eras = Array.from({ length: LOD_COUNT }, () => []);
+  const overlap = (L, e) => eras[L].filter((o) => o.y0 < e.y1 && o.y1 > e.y0).length;
+  const order = items.slice().sort((a, b) => b.e.score - a.e.score || a.e.y0 - b.e.y0 || (a.e.id < b.e.id ? -1 : 1));
+  for (const it of order) {
+    const e = it.e;
+    const asBar = (L) => e.era && (e.y1 - e.y0) * Math.pow(2, L + LOD_BASE) >= 14 && overlap(L, e) < ERA_CAP;
+    const fits = (L) => asBar(L) || (crowd(L, e.y0, 4) < CAP && crowd(L, e.y0, 1) < LOCAL_CAP);
+    let L = LOD_COUNT - 1;
+    if (fits(L)) while (L > 0 && fits(L - 1)) L--;
+    it.lod = L;
+    const bar = asBar(L);
+    for (let k = L; k < LOD_COUNT; k++) {
+      if (bar) eras[k].push(e);
+      else { const b = binOf(k, e.y0); bins[k].set(b, (bins[k].get(b) || 0) + 1); }
+    }
+  }
+  return items;
+}
 
 export function write(files, out = OUT) {
   fs.rmSync(out, { recursive: true, force: true });

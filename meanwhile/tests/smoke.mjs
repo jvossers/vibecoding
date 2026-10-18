@@ -33,7 +33,7 @@ check(!badDate.length, 'every event date parses and ends after it starts' + (bad
 check(data.events.every(e => [1, 2, 3].includes(e.importance)), 'importance is 1, 2 or 3');
 
 // 2. the built tiles (build/build.mjs) hold exactly what each lane should show
-const { build } = await import('../build/build.mjs');
+const { build, LIMITS } = await import('../build/build.mjs');
 const built = build(data);
 const manifest = built.get('manifest.json');
 const onDisk = JSON.parse(fs.readFileSync(path.join(APP_DIR, 'data', 'manifest.json'), 'utf8'));
@@ -51,15 +51,34 @@ check(onDisk.v === manifest.v, `data/ is up to date with source/data.json (run n
       return d === 0 || (d === 1 && e.importance <= 2 && (!era || e.importance === 1)) || (d >= 2 && e.importance === 1 && !era);
     }).map(e => e.id));
     const got = new Set();
-    for (const [, from, to, file] of manifest.tiles[s.id] || []) {
+    for (const [, , from, to, file] of manifest.tiles[s.id] || []) {
       const t = built.get(file);
-      if (t.events.length > 120 && to - from > 1) oversize.push(file);
+      if (t.events.length > LIMITS.MAX_PER_TILE && to - from > 1) oversize.push(file);
       t.events.forEach(r => got.add(r[0]));
     }
     if (want.size !== got.size || [...want].some(id => !got.has(id))) mismatch.push(`${s.id} (${got.size}/${want.size})`);
   }
   check(!mismatch.length, 'every lane\'s tiles hold exactly its events' + (mismatch.length ? ': ' + mismatch.slice(0, 5).join(', ') : ''));
-  check(!oversize.length, 'no tile over 120 events' + (oversize.length ? ': ' + oversize.join(', ') : ''));
+  check(!oversize.length, 'no tile over ' + LIMITS.MAX_PER_TILE + ' events' + (oversize.length ? ': ' + oversize.join(', ') : ''));
+  // density: at every detail level, a screen-width of time holds a bounded number
+  // of point events at or above that level (the build's count is binned, so allow 2×)
+  const year = (d) => { const m = DATE.exec(d); return +m[1] + ((+m[2] || 1) - 1) / 12 + ((+m[3] || 1) - 1) / 365; };
+  let worst = { n: 0 }, worstLocal = { n: 0 };
+  for (const s of data.scopes) {
+    const items = new Map();
+    for (const [, , , , file] of manifest.tiles[s.id] || []) for (const r of built.get(file).events) if (!r[3]) items.set(r[0], { y: year(r[2]), lod: r[5] });
+    const list = [...items.values()];
+    for (let L = 0; L < LIMITS.LOD_COUNT; L++) {
+      const w = LIMITS.SCREEN / Math.pow(2, L + LIMITS.LOD_BASE);
+      const ys = list.filter(x => x.lod <= L).map(x => x.y).sort((a, b) => a - b);
+      for (let i = 0, j = 0; i < ys.length; i++) { while (ys[i] - ys[j] > w) j++; if (i - j + 1 > worst.n) worst = { n: i - j + 1, scope: s.id, L }; }
+      for (let i = 0, j = 0; i < ys.length; i++) { while (ys[i] - ys[j] > w / 4) j++; if (i - j + 1 > worstLocal.n) worstLocal = { n: i - j + 1, scope: s.id, L }; }
+    }
+  }
+  check(worst.n <= 2 * LIMITS.CAP, `no screen gets crowded at any zoom (worst: ${worst.n} events in one screen, ${worst.scope} at lod ${worst.L})`);
+  check(worstLocal.n <= 2 * LIMITS.LOCAL_CAP, `events don't bunch up within a screen (worst: ${worstLocal.n} in a quarter screen, ${worstLocal.scope} at lod ${worstLocal.L})`);
+  const lods = new Set(); Object.values(manifest.tiles).flat().forEach(([, , , , f]) => built.get(f).events.forEach(r => lods.add(r[5])));
+  check(lods.size >= 6, `events spread over ${lods.size} detail levels`);
   const tileCount = [...built.keys()].filter(f => f.startsWith('tiles/')).length;
   check(tileCount > data.scopes.length, `${tileCount} tiles for ${data.scopes.length} lanes`);
 }
@@ -102,21 +121,25 @@ try {
   const tilesTotal = Object.values(manifest.tiles).reduce((n, t) => n + t.length, 0);
   check(tilesLoaded > 0 && tilesLoaded < tilesTotal / 10, `default view loads only the tiles it needs (${tilesLoaded} of ${tilesTotal})`);
 
-  // roll-up: Nigeria's independence (tagged only with Nigeria) shows in the Africa lane only with sub-regions on
-  const ghana = data.events.find(e => e.title === 'Nigeria becomes independent').id;
-  const inAfrica = () => page.locator(`.lane:nth-child(4) [data-id="${ghana}"]`).count();
+  // roll-up: Nigeria's independence (tagged only with Nigeria) shows in the Africa lane only with
+  // sub-regions on. Africa is busy around 1960, so it only appears when zoomed in to a few years.
+  await page.evaluate(() => setRange(1957, 1963, true, true));
+  await page.waitForTimeout(700);
+  const nigeria = data.events.find(e => e.title === 'Nigeria becomes independent').id;
+  const inAfrica = () => page.locator(`.lane:nth-child(4) [data-id="${nigeria}"]`).count();
   check(await inAfrica() > 0, 'child-country event rolls up into the Africa lane');
   await page.locator('.lane:nth-child(4) [data-rollup]').uncheck();
   await page.waitForTimeout(100);
   check(await inAfrica() === 0, 'turning off "Include sub-regions" hides it');
   await page.locator('.lane:nth-child(4) [data-rollup]').check();
-  await page.waitForTimeout(100);
+  await page.evaluate(() => { setRange(1850, 1970, true, true); state.cursor = 1905; requestRender(); });
+  await page.waitForTimeout(700);
 
   // select an event
   await page.locator('.ev-label', { hasText: "Einstein's annus mirabilis" }).click();
   check(await page.locator('#detail.open h2').textContent() === "Einstein's annus mirabilis", 'clicking an event opens its details');
   check(await page.locator('#detail button.row').count() > 0, 'details list what else happened within a year');
-  await page.waitForTimeout(250);
+  await page.waitForFunction(() => location.hash.includes('e=einsteins-annus-mirabilis'), null, { timeout: 3000 }).catch(() => {});
   check(page.url().includes('e=einsteins-annus-mirabilis'), 'selection is saved in the URL');
   await page.screenshot({ path: path.join(OUT, 'desktop-detail.png') });
   await page.keyboard.press('Escape');
@@ -186,9 +209,20 @@ try {
   await page.keyboard.press('Enter');
   check((await page.locator('#detail.open h2').textContent()) === 'Fall of the Berlin Wall', 'search jumps to an event');
 
-  // tiles that arrive while panning never move labels that were already placed
+  // tiles that arrive while panning never move labels that were already placed.
+  // Today's data fits in one tile per detail band, so serve a build with tiny
+  // tiles (8 events) to make panning fetch new periods, as it will with big data.
   {
-    const p3 = await open({ viewport: { width: 1440, height: 900 } }, '#lanes=europe,world&from=1700&to=1760&at=1730');
+    const small = build(data, { maxPerTile: 8 });
+    const p3 = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    p3.on('pageerror', e => errors.push(e.message));
+    await p3.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
+    await p3.route(/\/data\//, (r) => {
+      const v = small.get(new URL(r.request().url()).pathname.split('/data/')[1]);
+      return v ? r.fulfill({ contentType: 'application/json', body: JSON.stringify(v) }) : r.fulfill({ status: 404, body: '' });
+    });
+    await p3.goto(BASE + '#lanes=europe,world&from=1700&to=1760&at=1730');
+    await p3.waitForSelector('.lane .ev-dot', { state: 'attached' });
     await p3.waitForTimeout(800);
     const rows = () => p3.evaluate(() => { const o = {}; document.querySelectorAll('.ev-label').forEach(l => { o[l.dataset.id] = l.style.top; }); return o; });
     const before = await rows();

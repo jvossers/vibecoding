@@ -1,1 +1,1 @@
-{"scope":"mlk","lod":0,"from":-99999,"to":99999,"events":[["i-have-a-dream","\"I Have a Dream\"","1963-08-28",0,1,0,0,["mlk","usa"],0]]}
+{"scope":"mlk","lods":[0,4],"from":-99999,"to":99999,"events":[["montgomery-bus-boycott","Montgomery bus boycott","1955-12-05","1956-12-20",2,0,0,["mlk","usa"],0],["i-have-a-dream","\"I Have a Dream\"","1963-08-28",0,1,0,0,["mlk","usa"],0],["king-wins-the-nobel-peace-prize","King wins the Nobel Peace Prize","1964-12-10",0,3,0,0,["mlk"],0],["king-assassinated","King assassinated","1968-04-04",0,2,0,0,["mlk","usa"],0]]}

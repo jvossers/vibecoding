@@ -504,7 +504,7 @@ function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add
 const DATA = 'data/';
 let SCOPES = new Map(), CHILDREN = new Map(), MANIFEST = null;
 const EVENT_BY_ID = new Map();   // every event loaded so far
-const laneData = new Map();      // scope id → Map(event id → { e, rolled, via }), loaded so far
+const laneData = new Map();      // scope id → Map(event id → { e, rolled, via, lod }), loaded so far
 const laneVersion = new Map();   // scope id → bumps when new events arrive for that lane
 const tileState = new Map();     // tile file → 'loading' | 'done'
 function dataUrl(file) { return DATA + file + '?v=' + MANIFEST.v; }
@@ -525,16 +525,17 @@ function prepare(manifest) {
     p.b = parseDate(p.born); p.dd = parseDate(p.died);
     const e = toEvent(['life-' + p.id, p.name, p.born, p.died, 1, 0, 0, [p.id]]);
     e.life = true; e.desc = p.role + ', ' + fmtDate(p.b) + ' – ' + fmtDate(p.dd) + '.';
-    laneData.get(p.id).set(e.id, { e, rolled: false, via: null });
+    laneData.get(p.id).set(e.id, { e, rolled: false, via: null, lod: 0 });
   });
 }
 // tile and search records: [id, title, start, end|0, importance, lod, flags, scopes]
+// (lod is per lane, so it's kept on the lane item, not the event)
 function toEvent(r) {
   if (EVENT_BY_ID.has(r[0])) return EVENT_BY_ID.get(r[0]);
   const [id, title, start, end, importance, lod, flags, scopes] = r;
   const approx = !!(flags & 1), ongoing = !!(flags & 2);
   const s = parseDate(start), en = end ? parseDate(end) : null, era = !!(end || ongoing);
-  const ev = { id, title, start, end: end || undefined, importance, lod, scopes, approx, ongoing, s, en, era,
+  const ev = { id, title, start, end: end || undefined, importance, scopes, approx, ongoing, s, en, era,
     y0: s.n, y1: era ? (en ? en.n : NOW) : s.n };
   if (era && en && en.n === s.n) ev.y1 = s.n + 1 / 365;
   ev.when = era ? fmtDate(s, approx) + ' – ' + (en ? fmtDate(en, approx) : 'today') : fmtDate(s, approx);
@@ -544,13 +545,13 @@ function toEvent(r) {
 }
 const stats = (id) => SCOPES.get(id).stats;
 
-// Fetch the tiles each lane needs for [from, to] at detail levels up to maxLod.
+// Fetch the tiles each lane needs for [from, to] at detail levels up to `upTo`.
 // Resolves once they're in; the caller re-renders.
-function loadTiles(scopeIds, from, to, maxLod) {
+function loadTiles(scopeIds, from, to, upTo) {
   const wanted = [];
   for (const id of new Set(scopeIds)) {
-    for (const [lod, a, b, file] of MANIFEST.tiles[id] || []) {
-      if (lod <= maxLod && b > from && a < to && !tileState.has(file)) wanted.push(file);
+    for (const [lo, , a, b, file] of MANIFEST.tiles[id] || []) {
+      if (lo <= upTo && b > from && a < to && !tileState.has(file)) wanted.push(file);
     }
   }
   if (!wanted.length) return Promise.resolve(false);
@@ -559,7 +560,7 @@ function loadTiles(scopeIds, from, to, maxLod) {
     const lane = laneData.get(t.scope);
     for (const rec of t.events) {
       const e = toEvent(rec), via = rec[8] || null;
-      if (!lane.has(e.id)) lane.set(e.id, { e, rolled: !!via, via });
+      if (!lane.has(e.id)) lane.set(e.id, { e, rolled: !!via, via, lod: rec[5] });
     }
     laneVersion.set(t.scope, laneVersion.get(t.scope) + 1);
     tileState.set(file, 'done');
@@ -725,8 +726,9 @@ function ticks(start, end, w) {
 // zooming in within a level only spreads things apart, so nothing jumps rows
 // while you move around.
 function zoomLevel(pxPerYear) { return Math.floor(Math.log2(pxPerYear)); }
-// The most detailed level (lod) shown at a scale; lod 0 is the most important.
-function maxLod(pxPerYear) { return pxPerYear < 0.7 ? 0 : pxPerYear < 2.6 ? 1 : 2; }
+// The most detailed level (lod) shown at a scale: lod L appears from
+// 2^(L + lodBase) px per year (see build/build.mjs, assignLods).
+function maxLod(pxPerYear) { return clamp(Math.floor(Math.log2(pxPerYear)) - MANIFEST.lodBase, 0, MANIFEST.lodCount - 1); }
 // Tiles arrive over time, so layout is incremental: new events are fitted into
 // free rows and never move events already placed. `version` bumps when it grows.
 const layoutCache = new Map();
@@ -738,8 +740,8 @@ function layoutLane(lane, level) {
   L.seen = laneVersion.get(lane.scope);
   const s = Math.pow(2, level); // the most zoomed-out scale of this level, in px per year
   const top = maxLod(s);
-  const rank = (a, b) => (!!b.e.life - !!a.e.life) || (!!a.rolled - !!b.rolled) || (a.e.importance - b.e.importance) || (a.e.y0 - b.e.y0);
-  const items = laneItems(lane.scope, lane.rollup).filter(({ e }) => !L.placed.has(e.id) && (e.life || e.lod <= top)).sort(rank);
+  const rank = (a, b) => (!!b.e.life - !!a.e.life) || (a.lod - b.lod) || (!!a.rolled - !!b.rolled) || (a.e.importance - b.e.importance) || (a.e.y0 - b.e.y0);
+  const items = laneItems(lane.scope, lane.rollup).filter((it) => !L.placed.has(it.e.id) && it.lod <= top).sort(rank);
   if (!items.length) return L;
   const fits = (rows, a, b) => rows.findIndex((row) => row.every(([p, q]) => b <= p || a >= q));
   const { eraRows, labelRows, eras, points } = L;
@@ -913,7 +915,7 @@ function loadVisible() {
   const ids = state.lanes.map((l) => l.scope);
   const jobs = [loadTiles(ids, start - span, end + span, maxLod(Math.pow(2, zoomLevel(w / span))))];
   const sel = EVENT_BY_ID.get(state.selected);
-  if (sel) jobs.push(loadTiles(ids, sel.y0 - 1.5, sel.y1 + 1.5, 2));
+  if (sel) jobs.push(loadTiles(ids, sel.y0 - 1.5, sel.y1 + 1.5, MANIFEST.lodCount - 1));
   return Promise.all(jobs).then((got) => { if (got.some(Boolean)) requestRender(); });
 }
 

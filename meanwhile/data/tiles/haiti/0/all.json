@@ -1,1 +1,1 @@
-{"scope":"haiti","lod":0,"from":-99999,"to":99999,"events":[["haitian-revolution","Haitian Revolution","1791-08-22","1804-01-01",1,0,0,["haiti","france","north-america"],0]]}
+{"scope":"haiti","lods":[0,4],"from":-99999,"to":99999,"events":[["haitian-revolution","Haitian Revolution","1791-08-22","1804-01-01",1,0,0,["haiti","france","north-america"],0],["haiti-becomes-independent","Haiti becomes independent","1804-01-01",0,2,0,0,["haiti"],0],["haiti-earthquake","Haiti earthquake","2010-01-12",0,2,0,0,["haiti"],0]]}

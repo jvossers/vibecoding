@@ -1,1 +1,1 @@
-{"scope":"rwanda","lod":0,"from":-99999,"to":99999,"events":[["rwandan-genocide","Rwandan genocide","1994-04-07","1994-07-15",1,0,0,["rwanda","africa"],0]]}
+{"scope":"rwanda","lods":[0,4],"from":-99999,"to":99999,"events":[["rwanda-becomes-independent","Rwanda becomes independent","1962-07-01",0,3,0,0,["rwanda"],0],["rwandan-genocide","Rwandan genocide","1994-04-07","1994-07-15",1,0,0,["rwanda","africa"],0],["second-congo-war","Second Congo War","1998-08-02","2003-07-18",2,0,0,["dr-congo","rwanda"],0]]}

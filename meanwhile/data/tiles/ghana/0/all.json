@@ -1,1 +1,1 @@
-{"scope":"ghana","lod":0,"from":-99999,"to":99999,"events":[["ghana-becomes-independent","Ghana becomes independent","1957-03-06",0,1,0,0,["ghana","africa"],0]]}
+{"scope":"ghana","lods":[0,4],"from":-99999,"to":99999,"events":[["elmina-castle-built","Elmina Castle built","1482",0,3,0,0,["ghana","portugal"],0],["ashanti-empire","Ashanti Empire","1701","1901",3,0,0,["ghana"],0],["ghana-becomes-independent","Ghana becomes independent","1957-03-06",0,1,0,0,["ghana","africa"],0]]}

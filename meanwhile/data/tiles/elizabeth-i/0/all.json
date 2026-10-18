@@ -1,1 +1,1 @@
-{"scope":"elizabeth-i","lod":0,"from":-99999,"to":99999,"events":[["spanish-armada-defeated","Spanish Armada defeated","1588-08-08",0,1,0,0,["elizabeth-i","united-kingdom","spain"],0]]}
+{"scope":"elizabeth-i","lods":[0,4],"from":-99999,"to":99999,"events":[["reign-of-elizabeth-i","Reign of Elizabeth I","1558-11-17","1603-03-24",2,0,0,["elizabeth-i","united-kingdom"],0],["spanish-armada-defeated","Spanish Armada defeated","1588-08-08",0,1,0,0,["elizabeth-i","united-kingdom","spain"],0]]}

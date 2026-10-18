@@ -1,1 +1,1 @@
-{"scope":"newton","lod":0,"from":-99999,"to":99999,"events":[["newtons-principia","Newton's Principia","1687-07-05",0,1,0,0,["newton","science"],0]]}
+{"scope":"newton","lods":[0,4],"from":-99999,"to":99999,"events":[["newtons-plague-years","Newton's plague years","1665","1667",3,0,0,["newton"],0],["newtons-principia","Newton's Principia","1687-07-05",0,1,0,0,["newton","science"],0],["president-of-the-royal-society","President of the Royal Society","1703","1727-03-31",3,0,0,["newton"],0]]}
