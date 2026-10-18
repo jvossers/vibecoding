@@ -19,7 +19,9 @@ let failures = 0;
 const check = (ok, msg) => { console.log(`${ok ? '✓' : '✗'} ${msg}`); if (!ok) failures++; };
 
 // 1. source/data.json is consistent
-const data = JSON.parse(fs.readFileSync(path.join(APP_DIR, 'source', 'data.json'), 'utf8'));
+// the curated data plus anything imported from Wikidata (source/wikidata.json)
+const { build, LIMITS, words, detailShard, loadSource } = await import('../build/build.mjs');
+const data = loadSource();
 const scopeIds = new Set(data.scopes.map(s => s.id));
 const DATE = /^(-?\d+)(?:-(\d\d))?(?:-(\d\d))?$/;
 const num = s => { const m = DATE.exec(s); return m ? +m[1] + ((+m[2] || 1) - 1) / 12 + ((+m[3] || 1) - 1) / 365 : NaN; };
@@ -33,7 +35,6 @@ check(!badDate.length, 'every event date parses and ends after it starts' + (bad
 check(data.events.every(e => [1, 2, 3].includes(e.importance)), 'importance is 1, 2 or 3');
 
 // 2. the built tiles (build/build.mjs) hold exactly what each lane should show
-const { build, LIMITS, words, detailShard } = await import('../build/build.mjs');
 const built = build(data);
 const manifest = built.get('manifest.json');
 const tilesOf = (id) => built.get(`lanes/${id}.json`).tiles;
@@ -85,7 +86,42 @@ check(onDisk.v === manifest.v, `data/ is up to date with source/data.json (run n
   check(tileCount > data.scopes.length, `${tileCount} tiles for ${data.scopes.length} lanes`);
 }
 
-// 3. the small files: manifest, lanes, people, details, search
+// 3. the Wikidata importer turns query results into events correctly. The rows
+// below are a made-up sample in the query service's format, not real data.
+{
+  const { convert, parseTime, importanceOf } = await import('../build/wikidata.mjs');
+  check(parseTime('+1574-10-03T00:00:00Z', 11).date === '1574-10-03' && parseTime('+1574-10-01T00:00:00Z', 10).date === '1574-10'
+    && parseTime('-0044-01-01T00:00:00Z', 9).date === '-44' && parseTime('+1500-01-01T00:00:00Z', 7).approx === true
+    && parseTime('+1500-01-01T00:00:00Z', 5) === null, 'importer reads Wikidata dates (day/month/year/century, BCE, too vague)');
+  check(importanceOf(90) === 1 && importanceOf(40) === 2 && importanceOf(10) === 3, 'importer ranks by Wikipedia coverage');
+  const row = (q, label, date, prec, links, more = {}) => ({ item: { value: 'http://www.wikidata.org/entity/' + q }, itemLabel: { value: label }, date: { value: date }, datePrec: { value: String(prec) }, links: { value: String(links) }, ...more });
+  const rows = new Map([
+    ['netherlands', [
+      row('Q900001', 'Sample flood', '+1421-11-18T00:00:00Z', 11, 45, { itemDescription: { value: 'sample flood in the sample' } }),
+      row('Q900002', 'Q900002', '+1600-01-01T00:00:00Z', 9, 50),                           // no English label
+      row('Q900003', 'Battle of Waterloo', '+1815-06-18T00:00:00Z', 11, 120),               // already curated
+      row('Q900004', 'Sample war', '+1568-01-01T00:00:00Z', 9, 95, { end: { value: '+1648-01-01T00:00:00Z' }, endPrec: { value: '9' } }),
+    ]],
+    ['belgium', [row('Q900004', 'Sample war', '+1568-01-01T00:00:00Z', 9, 95)]],
+    ['einstein', [row('Q900005', 'Sample Prize', '+1921-01-01T00:00:00Z', 9, 60, { kind: { value: 'award' } })]],
+  ]);
+  const out = convert(rows, data);
+  const byQ = Object.fromEntries(out.map(e => [e.wikidata, e]));
+  check(out.length === 3 && !byQ.Q900002 && !byQ.Q900003, `importer skips unlabelled and already-curated events (${out.length} kept)`);
+  check(byQ.Q900001.start === '1421-11-18' && byQ.Q900001.importance === 2 && byQ.Q900001.desc === 'Sample flood in the sample.', 'importer keeps date, importance and description');
+  check(byQ.Q900004.end === '1648' && byQ.Q900004.scopes.join() === 'netherlands,belgium' && byQ.Q900004.importance === 1, 'importer merges one item found in two places, with its end date');
+  check(byQ.Q900005.title === 'Albert Einstein receives the Sample Prize' && byQ.Q900005.scopes.join() === 'einstein', 'importer names awards after the person');
+  const keys = new Set(['title', 'start', 'end', 'scopes', 'importance', 'desc', 'approx', 'ongoing', 'score', 'wikidata']);
+  check(out.every(e => /^wd-q\d+/.test(e.id) && Object.keys(e).every(k => k === 'id' || keys.has(k))), 'imported events use the source format with stable wd- ids');
+  // …and flow through the build like curated ones
+  const withImport = build({ ...data, events: [...data.events, ...out] });
+  const nlTiles = withImport.get('lanes/netherlands.json').tiles.flatMap(([, , , , f]) => withImport.get(f).events.map(r => r[0]));
+  const sa = withImport.get('search/sa.json') || [];
+  check(nlTiles.includes('wd-q900001') && sa.some(r => r[1] === 'wd-q900001') && withImport.get(`details/${detailShard('wd-q900001')}.json`)['wd-q900001'],
+    'imported events reach lane tiles, search and details');
+}
+
+// 4. the small files: manifest, lanes, people, details, search
 {
   const size = JSON.stringify(manifest).length;
   check(size < 20000, `manifest stays small (${Math.round(size / 1024)} KB)`);
@@ -113,7 +149,7 @@ check(onDisk.v === manifest.v, `data/ is up to date with source/data.json (run n
   check(split > 0 && !tinyMisses.length, `…also when busy prefixes split into 3-letter files (${split} of them)` + (tinyMisses.length ? ': ' + tinyMisses.slice(0, 3).join(', ') : ''));
 }
 
-// 4. the app
+// 5. the app
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json' };
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);

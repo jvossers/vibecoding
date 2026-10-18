@@ -1,1 +1,1 @@
-{"scope":{"id":"kenya","name":"Kenya","type":"country","parent":"africa","n":3},"stats":{"n":3,"ext":[1952.75,2004.77],"hist":{"238":2,"240":1},"own":{"238":2,"240":1},"rel":[["united-kingdom",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/kenya/0/all.json"]]}
+{"scope":{"id":"kenya","name":"Kenya","type":"country","parent":"africa","wikidata":"Q114","n":3},"stats":{"n":3,"ext":[1952.75,2004.77],"hist":{"238":2,"240":1},"own":{"238":2,"240":1},"rel":[["united-kingdom",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/kenya/0/all.json"]]}

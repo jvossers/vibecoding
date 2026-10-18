@@ -13,8 +13,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```
 index.html          the whole app: markup, CSS, JS
-source/data.json    the source of truth: ~140 scopes (lanes) and ~1,050 events/eras
-build/build.mjs     turns source/data.json into data/ (run it after every data change)
+source/data.json    hand-curated: ~140 scopes (lanes) and ~1,050 events/eras
+source/wikidata.json  imported by build/wikidata.mjs (once run); curated events win over it
+build/build.mjs     turns the source into data/ (run it after every data change)
+build/wikidata.mjs  imports events from Wikidata into source/wikidata.json
 data/               generated; what the app loads (manifest, tiles, details, search)
 tests/smoke.mjs     data and tile checks + Playwright smoke test
 ```
@@ -39,6 +41,7 @@ The test first checks the data:
 - **`data/`:** it is up to date with the source.
 - **Tiles:** every lane's tiles hold exactly the events its roll-up rule selects, and no tile is too big.
 - **Small files:** the manifest stays small, every scope has a lane file, every person is in one people file, and every event has a details record.
+- **Importer:** using a made-up sample response, Wikidata dates, coverage ranking, de-duplication, merging an item found in two places, award titles and the output format, and that imported events reach lane tiles, search and details.
 - **Search:** every event and lane is findable by each word of its title or name, also in a build with tiny search files (`build(src, { searchMax: 20 })`) that forces the three-letter split.
 
 It then drives the app at desktop and phone sizes: lanes render, roll-up toggles, event details open, zoom and pan work, the lane picker and search work, share links restore the view, BCE years display, and there is no horizontal scroll at 390px. It also checks loading: the default view fetches only a few tiles, labels don't move when new tiles arrive, and a shared link to an unloaded event still opens it with its description. The label check serves a build with tiny tiles (`build(src, { maxPerTile: 8 })`) so that panning really fetches new periods. It also checks density: at every detail level, no screen-width (or quarter screen) of any lane holds more than twice the caps. Screenshots go to `tests/out/`, which is gitignored.
@@ -62,10 +65,34 @@ It then drives the app at desktop and phone sizes: lanes render, roll-up toggles
 - **Dates:** `YYYY`, `YYYY-MM` or `YYYY-MM-DD`. Negative years are BCE (`-44-03-15`). The precision you write is the precision shown. `approx: true` adds "c.".
 - **Eras** have an `end`, or `ongoing: true` (runs to today). Everything else is a point event.
 - **Importance:** 1 = world-historic, 2 = notable, 3 = local detail. It decides which events roll up, and is the biggest part of an event's score (see detail levels below).
+- **`wikidata`** (optional, on scopes and events): the Wikidata item id (`Q55` for the Netherlands). The importer uses scope ids to find events, and an event's id to avoid duplicates. Mansa Musa, World and the themes have none yet.
 - **`score`** (optional number): a manual boost when space is short, added to the computed score. Later this could come from popularity, such as how many Wikipedia languages cover the event.
 - A person's lifespan era is generated from `born`/`died`, so don't add it as an event.
 - An event can belong to several scopes. Tag the most specific place and the people involved; roll-up takes care of the parents.
 - Event ids are slugs of the title (plus `-2` etc. if needed). Keep them stable, because share links use them (`e=`).
+
+## Importing from Wikidata
+
+`build/wikidata.mjs` queries the Wikidata query service for every place and person with a `wikidata` id.
+- **Places:** dated items (point in time, or start/end) whose country (P17), "located in" (P131) or location (P276) is that place. Humans are excluded.
+- **People:** their notable works (P800, dated by publication or inception), dated awards (P166), and significant events (P793).
+- **Importance and score:** from how many Wikipedia languages cover the item. 80+ is importance 1, 30+ is importance 2, and the score is links/4.
+- **Kept:** the best-covered 400 per place.
+- **Skipped:** items without an English label, items already curated (same Wikidata id, or same title within a year), and dates vaguer than a millennium.
+- **Ids:** imported event ids are `wd-<qid>`, stable across re-runs. Awards get the person appended, e.g. `wd-q38104-einstein`.
+
+```bash
+node build/wikidata.mjs --check                 # confirm every scope's Wikidata id names the right thing
+node build/wikidata.mjs                         # import (min 15 sitelinks); then:
+node build/build.mjs
+node build/wikidata.mjs --only netherlands,einstein --min-links 30   # re-import some lanes, keep the rest
+```
+
+- **Requirements:** needs network access to `query.wikidata.org` (and `www.wikidata.org` for `--check`).
+- **Caching:** responses are cached in `build/.cache/` (gitignored); delete it to refresh.
+- **Failures:** if every query fails, the importer stops without touching `source/wikidata.json`.
+- **Date caveat:** BCE years are taken as Wikidata gives them (`-0044` → 44 BCE). Wikidata's historical year numbering may put some BCE dates one year off.
+- **Licence:** Wikidata is CC0, so no attribution is required, but `source/wikidata.json` records its source.
 
 ## How the data is loaded (tiles)
 

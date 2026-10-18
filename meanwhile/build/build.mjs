@@ -1,4 +1,5 @@
-// Builds the files the app loads from source/data.json:
+// Builds the files the app loads from source/data.json (plus source/wikidata.json,
+// if build/wikidata.mjs has imported events):
 //
 //   data/manifest.json              settings plus small indexes (people files, search files,
 //                                   busiest places per century); fetched first, always
@@ -26,6 +27,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'source', 'data.json');
+const IMPORTED = path.join(ROOT, 'source', 'wikidata.json'); // from build/wikidata.mjs, optional
 const OUT = path.join(ROOT, 'data');
 const MAX_PER_TILE = 120;
 // lod L is shown from 2^(L + LOD_BASE) px per year: lod 0 at ≤ 1/8 px/yr (~10,000
@@ -59,8 +61,22 @@ export function detailShard(id) {
   return (h % DETAIL_SHARDS).toString(16);
 }
 
+// The source: hand-curated events plus, if present, those imported from Wikidata.
+// Curated events win: an imported event with the same id or Wikidata id is dropped.
+export function loadSource() {
+  const src = JSON.parse(fs.readFileSync(SRC, 'utf8'));
+  if (!fs.existsSync(IMPORTED)) return src;
+  const ids = new Set(src.events.map((e) => e.id)), qids = new Set(src.events.map((e) => e.wikidata).filter(Boolean));
+  const scopes = new Set(src.scopes.map((s) => s.id));
+  const extra = JSON.parse(fs.readFileSync(IMPORTED, 'utf8')).events
+    .filter((e) => !ids.has(e.id) && !qids.has(e.wikidata))
+    .map((e) => ({ ...e, scopes: e.scopes.filter((id) => scopes.has(id)) }))
+    .filter((e) => e.scopes.length);
+  return { ...src, events: [...src.events, ...extra] };
+}
+
 // `maxPerTile` and `searchMax` can be lowered to exercise splitting with little data (the tests do).
-export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8')), { maxPerTile = MAX_PER_TILE, searchMax = SEARCH_MAX } = {}) {
+export function build(src = loadSource(), { maxPerTile = MAX_PER_TILE, searchMax = SEARCH_MAX } = {}) {
   const scopes = new Map(src.scopes.map((s) => [s.id, s]));
   const chain = new Map();
   for (const s of src.scopes) {
