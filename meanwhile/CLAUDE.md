@@ -38,6 +38,8 @@ The test first checks the data:
 - **`source/data.json`:** parents and scopes exist, dates parse, ends come after starts, and ids are unique.
 - **`data/`:** it is up to date with the source.
 - **Tiles:** every lane's tiles hold exactly the events its roll-up rule selects, and no tile is too big.
+- **Small files:** the manifest stays small, every scope has a lane file, every person is in one people file, and every event has a details record.
+- **Search:** every event and lane is findable by each word of its title or name, also in a build with tiny search files (`build(src, { searchMax: 20 })`) that forces the three-letter split.
 
 It then drives the app at desktop and phone sizes: lanes render, roll-up toggles, event details open, zoom and pan work, the lane picker and search work, share links restore the view, BCE years display, and there is no horizontal scroll at 390px. It also checks loading: the default view fetches only a few tiles, labels don't move when new tiles arrive, and a shared link to an unloaded event still opens it with its description. The label check serves a build with tiny tiles (`build(src, { maxPerTile: 8 })`) so that panning really fetches new periods. It also checks density: at every detail level, no screen-width (or quarter screen) of any lane holds more than twice the caps. Screenshots go to `tests/out/`, which is gitignored.
 
@@ -70,17 +72,30 @@ It then drives the app at desktop and phone sizes: lanes render, roll-up toggles
 Built for hundreds of thousands of events. The app never loads everything; `build/build.mjs` splits the data the way maps split into tiles.
 
 What the build writes to `data/`:
-- **`manifest.json`:** fetched at start.
-  - every scope, plus per-lane `stats`: event count, time extent, a 25-year histogram for the overview bar and the busiest-places suggestions, and places that share many events with the lane
-  - the tile index: `tiles[scope] = [[lod, from, to, file], …]`
+Every file is small and fetched only when needed; nothing grows with the total amount of data except the number of files.
+- **`manifest.json`:** fetched first, always (~2 KB compressed). It holds only:
+  - settings (detail-level zoom mapping, histogram bins, details shard count)
+  - the list of people files and search files
+  - the busiest places per century, for the picker's suggestions
   - a content hash `v`, added to every fetch (`?v=`) so caches refresh when the data changes
+- **`scopes/places.json`:** every place and theme with its event count `n`. Fetched at start, because breadcrumbs, roll-up and the Places tab need the whole tree. This should stay a few thousand records at most.
+- **`scopes/people-<n>.json`:** people by period of birth (`manifest.people` lists the files with their year ranges). Fetched by the People tab, and by the "alive in this period" and "alive at the same time" suggestions, via `peopleFor()`. The People tab shows the best-covered 60 per period; search finds the rest.
+- **`lanes/<id>.json`:** fetched when a lane is shown (`ensureLane()`). Contains:
+  - the lane's full record
+  - `stats`: event count, time extent, a 25-year histogram for the overview bar, places that share many events with it, and its best-covered people
+  - its tile index: entries `[lodFrom, lodTo, from, to, file]`
 - **`tiles/<scope>/<band>/<from|all>.json`:** one lane, one band of detail levels, one period.
-  - The tile index entries are `[lodFrom, lodTo, from, to, file]`.
   - Records are compact arrays: `[id, title, start, end|0, importance, lod, flags, scopes, via|0]`. `lod` is this event's detail level *in this lane*.
   - Roll-up is done at build time, so a continent's tiles already include its countries' qualifying events. `via` names the child place an event came from; 0 means it's the lane's own.
   - Levels are grouped into 4 bands (0–4, 5–7, 8–10, 11–13), so a view needs few requests. A band's period splits 1000 → 100 → 10 → 1 years until a tile has ≤ 120 events. Eras go in every period they overlap.
-- **`details/<shard>.json`:** descriptions, fetched when an event is opened. The shard is a hash of the id; `detailShard()` is the same in the build and the app.
-- **`search.json`:** every event in short form, fetched on the first event search, or to open a shared link to an event that isn't loaded.
+- **`details/<shard>.json`:** fetched when an event is opened, or for a shared link to an event that isn't loaded (`loadEvent()`).
+  - Each entry is `id → [record, description, {personId: name}]`.
+  - The shard is a hash of the id; `detailShard()` is the same in the build and the app.
+- **`search/<prefix>.json`:** search entries filed under the first two letters of each word (`words()` in the build, `searchWords()` in the app: lower-case, accents and filler words like "of"/"the" removed).
+  - A file over 1,500 entries splits by three letters, and two-letter words then go in `<prefix>_`.
+  - Entries are events `['e', ...record]` and lanes `['s', id, name, type, extra]`, where extra is `[born, died, role, home]` for people and the parent for places.
+  - A query loads the file for its longest word (`searchFile()`, `searchLookup()`) and keeps entries where every query word starts a word of the title. Matching is by word start, not anywhere in the text.
+  - Search covers titles and names, not descriptions.
 
 **Detail levels (`lod`, `assignLods()` in the build):** these guarantee that no screen gets crowded, however much data there is.
 - **Zoom:** level L appears from 2^(L − 3) px per year. Level 0 shows even with ~10,000 years on screen; level 13 needs about a one-year view. There are 14 levels, one per doubling of zoom, matching the app's layout levels.
@@ -93,7 +108,9 @@ What the build writes to `data/`:
 - **Ripple effect:** a busy period pushes its lesser events to finer levels. Around 1960, for example, Nigeria's independence only appears in the Africa lane once you zoom in to a few years.
 
 In the app:
-- `loadVisible()` runs when the view comes to rest. It fetches tiles for the lanes on screen, a screen's width either side, and full detail around a selected event.
+- `loadVisible()` runs when the view comes to rest. It fetches the lane files for the lanes on screen, then their tiles for the period on screen plus a screen's width either side, and full detail around a selected event.
+- At start the app loads the manifest, `places.json` and the lane files for the lanes in the link (or the defaults) in parallel. Anything else arrives on demand: people, search files, details.
+- People can be known before their lane file arrives (from a search entry, a people file or an event's names). `registerScope()` merges whatever is known, and lanes render with what they have until the lane file fills in the rest.
 - `maxLod(pxPerYear)` gives the finest level to show, using `lodBase` and `lodCount` from the manifest.
 - `layoutLane()` is incremental: new events fill free rows and never move events already placed.
 

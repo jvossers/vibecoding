@@ -1,9 +1,13 @@
 // Builds the files the app loads from source/data.json:
 //
-//   data/manifest.json             scopes (lanes), per-lane stats and the tile index
+//   data/manifest.json              settings plus small indexes (people files, search files,
+//                                   busiest places per century); fetched first, always
+//   data/scopes/places.json         every place and theme; fetched at start
+//   data/scopes/people-<n>.json     people, by period of birth; fetched when needed
+//   data/lanes/<scope>.json         one lane's record, stats and tile index
 //   data/tiles/<scope>/<band>/*.json events for one lane, a band of detail levels, one period
-//   data/details/<shard>.json      event descriptions, fetched when an event is opened
-//   data/search.json               every event in short form, fetched on first search
+//   data/details/<shard>.json       full event records with descriptions, by id
+//   data/search/<prefix>.json       search entries filed by the first 2 (or 3) letters of each word
 //
 // A lane's tiles already include the events rolled up from its child places, so
 // the app never needs the whole data set.
@@ -32,11 +36,14 @@ const CAP = 30;          // at most this many events in a screen-width around an
 const LOCAL_CAP = 10;    // …and this many in 3/8 of a screen, so they can't bunch up
 const ERA_CAP = 4;       // at most this many eras overlapping at once
 const BANDS = [[0, 4], [5, 7], [8, 10], [11, 13]];
-export const LIMITS = { LOD_BASE, LOD_COUNT, SCREEN, CAP, LOCAL_CAP, ERA_CAP, MAX_PER_TILE };
 const PERIODS = [1000, 100, 10, 1];           // tile sizes in years, coarsest first
 const ALL = [-99999, 99999];                  // the "whole of history" tile
 const HIST_ORIGIN = -4000, HIST_BIN = 25;     // per-lane event counts, for the overview bar
 const DETAIL_SHARDS = 16;
+const SEARCH_MAX = 1500;  // entries per search file before it splits by three letters
+// people files, by year of birth
+const PEOPLE_PERIODS = [[-1e9, 500, 'Ancient world'], [500, 1450, 'Middle Ages'], [1450, 1700, 'Renaissance and early modern'], [1700, 1850, 'Age of revolutions'], [1850, 1e9, 'Modern times']];
+export const LIMITS = { LOD_BASE, LOD_COUNT, SCREEN, CAP, LOCAL_CAP, ERA_CAP, MAX_PER_TILE, SEARCH_MAX };
 const NOW = new Date().getUTCFullYear() + 1;  // open-ended ("ongoing") eras run to here
 
 const DATE = /^(-?\d+)(?:-(\d\d))?(?:-(\d\d))?$/;
@@ -52,8 +59,8 @@ export function detailShard(id) {
   return (h % DETAIL_SHARDS).toString(16);
 }
 
-// `maxPerTile` can be lowered to exercise period splitting with little data (the tests do).
-export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8')), { maxPerTile = MAX_PER_TILE } = {}) {
+// `maxPerTile` and `searchMax` can be lowered to exercise splitting with little data (the tests do).
+export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8')), { maxPerTile = MAX_PER_TILE, searchMax = SEARCH_MAX } = {}) {
   const scopes = new Map(src.scopes.map((s) => [s.id, s]));
   const chain = new Map();
   for (const s of src.scopes) {
@@ -70,28 +77,33 @@ export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8')), { maxPerTi
   // lod is per lane (it's in the tile record); the search index doesn't need it
   const record = (e, lod = 0) => [e.id, e.title, e.start, e.end || 0, e.importance, lod, flags(e), e.scopes];
 
-  // Roll-up: the same rule the app used to apply on the fly.
+  // Roll-up: an event shows in the lanes of the scopes it's tagged with, and (if
+  // it qualifies) in their ancestors' lanes. Walking each tag's ancestors keeps
+  // this proportional to the data, not events × scopes.
   const lanes = new Map(src.scopes.map((s) => [s.id, []]));
   for (const e of events) {
-    for (const s of src.scopes) {
-      let best = null;
-      for (const sid of e.scopes) {
-        const d = chain.get(sid).indexOf(s.id);
-        if (d === 0) { best = { d: 0, via: null }; break; }
-        if (d > 0 && (!best || d < best.d)) best = { d, via: sid };
-      }
-      if (!best) continue;
-      if (best.d === 1 && e.importance > 2) continue;
-      if (best.d >= 1 && e.era && (best.d > 1 || e.importance > 1)) continue; // eras roll up one level, big ones only
-      if (best.d >= 2 && e.importance > 1) continue;
-      lanes.get(s.id).push({ e, via: best.via });
+    const best = new Map(); // lane id → { d, via }
+    for (const sid of e.scopes) {
+      chain.get(sid).forEach((lane, d) => {
+        const b = best.get(lane);
+        if (!b || d < b.d) best.set(lane, { d, via: d ? sid : null });
+      });
+    }
+    for (const [lane, { d, via }] of best) {
+      if (d === 1 && e.importance > 2) continue;
+      if (d >= 1 && e.era && (d > 1 || e.importance > 1)) continue; // eras roll up one level, big ones only
+      if (d >= 2 && e.importance > 1) continue;
+      lanes.get(lane).push({ e, via });
     }
   }
 
   const files = new Map(); // relative path → JSON value
-  const tileIndex = {};
-  const stats = {};
   const bin = (y) => Math.floor((y - HIST_ORIGIN) / HIST_BIN);
+  const isPerson = (s) => s.type === 'person';
+  const isPlace = (s) => s.type !== 'person' && s.type !== 'theme';
+  const people = src.scopes.filter(isPerson);
+  const count = new Map(src.scopes.map((s) => [s.id, lanes.get(s.id).length]));
+  const personRecord = (p) => ({ ...p, n: count.get(p.id) });
   for (const s of src.scopes) {
     const items = lanes.get(s.id);
     // stats for the overview bar, the lane picker and its suggestions
@@ -103,15 +115,17 @@ export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8')), { maxPerTi
       if (!via) own[bin(e.y0)] = (own[bin(e.y0)] || 0) + 1;
       for (const id of e.scopes) {
         const o = scopes.get(id);
-        if (o.type === 'person' || o.type === 'theme' || chain.get(id).includes(s.id) || chain.get(s.id).includes(id)) continue;
+        if (!isPlace(o) || chain.get(id).includes(s.id) || chain.get(s.id).includes(id)) continue;
         rel.set(id, (rel.get(id) || 0) + 1);
       }
     }
-    stats[s.id] = {
+    const stats = {
       n: items.length,
       ext: items.length ? [round(a), round(b)] : null,
       hist, own,
       rel: [...rel].sort((x, y) => y[1] - x[1] || (x[0] < y[0] ? -1 : 1)).slice(0, 6),
+      // the best-covered people from this place, for "From …" suggestions
+      people: people.filter((p) => p.home === s.id).sort((x, y) => count.get(y.id) - count.get(x.id)).slice(0, 4).map(personRecord),
     };
     // tiles, per band of detail levels
     assignLods(items);
@@ -140,18 +154,57 @@ export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8')), { maxPerTi
       };
       split(band, ALL[0], ALL[1], 0);
     }
-    if (entries.length) tileIndex[s.id] = entries;
+    // one small file per lane: its record, stats and tile index, fetched when it's shown
+    files.set(`lanes/${s.id}.json`, { scope: isPerson(s) ? personRecord(s) : { ...s, n: items.length }, stats, tiles: entries });
   }
 
-  // descriptions, sharded by id
+  // every place and theme (needed for breadcrumbs and roll-up), loaded at start
+  files.set('scopes/places.json', src.scopes.filter((s) => !isPerson(s)).map((s) => ({ ...s, n: count.get(s.id) })));
+  // people, by period of birth, loaded when the People tab or a suggestion needs them
+  const peopleIndex = PEOPLE_PERIODS.map(([from, to, title], i) => {
+    const list = people.filter((p) => year(p.born) >= from && year(p.born) < to).sort((x, y) => year(x.born) - year(y.born)).map(personRecord);
+    files.set(`scopes/people-${i}.json`, list);
+    return { file: `scopes/people-${i}.json`, title, from, to, n: list.length };
+  }).filter((x) => x.n);
+
+  // busiest places per century, for the picker's "busiest places" suggestions
+  const busy = {};
+  for (const e of events) {
+    const c = Math.floor(e.y0 / 100) * 100;
+    for (const id of e.scopes) if (isPlace(scopes.get(id)) && id !== 'world') ((busy[c] = busy[c] || {})[id] = (busy[c][id] || 0) + 1);
+  }
+  for (const c of Object.keys(busy)) busy[c] = Object.entries(busy[c]).sort((x, y) => y[1] - x[1] || (x[0] < y[0] ? -1 : 1)).slice(0, 12);
+
+  // event details, sharded by id: the full record (so a shared link can open any
+  // event), its description and the names of people it's tagged with
   const shards = {};
   for (const e of events) {
-    if (!e.desc) continue;
-    const k = detailShard(e.id);
-    (shards[k] = shards[k] || {})[e.id] = e.desc;
+    const names = {};
+    for (const id of e.scopes) if (isPerson(scopes.get(id))) names[id] = scopes.get(id).name;
+    (shards[detailShard(e.id)] = shards[detailShard(e.id)] || {})[e.id] = [record(e), e.desc || '', names];
   }
   for (const [k, v] of Object.entries(shards)) files.set(`details/${k}.json`, v);
-  files.set('search.json', { events: events.map(record) });
+
+  // search: entries filed under the first letters of each word; a file that gets
+  // too big is split by three letters. Events: ['e', ...record]; lanes:
+  // ['s', id, name, type, extra] (extra: [born, died, role, home] for people).
+  const entries = [
+    ...events.map((e) => ({ text: e.title, row: ['e', ...record(e)] })),
+    ...src.scopes.map((s) => ({
+      text: [s.name, ...(s.aliases || []), s.role || ''].join(' '),
+      row: ['s', s.id, s.name, s.type, isPerson(s) ? [s.born, s.died, s.role, s.home] : s.parent || 0],
+    })),
+  ];
+  const byKey = new Map();
+  const file = (k, x) => { if (!byKey.has(k)) byKey.set(k, new Set()); byKey.get(k).add(x); };
+  for (const x of entries) for (const t of words(x.text)) file(t.slice(0, 2), x);
+  for (const [k, set] of [...byKey]) {
+    if (set.size <= searchMax) continue;
+    byKey.delete(k);
+    for (const x of set) for (const t of words(x.text)) if (t.startsWith(k)) file(t.length > 2 ? t.slice(0, 3) : k + '_', x);
+  }
+  const searchKeys = [...byKey.keys()].sort();
+  for (const k of searchKeys) files.set(`search/${k}.json`, [...byKey.get(k)].map((x) => x.row));
 
   // a content hash, so the app can bust caches when the data changes
   const hash = crypto.createHash('sha1');
@@ -160,13 +213,20 @@ export function build(src = JSON.parse(fs.readFileSync(SRC, 'utf8')), { maxPerTi
     v: hash.digest('hex').slice(0, 10),
     histOrigin: HIST_ORIGIN, histBin: HIST_BIN, detailShards: DETAIL_SHARDS,
     lodBase: LOD_BASE, lodCount: LOD_COUNT,
-    scopes: src.scopes.map((s) => ({ ...s, stats: stats[s.id] })),
-    tiles: tileIndex,
+    people: peopleIndex,
+    search: searchKeys,
+    busy,
   };
   files.set('manifest.json', manifest);
   return files;
 }
 const round = (y) => Math.round(y * 100) / 100;
+// Words for search: lower-case, without accents or filler words. Shared with the
+// app (searchWords in index.html), which splits queries the same way.
+const STOP = new Set(['of', 'the', 'and', 'in', 'on', 'at', 'to', 'for', 'by', 'an']);
+export function words(text) {
+  return text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().split(/[^a-z0-9]+/).filter((t) => t.length >= 2 && !STOP.has(t));
+}
 
 // How much an event deserves a place when space is short. Importance dominates;
 // a description and links to several places or people break ties, and an

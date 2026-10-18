@@ -1,0 +1,1 @@
+{"scope":{"id":"gandhi","name":"Mahatma Gandhi","type":"person","parent":null,"born":"1869-10-02","died":"1948-01-30","home":"india","role":"Independence leader","n":4},"stats":{"n":4,"ext":[1893.33,1948.08],"hist":{"235":1,"237":3},"own":{"235":1,"237":3},"rel":[["india",3],["south-africa",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/gandhi/0/all.json"]]}

@@ -1,0 +1,1 @@
+{"scope":{"id":"cuba","name":"Cuba","type":"country","parent":"north-america","n":8},"stats":{"n":8,"ext":[1492.82,2016.9],"hist":{"219":1,"220":1,"235":1,"238":3,"240":2},"own":{"219":1,"220":1,"235":1,"238":3,"240":2},"rel":[["usa",4],["spain",2],["russia",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/cuba/0/all.json"]]}

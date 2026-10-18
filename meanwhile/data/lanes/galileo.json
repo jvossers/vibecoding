@@ -1,0 +1,1 @@
+{"scope":{"id":"galileo","name":"Galileo Galilei","type":"person","parent":null,"born":"1564-02-15","died":"1642-01-08","home":"italy","role":"Astronomer","n":3},"stats":{"n":3,"ext":[1610.02,1633.47],"hist":{"224":1,"225":2},"own":{"224":1,"225":2},"rel":[["italy",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/galileo/0/all.json"]]}

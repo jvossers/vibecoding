@@ -1,0 +1,1 @@
+{"scope":{"id":"mansa-musa","name":"Mansa Musa","type":"person","parent":null,"born":"1280","died":"1337","home":"mali","role":"Emperor of Mali","n":3},"stats":{"n":3,"ext":[1312,1337],"hist":{"212":2,"213":1},"own":{"212":2,"213":1},"rel":[["mali",3],["africa",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/mansa-musa/0/all.json"]]}

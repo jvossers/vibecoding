@@ -1,0 +1,1 @@
+{"scope":{"id":"dr-congo","name":"DR Congo","type":"country","parent":"africa","aliases":["Congo"],"n":7},"stats":{"n":7,"ext":[1885,2003.55],"hist":{"235":1,"236":1,"238":4,"239":1},"own":{"235":1,"236":1,"238":4,"239":1},"rel":[["belgium",3],["rwanda",1],["usa",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/dr-congo/0/all.json"]]}

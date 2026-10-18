@@ -1,0 +1,1 @@
+{"scope":{"id":"mandela","name":"Nelson Mandela","type":"person","parent":null,"born":"1918-07-18","died":"2013-12-05","home":"south-africa","role":"President of South Africa","n":5},"stats":{"n":5,"ext":[1962.59,1999.45],"hist":{"238":2,"239":3},"own":{"238":2,"239":3},"rel":[["south-africa",3]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/mandela/0/all.json"]]}

@@ -1,0 +1,1 @@
+{"scope":{"id":"argentina","name":"Argentina","type":"country","parent":"south-america","n":8},"stats":{"n":8,"ext":[1580.44,2022.96],"hist":{"223":1,"232":1,"237":1,"239":4,"240":1},"own":{"223":1,"232":1,"237":1,"239":4,"240":1},"rel":[["united-kingdom",2],["spain",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/argentina/0/all.json"]]}

@@ -1,0 +1,1 @@
+{"scope":{"id":"columbus","name":"Christopher Columbus","type":"person","parent":null,"born":"1451","died":"1506-05-20","home":"italy","role":"Explorer","n":3},"stats":{"n":3,"ext":[1492.59,1504.85],"hist":{"219":3},"own":{"219":3},"rel":[["cuba",1],["north-america",1],["spain",1],["world",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/columbus/0/all.json"]]}

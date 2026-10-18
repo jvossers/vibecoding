@@ -1,0 +1,1 @@
+{"scope":{"id":"brazil","name":"Brazil","type":"country","parent":"south-america","n":12},"stats":{"n":12,"ext":[1500.31,2016.59],"hist":{"220":2,"232":3,"235":2,"238":4,"240":1},"own":{"220":2,"232":3,"235":2,"238":4,"240":1},"rel":[["portugal",4],["sweden",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/brazil/0/all.json"]]}

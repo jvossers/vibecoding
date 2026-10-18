@@ -1,0 +1,1 @@
+{"scope":{"id":"anne-frank","name":"Anne Frank","type":"person","parent":null,"born":"1929-06-12","died":"1945-02","home":"netherlands","role":"Diarist","n":6},"stats":{"n":6,"ext":[1942.45,1947.48],"hist":{"237":6},"own":{"237":6},"rel":[["amsterdam",3],["netherlands",3],["germany",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/anne-frank/0/all.json"]]}

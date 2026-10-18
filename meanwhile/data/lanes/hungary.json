@@ -1,0 +1,1 @@
+{"scope":{"id":"hungary","name":"Hungary","type":"country","parent":"europe","n":6},"stats":{"n":6,"ext":[1000.98,2004.33],"hist":{"200":1,"221":1,"233":1,"238":1,"239":1,"240":1},"own":{"200":1,"221":1,"233":1,"238":1,"239":1,"240":1},"rel":[["austria",2],["czechia",1],["poland",1],["russia",1],["turkey",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/hungary/0/all.json"]]}

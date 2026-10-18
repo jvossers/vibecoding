@@ -1,0 +1,1 @@
+{"scope":{"id":"haiti","name":"Haiti","type":"country","parent":"north-america","n":3},"stats":{"n":3,"ext":[1791.64,2010.03],"hist":{"231":1,"232":1,"240":1},"own":{"231":1,"232":1,"240":1},"rel":[["france",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/haiti/0/all.json"]]}

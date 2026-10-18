@@ -1,0 +1,1 @@
+{"scope":{"id":"julius-caesar","name":"Julius Caesar","type":"person","parent":null,"born":"-100-07-12","died":"-44-03-15","home":"italy","role":"Roman general & dictator","n":4},"stats":{"n":4,"ext":[-58,-43.79],"hist":{"157":2,"158":2},"own":{"157":2,"158":2},"rel":[["france",2],["italy",2],["rome",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/julius-caesar/0/all.json"]]}

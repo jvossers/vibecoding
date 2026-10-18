@@ -1,0 +1,1 @@
+{"scope":{"id":"ireland","name":"Ireland","type":"country","parent":"europe","n":8},"stats":{"n":8,"ext":[432,1998.27],"hist":{"177":1,"200":1,"227":1,"233":1,"236":2,"238":1,"239":1},"own":{"177":1,"200":1,"227":1,"233":1,"236":2,"238":1,"239":1},"rel":[["united-kingdom",5],["netherlands",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/ireland/0/all.json"]]}

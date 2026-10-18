@@ -1,0 +1,1 @@
+{"scope":{"id":"new-york","name":"New York City","type":"city","parent":"usa","aliases":["NYC","New Amsterdam"],"n":10},"stats":{"n":10,"ext":[1625,2001.69],"hist":{"225":1,"235":4,"236":1,"237":2,"238":1,"240":1},"own":{"225":1,"235":4,"236":1,"237":2,"238":1,"240":1},"rel":[["france",1],["netherlands",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/new-york/0/all.json"]]}

@@ -1,0 +1,1 @@
+{"scope":{"id":"lenin","name":"Vladimir Lenin","type":"person","parent":null,"born":"1870-04-22","died":"1924-01-21","home":"russia","role":"Revolutionary leader","n":5},"stats":{"n":5,"ext":[1914.67,1924.05],"hist":{"236":5},"own":{"236":5},"rel":[["russia",4],["switzerland",1],["world",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/lenin/0/all.json"]]}

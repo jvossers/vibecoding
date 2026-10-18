@@ -1,0 +1,1 @@
+{"scope":{"id":"mozart","name":"Wolfgang Amadeus Mozart","type":"person","parent":null,"born":"1756-01-27","died":"1791-12-05","home":"austria","role":"Composer","n":5},"stats":{"n":5,"ext":[1763.42,1791.93],"hist":{"230":1,"231":4},"own":{"230":1,"231":4},"rel":[["austria",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/mozart/0/all.json"]]}

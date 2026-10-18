@@ -1,0 +1,1 @@
+{"scope":{"id":"chile","name":"Chile","type":"country","parent":"south-america","n":8},"stats":{"n":8,"ext":[1250,2010.78],"hist":{"210":1,"232":1,"238":5,"240":1},"own":{"210":1,"232":1,"238":5,"240":1},"rel":[["oceania",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/chile/0/all.json"]]}

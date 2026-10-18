@@ -445,6 +445,8 @@ const COMBOS = [
   { title: 'Medicine through time', sub: 'From the Black Death to mRNA', lanes: ['medicine', 'science', 'world'], from: 1300, to: 2025, at: 1796.4 },
   { title: 'Cities side by side', sub: 'Amsterdam, London, Paris and New York', lanes: ['amsterdam', 'london', 'paris', 'new-york'], from: 1600, to: 2025, at: 1889 }
 ];
+// names for the people in COMBOS, which may not be loaded when the combos are listed
+const COMBO_NAMES = { einstein: 'Albert Einstein', darwin: 'Charles Darwin', lincoln: 'Abraham Lincoln', mozart: 'Mozart', 'julius-caesar': 'Julius Caesar', cleopatra: 'Cleopatra', napoleon: 'Napoleon', jefferson: 'Thomas Jefferson', shakespeare: 'Shakespeare', 'elizabeth-i': 'Elizabeth I', bach: 'J. S. Bach', newton: 'Isaac Newton', 'peter-the-great': 'Peter the Great', 'ibn-battuta': 'Ibn Battuta', 'mansa-musa': 'Mansa Musa', armstrong: 'Neil Armstrong', jfk: 'John F. Kennedy' };
 
 // ---------- helpers ----------
 const $ = (id) => document.getElementById(id);
@@ -499,100 +501,187 @@ function textW(s) {
 function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 1800); }
 
 // ---------- data ----------
-// The app starts from data/manifest.json (lanes, per-lane stats, tile index) and
-// loads event tiles for the lanes and period on screen as you go; see build/build.mjs.
+// Everything is fetched as needed from data/ (see build/build.mjs): the small
+// manifest and all places at start, then one file per lane on screen, its event
+// tiles for the period and zoom, people by period, search files by first letters
+// and event details by id.
 const DATA = 'data/';
 let SCOPES = new Map(), CHILDREN = new Map(), MANIFEST = null;
 const EVENT_BY_ID = new Map();   // every event loaded so far
+const laneInfo = new Map();      // scope id → { stats, tiles } once its lane file is in
 const laneData = new Map();      // scope id → Map(event id → { e, rolled, via, lod }), loaded so far
 const laneVersion = new Map();   // scope id → bumps when new events arrive for that lane
 const tileState = new Map();     // tile file → 'loading' | 'done'
-function dataUrl(file) { return DATA + file + '?v=' + MANIFEST.v; }
+const fetched = new Map();       // data file → Promise of its JSON (each file fetched once)
+function getData(file) {
+  if (!fetched.has(file)) fetched.set(file, fetch(DATA + file + '?v=' + MANIFEST.v).then((r) => (r.ok ? r.json() : Promise.reject(new Error(file + ': ' + r.status)))));
+  return fetched.get(file);
+}
+const EMPTY_STATS = { n: 0, ext: null, hist: {}, own: {}, rel: [], people: [] };
+const stats = (id) => (laneInfo.get(id) || {}).stats || EMPTY_STATS;
+function laneMap(id) {
+  if (!laneData.has(id)) { laneData.set(id, new Map()); laneVersion.set(id, 0); }
+  return laneData.get(id);
+}
 
-function prepare(manifest) {
+// Add what we know about a scope; later records (e.g. a lane file) fill in more.
+function registerScope(rec) {
+  const s = Object.assign(SCOPES.get(rec.id) || {}, rec);
+  SCOPES.set(s.id, s);
+  if (!CHILDREN.has(s.id)) CHILDREN.set(s.id, []);
+  s.search = [s.name, ...(s.aliases || []), s.role || ''].join(' ').toLowerCase();
+  if (s.type === 'person') {
+    s.chain = [s.id]; s.depth = 0;
+    if (s.born && !s.b) {
+      s.b = parseDate(s.born); s.dd = parseDate(s.died);
+      // a person's lifespan is drawn as an era in their lane; it isn't in the tiles
+      const e = toEvent(['life-' + s.id, s.name, s.born, s.died, 1, 0, 0, [s.id]]);
+      e.life = true; e.desc = s.role + ', ' + fmtDate(s.b) + ' – ' + fmtDate(s.dd) + '.';
+      laneMap(s.id).set(e.id, { e, rolled: false, via: null, lod: 0 });
+    }
+  }
+  return s;
+}
+const chainOf = (id) => (SCOPES.get(id) || {}).chain || [id];
+function prepare(manifest, places) {
   MANIFEST = manifest;
-  manifest.scopes.forEach((s) => { SCOPES.set(s.id, s); CHILDREN.set(s.id, []); laneData.set(s.id, new Map()); laneVersion.set(s.id, 0); });
-  manifest.scopes.forEach((s) => { if (s.parent) CHILDREN.get(s.parent).push(s.id); });
-  manifest.scopes.forEach((s) => {
-    const chain = []; let c = s;
+  places.forEach(registerScope);
+  places.forEach((s) => { if (s.parent) CHILDREN.get(s.parent).push(s.id); });
+  places.forEach((p) => {
+    const s = SCOPES.get(p.id), chain = []; let c = s;
     while (c) { chain.push(c.id); c = c.parent ? SCOPES.get(c.parent) : null; }
     s.chain = chain; // self → … → root
     s.depth = chain.length - 1;
-    s.search = [s.name, ...(s.aliases || []), s.role || ''].join(' ').toLowerCase();
-  });
-  // a person's lifespan is drawn as an era in their lane; it isn't in the tiles
-  manifest.scopes.filter((s) => s.type === 'person').forEach((p) => {
-    p.b = parseDate(p.born); p.dd = parseDate(p.died);
-    const e = toEvent(['life-' + p.id, p.name, p.born, p.died, 1, 0, 0, [p.id]]);
-    e.life = true; e.desc = p.role + ', ' + fmtDate(p.b) + ' – ' + fmtDate(p.dd) + '.';
-    laneData.get(p.id).set(e.id, { e, rolled: false, via: null, lod: 0 });
   });
 }
-// tile and search records: [id, title, start, end|0, importance, lod, flags, scopes]
+// A lane's own file: its full record, stats and tile index.
+function ensureLane(id) {
+  if (laneInfo.has(id)) return Promise.resolve(true);
+  return getData('lanes/' + id + '.json').then((f) => {
+    registerScope(f.scope);
+    laneInfo.set(id, { stats: f.stats, tiles: f.tiles });
+    (f.stats.people || []).forEach(registerScope);
+    laneMap(id);
+    return true;
+  }).catch((err) => { console.error(err); return false; });
+}
+// People, by period of birth. peopleFor() returns true if everyone who could be
+// alive in [from, to] is loaded; otherwise it starts loading and calls `then`.
+const peopleDone = new Set();
+function peopleFor(from, to, then) {
+  const files = MANIFEST.people.filter((p) => p.from <= to && p.to >= from - 120).map((p) => p.file); // lives up to ~120 years
+  const missing = files.filter((f) => !peopleDone.has(f));
+  if (!missing.length) return true;
+  Promise.all(missing.map((f) => getData(f).then((list) => { list.forEach(registerScope); peopleDone.add(f); }))).then(() => then && then());
+  return false;
+}
+const PEOPLE = () => [...SCOPES.values()].filter((s) => s.type === 'person' && s.b);
+
+// tile, search and detail records: [id, title, start, end|0, importance, lod, flags, scopes]
 // (lod is per lane, so it's kept on the lane item, not the event)
 function toEvent(r) {
   if (EVENT_BY_ID.has(r[0])) return EVENT_BY_ID.get(r[0]);
-  const [id, title, start, end, importance, lod, flags, scopes] = r;
+  const [id, title, start, end, importance, , flags, scopes] = r;
   const approx = !!(flags & 1), ongoing = !!(flags & 2);
   const s = parseDate(start), en = end ? parseDate(end) : null, era = !!(end || ongoing);
   const ev = { id, title, start, end: end || undefined, importance, scopes, approx, ongoing, s, en, era,
     y0: s.n, y1: era ? (en ? en.n : NOW) : s.n };
   if (era && en && en.n === s.n) ev.y1 = s.n + 1 / 365;
   ev.when = era ? fmtDate(s, approx) + ' – ' + (en ? fmtDate(en, approx) : 'today') : fmtDate(s, approx);
-  ev.search = title.toLowerCase();
+  ev.words = searchWords(title);
   EVENT_BY_ID.set(id, ev);
   return ev;
 }
-const stats = (id) => SCOPES.get(id).stats;
 
 // Fetch the tiles each lane needs for [from, to] at detail levels up to `upTo`.
 // Resolves once they're in; the caller re-renders.
 function loadTiles(scopeIds, from, to, upTo) {
   const wanted = [];
   for (const id of new Set(scopeIds)) {
-    for (const [lo, , a, b, file] of MANIFEST.tiles[id] || []) {
+    for (const [lo, , a, b, file] of (laneInfo.get(id) || {}).tiles || []) {
       if (lo <= upTo && b > from && a < to && !tileState.has(file)) wanted.push(file);
     }
   }
   if (!wanted.length) return Promise.resolve(false);
   wanted.forEach((f) => tileState.set(f, 'loading'));
-  return Promise.all(wanted.map((file) => fetch(dataUrl(file)).then((r) => r.json()).then((t) => {
-    const lane = laneData.get(t.scope);
+  return Promise.all(wanted.map((file) => getData(file).then((t) => {
+    const lane = laneMap(t.scope);
     for (const rec of t.events) {
       const e = toEvent(rec), via = rec[8] || null;
       if (!lane.has(e.id)) lane.set(e.id, { e, rolled: !!via, via, lod: rec[5] });
     }
     laneVersion.set(t.scope, laneVersion.get(t.scope) + 1);
     tileState.set(file, 'done');
-  }).catch((err) => { tileState.delete(file); console.error('tile failed', file, err); }))).then(() => true);
+  }).catch((err) => { tileState.delete(file); fetched.delete(file); console.error('tile failed', file, err); }))).then(() => true);
 }
 
-// The search index: every event in short form, fetched the first time it's needed.
-let searchIndex = null, searchLoading = null;
-function loadSearch() {
-  if (searchIndex) return Promise.resolve(searchIndex);
-  if (!searchLoading) searchLoading = fetch(dataUrl('search.json')).then((r) => r.json()).then((d) => (searchIndex = d.events.map(toEvent)));
-  return searchLoading;
+// Search: entries are filed by the first two (or, for busy prefixes, three)
+// letters of each word. A query looks up the file for its longest word.
+// Must split text the same way as words() in build/build.mjs.
+const STOP_WORDS = new Set(['of', 'the', 'and', 'in', 'on', 'at', 'to', 'for', 'by', 'an']);
+function searchWords(text) {
+  return text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().split(/[^a-z0-9]+/).filter((t) => t.length >= 2 && !STOP_WORDS.has(t));
 }
-// Descriptions live in separate files, fetched when an event is opened.
-const detailFiles = new Map();
+function searchFile(word) {
+  const keys = MANIFEST.searchKeys || (MANIFEST.searchKeys = new Set(MANIFEST.search));
+  if (keys.has(word.slice(0, 2))) return word.slice(0, 2);
+  if (word.length >= 3 && keys.has(word.slice(0, 3))) return word.slice(0, 3);
+  if (word.length === 2 && keys.has(word + '_')) return word + '_';
+  return null;
+}
+const searchResults = new Map(); // query → { events, scopes } once its file is in
+// Returns the matches for a query if its search file is loaded; otherwise starts
+// loading it and calls `then` when ready.
+function searchLookup(q, then) {
+  const ws = searchWords(q);
+  if (!ws.length) return { events: [], scopes: [] };
+  if (searchResults.has(q)) return searchResults.get(q);
+  const word = ws.slice().sort((a, b) => b.length - a.length)[0];
+  const key = searchFile(word);
+  if (!key) { const r = { events: [], scopes: [] }; searchResults.set(q, r); return r; }
+  getData('search/' + key + '.json').then((rows) => {
+    const res = { events: [], scopes: [] };
+    for (const r of rows) {
+      const text = r[0] === 'e' ? r[2] : r[2] + ' ' + (Array.isArray(r[4]) ? r[4][2] : '');
+      const tw = searchWords(text);
+      if (!ws.every((w) => tw.some((t) => t.startsWith(w)))) continue;
+      if (r[0] === 'e') res.events.push(toEvent(r.slice(1)));
+      else {
+        const [, id, name, type, extra] = r;
+        const rec = Array.isArray(extra) ? { id, name, type, born: extra[0], died: extra[1], role: extra[2], home: extra[3] } : { id, name, type, parent: extra || null };
+        res.scopes.push(SCOPES.has(id) ? SCOPES.get(id) : registerScope(rec));
+      }
+    }
+    searchResults.set(q, res);
+    then && then(res);
+  }).catch((err) => console.error(err));
+  return null;
+}
+
+// Event details (record, description, people's names), by id, fetched when opened.
 function detailShard(id) {
   let h = 5381;
   for (const c of id) h = ((h * 33) ^ c.charCodeAt(0)) >>> 0;
   return (h % MANIFEST.detailShards).toString(16);
 }
-function loadDetail(e) {
-  if (e.desc !== undefined) return Promise.resolve();
-  const k = detailShard(e.id);
-  if (!detailFiles.has(k)) detailFiles.set(k, fetch(dataUrl('details/' + k + '.json')).then((r) => (r.ok ? r.json() : {})).catch(() => ({})));
-  return detailFiles.get(k).then((d) => { e.desc = d[e.id] || ''; });
+function loadEvent(id) {
+  return getData('details/' + detailShard(id) + '.json').then((d) => {
+    const x = d[id];
+    if (!x) return null;
+    const e = toEvent(x[0]);
+    if (e.desc === undefined) e.desc = x[1];
+    e.names = x[2];
+    return e;
+  }).catch(() => null);
 }
+const loadDetail = (e) => (e.desc !== undefined ? Promise.resolve(e) : loadEvent(e.id));
+const scopeName = (id, e) => (SCOPES.get(id) || {}).name || (e && e.names && e.names[id]) || id;
 
 function scopeKind(s) {
-  if (s.type === 'person') return s.role + ' · ' + fmtYear(s.b.y) + '–' + fmtYear(s.dd.y);
+  if (s.type === 'person') return (s.role || 'Person') + (s.b ? ' · ' + fmtYear(s.b.y) + '–' + fmtYear(s.dd.y) : '');
   if (s.type === 'theme') return 'Theme';
   if (s.type === 'world') return 'Everything, key events';
-  const parent = s.parent ? SCOPES.get(s.parent).name + ' › ' : '';
+  const parent = s.parent && SCOPES.has(s.parent) ? SCOPES.get(s.parent).name + ' › ' : '';
   const t = { continent: 'Continent', region: 'Region', country: 'Country', city: 'City' }[s.type] || s.type;
   return parent ? parent + t : t;
 }
@@ -601,15 +690,15 @@ function scopeKind(s) {
 // rolled up from child places — the build already picked which ones qualify.
 const laneCache = new Map();
 function laneItems(scopeId, rollup) {
-  const key = scopeId + '|' + rollup, v = laneVersion.get(scopeId), c = laneCache.get(key);
+  const key = scopeId + '|' + rollup, map = laneMap(scopeId), v = laneVersion.get(scopeId), c = laneCache.get(key);
   if (c && c.v === v) return c.items;
-  const items = [...laneData.get(scopeId).values()].filter((it) => rollup || !it.rolled);
+  const items = [...map.values()].filter((it) => rollup || !it.rolled);
   laneCache.set(key, { v, items });
   return items;
 }
 // Whether an event shows in a lane (without needing its tiles loaded).
 function inLane(e, lane) {
-  return e.scopes.some((id) => id === lane.scope || (lane.rollup && SCOPES.get(id).chain.includes(lane.scope)));
+  return e.scopes.some((id) => id === lane.scope || (lane.rollup && chainOf(id).includes(lane.scope)));
 }
 
 // ---------- state ----------
@@ -642,7 +731,13 @@ function zoomAt(anchor, factor) {
 }
 function centerOn(y, span) { setRange(y - span / 2, y + span / 2, true); }
 function hasLane(id) { return state.lanes.some((l) => l.scope === id); }
-function addLane(id) { if (!hasLane(id)) { state.lanes.push({ scope: id, rollup: true }); requestRender(); } }
+function addLane(id) {
+  if (hasLane(id)) return;
+  if (!SCOPES.has(id)) registerScope({ id, name: COMBO_NAMES[id] || id, type: 'person' }); // only people can be unknown
+  state.lanes.push({ scope: id, rollup: true });
+  ensureLane(id).then(() => { requestRender(); loadVisible(); });
+  requestRender();
+}
 function removeLane(id) { state.lanes = state.lanes.filter((l) => l.scope !== id); requestRender(); }
 function moveLane(from, to) {
   if (from === to || from < 0 || to < 0 || from >= state.lanes.length || to >= state.lanes.length) return;
@@ -911,8 +1006,9 @@ function frame() {
 // Fetch the tiles for the lanes on screen, plus a screen's width either side so
 // panning finds them ready, and full detail around a selected event.
 function loadVisible() {
-  const { start, end } = state, span = end - start, w = trackWidth();
   const ids = state.lanes.map((l) => l.scope);
+  if (!ids.every((id) => laneInfo.has(id))) return Promise.all(ids.map(ensureLane)).then(() => { requestRender(); return loadVisible(); });
+  const { start, end } = state, span = end - start, w = trackWidth();
   const jobs = [loadTiles(ids, start - span, end + span, maxLod(Math.pow(2, zoomLevel(w / span))))];
   const sel = EVENT_BY_ID.get(state.selected);
   if (sel) jobs.push(loadTiles(ids, sel.y0 - 1.5, sel.y1 + 1.5, MANIFEST.lodCount - 1));
@@ -976,7 +1072,7 @@ function renderMeanwhile(colors, span) {
   $('cards').innerHTML = state.lanes.map((lane, i) => {
     const s = SCOPES.get(lane.scope), items = laneItems(lane.scope, lane.rollup);
     const on = [];
-    if (s.type === 'person') {
+    if (s.type === 'person' && s.b) {
       if (c < s.b.n) on.push('Not born yet'); else if (c > s.dd.n) on.push('Died ' + fmtYear(s.dd.y)); else on.push('Age ' + Math.floor(c - s.b.n));
     }
     items.filter(({ e }) => e.era && !e.life && e.y0 <= c && e.y1 >= c).sort((a, b) => a.rolled - b.rolled || a.e.importance - b.e.importance)
@@ -1030,7 +1126,7 @@ function renderDetail(colors) {
     // an event from a shared link, not loaded yet: look it up in the search index
     if (state.selected) {
       const id = state.selected;
-      loadSearch().then(() => { if (state.selected === id) { if (!EVENT_BY_ID.has(id)) state.selected = null; requestRender(); loadVisible(); } });
+      loadEvent(id).then((found) => { if (state.selected === id) { if (!found) state.selected = null; requestRender(); loadVisible(); } });
     }
     return;
   }
@@ -1038,14 +1134,14 @@ function renderDetail(colors) {
   if (e.desc === undefined) loadDetail(e).then(() => { if (state.selected === e.id) requestRender(); });
   const t = e.y0;
   const chips = e.scopes.map((id) => {
-    const s = SCOPES.get(id), on = hasLane(id);
-    return `<button class="chip${on ? ' on' : ''}" ${on ? 'disabled' : `data-add="${id}" title="Add ${esc(s.name)} as a lane"`}>${on ? '' : '+ '}${esc(s.name)}</button>`;
+    const name = scopeName(id, e), on = hasLane(id);
+    return `<button class="chip${on ? ' on' : ''}" ${on ? 'disabled' : `data-add="${id}" data-name="${esc(name)}" title="Add ${esc(name)} as a lane"`}>${on ? '' : '+ '}${esc(name)}</button>`;
   }).join('');
   // what else was going on, across the visible lanes
   const ongoing = [], near = [], seen = new Set([e.id]);
   state.lanes.forEach((lane, i) => {
     const s = SCOPES.get(lane.scope);
-    if (s.type === 'person' && t >= s.b.n && t <= s.dd.n && !e.scopes.includes(s.id)) ongoing.push({ color: colors[i], label: s.name, note: 'age ' + Math.floor(t - s.b.n) });
+    if (s.type === 'person' && s.b && t >= s.b.n && t <= s.dd.n && !e.scopes.includes(s.id)) ongoing.push({ color: colors[i], label: s.name, note: 'age ' + Math.floor(t - s.b.n) });
     laneItems(lane.scope, lane.rollup).forEach(({ e: o }) => {
       if (seen.has(o.id)) return;
       if (o.era && !o.life && o.y0 <= t && o.y1 >= t) {
@@ -1069,7 +1165,7 @@ function renderDetail(colors) {
     ${e.desc ? `<p>${esc(e.desc)}</p>` : e.desc === undefined ? '<p style="color:var(--dim)">Loading…</p>' : ''}
     <div class="actions">
       <button class="btn" data-zoom="${e.era ? (e.y0 + e.y1) / 2 : e.y0}" data-zspan="${zoomSpan}">Zoom in here</button>
-      <a class="btn" href="https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(e.life ? SCOPES.get(e.scopes[0]).name : e.title)}" target="_blank" rel="noopener">Read more</a>
+      <a class="btn" href="https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(e.life ? scopeName(e.scopes[0]) : e.title)}" target="_blank" rel="noopener">Read more</a>
     </div>
     <h3>ONGOING AT THIS MOMENT</h3>
     ${ongoing.slice(0, 8).map((o) => `<div class="row"><span class="dot" style="background:${o.color}"></span><span class="t">${esc(o.label)}</span><span class="note">${esc(o.note)}</span></div>`).join('') || '<div class="row"><span class="t" style="color:var(--dim)">Nothing else ongoing in your lanes</span></div>'}
@@ -1082,8 +1178,8 @@ let pkTab = 'suggested';
 const THEME_DESC = { science: 'Discoveries and inventions', arts: 'Art, music, writing and buildings', exploration: 'Voyages and firsts', religion: 'Faiths, schisms and thinkers', medicine: 'Vaccines, cures and epidemics', sport: 'Olympics, records and World Cups' };
 const PLUS = '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 2v10M2 7h10"/></svg>';
 const CHECK = '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7"/></svg>';
-function scopeTotal(id) { return stats(id).n; }
-function lifeSpanText(s) { return fmtYear(s.b.y) + '–' + fmtYear(s.dd.y); }
+function scopeTotal(id) { const s = SCOPES.get(id); return (s && s.n) || stats(id).n; }
+function lifeSpanText(s) { return s.b ? fmtYear(s.b.y) + '–' + fmtYear(s.dd.y) : ''; }
 function hl(text, q) {
   if (!q) return esc(text);
   const i = text.toLowerCase().indexOf(q);
@@ -1093,7 +1189,7 @@ function hl(text, q) {
 function pkCard(s, sub, q, range) {
   const on = hasLane(s.id);
   let life = '';
-  if (s.type === 'person' && range) {
+  if (s.type === 'person' && s.b && range) {
     const X = (y) => clamp((y - range[0]) / (range[1] - range[0]) * 100, 0, 100);
     life = `<span class="life" aria-hidden="true"><div style="left:${X(s.b.n)}%;width:${Math.max(2, X(s.dd.n) - X(s.b.n))}%"></div></span>`;
   }
@@ -1109,7 +1205,6 @@ function defaultSub(s) {
   return scopeKind(s) + ' · ' + scopeTotal(s.id) + ' events';
 }
 const isPlace = (s) => s.type !== 'person' && s.type !== 'theme';
-const PEOPLE = () => [...SCOPES.values()].filter((s) => s.type === 'person');
 
 // Suggestions come from the lanes you have and the period you're looking at.
 function suggestions() {
@@ -1120,7 +1215,8 @@ function suggestions() {
     const s = SCOPES.get(lane.scope);
     if (s.type === 'person') {
       add(s.home, s.name + "'s home");
-      PEOPLE().filter((p) => p !== s)
+      if (s.b) peopleFor(s.b.n, s.dd.n, rerenderPicker);
+      if (s.b) PEOPLE().filter((p) => p !== s)
         .map((p) => ({ p, o: Math.min(p.dd.n, s.dd.n) - Math.max(p.b.n, s.b.n) }))
         .filter((x) => x.o > 0.3 * Math.min(x.p.dd.n - x.p.b.n, s.dd.n - s.b.n))
         .sort((a, b) => b.o - a.o).slice(0, 3).forEach((x) => add(x.p.id, 'Alive at the same time as ' + s.name));
@@ -1130,7 +1226,7 @@ function suggestions() {
       if (s.parent && s.parent !== 'world') add(s.parent, 'Includes ' + s.name);
       byTotal(CHILDREN.get(s.id)).slice(0, 4).forEach((c) => add(c, 'Part of ' + s.name));
       if (s.parent) byTotal(CHILDREN.get(s.parent).filter((c) => c !== s.id)).slice(0, 2).forEach((c) => add(c, 'Also in ' + SCOPES.get(s.parent).name));
-      PEOPLE().filter((p) => p.home === s.id).slice(0, 2).forEach((p) => add(p.id, 'From ' + s.name));
+      stats(s.id).people.slice(0, 2).forEach((p) => add(p.id, 'From ' + s.name));
     }
     // places that share the most events with this lane
     stats(lane.scope).rel.slice(0, 2).forEach(([id, n]) => add(id, n + ' shared events with ' + s.name));
@@ -1143,16 +1239,17 @@ function pickerSuggested() {
   const sug = suggestions().slice(0, 12);
   const shown = new Set(sug.map((x) => x.s.id)); // each lane appears in one section only
   html += pkSection('Suggested for your lanes', state.lanes.length ? '' : 'Add a lane to get suggestions', grid(sug.map(({ s, why }) => pkCard(s, why))));
+  const peopleReady = peopleFor(start, end, rerenderPicker);
   const alive = PEOPLE().filter((p) => !hasLane(p.id) && !shown.has(p.id) && p.dd.n >= start && p.b.n <= end)
     .map((p) => ({ p, o: Math.min(p.dd.n, end) - Math.max(p.b.n, start) })).sort((a, b) => b.o - a.o).slice(0, 8);
-  html += pkSection('People alive in ' + rangeTxt, '', grid(alive.map(({ p }) => pkCard(p, p.role + ' · ' + lifeSpanText(p), '', [start - span * 0.1, end + span * 0.1]))));
-  const busy = new Map(), { histOrigin, histBin } = MANIFEST;
-  SCOPES.forEach((p) => {
-    if (!isPlace(p) || p.id === 'world') return;
-    let n = 0;
-    for (const [i, c] of Object.entries(p.stats.own)) { const y = histOrigin + (+i + 0.5) * histBin; if (y >= start && y <= end) n += c; }
-    if (n) busy.set(p.id, n);
-  });
+  html += pkSection('People alive in ' + rangeTxt, peopleReady ? '' : 'loading…', grid(alive.map(({ p }) => pkCard(p, p.role + ' · ' + lifeSpanText(p), '', [start - span * 0.1, end + span * 0.1]))));
+  // the build lists the busiest places per century; weigh each by how much of it is on screen
+  const busy = new Map();
+  for (const [c, list] of Object.entries(MANIFEST.busy)) {
+    const share = Math.max(0, Math.min(end, +c + 100) - Math.max(start, +c)) / 100;
+    if (share > 0) for (const [id, n] of list) busy.set(id, (busy.get(id) || 0) + n * share);
+  }
+  busy.forEach((n, id) => busy.set(id, Math.max(1, Math.round(n))));
   const top = [...busy].filter(([id]) => !hasLane(id) && !shown.has(id)).sort((a, b) => b[1] - a[1]).slice(0, 8);
   html += pkSection('Busiest places in ' + rangeTxt, '', grid(top.map(([id, n]) => pkCard(SCOPES.get(id), n + ' events in this period · ' + scopeKind(SCOPES.get(id))))));
   html += pkSection('Try a comparison', 'replaces your current lanes', comboList(COMBOS.slice(0, 4)));
@@ -1173,13 +1270,15 @@ function pickerPlaces() {
   });
   return html;
 }
+const PEOPLE_SHOWN = 60; // per period; the rest are found by searching
 function pickerPeople() {
-  const groups = [[-1e9, 500, 'Ancient world'], [500, 1450, 'Middle Ages'], [1450, 1700, 'Renaissance and early modern'], [1700, 1850, 'Age of revolutions'], [1850, 1e9, 'Modern times']];
-  return groups.map(([a, b, title]) => {
-    const ps = PEOPLE().filter((p) => p.b.n >= a && p.b.n < b).sort((x, y) => x.b.n - y.b.n);
+  if (!peopleFor(-Infinity, Infinity, rerenderPicker)) return '<div class="pk-empty">Loading people…</div>';
+  return MANIFEST.people.map(({ from, to, title, n }) => {
+    const ps = PEOPLE().filter((p) => p.b.n >= from && p.b.n < to).sort((x, y) => (y.n || 0) - (x.n || 0)).slice(0, PEOPLE_SHOWN).sort((x, y) => x.b.n - y.b.n);
     if (!ps.length) return '';
     const range = [Math.min(...ps.map((p) => p.b.n)), Math.max(...ps.map((p) => p.dd.n))];
-    return pkSection(title, fmtYear(Math.floor(range[0])) + '–' + fmtYear(Math.floor(range[1])), grid(ps.map((p) => pkCard(p, p.role + ' · ' + lifeSpanText(p), '', range))));
+    const why = fmtYear(Math.floor(range[0])) + '–' + fmtYear(Math.floor(range[1])) + (n > ps.length ? ` · ${ps.length} of ${n}, search to find the others` : '');
+    return pkSection(title, why, grid(ps.map((p) => pkCard(p, p.role + ' · ' + lifeSpanText(p), '', range))));
   }).join('');
 }
 function pickerThemes() {
@@ -1187,16 +1286,18 @@ function pickerThemes() {
   return pkSection('Themes', 'events of one kind, from every place', grid(ts.map((t) => pkCard(t, defaultSub(t)))));
 }
 function comboList(list) {
-  return `<div class="pk-grid">${list.map((c) => `<button class="pk-combo" data-combo="${COMBOS.indexOf(c)}"><b>${esc(c.title)}</b><span>${esc(c.sub)} · ${esc(fmtYear(c.from))}–${esc(fmtYear(c.to))}</span><span class="lanes">${c.lanes.map((id) => `<i>${esc(SCOPES.get(id).name)}</i>`).join('')}</span></button>`).join('')}</div>`;
+  return `<div class="pk-grid">${list.map((c) => `<button class="pk-combo" data-combo="${COMBOS.indexOf(c)}"><b>${esc(c.title)}</b><span>${esc(c.sub)} · ${esc(fmtYear(c.from))}–${esc(fmtYear(c.to))}</span><span class="lanes">${c.lanes.map((id) => `<i>${esc(scopeName(id) === id ? COMBO_NAMES[id] || id : scopeName(id))}</i>`).join('')}</span></button>`).join('')}</div>`;
 }
 function pickerSearch(q) {
+  // people (and event mentions) come from the search files; places are all loaded
+  const found = searchLookup(q, rerenderPicker);
   const score = (s) => {
     const n = s.name.toLowerCase();
     if (n.startsWith(q)) return 0;
     if (n.split(/[\s(-]+/).some((w) => w.startsWith(q))) return 1;
     if (n.includes(q)) return 2;
     if (s.search.includes(q)) return 3;
-    const p = s.parent && SCOPES.get(s.parent).name.toLowerCase();
+    const p = s.parent && SCOPES.has(s.parent) && SCOPES.get(s.parent).name.toLowerCase();
     if (p && p.includes(q)) return 4; // e.g. "europe" also lists European countries
     return -1;
   };
@@ -1209,17 +1310,18 @@ function pickerSearch(q) {
     return pkSection(title, list.length + ' found', grid(list.slice(0, 24).map(({ s, k }) => pkCard(s, k === 4 ? 'In ' + SCOPES.get(s.parent).name + ' · ' + scopeTotal(s.id) + ' events' : defaultSub(s), q, s.type === 'person' ? [s.b.n, s.dd.n] : null))));
   }).join('');
   // lanes whose events mention the words, e.g. "plague" or "olympics"
-  if (q.length >= 3 && !searchIndex) {
-    loadSearch().then(() => { if ($('picker').open && $('pk-search').value.trim().toLowerCase() === q) renderPicker(); });
-    html += pkSection('Lanes with events about “' + q + '”', '', '<div class="pk-empty" style="padding:8px 0">Searching events…</div>');
+  if (!found) {
+    html += pkSection('People and events', '', '<div class="pk-empty" style="padding:8px 0">Searching…</div>');
   } else if (q.length >= 3) {
     const mention = new Map();
-    searchIndex.forEach((e) => { if (e.search.includes(q)) e.scopes.forEach((id) => mention.set(id, (mention.get(id) || 0) + 1)); });
+    found.events.forEach((e) => e.scopes.forEach((id) => { if (SCOPES.has(id)) mention.set(id, (mention.get(id) || 0) + 1); }));
     const top = [...mention].filter(([id]) => !shown.has(id)).sort((a, b) => b[1] - a[1]).slice(0, 8);
     html += pkSection('Lanes with events about “' + q + '”', '', grid(top.map(([id, n]) => pkCard(SCOPES.get(id), n + (n === 1 ? ' event mentions it' : ' events mention it')))));
   }
   return html || `<div class="pk-empty">Nothing matches “${esc(q)}”. Try browsing instead:<div class="tabs">${['places', 'people', 'themes'].map((t) => `<button data-tab="${t}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}</div></div>`;
 }
+// re-render the picker if it's still open (after people or search results arrive)
+function rerenderPicker() { if ($('picker').open) renderPicker(); }
 function openPicker() {
   $('pk-search').value = '';
   pkTab = 'suggested';
@@ -1255,14 +1357,14 @@ function applyCombo(c) {
 }
 
 // ---------- search ----------
-let searchSel = 0, searchItems = [];
+let searchSel = 0, searchItems = [], enterPending = null;
 function runSearch() {
   const q = $('search-input').value.trim().toLowerCase(), box = $('search-results');
   if (q.length < 2) { box.classList.remove('open'); searchItems = []; return; }
   const asYear = /^-?\d{1,4}$/.test(q) ? +q : null;
+  const found = searchLookup(q, () => { if ($('search-input').value.trim().toLowerCase() === q) runSearch(); });
   const scopes = [...SCOPES.values()].filter((s) => s.search.includes(q)).slice(0, 5).map((s) => ({ kind: 'scope', s }));
-  if (!searchIndex) loadSearch().then(() => { if ($('search-input').value.trim().toLowerCase() === q) runSearch(); });
-  const evs = (searchIndex || []).filter((e) => e.search.includes(q))
+  const evs = ((found && found.events) || []).filter((e) => !e.life)
     .sort((a, b) => (a.title.toLowerCase().includes(q) ? 0 : 1) - (b.title.toLowerCase().includes(q) ? 0 : 1) || a.importance - b.importance)
     .slice(0, 8).map((e) => ({ kind: 'event', e }));
   searchItems = [...(asYear !== null ? [{ kind: 'year', y: asYear }] : []), ...scopes, ...evs];
@@ -1276,8 +1378,9 @@ function runSearch() {
     if (it.kind === 'scope') html += `<button class="${a}" data-si="${i}">${hasLane(it.s.id) ? '✓ ' : '+ '}${esc(it.s.name)}<span class="meta">${esc(scopeKind(it.s))}</span></button>`;
     if (it.kind === 'event') html += `<button class="${a}" data-si="${i}">${esc(it.e.title)}<span class="meta">${esc(it.e.when)}</span></button>`;
   });
-  box.innerHTML = html || '<div class="head">NO MATCHES</div>';
+  box.innerHTML = html || (found ? '<div class="head">NO MATCHES</div>' : '<div class="head">SEARCHING…</div>');
   box.classList.add('open');
+  if (found && enterPending === q) { enterPending = null; pickSearch(0); }
 }
 function pickSearch(i) {
   const it = searchItems[i]; if (!it) return;
@@ -1322,7 +1425,10 @@ function bind() {
     const rm = t.closest('[data-remove]');
     if (rm) { removeLane(rm.dataset.remove); if ($('picker').open) renderPicker(); return; }
     const add = t.closest('[data-add]');
-    if (add) { addLane(add.dataset.add); toast(SCOPES.get(add.dataset.add).name + ' added'); return; }
+    if (add) {
+      if (!SCOPES.has(add.dataset.add)) registerScope({ id: add.dataset.add, name: add.dataset.name, type: 'person' });
+      addLane(add.dataset.add); toast(add.dataset.name + ' added'); return;
+    }
     const z = t.closest('[data-zoom]');
     if (z) { centerOn(+z.dataset.zoom, +z.dataset.zspan); return; }
     if (t.closest('#detail-close')) { state.selected = null; requestRender(); return; }
@@ -1446,7 +1552,11 @@ function bind() {
       ev.preventDefault();
       searchSel = clamp(searchSel + (ev.key === 'ArrowDown' ? 1 : -1), 0, searchItems.length - 1);
       document.querySelectorAll('#search-results [data-si]').forEach((b) => b.classList.toggle('active', +b.dataset.si === searchSel));
-    } else if (ev.key === 'Enter') { pickSearch(searchSel); }
+    } else if (ev.key === 'Enter') {
+      // if this query's search file is still on its way, pick once the results are in
+      const q = $('search-input').value.trim().toLowerCase();
+      if (q.length >= 2 && !searchResults.has(q) && searchWords(q).length) enterPending = q; else pickSearch(searchSel);
+    }
     else if (ev.key === 'Escape') { $('search-results').classList.remove('open'); }
   });
 
@@ -1467,13 +1577,22 @@ function bind() {
   });
 
   window.addEventListener('resize', requestRender);
-  window.addEventListener('hashchange', () => { readHash(); requestRender(); });
+  window.addEventListener('hashchange', () => {
+    const ids = (new URLSearchParams(location.hash.slice(1)).get('lanes') || '').split(',').map((x) => x.replace(/!$/, '')).filter(Boolean);
+    Promise.all(ids.map(ensureLane)).then(() => { readHash(); requestRender(); });
+  });
   window.addEventListener('resize', () => { built.sig = ''; });
 }
 
 // ---------- boot ----------
 fetch(DATA + 'manifest.json', { cache: 'no-cache' }).then((r) => r.json()).then((manifest) => {
-  prepare(manifest);
+  MANIFEST = manifest;
+  const linked = (new URLSearchParams(location.hash.slice(1)).get('lanes') || DEFAULT.lanes.join(',')).split(',').map((x) => x.replace(/!$/, '')).filter(Boolean);
+  return Promise.all([getData('scopes/places.json'), ...linked.map((id) => getData('lanes/' + id + '.json').catch(() => null))]).then(([places]) => {
+    prepare(manifest, places);
+    return Promise.all(linked.map(ensureLane));
+  });
+}).then(() => {
   readHash();
   bind();
   requestRender();

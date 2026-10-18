@@ -33,9 +33,11 @@ check(!badDate.length, 'every event date parses and ends after it starts' + (bad
 check(data.events.every(e => [1, 2, 3].includes(e.importance)), 'importance is 1, 2 or 3');
 
 // 2. the built tiles (build/build.mjs) hold exactly what each lane should show
-const { build, LIMITS } = await import('../build/build.mjs');
+const { build, LIMITS, words, detailShard } = await import('../build/build.mjs');
 const built = build(data);
 const manifest = built.get('manifest.json');
+const tilesOf = (id) => built.get(`lanes/${id}.json`).tiles;
+const allTiles = () => data.scopes.flatMap(s => tilesOf(s.id));
 const onDisk = JSON.parse(fs.readFileSync(path.join(APP_DIR, 'data', 'manifest.json'), 'utf8'));
 check(onDisk.v === manifest.v, `data/ is up to date with source/data.json (run node build/build.mjs) — ${onDisk.v} vs ${manifest.v}`);
 {
@@ -51,7 +53,7 @@ check(onDisk.v === manifest.v, `data/ is up to date with source/data.json (run n
       return d === 0 || (d === 1 && e.importance <= 2 && (!era || e.importance === 1)) || (d >= 2 && e.importance === 1 && !era);
     }).map(e => e.id));
     const got = new Set();
-    for (const [, , from, to, file] of manifest.tiles[s.id] || []) {
+    for (const [, , from, to, file] of tilesOf(s.id)) {
       const t = built.get(file);
       if (t.events.length > LIMITS.MAX_PER_TILE && to - from > 1) oversize.push(file);
       t.events.forEach(r => got.add(r[0]));
@@ -66,7 +68,7 @@ check(onDisk.v === manifest.v, `data/ is up to date with source/data.json (run n
   let worst = { n: 0 }, worstLocal = { n: 0 };
   for (const s of data.scopes) {
     const items = new Map();
-    for (const [, , , , file] of manifest.tiles[s.id] || []) for (const r of built.get(file).events) if (!r[3]) items.set(r[0], { y: year(r[2]), lod: r[5] });
+    for (const [, , , , file] of tilesOf(s.id)) for (const r of built.get(file).events) if (!r[3]) items.set(r[0], { y: year(r[2]), lod: r[5] });
     const list = [...items.values()];
     for (let L = 0; L < LIMITS.LOD_COUNT; L++) {
       const w = LIMITS.SCREEN / Math.pow(2, L + LIMITS.LOD_BASE);
@@ -77,13 +79,41 @@ check(onDisk.v === manifest.v, `data/ is up to date with source/data.json (run n
   }
   check(worst.n <= 2 * LIMITS.CAP, `no screen gets crowded at any zoom (worst: ${worst.n} events in one screen, ${worst.scope} at lod ${worst.L})`);
   check(worstLocal.n <= 2 * LIMITS.LOCAL_CAP, `events don't bunch up within a screen (worst: ${worstLocal.n} in a quarter screen, ${worstLocal.scope} at lod ${worstLocal.L})`);
-  const lods = new Set(); Object.values(manifest.tiles).flat().forEach(([, , , , f]) => built.get(f).events.forEach(r => lods.add(r[5])));
+  const lods = new Set(); allTiles().forEach(([, , , , f]) => built.get(f).events.forEach(r => lods.add(r[5])));
   check(lods.size >= 6, `events spread over ${lods.size} detail levels`);
   const tileCount = [...built.keys()].filter(f => f.startsWith('tiles/')).length;
   check(tileCount > data.scopes.length, `${tileCount} tiles for ${data.scopes.length} lanes`);
 }
 
-// 3. the app
+// 3. the small files: manifest, lanes, people, details, search
+{
+  const size = JSON.stringify(manifest).length;
+  check(size < 20000, `manifest stays small (${Math.round(size / 1024)} KB)`);
+  check(data.scopes.every(s => built.has(`lanes/${s.id}.json`)), 'every scope has a lane file');
+  const people = data.scopes.filter(s => s.type === 'person');
+  const inFiles = manifest.people.flatMap(p => built.get(p.file).map(x => x.id));
+  check(inFiles.length === people.length && people.every(p => inFiles.includes(p.id)), `every person is in exactly one people file (${manifest.people.length} files)`);
+  const missingDetail = data.events.filter(e => !(built.get(`details/${detailShard(e.id)}.json`) || {})[e.id]);
+  check(!missingDetail.length, 'every event has a details record' + (missingDetail.length ? ': ' + missingDetail[0].id : ''));
+  // every event and lane can be found by each word of its title or name, using the
+  // app's rule for picking a search file (searchFile in index.html)
+  const findable = (b) => {
+    const keys = new Set(b.get('manifest.json').search), misses = [];
+    const fileFor = (w) => keys.has(w.slice(0, 2)) ? w.slice(0, 2) : w.length >= 3 && keys.has(w.slice(0, 3)) ? w.slice(0, 3) : keys.has(w + '_') ? w + '_' : null;
+    const has = (w, kind, id) => { const k = fileFor(w); return k && b.get(`search/${k}.json`).some(r => r[0] === kind && r[1] === id); };
+    for (const e of data.events) for (const w of words(e.title)) if (!has(w, 'e', e.id)) misses.push(`${e.id}/${w}`);
+    for (const sc of data.scopes) for (const w of words(sc.name)) if (!has(w, 's', sc.id)) misses.push(`${sc.id}/${w}`);
+    return misses;
+  };
+  const misses = findable(built);
+  check(!misses.length, 'every event and lane is findable by each word' + (misses.length ? ': ' + misses.slice(0, 3).join(', ') : ''));
+  const tiny = build(data, { searchMax: 20 });
+  const split = tiny.get('manifest.json').search.filter(k => k.length === 3).length;
+  const tinyMisses = findable(tiny);
+  check(split > 0 && !tinyMisses.length, `…also when busy prefixes split into 3-letter files (${split} of them)` + (tinyMisses.length ? ': ' + tinyMisses.slice(0, 3).join(', ') : ''));
+}
+
+// 4. the app
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json' };
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
@@ -118,7 +148,7 @@ try {
   check((await page.textContent('#mw-when')) === '1905', 'cursor starts at 1905');
   await page.screenshot({ path: path.join(OUT, 'desktop.png') });
   const tilesLoaded = await page.evaluate(() => [...tileState.values()].filter(v => v === 'done').length);
-  const tilesTotal = Object.values(manifest.tiles).reduce((n, t) => n + t.length, 0);
+  const tilesTotal = allTiles().length;
   check(tilesLoaded > 0 && tilesLoaded < tilesTotal / 10, `default view loads only the tiles it needs (${tilesLoaded} of ${tilesTotal})`);
 
   // roll-up: Nigeria's independence (tagged only with Nigeria) shows in the Africa lane only with
@@ -186,6 +216,7 @@ try {
   check(await page.locator('#pk-list .pk-card:visible').count() >= 10, 'picker opens with suggestions to browse');
   await page.screenshot({ path: path.join(OUT, 'picker.png') });
   await page.locator('#pk-tabs [data-tab="people"]').click();
+  await page.waitForFunction(() => !document.querySelector('#pk-list .pk-empty'), null, { timeout: 5000 }).catch(() => {});
   const people = data.scopes.filter(s => s.type === 'person').length;
   check(await page.locator('#pk-list .pk-card').count() === people, `People tab lists all ${people} people`);
   await page.locator('#pk-tabs [data-tab="places"]').click();
@@ -194,11 +225,13 @@ try {
   check(await page.locator('#pk-list [data-toggle="france"]:visible').count() === 1, 'typing "fra" shows France');
   await page.locator('#pk-search').fill('');
   await page.locator('#pk-search').pressSequentially('darw');
+  await page.waitForSelector('#pk-list [data-toggle="darwin"]', { timeout: 5000 }).catch(() => {});
   const listBox = await page.locator('#pk-list').boundingBox();
   check(listBox && listBox.height > 250, `results area has room (${listBox && Math.round(listBox.height)}px tall)`);
   await page.keyboard.press('Enter');
   check(await page.locator('#pk-list [data-toggle="darwin"][aria-pressed="true"]').count() === 1, 'Enter adds the first result');
   await page.locator('#pk-search').fill('plague');
+  await page.waitForFunction(() => document.querySelectorAll('#pk-list .pk-card').length > 0, null, { timeout: 5000 }).catch(() => {});
   check(await page.locator('#pk-list .pk-card').count() > 0, 'searching an event word ("plague") suggests lanes');
   await page.screenshot({ path: path.join(OUT, 'picker-search.png') });
   await page.click('#pk-done');
@@ -206,7 +239,8 @@ try {
 
   // search jumps to an event
   await page.fill('#search-input', 'Fall of the Berlin Wall');
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Enter'); // straight away, before the search file has arrived
+  await page.waitForSelector('#detail.open h2', { timeout: 5000 }).catch(() => {});
   check((await page.locator('#detail.open h2').textContent()) === 'Fall of the Berlin Wall', 'search jumps to an event');
 
   // tiles that arrive while panning never move labels that were already placed.
