@@ -165,30 +165,22 @@ try {
   check((await p2.textContent('#mw-when')) === '44 BCE', 'BCE years display correctly');
   await p2.screenshot({ path: path.join(OUT, 'ancient.png') });
 
-  // light / dark theme
-  const theme = (pg) => pg.evaluate(() => document.documentElement.dataset.theme);
-  const t0 = await theme(p2);
-  await p2.click('#theme-btn');
-  await p2.waitForTimeout(150);
-  const t1 = await theme(p2);
-  check(t0 !== t1 && ['light', 'dark'].includes(t1), `theme toggle switches ${t0} → ${t1}`);
-  const bg = await p2.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  check(t1 === 'dark' ? bg === 'rgb(21, 21, 21)' : bg === 'rgb(251, 250, 246)', `${t1} background applied (${bg})`);
-  await p2.screenshot({ path: path.join(OUT, `ancient-${t1}.png`) });
-  await p2.reload(); await p2.waitForSelector('.lane .ev-dot', { state: 'attached' });
-  check(await theme(p2) === t1, 'theme choice survives a reload');
+  // one light theme only, even on a device set to dark mode
   const pd = await browser.newPage({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark' });
   await pd.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
   await pd.goto(BASE); await pd.waitForSelector('.lane .ev-dot', { state: 'attached' });
-  check(await theme(pd) === 'dark', 'follows a dark device setting by default');
-  await pd.waitForTimeout(300);
-  await pd.screenshot({ path: path.join(OUT, 'desktop-dark.png') });
+  const bg = await pd.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  check(bg === 'rgb(251, 250, 246)', `light background even when the device prefers dark (${bg})`);
+  check(await pd.locator('#theme-btn').count() === 0, 'no dark-mode toggle');
 
   // phone
   const ph = await open({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const scrollW = await ph.evaluate(() => document.documentElement.scrollWidth);
   check(scrollW <= 390, `no horizontal scroll at 390px (scrollWidth ${scrollW})`);
   await ph.screenshot({ path: path.join(OUT, 'phone.png'), fullPage: true });
+  // lane names on a phone are coloured tags with dark or white text, not grey on grey
+  const tag = await ph.evaluate(() => { const el = document.querySelector('.lane:nth-child(2) .mobile-name'); const cs = getComputedStyle(el); return { bg: cs.backgroundColor, fg: cs.color, op: cs.opacity }; });
+  check(tag.bg === 'rgb(242, 96, 63)' && tag.fg === 'rgb(17, 17, 17)' && tag.op === '1', `phone lane name is readable (${tag.fg} on ${tag.bg})`);
   await ph.locator('.lane:nth-child(2) .ev-label:visible').first().tap();
   await ph.waitForSelector('#detail.open', { timeout: 3000 }).catch(() => {});
   check(await ph.locator('#detail.open').count() === 1, 'tapping an event opens the details sheet on a phone');

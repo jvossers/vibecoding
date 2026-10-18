@@ -88,14 +88,19 @@ Search matches:
 
 Enter toggles the first result. On a phone the dialog is full screen, and the current lanes show as removable chips.
 
-## Look and themes
+## Look
 
-The style is "Bold blocks": thick ink outlines, hard offset shadows, and solid primary-colour era blocks with uppercase labels. Events are diamonds, and the cursor is a thick line with a yellow year tag. Fonts are Bricolage Grotesque, with Space Mono for numbers.
+The style is "Bold blocks", a light theme only. Dark mode was tried and removed on purpose. The look has:
+- thick ink outlines, hard offset shadows and square corners
+- solid primary-colour era blocks with uppercase labels
+- diamond event markers, and a thick cursor with a yellow year tag
+- Bricolage Grotesque, with Space Mono for numbers
 
-- **Light and dark themes:** both are CSS custom properties. Light is on `:root` and dark on `:root[data-theme="dark"]`, in the theme block near the end of the `<style>`.
-- **Choosing the theme:** a small script in `<head>` sets `data-theme` before first paint. It uses the saved choice (`localStorage` key `meanwhile-theme`), else the device's `prefers-color-scheme`. The moon/sun button in the header toggles it.
-- **Lane colours:** they come from `PALETTE`. The World lane uses `--world`, which differs per theme.
+How it's built:
+- **Colours:** CSS custom properties on `:root`, in the theme block near the end of the `<style>`.
+- **Lane colours:** they come from `PALETTE`. The World lane uses `WORLD_COLOR`.
 - **Text on coloured blocks:** `inkOn(colour)` picks black or white, whichever has more contrast.
+- **Lane names:** they are coloured tags. On phones the tag sits inside the track (`.mobile-name`).
 - **Events:** solid diamonds are a lane's own events. Hollow diamonds and dashed, paler eras are rolled up from child places.
 
 ## Layout decisions
