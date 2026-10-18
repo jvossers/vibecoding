@@ -3,8 +3,8 @@
 Helps a Year 11 student (and their parents) choose the A levels they'll take in Year 12: score a
 combination for university entry and careers, and suggest the best next subject.
 
-Status: **mockups only** — `mockups/index.html` is a clickable prototype with a storyboard bar
-of six states and an annotation for each. All data in it is simplified and illustrative.
+Status: **v1 built** at `index.html` (labs.vossers.com/alevels/). `mockups/index.html` is the
+reviewed clickable mockup it was built from, kept for reference.
 
 ## Core interactions
 
@@ -51,10 +51,18 @@ reachable completion.
 - Start with Russell Group + a handful of popular others (~30 universities × top 25 subject areas)
   rather than every course in UCAS.
 
-## Open questions for review
+## Decisions taken for v1 (were open questions)
 
-1. Ask for predicted / GCSE grades? Would allow offer-level advice (A*A*A vs ABB) but adds friction.
-2. Single goal or several ("Law or PPE")?
-3. Four A levels — support or just mention?
-4. Tone and naming: aimed at 15–16 year olds *and* parents.
-5. Scottish Highers / IB — out of scope for v1?
+1. **No grades asked.** Each course shows its typical offer instead; grade-level advice can come later.
+2. **Up to three goals** ("I'd like to study…"); goal fit is their average, 40% of overall.
+3. **Three A levels only.** A fourth is mentioned in "Things to know", not scored.
+4. **England, Wales and NI A levels only.** No Highers or IB.
+5. **"My school doesn't offer…"** hides subjects from suggestions (saved locally).
+6. **State saved** in localStorage; **shareable link** via `#s=maths,cs&g=cs&p=balanced`.
+7. Data is **inline** in `index.html` so it works from `file://` with no build step.
+
+## Next steps
+
+- Verify every course row against the university's page and record a checked date.
+- Replace the coarse career index with real LEO figures per subject.
+- Optional predicted grades to compare against typical offers.
