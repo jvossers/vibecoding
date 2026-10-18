@@ -351,12 +351,13 @@ dialog .close-d { float: right; border: 0; background: var(--paper-2); border-ra
     <p>Every number is relative: <strong>100 means the best combination of three in Trio's data</strong> for that measure.</p>
     <ul>
       <li><strong>University access</strong>: how many of the listed university courses your subjects meet the requirements for. Missing a <em>required</em> subject rules a course out. Missing a <em>recommended</em> one counts as partly open. The most selective courses count for more.</li>
-      <li><strong>Career prospects</strong>: which degree areas are open to you, weighted by how graduates in that area typically do (earnings and employment a few years after graduating) and how many students study it.</li>
-      <li><strong>Keeps options open</strong>: how many degree areas stay open, whatever they lead to.</li>
-      <li><strong>Fits together</strong>: of the degrees your subjects point towards, how many you fully qualify for. Subjects that support each other score higher than three unrelated ones.</li>
+      <li><strong>Career prospects</strong>: which degree areas are open to you, weighted by how graduates in that area typically do (earnings and employment a few years after graduating).</li>
+      <li><strong>Keeps options open</strong>: how many degree areas stay open, weighted by how many students study them.</li>
+      <li><strong>Fits together</strong>: whether each subject earns its place. A subject gets full credit when it counts towards a degree you can apply for <em>together with</em> another of your subjects, half credit when it counts on its own, and none when it doesn't count towards any degree in Trio.</li>
       <li><strong>Fit for your goal</strong>: if you choose up to three things you'd like to study, how well the combination meets what those degrees ask for.</li>
       <li><strong>Overall</strong>: a blend of all of these. <em>Prioritise</em> changes the mix of the first three. With goals set, goal fit is 40% of the overall score.</li>
     </ul>
+    <p>The label (Excellent, Strong, Good, Focused) comes from how your combination ranks against every possible combination of three: Excellent is the top 10%.</p>
     <p>With fewer than three subjects, scores show the best you can still reach (“up to”).</p>
     <p>Suggestions are ranked by overall score. They leave out subjects you've marked as not offered at your school.</p>
   </div>
@@ -414,7 +415,9 @@ const CAT_COLOR = { 'Maths': 'var(--hi-yellow)', 'Sciences': 'var(--hi-green)', 
 
 /* Degree areas. career: relative graduate-outcomes index (0-100) loosely
    based on DfE LEO earnings/employment five years after graduation.
-   pop: relative number of applicants. Both are coarse on purpose. */
+   pop: relative number of applicants. Both are coarse on purpose.
+   rel: subjects that count towards the degree for "Fits together" without
+   being required or recommended (e.g. Business for Business degrees). */
 const AREAS = [
   { id: 'med', name: 'Medicine', career: 96, pop: 1.2, req: [['chem'], ['bio', 'phys', 'maths']], pref: [['bio']] },
   { id: 'dent', name: 'Dentistry', career: 92, pop: .5, req: [['chem'], ['bio']] },
@@ -431,10 +434,11 @@ const AREAS = [
   { id: 'envd', name: 'Environmental Science', career: 60, pop: .4, req: [['bio', 'chem', 'geog', 'envsci', 'phys', 'maths']], pref: [['geog', 'envsci', 'bio']] },
   { id: 'econ', name: 'Economics', career: 90, pop: 1.1, req: [['maths']], pref: [['fm', 'econ']] },
   { id: 'acc', name: 'Accounting & Finance', career: 78, pop: .8, req: [], pref: [['maths']] },
-  { id: 'bm', name: 'Business & Management', career: 70, pop: 1.2, req: [], pref: [] },
+  { id: 'bm', name: 'Business & Management', career: 70, pop: 1.2, req: [], pref: [], rel: ['bus', 'econ', 'maths'] },
   { id: 'ppe', name: 'PPE', career: 86, pop: .4, req: [], pref: [['maths'], ['hist', 'pol', 'econ', 'englit', 'rs', 'phil', 'classics']] },
-  { id: 'law', name: 'Law', career: 80, pop: 1.2, req: [], pref: [ESSAY] },
+  { id: 'law', name: 'Law', career: 80, pop: 1.2, req: [], pref: [ESSAY], rel: ['law'] },
   { id: 'polir', name: 'Politics & IR', career: 66, pop: .8, req: [], pref: [ESSAY] },
+  { id: 'socd', name: 'Sociology & Criminology', career: 56, pop: .8, req: [], pref: [], rel: ['soc', 'psych', 'law', 'pol', 'rs'] },
   { id: 'psy', name: 'Psychology', career: 58, pop: 1.1, req: [], pref: [['bio', 'chem', 'maths', 'phys', 'psych']] },
   { id: 'arch', name: 'Architecture', career: 64, pop: .5, req: [], pref: [['art', 'dt'], ['maths', 'phys']], note: 'portfolio usually needed' },
   { id: 'hist', name: 'History', career: 62, pop: .8, req: [['hist']] },
@@ -444,7 +448,7 @@ const AREAS = [
   { id: 'classicsd', name: 'Classics', career: 66, pop: .3, req: [], pref: [['latin', 'classics']] },
   { id: 'geo', name: 'Geography', career: 64, pop: .7, req: [], pref: [['geog']] },
   { id: 'sport', name: 'Sport & Exercise Science', career: 54, pop: .6, req: [], pref: [['bio', 'pe', 'psych', 'chem', 'phys']] },
-  { id: 'media', name: 'Media, Film & Journalism', career: 48, pop: .6, req: [], pref: [] },
+  { id: 'media', name: 'Media, Film & Journalism', career: 48, pop: .6, req: [], pref: [], rel: ['media', 'film', 'englang', 'englit'] },
   { id: 'drama', name: 'Drama & Performance', career: 42, pop: .4, req: [], pref: [['drama', 'englit']], note: 'audition usually needed' },
   { id: 'music', name: 'Music', career: 46, pop: .3, req: [['music']], note: 'audition or Grade 8 often expected' },
   { id: 'artd', name: 'Art & Design', career: 44, pop: .6, req: [['art', 'dt']], note: 'portfolio needed' },
@@ -524,6 +528,8 @@ const COURSES = [
   C('Cardiff', 'Journalism, Media & Culture', 'ABB', 1, 'media', [], []),
   C('Cardiff', 'Pharmacy', 'AAB', 1, 'pharm', [['chem'], ['bio', 'maths', 'phys']], []),
   C('Newcastle', 'Psychology', 'AAB', 1, 'psy', [], []),
+  C('Manchester', 'Criminology', 'AAB', 1, 'socd', [], []),
+  C('Leeds', 'Sociology', 'ABB', 1, 'socd', [], []),
   C('Royal Holloway', 'Drama & Theatre', 'ABB', 1, 'drama', [], [['drama', 'englit']]),
   C('University of the Arts London', 'Fine Art', 'CCC', 1, 'artd', [['art', 'dt']], [], 'Portfolio; Foundation often expected'),
 ];
@@ -566,24 +572,36 @@ function evalRule(rule, sel, selective) {
 }
 const evalCourse = (c, sel) => evalRule(c, sel, c.tier === 3);
 const VALUE = { open: 1, close: .6, closed: 0 };
-// an area is "related" to a selection if one of the subjects is named specifically in its rules
-const related = (a, sel) => [...(a.req || []), ...(a.pref || [])].some(g => g.length <= 2 && g.some(x => sel.includes(x)));
+// does this degree area name subject x anywhere (required, recommended or relevant)?
+const named = (a, x) => (a.rel || []).includes(x) || [...(a.req || []), ...(a.pref || [])].some(g => g.includes(x));
+const SOLO = .5; // credit for a subject that only counts towards a degree on its own
 const valid = sel => !sel.some(x => S[x].needs && !sel.includes(S[x].needs));
 
 const cache = new Map();
 function raw(sel) {
   const key = sel.slice().sort().join('+');
   if (cache.has(key)) return cache.get(key);
-  let uni = 0, career = 0, flex = 0, cohN = 0, cohD = 0;
+  let uni = 0, career = 0, flex = 0;
   for (const c of COURSES) uni += TIER_W[c.tier] * evalCourse(c, sel).v;
   const areas = {};
   for (const a of AREAS) {
     const r = evalRule(a, sel, false); areas[a.id] = r;
-    career += r.v * a.pop * (a.career / 100) ** 2;
+    career += r.v * a.career;
     flex += r.v * a.pop;
-    if (related(a, sel)) { cohD += a.career; cohN += r.v * a.career; }
   }
-  const out = { uni, career, flex, coh: cohD ? 100 * cohN / cohD : 50, areas };
+  // Fits together: each subject earns credit for the best degree it counts towards that's open to you;
+  // full credit only when another of your subjects backs the same degree, SOLO when it stands alone.
+  let coh = 0;
+  for (const x of sel) {
+    let best = 0;
+    for (const a of AREAS) {
+      const v = areas[a.id].v;
+      if (!v || !named(a, x)) continue;
+      best = Math.max(best, v * (sel.some(y => y !== x && named(a, y)) ? 1 : SOLO));
+    }
+    coh += best;
+  }
+  const out = { uni, career, flex, coh: sel.length ? 100 * coh / sel.length : 0, areas };
   cache.set(key, out);
   return out;
 }
@@ -685,10 +703,15 @@ function reqsText(c) {
   if (c.pref.length) t += '; <em>recommended:</em> ' + c.pref.map(prefText).join(', ');
   return t;
 }
-function verdict(v) {
-  if (v >= 85) return ['Excellent', 'var(--open)', 'Opens a very wide range of strong options.'];
-  if (v >= 70) return ['Strong', 'var(--open)', 'A well-regarded combination with plenty of routes.'];
-  if (v >= 55) return ['Good', 'var(--close)', 'Solid. Some routes will need a different subject.'];
+// share of all possible combinations (with current priorities and goals) that score lower than v
+function percentile(v) {
+  const all = TRIPLES.map(t => score(t).overall);
+  return Math.round(100 * all.filter(x => x < v - 1e-9).length / all.length);
+}
+function verdict(p) {
+  if (p >= 90) return ['Excellent', 'var(--open)', 'Opens a very wide range of strong options.'];
+  if (p >= 70) return ['Strong', 'var(--open)', 'A well-regarded combination with plenty of routes.'];
+  if (p >= 40) return ['Good', 'var(--close)', 'Solid. Some routes will need a different subject.'];
   return ['Focused', 'var(--closed)', 'Narrower: great if it matches your plans.'];
 }
 let prevAreas = {};
@@ -794,14 +817,15 @@ function renderPalette(n, ranked) {
 function renderScore(n, cur, ceiling) {
   if (!cur) { $('#score').innerHTML = '<p class="fine">No combination is possible with the subjects you have available.</p>'; return; }
   const sc = cur.sc, partial = n < 3;
-  const [vt, vc, vs] = verdict(sc.overall);
+  const pct = percentile(sc.overall);
+  const [vt, vc, vs] = verdict(pct);
   const bar = (lbl, sub, v, color) => `<div class="bar-row"><div class="lbl">${lbl}<span>${sub}</span></div>
     <div class="track"><div class="fill ${partial ? 'partial' : ''}" style="width:${Math.max(0, Math.min(100, v)).toFixed(0)}%;background:${color}"></div></div><div class="v">${Math.round(v)}</div></div>`;
   const adding = partial && ceiling ? ceiling.t.filter(x => !st.sel.includes(x)) : [];
   $('#score').innerHTML = `
     <div class="overall">
       <div class="big">${Math.round(sc.overall)}<small>/100</small></div>
-      <div>${partial ? '<span class="upto">UP TO</span><br>' : ''}<div class="verdict" style="color:${vc}">${vt}</div>
+      <div>${partial ? '<span class="upto">UP TO</span><br>' : ''}<div class="verdict" style="color:${vc}">${vt} · ${pct >= 100 ? 'the top combination' : `better than ${pct}% of combinations`}</div>
         <div class="verdict-sub">${partial ? (n === 0 ? 'The best any three subjects can reach with these priorities.' : `Best reached by adding ${esc(listAnd(names(adding)))}.`) : vs}</div></div>
     </div>
     <div class="bars">

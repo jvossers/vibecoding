@@ -18,7 +18,8 @@ Open `index.html` directly in a browser. Deployed via GitHub Pages at labs.vosse
 
 - **Data**: `SUBJECTS`, `AREAS` (degree areas with `career`/`pop` weights) and `COURSES`
   (university courses). Rules use `req` (groups, each met by a *different* subject; matched by
-  `unmatched()`) and `pref` (recommended).
+  `unmatched()`), `pref` (recommended) and, on areas only, `rel` (relevant for "Fits together"
+  without being recommended).
 - **Engine**: `raw()` scores a selection (cached); `score()` normalises against the best of all
   valid triples (`MAX`) and blends by priority and goals; `best()` finds the best completion of a
   partial selection.
