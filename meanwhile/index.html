@@ -154,35 +154,51 @@ button.row:hover .t { text-decoration: underline; }
 .row .note { margin-left: auto; font-size: 12px; color: var(--muted); white-space: nowrap; }
 
 /* picker */
-dialog { padding: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); color: var(--text); width: min(820px, calc(100vw - 24px)); max-height: min(720px, calc(100vh - 24px)); }
+dialog { padding: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); color: var(--text); width: min(1040px, calc(100vw - 24px)); max-height: none; }
 dialog::backdrop { background: rgba(5,8,12,.7); }
-.pk { display: flex; flex-direction: column; height: min(720px, calc(100vh - 26px)); }
-.pk-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px 14px; border-bottom: 1px solid var(--line); }
-.pk-head h2 { margin: 0; font-size: 20px; font-weight: 600; }
+.pk { display: flex; flex-direction: column; height: min(780px, calc(100vh - 26px)); }
+.pk-head { display: flex; align-items: center; gap: 16px; padding: 14px 18px 14px 22px; border-bottom: 1px solid var(--line); flex: none; }
+.pk-head h2 { margin: 0; font-size: 20px; font-weight: 600; white-space: nowrap; }
+.pk-search { flex: 1; display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 14px; background: var(--bg); border: 1px solid var(--line2); border-radius: 10px; min-width: 0; }
+.pk-search input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; color: var(--text); font: inherit; font-size: 15px; }
 .pk-body { flex: 1; display: flex; min-height: 0; }
-.pk-left { flex: 1; min-width: 0; padding: 16px 22px; display: flex; flex-direction: column; gap: 12px; border-right: 1px solid var(--line); }
-.pk-left .search label { background: var(--bg); border-color: var(--line2); height: 44px; }
-.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-.tabs button { height: 32px; padding: 0 12px; border-radius: 16px; border: 1px solid var(--line); background: transparent; color: var(--soft); font-size: 13px; cursor: pointer; }
+.pk-main { flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 0; }
+.tabs { display: flex; gap: 6px; padding: 12px 22px; border-bottom: 1px solid var(--line); overflow-x: auto; flex: none; }
+.tabs button { flex: none; height: 32px; padding: 0 13px; border-radius: 16px; border: 1px solid var(--line); background: transparent; color: var(--soft); font-size: 13px; cursor: pointer; }
+.tabs button:hover { background: var(--panel2); }
 .tabs button[aria-selected="true"] { background: var(--cursor); border-color: var(--cursor); color: var(--bg); font-weight: 500; }
-.pk-list { flex: 1; overflow-y: auto; margin: 0 -6px; padding: 0 6px; }
-.pk-item { display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid var(--line); cursor: pointer; padding-right: 4px; }
-.pk-item input { width: 18px; height: 18px; accent-color: #6E9BF5; margin: 0 4px 0 2px; flex: none; }
-.pk-item .nm { font-size: 14px; font-weight: 500; }
-.pk-item .sub { font-size: 12px; color: var(--muted); }
-.life { position: relative; width: 110px; height: 6px; background: var(--panel2); border-radius: 3px; flex: none; margin-left: auto; }
-.life div { position: absolute; top: 0; height: 6px; border-radius: 3px; background: #5A6573; }
-.pk-item .count { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--dim); white-space: nowrap; }
-.pk-right { width: 300px; flex: none; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; background: #11161C; overflow-y: auto; }
-.pk-right h3 { margin: 0; font-size: 11px; letter-spacing: .08em; font-weight: 500; color: var(--dim); }
+.pk-list { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 22px 28px; }
+.pk-sec { margin-top: 18px; }
+.pk-sec h3 { margin: 0 0 8px; font-size: 11px; letter-spacing: .08em; font-weight: 500; color: var(--dim); text-transform: uppercase; }
+.pk-sec h3 .why { letter-spacing: 0; text-transform: none; font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 6px; }
+.pk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; }
+.pk-card { display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 8px 10px 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: transparent; cursor: pointer; text-align: left; width: 100%; min-width: 0; }
+.pk-card:hover { background: var(--panel2); border-color: var(--line2); }
+.pk-card[aria-pressed="true"] { border-color: #6E9BF5; background: rgba(110,155,245,.10); }
+.pk-card .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pk-card .nm { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pk-card .sub { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.pk-card .add { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line2); display: flex; align-items: center; justify-content: center; flex: none; color: var(--soft); }
+.pk-card[aria-pressed="true"] .add { background: #6E9BF5; border-color: #6E9BF5; color: var(--bg); }
+.life { position: relative; height: 4px; background: var(--panel2); border-radius: 2px; margin-top: 6px; }
+.life div { position: absolute; top: 0; height: 4px; border-radius: 2px; background: #6B7684; }
+.pk-card[aria-pressed="true"] .life div { background: #6E9BF5; }
+.pk-combo { display: block; width: 100%; text-align: left; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: transparent; cursor: pointer; }
+.pk-combo:hover { background: var(--panel2); border-color: var(--line2); }
+.pk-combo b { display: block; font-size: 14px; font-weight: 500; }
+.pk-combo span { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+.pk-combo .lanes { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
+.pk-combo .lanes i { font-style: normal; font-size: 11px; color: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 1px 8px; }
+.pk-empty { padding: 32px 0; color: var(--muted); font-size: 14px; }
+.pk-empty .tabs { padding: 12px 0 0; border: 0; }
+mark { background: rgba(232,197,71,.28); color: inherit; border-radius: 2px; }
+.pk-side { width: 280px; flex: none; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; background: #11161C; border-left: 1px solid var(--line); overflow-y: auto; }
+.pk-side h3 { margin: 0 0 2px; font-size: 11px; letter-spacing: .08em; font-weight: 500; color: var(--dim); }
+.pk-side .hint { font-size: 12px; color: var(--dim); margin: 2px 0 0; }
 .mine { display: flex; align-items: center; gap: 8px; height: 42px; padding: 0 4px 0 10px; background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; font-size: 14px; }
 .mine span.n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mine .icon-btn { width: 30px; height: 30px; border: 0; background: transparent; color: var(--muted); }
-.combo { text-align: left; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: transparent; cursor: pointer; }
-.combo:hover { background: var(--panel2); }
-.combo b { display: block; font-size: 13px; font-weight: 500; }
-.combo span { font-size: 12px; color: var(--muted); }
-
+.pk-chips { display: none; }
 .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--cursor); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: 500; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 50; }
 .toast.show { opacity: 1; }
 
@@ -201,10 +217,16 @@ dialog::backdrop { background: rgba(5,8,12,.7); }
   .mobile-name { display: flex; align-items: center; gap: 6px; position: absolute; left: 4px; top: 4px; z-index: 2; font-size: 12px; font-weight: 600; background: rgba(13,17,22,.85); padding: 2px 6px 2px 4px; border-radius: 6px; pointer-events: auto; }
   .mobile-name .icon-btn { width: 22px; height: 22px; border: 0; background: transparent; color: var(--dim); }
   .detail { left: 0; top: auto; width: auto; height: 72vh; border-left: 0; border-top: 1px solid var(--line); border-radius: 16px 16px 0 0; box-shadow: 0 -12px 40px rgba(0,0,0,.5); }
-  .pk-body { flex-direction: column; overflow-y: auto; }
-  .pk-left { border-right: 0; min-height: 60vh; }
-  .pk-right { width: auto; }
-  .life { display: none; }
+  dialog { width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; border: 0; border-radius: 0; }
+  .pk { height: 100dvh; }
+  .pk-head { padding: 10px 10px 10px 14px; gap: 8px; }
+  .pk-head h2 { display: none; }
+  .pk-side { display: none; }
+  .pk-chips { display: flex; gap: 6px; overflow-x: auto; padding: 10px 14px 0; flex: none; }
+  .pk-chips .chip { flex: none; cursor: pointer; }
+  .tabs { padding: 10px 14px; }
+  .pk-list { padding: 0 14px 24px; }
+  .pk-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 }
 </style>
 </head>
@@ -268,23 +290,23 @@ dialog::backdrop { background: rgba(5,8,12,.7); }
 <dialog id="picker" aria-labelledby="pk-title">
   <div class="pk">
     <div class="pk-head">
-      <h2 id="pk-title">Lanes</h2>
+      <h2 id="pk-title">Add lanes</h2>
+      <label class="pk-search">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#A1ABB8" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+        <input id="pk-search" type="search" autocomplete="off" placeholder="Search places, people, themes or events…" aria-label="Search lanes">
+      </label>
       <button class="icon-btn ghost" id="pk-close" aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg></button>
     </div>
+    <div class="pk-chips" id="pk-chips"></div>
     <div class="pk-body">
-      <div class="pk-left">
-        <div class="search"><label>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#A1ABB8" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
-          <input id="pk-search" type="search" autocomplete="off" placeholder="Search countries, regions, people, themes…" aria-label="Search lanes">
-        </label></div>
+      <div class="pk-main">
         <div class="tabs" role="tablist" id="pk-tabs"></div>
         <div class="pk-list" id="pk-list"></div>
       </div>
-      <div class="pk-right">
+      <div class="pk-side">
         <h3>YOUR LANES</h3>
         <div id="pk-mine" style="display:flex;flex-direction:column;gap:6px"></div>
-        <h3 style="margin-top:12px">TRY A COMPARISON</h3>
-        <div id="pk-combos" style="display:flex;flex-direction:column;gap:8px"></div>
+        <p class="hint">Use the arrows to reorder. You can also drag lanes by their handle on the timeline.</p>
         <div class="spacer"></div>
         <button class="btn primary" id="pk-done" style="justify-content:center;height:44px">Done</button>
       </div>
@@ -311,7 +333,14 @@ const COMBOS = [
   { title: 'Mozart & the American Revolution', sub: 'Vienna and the Thirteen Colonies, 1756–1791', lanes: ['mozart', 'usa', 'france'], from: 1750, to: 1800, at: 1776.5 },
   { title: 'Rome, Han China & Egypt', sub: 'The ancient world side by side', lanes: ['italy', 'china', 'egypt', 'julius-caesar', 'cleopatra'], from: -300, to: 300, at: -44 },
   { title: 'The Cold War', sub: 'USA, USSR, Germany and Cuba', lanes: ['usa', 'russia', 'germany', 'cuba'], from: 1940, to: 1995, at: 1962.8 },
-  { title: 'Science vs the arts', sub: 'Two themes across five centuries', lanes: ['science', 'arts', 'europe'], from: 1450, to: 2025, at: 1687 }
+  { title: 'Science vs the arts', sub: 'Two themes across five centuries', lanes: ['science', 'arts', 'europe'], from: 1450, to: 2025, at: 1687 },
+  { title: 'Age of revolutions', sub: 'America, France and Haiti', lanes: ['usa', 'france', 'haiti', 'napoleon', 'jefferson'], from: 1765, to: 1830, at: 1789.5 },
+  { title: 'Shakespeare & the wider world', sub: 'Elizabethan England, Ming China and the Mughals', lanes: ['shakespeare', 'elizabeth-i', 'china', 'india'], from: 1550, to: 1630, at: 1600 },
+  { title: 'Bach, Newton & Peter the Great', sub: 'Three lives around 1700', lanes: ['bach', 'newton', 'peter-the-great', 'netherlands'], from: 1640, to: 1760, at: 1697.5 },
+  { title: 'Ibn Battuta’s world', sub: 'Morocco to Mali, India and China', lanes: ['ibn-battuta', 'mansa-musa', 'mali', 'india', 'china'], from: 1280, to: 1380, at: 1330 },
+  { title: 'The space age', sub: 'Race to the Moon', lanes: ['armstrong', 'jfk', 'usa', 'russia', 'science'], from: 1955, to: 1975, at: 1969.55 },
+  { title: 'Medicine through time', sub: 'From the Black Death to mRNA', lanes: ['medicine', 'science', 'world'], from: 1300, to: 2025, at: 1796.4 },
+  { title: 'Cities side by side', sub: 'Amsterdam, London, Paris and New York', lanes: ['amsterdam', 'london', 'paris', 'new-york'], from: 1600, to: 2025, at: 1889 }
 ];
 
 // ---------- helpers ----------
@@ -398,7 +427,7 @@ function scopeKind(s) {
   if (s.type === 'theme') return 'Theme';
   if (s.type === 'world') return 'Everything, key events';
   const parent = s.parent ? SCOPES.get(s.parent).name + ' › ' : '';
-  const t = { continent: 'Continent', region: 'Region', country: 'Country' }[s.type] || s.type;
+  const t = { continent: 'Continent', region: 'Region', country: 'Country', city: 'City' }[s.type] || s.type;
   return parent ? parent + t : t;
 }
 
@@ -862,36 +891,173 @@ function renderDetail(colors) {
 }
 
 // ---------- picker ----------
-let pkTab = 'all';
-function openPicker() { renderPicker(); $('picker').showModal(); $('pk-search').focus(); }
-function renderPicker() {
-  const tabs = [['all', 'All'], ['place', 'Places'], ['person', 'People'], ['theme', 'Themes']];
-  $('pk-tabs').innerHTML = tabs.map(([k, l]) => `<button role="tab" data-tab="${k}" aria-selected="${pkTab === k}">${l}</button>`).join('');
-  const q = $('pk-search').value.trim().toLowerCase();
-  let list = [...SCOPES.values()].filter((s) => {
-    if (pkTab === 'person' && s.type !== 'person') return false;
-    if (pkTab === 'theme' && s.type !== 'theme') return false;
-    if (pkTab === 'place' && (s.type === 'person' || s.type === 'theme')) return false;
-    return !q || s.search.includes(q);
+let pkTab = 'suggested';
+const THEME_DESC = { science: 'Discoveries and inventions', arts: 'Art, music, writing and buildings', exploration: 'Voyages and firsts', religion: 'Faiths, schisms and thinkers', medicine: 'Vaccines, cures and epidemics', sport: 'Olympics, records and World Cups' };
+const PLUS = '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 2v10M2 7h10"/></svg>';
+const CHECK = '<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7"/></svg>';
+const totals = new Map();
+function scopeTotal(id) { if (!totals.has(id)) totals.set(id, laneItems(id, true).length); return totals.get(id); }
+function lifeSpanText(s) { return fmtYear(s.b.y) + '–' + fmtYear(s.dd.y); }
+function hl(text, q) {
+  if (!q) return esc(text);
+  const i = text.toLowerCase().indexOf(q);
+  return i < 0 ? esc(text) : esc(text.slice(0, i)) + '<mark>' + esc(text.slice(i, i + q.length)) + '</mark>' + esc(text.slice(i + q.length));
+}
+// one clickable card per lane; `range` scales the lifespan bar for people
+function pkCard(s, sub, q, range) {
+  const on = hasLane(s.id);
+  let life = '';
+  if (s.type === 'person' && range) {
+    const X = (y) => clamp((y - range[0]) / (range[1] - range[0]) * 100, 0, 100);
+    life = `<span class="life" aria-hidden="true"><div style="left:${X(s.b.n)}%;width:${Math.max(2, X(s.dd.n) - X(s.b.n))}%"></div></span>`;
+  }
+  return `<button class="pk-card" data-toggle="${s.id}" aria-pressed="${on}" title="${on ? 'Remove' : 'Add'} ${esc(s.name)}"><span class="tx"><span class="nm">${hl(s.name, q)}</span><span class="sub">${esc(sub)}</span>${life}</span><span class="add">${on ? CHECK : PLUS}</span></button>`;
+}
+function pkSection(title, why, body) {
+  return body ? `<section class="pk-sec"><h3>${esc(title)}${why ? `<span class="why">${esc(why)}</span>` : ''}</h3>${body}</section>` : '';
+}
+const grid = (cards) => cards.length ? `<div class="pk-grid">${cards.join('')}</div>` : '';
+function defaultSub(s) {
+  if (s.type === 'person') return s.role + ' · ' + lifeSpanText(s);
+  if (s.type === 'theme') return (THEME_DESC[s.id] || 'Theme') + ' · ' + scopeTotal(s.id) + ' events';
+  return scopeKind(s) + ' · ' + scopeTotal(s.id) + ' events';
+}
+const isPlace = (s) => s.type !== 'person' && s.type !== 'theme';
+const PEOPLE = () => [...SCOPES.values()].filter((s) => s.type === 'person');
+
+// Suggestions come from the lanes you have and the period you're looking at.
+function suggestions() {
+  const out = [], seen = new Set(state.lanes.map((l) => l.scope));
+  const add = (id, why) => { if (id && SCOPES.has(id) && !seen.has(id)) { seen.add(id); out.push({ s: SCOPES.get(id), why }); } };
+  const byTotal = (ids) => ids.slice().sort((a, b) => scopeTotal(b) - scopeTotal(a));
+  for (const lane of state.lanes) {
+    const s = SCOPES.get(lane.scope);
+    if (s.type === 'person') {
+      add(s.home, s.name + "'s home");
+      PEOPLE().filter((p) => p !== s)
+        .map((p) => ({ p, o: Math.min(p.dd.n, s.dd.n) - Math.max(p.b.n, s.b.n) }))
+        .filter((x) => x.o > 0.3 * Math.min(x.p.dd.n - x.p.b.n, s.dd.n - s.b.n))
+        .sort((a, b) => b.o - a.o).slice(0, 3).forEach((x) => add(x.p.id, 'Alive at the same time as ' + s.name));
+    } else if (s.type === 'theme') {
+      [...SCOPES.values()].filter((t) => t.type === 'theme').forEach((t) => add(t.id, 'Another theme'));
+    } else {
+      if (s.parent && s.parent !== 'world') add(s.parent, 'Includes ' + s.name);
+      byTotal(CHILDREN.get(s.id)).slice(0, 4).forEach((c) => add(c, 'Part of ' + s.name));
+      if (s.parent) byTotal(CHILDREN.get(s.parent).filter((c) => c !== s.id)).slice(0, 2).forEach((c) => add(c, 'Also in ' + SCOPES.get(s.parent).name));
+      PEOPLE().filter((p) => p.home === s.id).slice(0, 2).forEach((p) => add(p.id, 'From ' + s.name));
+    }
+    // places that share the most events with this lane
+    const co = new Map();
+    laneItems(lane.scope, lane.rollup).forEach(({ e }) => e.scopes.forEach((id) => {
+      const o = SCOPES.get(id);
+      if (!isPlace(o) || o.chain.includes(lane.scope) || s.chain.includes(id)) return;
+      co.set(id, (co.get(id) || 0) + 1);
+    }));
+    [...co].sort((a, b) => b[1] - a[1]).slice(0, 2).forEach(([id, n]) => add(id, n + ' shared events with ' + s.name));
+  }
+  return out;
+}
+function pickerSuggested() {
+  const { start, end } = target, span = end - start, rangeTxt = fmtYear(Math.round(start)) + '–' + fmtYear(Math.round(end));
+  let html = '';
+  const sug = suggestions().slice(0, 12);
+  const shown = new Set(sug.map((x) => x.s.id)); // each lane appears in one section only
+  html += pkSection('Suggested for your lanes', state.lanes.length ? '' : 'Add a lane to get suggestions', grid(sug.map(({ s, why }) => pkCard(s, why))));
+  const alive = PEOPLE().filter((p) => !hasLane(p.id) && !shown.has(p.id) && p.dd.n >= start && p.b.n <= end)
+    .map((p) => ({ p, o: Math.min(p.dd.n, end) - Math.max(p.b.n, start) })).sort((a, b) => b.o - a.o).slice(0, 8);
+  html += pkSection('People alive in ' + rangeTxt, '', grid(alive.map(({ p }) => pkCard(p, p.role + ' · ' + lifeSpanText(p), '', [start - span * 0.1, end + span * 0.1]))));
+  const busy = new Map();
+  EVENTS.forEach((e) => { if (!e.life && e.y0 >= start && e.y0 <= end) e.scopes.forEach((id) => { if (isPlace(SCOPES.get(id)) && id !== 'world') busy.set(id, (busy.get(id) || 0) + 1); }); });
+  const top = [...busy].filter(([id]) => !hasLane(id) && !shown.has(id)).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  html += pkSection('Busiest places in ' + rangeTxt, '', grid(top.map(([id, n]) => pkCard(SCOPES.get(id), n + ' events in this period · ' + scopeKind(SCOPES.get(id))))));
+  html += pkSection('Try a comparison', 'replaces your current lanes', comboList(COMBOS.slice(0, 4)));
+  return html;
+}
+function pickerPlaces() {
+  let html = pkSection('Whole world', '', grid([pkCard(SCOPES.get('world'), 'Key events from everywhere')]));
+  const byName = (a, b) => a.name.localeCompare(b.name);
+  CHILDREN.get('world').map((id) => SCOPES.get(id)).sort(byName).forEach((cont) => {
+    const cards = [pkCard(cont, 'Whole ' + cont.type + ' · ' + scopeTotal(cont.id) + ' events')];
+    const walk = (id, parentName) => CHILDREN.get(id).map((c) => SCOPES.get(c)).sort(byName).forEach((c) => {
+      const kind = { country: 'Country', region: 'Region', city: 'City' }[c.type] || c.type;
+      cards.push(pkCard(c, (parentName ? kind + ' in ' + parentName : kind) + ' · ' + scopeTotal(c.id) + ' events'));
+      walk(c.id, c.name);
+    });
+    walk(cont.id, '');
+    html += pkSection(cont.name, '', grid(cards));
   });
-  // places in hierarchy order, people by birth
-  const order = (s) => s.type === 'person' ? 'z' + String(s.b.n + 10000).padStart(8, '0') : s.type === 'theme' ? 'y' + s.name : s.chain.slice().reverse().map((id) => SCOPES.get(id).name).join('/');
-  list.sort((a, b) => order(a) < order(b) ? -1 : 1);
-  const LX = (y) => (y - 1000) / (2030 - 1000) * 110;
-  $('pk-list').innerHTML = list.map((s) => {
-    const indent = s.type === 'person' || s.type === 'theme' ? 0 : s.depth * 14;
-    const extra = s.type === 'person'
-      ? `<div class="life" aria-hidden="true"><div style="left:${clamp(LX(s.b.n), 0, 108)}px;width:${Math.max(2, LX(s.dd.n) - clamp(LX(s.b.n), 0, 108))}px"></div></div>`
-      : `<span class="count">${s.count}</span>`;
-    return `<label class="pk-item" style="padding-left:${indent}px"><input type="checkbox" data-scope="${s.id}" ${hasLane(s.id) ? 'checked' : ''}>
-      <div style="min-width:0"><div class="nm">${esc(s.name)}</div><div class="sub">${esc(scopeKind(s))}</div></div>${extra}</label>`;
-  }).join('') || '<div class="empty">No matches</div>';
+  return html;
+}
+function pickerPeople() {
+  const groups = [[-1e9, 500, 'Ancient world'], [500, 1450, 'Middle Ages'], [1450, 1700, 'Renaissance and early modern'], [1700, 1850, 'Age of revolutions'], [1850, 1e9, 'Modern times']];
+  return groups.map(([a, b, title]) => {
+    const ps = PEOPLE().filter((p) => p.b.n >= a && p.b.n < b).sort((x, y) => x.b.n - y.b.n);
+    if (!ps.length) return '';
+    const range = [Math.min(...ps.map((p) => p.b.n)), Math.max(...ps.map((p) => p.dd.n))];
+    return pkSection(title, fmtYear(Math.floor(range[0])) + '–' + fmtYear(Math.floor(range[1])), grid(ps.map((p) => pkCard(p, p.role + ' · ' + lifeSpanText(p), '', range))));
+  }).join('');
+}
+function pickerThemes() {
+  const ts = [...SCOPES.values()].filter((s) => s.type === 'theme');
+  return pkSection('Themes', 'events of one kind, from every place', grid(ts.map((t) => pkCard(t, defaultSub(t)))));
+}
+function comboList(list) {
+  return `<div class="pk-grid">${list.map((c) => `<button class="pk-combo" data-combo="${COMBOS.indexOf(c)}"><b>${esc(c.title)}</b><span>${esc(c.sub)} · ${esc(fmtYear(c.from))}–${esc(fmtYear(c.to))}</span><span class="lanes">${c.lanes.map((id) => `<i>${esc(SCOPES.get(id).name)}</i>`).join('')}</span></button>`).join('')}</div>`;
+}
+function pickerSearch(q) {
+  const score = (s) => {
+    const n = s.name.toLowerCase();
+    if (n.startsWith(q)) return 0;
+    if (n.split(/[\s(-]+/).some((w) => w.startsWith(q))) return 1;
+    if (n.includes(q)) return 2;
+    if (s.search.includes(q)) return 3;
+    const p = s.parent && SCOPES.get(s.parent).name.toLowerCase();
+    if (p && p.includes(q)) return 4; // e.g. "europe" also lists European countries
+    return -1;
+  };
+  const hits = [...SCOPES.values()].map((s) => ({ s, k: score(s) })).filter((x) => x.k >= 0)
+    .sort((a, b) => a.k - b.k || scopeTotal(b.s.id) - scopeTotal(a.s.id));
+  const shown = new Set(hits.map((x) => x.s.id));
+  const kinds = [['Places', isPlace], ['People', (s) => s.type === 'person'], ['Themes', (s) => s.type === 'theme']];
+  let html = kinds.map(([title, f]) => {
+    const list = hits.filter((x) => f(x.s));
+    return pkSection(title, list.length + ' found', grid(list.slice(0, 24).map(({ s, k }) => pkCard(s, k === 4 ? 'In ' + SCOPES.get(s.parent).name + ' · ' + scopeTotal(s.id) + ' events' : defaultSub(s), q, s.type === 'person' ? [s.b.n, s.dd.n] : null))));
+  }).join('');
+  // lanes whose events mention the words, e.g. "plague" or "olympics"
+  if (q.length >= 3) {
+    const mention = new Map();
+    EVENTS.forEach((e) => { if (!e.life && e.search.includes(q)) e.scopes.forEach((id) => mention.set(id, (mention.get(id) || 0) + 1)); });
+    const top = [...mention].filter(([id]) => !shown.has(id)).sort((a, b) => b[1] - a[1]).slice(0, 8);
+    html += pkSection('Lanes with events about “' + q + '”', '', grid(top.map(([id, n]) => pkCard(SCOPES.get(id), n + (n === 1 ? ' event mentions it' : ' events mention it')))));
+  }
+  return html || `<div class="pk-empty">Nothing matches “${esc(q)}”. Try browsing instead:<div class="tabs">${['places', 'people', 'themes'].map((t) => `<button data-tab="${t}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}</div></div>`;
+}
+function openPicker() {
+  $('pk-search').value = '';
+  pkTab = 'suggested';
+  renderPicker();
+  $('picker').showModal();
+  $('pk-list').scrollTop = 0;
+  if (matchMedia('(pointer: fine)').matches) $('pk-search').focus();
+}
+function renderPicker() {
+  const q = $('pk-search').value.trim().toLowerCase();
+  const tabs = [['suggested', 'Suggested'], ['places', 'Places'], ['people', 'People'], ['themes', 'Themes'], ['comparisons', 'Comparisons']];
+  $('pk-tabs').innerHTML = tabs.map(([k, l]) => `<button role="tab" data-tab="${k}" aria-selected="${!q && pkTab === k}">${l}</button>`).join('');
+  const list = $('pk-list'), top = list.scrollTop;
+  list.innerHTML = q ? pickerSearch(q)
+    : pkTab === 'places' ? pickerPlaces()
+    : pkTab === 'people' ? pickerPeople()
+    : pkTab === 'themes' ? pickerThemes()
+    : pkTab === 'comparisons' ? pkSection('Comparisons', 'replaces your current lanes', comboList(COMBOS))
+    : pickerSuggested();
+  list.scrollTop = top;
   const colors = colorsFor();
   $('pk-mine').innerHTML = state.lanes.map((l, i) => `<div class="mine"><span class="dot" style="background:${colors[i]}"></span><span class="n">${esc(SCOPES.get(l.scope).name)}</span>
-    <button class="icon-btn" data-up="${i}" aria-label="Move up" ${i === 0 ? 'disabled' : ''}><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8l4-4 4 4"/></svg></button>
-    <button class="icon-btn" data-down="${i}" aria-label="Move down" ${i === state.lanes.length - 1 ? 'disabled' : ''}><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg></button>
-    <button class="icon-btn" data-remove="${l.scope}" aria-label="Remove"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg></button></div>`).join('') || '<div style="color:var(--dim);font-size:13px">None yet</div>';
-  $('pk-combos').innerHTML = COMBOS.map((c, i) => `<button class="combo" data-combo="${i}"><b>${esc(c.title)}</b><span>${esc(c.sub)}</span></button>`).join('');
+    <button class="icon-btn" data-up="${i}" aria-label="Move ${esc(SCOPES.get(l.scope).name)} up" ${i === 0 ? 'disabled' : ''}><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8l4-4 4 4"/></svg></button>
+    <button class="icon-btn" data-down="${i}" aria-label="Move ${esc(SCOPES.get(l.scope).name)} down" ${i === state.lanes.length - 1 ? 'disabled' : ''}><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg></button>
+    <button class="icon-btn" data-remove="${l.scope}" aria-label="Remove ${esc(SCOPES.get(l.scope).name)}"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg></button></div>`).join('') || '<div style="color:var(--dim);font-size:13px">None yet — pick some on the left.</div>';
+  $('pk-chips').innerHTML = state.lanes.map((l, i) => `<button class="chip on" data-remove="${l.scope}" aria-label="Remove ${esc(SCOPES.get(l.scope).name)}"><span class="dot" style="background:${colors[i]};width:8px;height:8px"></span>${esc(SCOPES.get(l.scope).name)} ✕</button>`).join('');
 }
 function applyCombo(c) {
   state.lanes = c.lanes.map((s) => ({ scope: s, rollup: true }));
@@ -1099,17 +1265,17 @@ function bind() {
   $('pk-close').onclick = $('pk-done').onclick = () => $('picker').close();
   $('picker').addEventListener('click', (ev) => {
     if (ev.target === $('picker')) { $('picker').close(); return; }
-    const tab = ev.target.closest('[data-tab]'); if (tab) { pkTab = tab.dataset.tab; renderPicker(); return; }
+    const tog = ev.target.closest('[data-toggle]');
+    if (tog) { const id = tog.dataset.toggle; if (hasLane(id)) removeLane(id); else addLane(id); renderPicker(); return; }
+    const tab = ev.target.closest('[data-tab]'); if (tab) { pkTab = tab.dataset.tab; $('pk-search').value = ''; $('pk-list').scrollTop = 0; renderPicker(); return; }
     const up = ev.target.closest('[data-up]'); if (up) { moveLane(+up.dataset.up, +up.dataset.up - 1); renderPicker(); return; }
     const dn = ev.target.closest('[data-down]'); if (dn) { moveLane(+dn.dataset.down, +dn.dataset.down + 1); renderPicker(); return; }
     const c = ev.target.closest('[data-combo]'); if (c) { applyCombo(COMBOS[+c.dataset.combo]); $('picker').close(); }
   });
-  $('picker').addEventListener('change', (ev) => {
-    const cb = ev.target.closest('[data-scope]'); if (!cb) return;
-    if (cb.checked) addLane(cb.dataset.scope); else removeLane(cb.dataset.scope);
-    renderPicker();
+  $('pk-search').addEventListener('input', () => { $('pk-list').scrollTop = 0; renderPicker(); });
+  $('pk-search').addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') { const first = $('pk-list').querySelector('[data-toggle]'); if (first) first.click(); }
   });
-  $('pk-search').addEventListener('input', renderPicker);
 
   window.addEventListener('resize', requestRender);
   window.addEventListener('hashchange', () => { readHash(); requestRender(); });

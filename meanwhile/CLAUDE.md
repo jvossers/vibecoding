@@ -13,7 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```
 index.html        the whole app: markup, CSS, JS
-data.json         scopes (lanes) and ~660 events/eras
+data.json         ~140 scopes (lanes) and ~1,050 events/eras
 tests/smoke.mjs   data checks + Playwright smoke test
 ```
 
@@ -48,7 +48,7 @@ The test validates `data.json`: parents and scopes exist, dates parse, ends come
   ]
 }
 ```
-- **Scope types:** `world`, `continent`, `region`, `country`, `person`, `theme`. Places form a tree through `parent` (world › continent › region › country). People and themes have no parent.
+- **Scope types:** `world`, `continent`, `region`, `country`, `city`, `person`, `theme`. Places form a tree through `parent` (world › continent › region › country › city, e.g. Europe › United Kingdom › Scotland, or Europe › Netherlands › Amsterdam). People and themes have no parent.
 - **Dates:** `YYYY`, `YYYY-MM` or `YYYY-MM-DD`. Negative years are BCE (`-44-03-15`). The precision you write is the precision shown. `approx: true` adds "c.".
 - **Eras** have an `end`, or `ongoing: true` (runs to today). Everything else is a point event.
 - **Importance:** 1 = world-historic, 2 = notable, 3 = local detail. It drives roll-up and level of detail.
@@ -66,6 +66,27 @@ The test validates `data.json`: parents and scopes exist, dates parse, ends come
   - eras roll up only one level, and only at importance 1
 - Rolled-up items are drawn hollow or dashed, and their tooltip says "via X".
 - **Level of detail by zoom:** spans > 1500 years show importance 1 only, > 400 years show ≤ 2, otherwise everything.
+
+## Adding lanes (the picker)
+
+The "Add lane" dialog (`renderPicker()`) has a search box and five tabs. Each lane is a card that toggles on click:
+- **Suggested** (the default):
+  - `suggestions()`: lanes related to the current lanes. These are the parent, children and siblings of a place, people from that place, a person's home country, people alive at the same time, and places that share the most events with a lane.
+  - People alive in the period on screen.
+  - The busiest places in that period.
+  - A few comparisons.
+  - Each lane appears in only one section.
+- **Places:** the whole place tree, grouped by continent.
+- **People:** grouped by period, with lifespan bars.
+- **Themes.**
+- **Comparisons:** presets from `COMBOS`. Choosing one replaces your lanes and the view.
+
+Search matches:
+- names, aliases and roles
+- the parent's name ("europe" lists European countries)
+- event text: "plague" suggests the lanes whose events mention it
+
+Enter toggles the first result. On a phone the dialog is full screen, and the current lanes show as removable chips.
 
 ## Layout decisions
 
@@ -103,5 +124,5 @@ Other layout rules:
 ## Ideas not built yet
 
 - A vertical timeline on phones (lanes as columns), as in the mockups.
-- More ancient, Asian, African and South American data. Coverage is densest for Europe and 1500–2000.
+- More data. Coverage is densest for Europe and 1500–2000, and some person lanes have only 2–3 events.
 - User-added events and lanes.

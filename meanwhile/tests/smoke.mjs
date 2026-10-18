@@ -122,10 +122,26 @@ try {
   await still(page);
   check(Math.abs(await span(page) - 10) < 0.01, 'Decade preset shows 10 years');
 
-  // add a lane from the picker
+  // the lane picker: suggestions, browsing and search
   await page.click('#add-lane');
-  await page.fill('#pk-search', 'darwin');
-  await page.locator('#pk-list [data-scope="darwin"]').check();
+  check(await page.locator('#pk-list .pk-card:visible').count() >= 10, 'picker opens with suggestions to browse');
+  await page.screenshot({ path: path.join(OUT, 'picker.png') });
+  await page.locator('#pk-tabs [data-tab="people"]').click();
+  const people = data.scopes.filter(s => s.type === 'person').length;
+  check(await page.locator('#pk-list .pk-card').count() === people, `People tab lists all ${people} people`);
+  await page.locator('#pk-tabs [data-tab="places"]').click();
+  check(await page.locator('#pk-list [data-toggle="amsterdam"]').count() === 1, 'Places tab includes cities');
+  await page.locator('#pk-search').pressSequentially('fra');
+  check(await page.locator('#pk-list [data-toggle="france"]:visible').count() === 1, 'typing "fra" shows France');
+  await page.locator('#pk-search').fill('');
+  await page.locator('#pk-search').pressSequentially('darw');
+  const listBox = await page.locator('#pk-list').boundingBox();
+  check(listBox && listBox.height > 250, `results area has room (${listBox && Math.round(listBox.height)}px tall)`);
+  await page.keyboard.press('Enter');
+  check(await page.locator('#pk-list [data-toggle="darwin"][aria-pressed="true"]').count() === 1, 'Enter adds the first result');
+  await page.locator('#pk-search').fill('plague');
+  check(await page.locator('#pk-list .pk-card').count() > 0, 'searching an event word ("plague") suggests lanes');
+  await page.screenshot({ path: path.join(OUT, 'picker-search.png') });
   await page.click('#pk-done');
   check(await page.locator('.lane').count() === 5, 'adding a lane from the picker');
 
@@ -157,6 +173,11 @@ try {
   await ph.waitForSelector('#detail.open', { timeout: 3000 }).catch(() => {});
   check(await ph.locator('#detail.open').count() === 1, 'tapping an event opens the details sheet on a phone');
   await ph.screenshot({ path: path.join(OUT, 'phone-detail.png') });
+  await ph.keyboard.press('Escape');
+  await ph.waitForTimeout(300);
+  await ph.locator('#add-lane').tap();
+  check(await ph.locator('#pk-list .pk-card:visible').count() >= 6, 'picker works on a phone');
+  await ph.screenshot({ path: path.join(OUT, 'phone-picker.png') });
 
   check(!errors.length, 'no page errors' + (errors.length ? ': ' + errors.join(' | ') : ''));
 } catch (e) {
