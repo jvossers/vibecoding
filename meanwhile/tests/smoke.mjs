@@ -19,7 +19,9 @@ let failures = 0;
 const check = (ok, msg) => { console.log(`${ok ? '✓' : '✗'} ${msg}`); if (!ok) failures++; };
 
 // 1. source/data.json is consistent
-const data = JSON.parse(fs.readFileSync(path.join(APP_DIR, 'source', 'data.json'), 'utf8'));
+// the curated data plus anything imported from Wikidata (source/wikidata.json)
+const { build, LIMITS, words, detailShard, loadSource } = await import('../build/build.mjs');
+const data = loadSource();
 const scopeIds = new Set(data.scopes.map(s => s.id));
 const DATE = /^(-?\d+)(?:-(\d\d))?(?:-(\d\d))?$/;
 const num = s => { const m = DATE.exec(s); return m ? +m[1] + ((+m[2] || 1) - 1) / 12 + ((+m[3] || 1) - 1) / 365 : NaN; };
@@ -33,7 +35,6 @@ check(!badDate.length, 'every event date parses and ends after it starts' + (bad
 check(data.events.every(e => [1, 2, 3].includes(e.importance)), 'importance is 1, 2 or 3');
 
 // 2. the built tiles (build/build.mjs) hold exactly what each lane should show
-const { build, LIMITS, words, detailShard } = await import('../build/build.mjs');
 const built = build(data);
 const manifest = built.get('manifest.json');
 const tilesOf = (id) => built.get(`lanes/${id}.json`).tiles;
@@ -85,7 +86,60 @@ check(onDisk.v === manifest.v, `data/ is up to date with source/data.json (run n
   check(tileCount > data.scopes.length, `${tileCount} tiles for ${data.scopes.length} lanes`);
 }
 
-// 3. the small files: manifest, lanes, people, details, search
+// 3. the Wikidata importer turns query results into events correctly. The rows
+// below are a made-up sample in the query service's format, not real data.
+{
+  const { convert, parseTime, importanceOf, assignPlaces } = await import('../build/wikidata.mjs');
+  check(parseTime('+1574-10-03T00:00:00Z', 11).date === '1574-10-03' && parseTime('+1574-10-01T00:00:00Z', 10).date === '1574-10'
+    && parseTime('-0044-01-01T00:00:00Z', 9).date === '-44' && parseTime('+1500-01-01T00:00:00Z', 7).approx === true
+    && parseTime('+1500-01-01T00:00:00Z', 5) === null, 'importer reads Wikidata dates (day/month/year/century, BCE, too vague)');
+  check(importanceOf(90) === 1 && importanceOf(40) === 2 && importanceOf(10) === 3, 'importer ranks by Wikipedia coverage');
+  const row = (q, label, date, prec, links, more = {}) => ({ item: { value: 'http://www.wikidata.org/entity/' + q }, itemLabel: { value: label }, date: { value: date }, datePrec: { value: String(prec) }, links: { value: String(links) }, ...more });
+  const rows = new Map([
+    ['netherlands', [
+      row('Q900001', 'Sample flood', '+1421-11-18T00:00:00Z', 11, 45, { itemDescription: { value: 'sample flood in the sample' } }),
+      row('Q900002', 'Q900002', '+1600-01-01T00:00:00Z', 9, 50),                           // no English label
+      row('Q900003', 'Battle of Waterloo', '+1815-06-18T00:00:00Z', 11, 120),               // already curated
+      row('Q900004', 'Sample war', '+1568-01-01T00:00:00Z', 9, 95, { end: { value: '+1648-01-01T00:00:00Z' }, endPrec: { value: '9' } }),
+    ]],
+    ['belgium', [row('Q900004', 'Sample war', '+1568-01-01T00:00:00Z', 9, 95)]],
+    ['einstein', [row('Q900005', 'Sample Prize', '+1921-01-01T00:00:00Z', 9, 60, { kind: { value: 'award' } }),
+      row('Q900006', 'sample field', '+1900-01-01T00:00:00Z', 9, 60, { kind: { value: 'inception' } }),   // a field, not a work
+      row('Q900007', 'sample ceremony', '+1950-01-01T00:00:00Z', 9, 60, { kind: { value: 'event' } })]],
+  ]);
+  const out = convert(rows, data);
+  const byQ = Object.fromEntries(out.map(e => [e.wikidata, e]));
+  check(out.length === 4 && !byQ.Q900002 && !byQ.Q900003 && !byQ.Q900006, `importer skips unlabelled, already-curated and concept events (${out.length} kept)`);
+  check(byQ.Q900001.start === '1421-11-18' && byQ.Q900001.importance === 2 && byQ.Q900001.desc === 'Sample flood in the sample.', 'importer keeps date, importance and description');
+  check(byQ.Q900004.end === '1648' && byQ.Q900004.scopes.join() === 'netherlands,belgium' && byQ.Q900004.importance === 1, 'importer merges one item found in two places, with its end date');
+  check(byQ.Q900005.title === 'Albert Einstein receives the Sample Prize' && byQ.Q900005.scopes.join() === 'einstein' && byQ.Q900007.title === "Albert Einstein's sample ceremony", 'importer names awards and generic events after the person');
+  const keys = new Set(['title', 'start', 'end', 'scopes', 'importance', 'desc', 'approx', 'ongoing', 'score', 'wikidata']);
+  check(out.every(e => /^wd-q\d+/.test(e.id) && Object.keys(e).every(k => k === 'id' || keys.has(k))), 'imported events use the source format with stable wd- ids');
+  // places are sorted into the most specific matching lanes
+  const qid = (id) => data.scopes.find(s => s.id === id).wikidata;
+  const locs = new Map([
+    ['Q900011', [qid('amsterdam'), qid('netherlands'), qid('europe')]],   // city beats its country and continent
+    ['Q900012', [qid('nigeria'), qid('africa'), qid('europe')]],          // a country beats any continent
+    ['Q900013', [qid('africa'), 'Q999999999']],                           // only a continent
+    ['Q900014', ['nigeria', 'kenya', 'ghana', 'egypt', 'china'].map(qid)], // too many places: world, if widely covered
+    ['Q900016', [qid('africa'), qid('asia')]],                            // several continents: likewise
+    ['Q900017', [qid('africa'), qid('asia')]],
+  ]);
+  const placed = assignPlaces(['Q900011', 'Q900012', 'Q900013', 'Q900014', 'Q900015', 'Q900016', 'Q900017']
+    .map(q => row(q, 'x', '+1900-01-01T00:00:00Z', 9, q === 'Q900017' ? 20 : 90)), locs, data);
+  const where = (q) => [...placed].filter(([, rs]) => rs.some(r => r.item.value.endsWith('/' + q))).map(([id]) => id).join();
+  check(where('Q900011') === 'amsterdam' && where('Q900012') === 'nigeria' && where('Q900013') === 'africa' && where('Q900014') === 'world' && where('Q900015') === ''
+    && where('Q900016') === 'world' && where('Q900017') === '',
+    'importer puts place events in the most specific lanes');
+  // …and flow through the build like curated ones
+  const withImport = build({ ...data, events: [...data.events, ...out] });
+  const nlTiles = withImport.get('lanes/netherlands.json').tiles.flatMap(([, , , , f]) => withImport.get(f).events.map(r => r[0]));
+  const sa = withImport.get('search/sa.json') || [];
+  check(nlTiles.includes('wd-q900001') && sa.some(r => r[1] === 'wd-q900001') && withImport.get(`details/${detailShard('wd-q900001')}.json`)['wd-q900001'],
+    'imported events reach lane tiles, search and details');
+}
+
+// 4. the small files: manifest, lanes, people, details, search
 {
   const size = JSON.stringify(manifest).length;
   check(size < 20000, `manifest stays small (${Math.round(size / 1024)} KB)`);
@@ -113,7 +167,7 @@ check(onDisk.v === manifest.v, `data/ is up to date with source/data.json (run n
   check(split > 0 && !tinyMisses.length, `…also when busy prefixes split into 3-letter files (${split} of them)` + (tinyMisses.length ? ': ' + tinyMisses.slice(0, 3).join(', ') : ''));
 }
 
-// 4. the app
+// 5. the app
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json' };
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
@@ -221,6 +275,12 @@ try {
   check(await page.locator('#pk-list .pk-card').count() === people, `People tab lists all ${people} people`);
   await page.locator('#pk-tabs [data-tab="places"]').click();
   check(await page.locator('#pk-list [data-toggle="amsterdam"]').count() === 1, 'Places tab includes cities');
+  await page.locator('#pk-tabs [data-tab="comparisons"]').click();
+  const combos = await page.evaluate('COMBOS.map(c => ({ lanes: c.lanes, group: c.group, named: c.lanes.every(id => scopeName(id) !== id || COMBO_NAMES[id]) }))');
+  const known = new Set(data.scopes.map(s => s.id));
+  check(combos.length >= 30 && combos.every(c => c.lanes.every(id => known.has(id)) && c.named), `all ${combos.length} comparisons use real lanes with names`);
+  check(await page.locator('#pk-list .pk-combo').count() === combos.length && await page.locator('#pk-list .pk-sec').count() === new Set(combos.map(c => c.group)).size,
+    'Comparisons tab lists every comparison, by group');
   await page.locator('#pk-search').pressSequentially('fra');
   check(await page.locator('#pk-list [data-toggle="france"]:visible').count() === 1, 'typing "fra" shows France');
   await page.locator('#pk-search').fill('');
@@ -298,6 +358,17 @@ try {
   check((await p2.textContent('#mw-when')) === '44 BCE', 'BCE years display correctly');
   await p2.screenshot({ path: path.join(OUT, 'ancient.png') });
 
+  // a comparison with people whose lane files aren't loaded yet
+  {
+    const pc = await open({ viewport: { width: 1440, height: 900 } });
+    await pc.click('#add-lane');
+    await pc.locator('#pk-tabs [data-tab="comparisons"]').click();
+    await pc.locator('.pk-combo', { hasText: 'The Mongol century' }).click();
+    await pc.waitForFunction(() => document.querySelectorAll('.lane').length === 6 && document.querySelector('.lane .ev-dot'), null, { timeout: 5000 }).catch(() => {});
+    check(await pc.evaluate(() => state.lanes.map(l => l.scope).join()) === 'genghis-khan,marco-polo,mongolia,china,iran,russia' && await pc.locator('.lane').count() === 6,
+      'choosing a comparison with people applies it');
+    await pc.close();
+  }
   // one light theme only, even on a device set to dark mode
   const pd = await browser.newPage({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark' });
   await pd.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());

@@ -430,23 +430,59 @@ const WORLD_COLOR = '#D9D4C7';
 const MAX_ERA_ROWS = 6, MAX_LABEL_ROWS = 4;
 const ERA_H = 25, LABEL_H = 17;
 const DEFAULT = { lanes: ['world', 'netherlands', 'einstein', 'africa'], from: 1850, to: 1970, at: 1905 };
+// The first four are offered on the picker's front page; the Comparisons tab lists
+// them all, by group.
+const COMBO_GROUPS = ['Ancient & medieval', 'Renaissance to revolution', 'The 19th century', 'The 20th century & now', 'Places across time'];
 const COMBOS = [
-  { title: 'Netherlands, Einstein & Africa', sub: 'The example from the mockups, 1850–1970', lanes: ['world', 'netherlands', 'einstein', 'africa'], from: 1850, to: 1970, at: 1905 },
-  { title: 'Darwin & Lincoln', sub: 'Born on the same day — 12 Feb 1809', lanes: ['darwin', 'lincoln', 'united-kingdom', 'usa'], from: 1800, to: 1890, at: 1809.1 },
-  { title: 'Mozart & the American Revolution', sub: 'Vienna and the Thirteen Colonies, 1756–1791', lanes: ['mozart', 'usa', 'france'], from: 1750, to: 1800, at: 1776.5 },
-  { title: 'Rome, Han China & Egypt', sub: 'The ancient world side by side', lanes: ['italy', 'china', 'egypt', 'julius-caesar', 'cleopatra'], from: -300, to: 300, at: -44 },
-  { title: 'The Cold War', sub: 'USA, USSR, Germany and Cuba', lanes: ['usa', 'russia', 'germany', 'cuba'], from: 1940, to: 1995, at: 1962.8 },
-  { title: 'Science vs the arts', sub: 'Two themes across five centuries', lanes: ['science', 'arts', 'europe'], from: 1450, to: 2025, at: 1687 },
-  { title: 'Age of revolutions', sub: 'America, France and Haiti', lanes: ['usa', 'france', 'haiti', 'napoleon', 'jefferson'], from: 1765, to: 1830, at: 1789.5 },
-  { title: 'Shakespeare & the wider world', sub: 'Elizabethan England, Ming China and the Mughals', lanes: ['shakespeare', 'elizabeth-i', 'china', 'india'], from: 1550, to: 1630, at: 1600 },
-  { title: 'Bach, Newton & Peter the Great', sub: 'Three lives around 1700', lanes: ['bach', 'newton', 'peter-the-great', 'netherlands'], from: 1640, to: 1760, at: 1697.5 },
-  { title: 'Ibn Battuta’s world', sub: 'Morocco to Mali, India and China', lanes: ['ibn-battuta', 'mansa-musa', 'mali', 'india', 'china'], from: 1280, to: 1380, at: 1330 },
-  { title: 'The space age', sub: 'Race to the Moon', lanes: ['armstrong', 'jfk', 'usa', 'russia', 'science'], from: 1955, to: 1975, at: 1969.55 },
-  { title: 'Medicine through time', sub: 'From the Black Death to mRNA', lanes: ['medicine', 'science', 'world'], from: 1300, to: 2025, at: 1796.4 },
-  { title: 'Cities side by side', sub: 'Amsterdam, London, Paris and New York', lanes: ['amsterdam', 'london', 'paris', 'new-york'], from: 1600, to: 2025, at: 1889 }
+  { group: 'The 20th century & now', title: 'Netherlands, Einstein & Africa', sub: 'The example from the mockups, 1850–1970', lanes: ['world', 'netherlands', 'einstein', 'africa'], from: 1850, to: 1970, at: 1905 },
+  { group: 'The 19th century', title: 'Darwin & Lincoln', sub: 'Born on the same day — 12 Feb 1809', lanes: ['darwin', 'lincoln', 'united-kingdom', 'usa'], from: 1800, to: 1890, at: 1809.1 },
+  { group: 'Renaissance to revolution', title: 'Mozart & the American Revolution', sub: 'Vienna and the Thirteen Colonies, 1756–1791', lanes: ['mozart', 'usa', 'france'], from: 1750, to: 1800, at: 1776.5 },
+  { group: 'Ancient & medieval', title: 'Rome, Han China & Egypt', sub: 'The ancient world side by side', lanes: ['italy', 'china', 'egypt', 'julius-caesar', 'cleopatra'], from: -300, to: 300, at: -44 },
+  // ancient & medieval
+  { group: 'Ancient & medieval', title: 'The Axial Age', sub: 'Confucius, the Buddha and Greek philosophy', lanes: ['confucius', 'greece', 'india', 'china', 'iran'], from: -600, to: -300, at: -480 },
+  { group: 'Ancient & medieval', title: 'Alexander’s conquests', sub: 'From Macedon to the Indus in eleven years', lanes: ['alexander', 'greece', 'egypt', 'iran', 'india'], from: -360, to: -300, at: -331 },
+  { group: 'Ancient & medieval', title: 'Charlemagne’s world', sub: 'Franks, the Abbasid caliphate and Tang China', lanes: ['charlemagne', 'france', 'germany', 'iraq', 'china'], from: 740, to: 860, at: 800 },
+  { group: 'Ancient & medieval', title: 'The Mongol century', sub: 'Genghis Khan’s empire and Marco Polo’s journey', lanes: ['genghis-khan', 'marco-polo', 'mongolia', 'china', 'iran', 'russia'], from: 1150, to: 1350, at: 1271 },
+  { group: 'Ancient & medieval', title: 'Ibn Battuta’s world', sub: 'Morocco to Mali, India and China', lanes: ['ibn-battuta', 'mansa-musa', 'mali', 'india', 'china'], from: 1280, to: 1380, at: 1330 },
+  { group: 'Ancient & medieval', title: 'Joan of Arc & the Hundred Years’ War', sub: 'France and England, 1337–1453', lanes: ['joan-of-arc', 'france', 'united-kingdom', 'italy'], from: 1330, to: 1460, at: 1429.4 },
+  // renaissance to revolution
+  { group: 'Renaissance to revolution', title: 'Leonardo, Michelangelo & Luther', sub: 'High Renaissance meets the Reformation', lanes: ['da-vinci', 'michelangelo', 'luther', 'italy', 'germany'], from: 1450, to: 1570, at: 1517.8 },
+  { group: 'Renaissance to revolution', title: 'The age of exploration', sub: 'Columbus, Portugal, Spain and the Americas', lanes: ['columbus', 'portugal', 'spain', 'mexico', 'peru'], from: 1400, to: 1600, at: 1492.8 },
+  { group: 'Renaissance to revolution', title: 'Shakespeare & the wider world', sub: 'Elizabethan England, Ming China and the Mughals', lanes: ['shakespeare', 'elizabeth-i', 'china', 'india'], from: 1550, to: 1630, at: 1600 },
+  { group: 'Renaissance to revolution', title: 'Galileo & the scientific revolution', sub: 'From the telescope to the Principia', lanes: ['galileo', 'newton', 'science', 'italy', 'united-kingdom'], from: 1550, to: 1730, at: 1633.5 },
+  { group: 'Renaissance to revolution', title: 'The Dutch Golden Age', sub: 'Rembrandt, Vermeer and the VOC in Asia', lanes: ['rembrandt', 'vermeer', 'netherlands', 'indonesia', 'japan'], from: 1580, to: 1700, at: 1642 },
+  { group: 'Renaissance to revolution', title: 'The Sun King & the Tsar', sub: 'Versailles, St Petersburg and the siege of Vienna', lanes: ['louis-xiv', 'peter-the-great', 'france', 'russia', 'turkey'], from: 1640, to: 1730, at: 1683.7 },
+  { group: 'Renaissance to revolution', title: 'Bach, Newton & Peter the Great', sub: 'Three lives around 1700', lanes: ['bach', 'newton', 'peter-the-great', 'netherlands'], from: 1640, to: 1760, at: 1697.5 },
+  { group: 'Renaissance to revolution', title: 'The Enlightenment', sub: 'Catherine the Great, Franklin and the philosophes', lanes: ['catherine-the-great', 'franklin', 'france', 'russia', 'usa'], from: 1740, to: 1800, at: 1762.5 },
+  { group: 'Renaissance to revolution', title: 'Age of revolutions', sub: 'America, France and Haiti', lanes: ['usa', 'france', 'haiti', 'napoleon', 'jefferson'], from: 1765, to: 1830, at: 1789.5 },
+  // 19th century
+  { group: 'The 19th century', title: 'Beethoven & Napoleon', sub: 'The Eroica and the empire, 1790–1830', lanes: ['beethoven', 'napoleon', 'austria', 'france', 'germany'], from: 1790, to: 1830, at: 1804.4 },
+  { group: 'The 19th century', title: 'Bolívar & Latin American independence', sub: 'Venezuela to Peru, and Spain’s side', lanes: ['bolivar', 'venezuela', 'colombia', 'peru', 'argentina', 'spain'], from: 1800, to: 1835, at: 1819.6 },
+  { group: 'The 19th century', title: 'Victoria’s century', sub: 'Darwin, Nightingale and Marx in Britain and India', lanes: ['queen-victoria', 'darwin', 'nightingale', 'marx', 'united-kingdom', 'india'], from: 1819, to: 1901, at: 1851 },
+  { group: 'The 19th century', title: 'Tesla, Curie & Einstein', sub: 'Electricity, radioactivity and relativity', lanes: ['tesla', 'curie', 'einstein', 'science'], from: 1860, to: 1950, at: 1905 },
+  { group: 'The 19th century', title: 'Modern art & the mind', sub: 'Van Gogh, Picasso, Kahlo and Freud', lanes: ['van-gogh', 'picasso', 'frida-kahlo', 'freud', 'arts'], from: 1850, to: 1960, at: 1907 },
+  // 20th century
+  { group: 'The 20th century & now', title: 'Revolutions of the 20th century', sub: 'Lenin, Mao and Castro', lanes: ['lenin', 'mao', 'russia', 'china', 'cuba'], from: 1900, to: 1980, at: 1917.8 },
+  { group: 'The 20th century & now', title: 'The world wars', sub: 'Churchill, and the great powers 1910–1950', lanes: ['churchill', 'germany', 'russia', 'japan', 'usa'], from: 1910, to: 1950, at: 1940.4 },
+  { group: 'The 20th century & now', title: 'Anne Frank’s Amsterdam', sub: 'Occupation and the war, 1929–1946', lanes: ['anne-frank', 'amsterdam', 'netherlands', 'germany'], from: 1929, to: 1946, at: 1942.5 },
+  { group: 'The 20th century & now', title: 'The Cold War', sub: 'USA, USSR, Germany and Cuba', lanes: ['usa', 'russia', 'germany', 'cuba'], from: 1940, to: 1995, at: 1962.8 },
+  { group: 'The 20th century & now', title: 'End of empire', sub: 'Gandhi, Mandela and independence', lanes: ['gandhi', 'mandela', 'india', 'south-africa', 'ghana', 'kenya'], from: 1900, to: 2000, at: 1947.6 },
+  { group: 'The 20th century & now', title: 'Civil rights & apartheid', sub: 'Martin Luther King and Nelson Mandela', lanes: ['mlk', 'mandela', 'usa', 'south-africa'], from: 1945, to: 1995, at: 1963.6 },
+  { group: 'The 20th century & now', title: 'The space age', sub: 'Race to the Moon', lanes: ['armstrong', 'jfk', 'usa', 'russia', 'science'], from: 1955, to: 1975, at: 1969.55 },
+  { group: 'The 20th century & now', title: 'Elizabeth II’s reign', sub: 'Seventy years, 1952–2022', lanes: ['elizabeth-ii', 'united-kingdom', 'world', 'australia'], from: 1950, to: 2025, at: 1969.5 },
+  { group: 'The 20th century & now', title: 'The digital age', sub: 'Steve Jobs and the tech powers', lanes: ['steve-jobs', 'usa', 'japan', 'china', 'science'], from: 1970, to: 2025, at: 2007 },
+  // places
+  { group: 'Places across time', title: 'Science vs the arts', sub: 'Two themes across five centuries', lanes: ['science', 'arts', 'europe'], from: 1450, to: 2025, at: 1687 },
+  { group: 'Places across time', title: 'Medicine through time', sub: 'From the Black Death to mRNA', lanes: ['medicine', 'science', 'world'], from: 1300, to: 2025, at: 1796.4 },
+  { group: 'Places across time', title: 'Cities side by side', sub: 'Amsterdam, London, Paris and New York', lanes: ['amsterdam', 'london', 'paris', 'new-york'], from: 1600, to: 2025, at: 1889 },
+  { group: 'Places across time', title: 'Crossroads of empires', sub: 'Turkey, Iran, Iraq, Egypt and Israel over 3,000 years', lanes: ['turkey', 'iran', 'iraq', 'egypt', 'israel'], from: -1000, to: 2025, at: 1453.4 },
+  { group: 'Places across time', title: 'West African kingdoms', sub: 'Ghana, Mali, Benin and Sokoto', lanes: ['mali', 'ghana', 'nigeria', 'senegal', 'morocco'], from: 700, to: 1900, at: 1324 },
+  { group: 'Places across time', title: 'East Asia', sub: 'China, Japan, Korea and Vietnam since the Opium Wars', lanes: ['china', 'japan', 'korea', 'vietnam'], from: 1840, to: 2025, at: 1945.6 },
+  { group: 'Places across time', title: 'The Americas', sub: 'Five countries from Columbus to now', lanes: ['usa', 'mexico', 'brazil', 'argentina', 'canada'], from: 1490, to: 2025, at: 1821 }
 ];
 // names for the people in COMBOS, which may not be loaded when the combos are listed
-const COMBO_NAMES = { einstein: 'Albert Einstein', darwin: 'Charles Darwin', lincoln: 'Abraham Lincoln', mozart: 'Mozart', 'julius-caesar': 'Julius Caesar', cleopatra: 'Cleopatra', napoleon: 'Napoleon', jefferson: 'Thomas Jefferson', shakespeare: 'Shakespeare', 'elizabeth-i': 'Elizabeth I', bach: 'J. S. Bach', newton: 'Isaac Newton', 'peter-the-great': 'Peter the Great', 'ibn-battuta': 'Ibn Battuta', 'mansa-musa': 'Mansa Musa', armstrong: 'Neil Armstrong', jfk: 'John F. Kennedy' };
+const COMBO_NAMES = { einstein: 'Albert Einstein', darwin: 'Charles Darwin', lincoln: 'Abraham Lincoln', mozart: 'Mozart', 'julius-caesar': 'Julius Caesar', cleopatra: 'Cleopatra', napoleon: 'Napoleon', jefferson: 'Thomas Jefferson', shakespeare: 'Shakespeare', 'elizabeth-i': 'Elizabeth I', bach: 'J. S. Bach', newton: 'Isaac Newton', 'peter-the-great': 'Peter the Great', 'ibn-battuta': 'Ibn Battuta', 'mansa-musa': 'Mansa Musa', armstrong: 'Neil Armstrong', jfk: 'John F. Kennedy',
+  confucius: 'Confucius', alexander: 'Alexander the Great', charlemagne: 'Charlemagne', 'genghis-khan': 'Genghis Khan', 'marco-polo': 'Marco Polo', 'joan-of-arc': 'Joan of Arc', 'da-vinci': 'Leonardo da Vinci', michelangelo: 'Michelangelo', luther: 'Martin Luther', columbus: 'Christopher Columbus', galileo: 'Galileo', rembrandt: 'Rembrandt', vermeer: 'Vermeer', 'louis-xiv': 'Louis XIV', 'catherine-the-great': 'Catherine the Great', franklin: 'Benjamin Franklin', beethoven: 'Beethoven', bolivar: 'Simón Bolívar', 'queen-victoria': 'Queen Victoria', nightingale: 'Florence Nightingale', marx: 'Karl Marx', tesla: 'Nikola Tesla', curie: 'Marie Curie', 'van-gogh': 'Van Gogh', picasso: 'Picasso', 'frida-kahlo': 'Frida Kahlo', freud: 'Sigmund Freud', lenin: 'Lenin', mao: 'Mao Zedong', churchill: 'Winston Churchill', 'anne-frank': 'Anne Frank', gandhi: 'Gandhi', mandela: 'Nelson Mandela', mlk: 'Martin Luther King Jr.', 'elizabeth-ii': 'Elizabeth II', 'steve-jobs': 'Steve Jobs' };
 
 // ---------- helpers ----------
 const $ = (id) => document.getElementById(id);
@@ -1339,7 +1375,7 @@ function renderPicker() {
     : pkTab === 'places' ? pickerPlaces()
     : pkTab === 'people' ? pickerPeople()
     : pkTab === 'themes' ? pickerThemes()
-    : pkTab === 'comparisons' ? pkSection('Comparisons', 'replaces your current lanes', comboList(COMBOS))
+    : pkTab === 'comparisons' ? COMBO_GROUPS.map((g, i) => pkSection(g, i ? '' : `${COMBOS.length} comparisons · each replaces your current lanes`, comboList(COMBOS.filter((c) => c.group === g)))).join('')
     : pickerSuggested();
   list.scrollTop = top;
   const colors = colorsFor();
@@ -1350,9 +1386,11 @@ function renderPicker() {
   $('pk-chips').innerHTML = state.lanes.map((l, i) => `<button class="chip on" data-remove="${l.scope}" aria-label="Remove ${esc(SCOPES.get(l.scope).name)}"><span class="dot" style="background:${colors[i]};width:8px;height:8px"></span>${esc(SCOPES.get(l.scope).name)} ✕</button>`).join('');
 }
 function applyCombo(c) {
+  for (const id of c.lanes) if (!SCOPES.has(id)) registerScope({ id, name: COMBO_NAMES[id] || id, type: 'person' }); // only people can be unknown
   state.lanes = c.lanes.map((s) => ({ scope: s, rollup: true }));
   state.selected = null; state.cursor = c.at;
   setRange(c.from, c.to, true);
+  Promise.all(c.lanes.map(ensureLane)).then(() => { requestRender(); loadVisible(); });
   requestRender();
 }
 

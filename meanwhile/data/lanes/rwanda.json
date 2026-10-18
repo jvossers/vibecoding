@@ -1,1 +1,1 @@
-{"scope":{"id":"rwanda","name":"Rwanda","type":"country","parent":"africa","n":3},"stats":{"n":3,"ext":[1962.5,2003.55],"hist":{"238":1,"239":2},"own":{"238":1,"239":2},"rel":[["dr-congo",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/rwanda/0/all.json"]]}
+{"scope":{"id":"rwanda","name":"Rwanda","type":"country","parent":"africa","wikidata":"Q1037","n":7},"stats":{"n":7,"ext":[1962.5,2018.22],"hist":{"238":1,"239":5,"240":1},"own":{"238":1,"239":5,"240":1},"rel":[["dr-congo",1]],"people":[]},"tiles":[[0,4,-99999,99999,"tiles/rwanda/0/all.json"]]}
