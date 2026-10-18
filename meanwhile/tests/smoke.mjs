@@ -106,6 +106,7 @@ try {
     document.querySelectorAll('.ev-label').forEach(l => { rows[l.dataset.id] = l.style.top; });
     return { rows, heights };
   });
+  await page.waitForTimeout(400); // lane heights settle ~120ms after the view stops
   const before = await snap();
   await page.evaluate(() => { window.__frames = []; let last = performance.now(); const f = (t) => { window.__frames.push(t - last); last = t; if (window.__frames.length < 400) requestAnimationFrame(f); }; requestAnimationFrame(f); return 0; });
   await page.mouse.move(box.x + box.width * 0.8, box.y + 40);
