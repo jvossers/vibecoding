@@ -69,8 +69,29 @@ The test validates `data.json`: parents and scopes exist, dates parse, ends come
 
 ## Layout decisions
 
-- **Lane height grows to fit:** era rows (up to 6) on top, then a line of dots, then up to 4 rows of labels. Events that don't fit in the label rows stay as dots, which you can still hover and click.
-- Eras narrower than 14px at the current zoom are drawn as points.
+**Scrolling must stay smooth: nothing may jump while you pan or zoom.** The rendering is built around that:
+
+- **Layout is per zoom level, not per frame.**
+  - `layoutLane()` assigns rows once for each power of two of pixels-per-year (`zoomLevel()`), over all of the lane's events, in years rather than pixels. It is cached.
+  - Panning never changes the layout. Zooming in within a level only spreads things apart.
+  - Rows can only change when you cross a 2× zoom boundary.
+- **The DOM is built once per level.**
+  - `buildLanes()` runs only when the lanes, roll-up settings, zoom level or phone/desktop mode change.
+  - Each frame, `positionLanes()` only moves elements with `transform` and hides those far off-screen.
+  - Selection just toggles a class (`applySelection()`) and never re-lays out.
+- **Vertical layout changes only at rest.**
+  - Era rows and the dot line have fixed positions per level.
+  - About 120ms after the view stops moving, `settleLanes()` adjusts each lane's height. It also slides the dots and labels up past era rows that are empty in view. Both animate with CSS.
+- **Motion.**
+  - The view animates towards `target` for wheel zoom, buttons and presets.
+  - Drag and pinch set the view directly; a drag keeps momentum (`velocity`) after release.
+  - `requestView()` is the cheap per-frame path. `requestRender()` also refreshes the cards, minimap bars and detail panel.
+- The smoke test checks that dragging changes no label's row and no lane's height.
+
+Other layout rules:
+
+- **Rows per lane:** up to 6 rows of eras on top, then a line of dots, then up to 4 rows of labels. Events that don't fit in the label rows stay as dots, which you can still hover and click.
+- Eras narrower than 14px at the zoom level are drawn as points. An era with less than 30px visible hides its text.
 - **Interaction:**
   - mouse wheel zooms around the pointer; horizontal scroll or shift+wheel pans
   - drag pans; pinch zooms on touch

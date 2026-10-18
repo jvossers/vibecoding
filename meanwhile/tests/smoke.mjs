@@ -52,9 +52,11 @@ async function open(opts, hash = '') {
   page.on('pageerror', e => errors.push(e.message));
   await page.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
   await page.goto(BASE + hash);
-  await page.waitForSelector('.lane .ev-dot', { timeout: 10000 });
+  await page.waitForSelector('.lane .ev-dot', { state: 'attached', timeout: 10000 });
   return page;
 }
+// the view animates towards its target; wait until it has arrived
+const still = page => page.waitForFunction(() => !velocity && state.start === target.start && state.end === target.end);
 const span = page => page.evaluate(() => state.end - state.start);
 
 try {
@@ -83,20 +85,41 @@ try {
   check(page.url().includes('e=einsteins-annus-mirabilis'), 'selection is saved in the URL');
   await page.screenshot({ path: path.join(OUT, 'desktop-detail.png') });
   await page.keyboard.press('Escape');
+  await page.waitForTimeout(300);
 
   // zoom and pan
   const box = await page.locator('.lane:nth-child(2) .track').boundingBox();
   const s0 = await span(page);
   await page.mouse.move(box.x + box.width / 2, box.y + 40);
   await page.mouse.wheel(0, -400);
-  await page.waitForTimeout(100);
+  await still(page);
   check(await span(page) < s0, 'scrolling the wheel zooms in');
   const st0 = await page.evaluate(() => state.start);
   await page.mouse.down();
   await page.mouse.move(box.x + box.width / 2 - 200, box.y + 40, { steps: 5 });
   await page.mouse.up();
+  await still(page);
   check(await page.evaluate(() => state.start) > st0, 'dragging pans the timeline');
+  // smoothness: while panning, labels keep their rows and lanes keep their height
+  const snap = () => page.evaluate(() => {
+    const rows = {}, heights = [...document.querySelectorAll('.lane')].map(l => l.style.height);
+    document.querySelectorAll('.ev-label').forEach(l => { rows[l.dataset.id] = l.style.top; });
+    return { rows, heights };
+  });
+  const before = await snap();
+  await page.evaluate(() => { window.__frames = []; let last = performance.now(); const f = (t) => { window.__frames.push(t - last); last = t; if (window.__frames.length < 400) requestAnimationFrame(f); }; requestAnimationFrame(f); return 0; });
+  await page.mouse.move(box.x + box.width * 0.8, box.y + 40);
+  await page.mouse.down();
+  let moved = 0;
+  for (let k = 0; k < 30; k++) { await page.mouse.move(box.x + box.width * 0.8 - k * 15, box.y + 40); const now = await snap(); moved += Object.keys(now.rows).filter(id => id in before.rows && now.rows[id] !== before.rows[id]).length + now.heights.filter((h, i) => h !== before.heights[i]).length; }
+  await page.mouse.up();
+  check(moved === 0, `panning keeps every label on its row and every lane at its height (${moved} changes)`);
+  const frames = await page.evaluate(() => window.__frames.slice(2));
+  const slow = frames.filter(f => f > 50).length;
+  console.log(`  frames during drag: ${frames.length}, median ${frames.sort((a, b) => a - b)[frames.length >> 1].toFixed(1)}ms, >50ms: ${slow}`);
+  await still(page);
   await page.locator('#presets [data-preset="10"]').click();
+  await still(page);
   check(Math.abs(await span(page) - 10) < 0.01, 'Decade preset shows 10 years');
 
   // add a lane from the picker
@@ -117,6 +140,7 @@ try {
   check((await p2.textContent('#range-label')).startsWith('1800'), 'share link restores the range');
   await p2.click('#zoom-out'); await p2.click('#zoom-out'); await p2.click('#zoom-out'); await p2.click('#zoom-out');
   await p2.click('#zoom-out'); await p2.click('#zoom-out'); await p2.click('#zoom-out');
+  await still(p2);
   check((await span(p2)) > 3000, 'zooms out to thousands of years');
   await p2.goto(BASE + '#lanes=italy,china,egypt&from=-300&to=300&at=-44');
   await p2.waitForFunction(() => state.cursor === -44);
@@ -129,7 +153,7 @@ try {
   const scrollW = await ph.evaluate(() => document.documentElement.scrollWidth);
   check(scrollW <= 390, `no horizontal scroll at 390px (scrollWidth ${scrollW})`);
   await ph.screenshot({ path: path.join(OUT, 'phone.png'), fullPage: true });
-  await ph.locator('.lane:nth-child(2) .ev-label').first().tap();
+  await ph.locator('.lane:nth-child(2) .ev-label:visible').first().tap();
   await ph.waitForSelector('#detail.open', { timeout: 3000 }).catch(() => {});
   check(await ph.locator('#detail.open').count() === 1, 'tapping an event opens the details sheet on a phone');
   await ph.screenshot({ path: path.join(OUT, 'phone-detail.png') });

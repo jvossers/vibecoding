@@ -73,6 +73,7 @@ main { flex: 1; display: flex; min-height: 0; }
 .hover-line { position: absolute; top: 0; bottom: 0; border-left: 1px dashed rgba(242,244,247,.35); display: none; }
 .hover-pill { position: absolute; top: 8px; left: 6px; font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; background: var(--bg); padding: 0 4px; }
 
+.lane { transition: height .2s ease; }
 .lane { display: flex; border-bottom: 1px solid var(--line); position: relative; z-index: 1; }
 .lane-label { width: var(--label-w); flex: none; padding: 12px 10px 10px 0; display: flex; gap: 6px; }
 .lane-label .grip { cursor: grab; color: #4A5563; padding: 2px; border: 0; background: transparent; height: 22px; }
@@ -89,7 +90,11 @@ main { flex: 1; display: flex; min-height: 0; }
 .lane.drag-over { box-shadow: inset 0 2px 0 var(--cursor); }
 .track { position: relative; flex: 1; overflow: hidden; cursor: grab; }
 .track.dragging, .timeline.dragging .track { cursor: grabbing; }
+.era, .ev-dot, .ev-stem, .ev-label { left: 0; will-change: transform; }
 .era { position: absolute; height: 17px; border-radius: 4px; font-size: 11px; line-height: 15px; padding: 0 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 1px solid; cursor: pointer; text-align: left; }
+.era.tiny { color: transparent !important; }
+.pts { position: absolute; inset: 0; transition: transform .2s ease; pointer-events: none; }
+.pts > * { pointer-events: auto; }
 .era.rolled { border-style: dashed; }
 .era.sel { box-shadow: 0 0 0 2px var(--cursor); }
 .ev-dot { position: absolute; width: 11px; height: 11px; padding: 0; border-radius: 50%; border: 2px solid var(--bg); cursor: pointer; }
@@ -428,17 +433,26 @@ function colorsFor() {
   let k = 0;
   return state.lanes.map((l) => (l.scope === 'world' ? WORLD_COLOR : PALETTE[k++ % PALETTE.length]));
 }
-function setRange(s, e, keepCursor) {
-  let span = clamp(e - s, MIN_SPAN, MAX_Y - MIN_Y);
+// The view animates towards a target range; drags set both at once.
+const target = { start: 1850, end: 1970 };
+let velocity = 0; // years per frame, for momentum after a drag
+function clampRange(s, e) {
+  const span = clamp(e - s, MIN_SPAN, MAX_Y - MIN_Y);
   s = clamp(s, MIN_Y, MAX_Y - span);
-  state.start = s; state.end = s + span;
-  if (!keepCursor && (state.cursor < s || state.cursor > s + span)) state.cursor = s + span / 2;
-  requestRender();
+  return [s, s + span];
+}
+function setRange(s, e, keepCursor, instant) {
+  [s, e] = clampRange(s, e);
+  target.start = s; target.end = e;
+  velocity = 0;
+  if (instant) { state.start = s; state.end = e; }
+  if (!keepCursor && (state.cursor < s || state.cursor > e)) { state.cursor = (s + e) / 2; requestRender(); }
+  requestView();
 }
 function zoomAt(anchor, factor) {
-  const span = state.end - state.start;
+  const span = target.end - target.start;
   const ns = clamp(span * factor, MIN_SPAN, MAX_Y - MIN_Y);
-  const s = anchor - (anchor - state.start) * (ns / span);
+  const s = anchor - (anchor - target.start) * (ns / span);
   setRange(s, s + ns, true);
 }
 function centerOn(y, span) { setRange(y - span / 2, y + span / 2, true); }
@@ -478,6 +492,7 @@ function readHash() {
   }
   const e = p.get('e');
   state.selected = e && EVENT_BY_ID.has(e) ? e : null;
+  target.start = state.start; target.end = state.end; velocity = 0;
 }
 let hashTimer;
 function writeHash() {
@@ -492,11 +507,14 @@ function writeHash() {
 }
 
 // ---------- rendering ----------
-let rafId = 0;
-function requestRender() { if (!rafId) rafId = requestAnimationFrame(() => { rafId = 0; render(); }); }
+// Two paths: a cheap per-frame view update (ruler, element positions, cursor)
+// and a heavier panel update (cards, minimap bars, details) that runs when
+// the data changes or once the view has settled.
+let rafId = 0, panelsDirty = true, settleTimer = 0;
+function requestView() { if (!rafId) rafId = requestAnimationFrame(frame); }
+function requestRender() { panelsDirty = true; requestView(); }
 function trackWidth() { return Math.max(100, $('ruler').clientWidth); }
 function labelWidth() { return $('ruler').offsetLeft; }
-function maxImportance(span) { return span > 1500 ? 1 : span > 400 ? 2 : 3; }
 
 function niceStep(span, w) {
   const steps = [1 / 12, 0.25, 0.5, 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000];
@@ -518,120 +536,215 @@ function ticks(start, end, w) {
   return out;
 }
 
-function layoutLane(lane, color, w) {
-  const { start, end } = state, span = end - start, X = (y) => (y - start) / span * w;
-  const maxImp = maxImportance(span);
-  const items = laneItems(lane.scope, lane.rollup);
-  const sel = state.selected;
-  const eras = [], points = [];
+// Layout is done once per zoom level (each 2× of pixels-per-year), over all of
+// a lane's events, in years rather than pixels. Panning never changes it, and
+// zooming in within a level only spreads things apart, so nothing jumps rows
+// while you move around.
+function zoomLevel(pxPerYear) { return Math.floor(Math.log2(pxPerYear)); }
+function maxImportance(pxPerYear) { return pxPerYear < 0.7 ? 1 : pxPerYear < 2.6 ? 2 : 3; }
+const layoutCache = new Map();
+function layoutLane(lane, level) {
+  const key = lane.scope + '|' + lane.rollup + '|' + level;
+  if (layoutCache.has(key)) return layoutCache.get(key);
+  const s = Math.pow(2, level); // the most zoomed-out scale of this level, in px per year
+  const maxImp = maxImportance(s);
+  const rank = (a, b) => (!!b.e.life - !!a.e.life) || (!!a.rolled - !!b.rolled) || (a.e.importance - b.e.importance) || (a.e.y0 - b.e.y0);
+  const items = laneItems(lane.scope, lane.rollup).filter(({ e }) => e.life || e.importance <= maxImp).sort(rank);
+  const fits = (rows, a, b) => rows.findIndex((row) => row.every(([p, q]) => b <= p || a >= q));
+  const eraRows = [], labelRows = [], eras = [], points = [];
   for (const it of items) {
     const e = it.e;
-    if (e.y1 < start || e.y0 > end) continue;
-    if (e.importance > maxImp && e.id !== sel && !e.life) continue;
-    // an era too short to see at this zoom is drawn as a point
-    (e.era && (e.y1 - e.y0) / span * w >= 14 ? eras : points).push(it);
-  }
-  const rank = (a, b) => ((b.e.id === sel) - (a.e.id === sel)) || (!!b.e.life - !!a.e.life) || (!!a.rolled - !!b.rolled) || (a.e.importance - b.e.importance) || (a.e.y0 - b.e.y0);
-  // eras: pack into rows by overlap
-  eras.sort(rank);
-  const eraRows = [];
-  const eraOut = [];
-  for (const it of eras) {
-    const a = Math.max(-2, X(it.e.y0)), b = Math.min(w + 2, X(it.e.y1));
-    const x0 = a, x1 = Math.max(a + 3, b);
-    let r = eraRows.findIndex((row) => row.every(([p, q]) => x1 + 2 <= p || x0 >= q + 2));
-    if (r < 0 && eraRows.length < MAX_ERA_ROWS) { eraRows.push([]); r = eraRows.length - 1; }
-    if (r < 0) continue;
-    eraRows[r].push([x0, x1]);
-    eraOut.push({ it, x0, x1, r });
-  }
-  // points: dots on one line, labels packed into rows below it
-  points.sort(rank);
-  const labelRows = [];
-  const ptOut = [];
-  for (const it of points) {
-    const x = X(it.e.y0), lw = textW(it.e.title);
-    let lx = x - 4;
-    if (lx + lw > w) lx = Math.max(0, x - lw + 4);
-    let r = labelRows.findIndex((row) => row.every(([p, q]) => lx + lw + 4 <= p || lx >= q + 4));
-    if (r < 0 && labelRows.length < MAX_LABEL_ROWS) { labelRows.push([]); r = labelRows.length - 1; }
-    if (r >= 0) labelRows[r].push([lx, lx + lw]);
-    ptOut.push({ it, x, lx, r });
-  }
-  const top = labelWidth() === 0 ? 30 : 10; // on phones the lane name sits on top of the track
-  const dotY = top + eraRows.length * ERA_H + (eraRows.length ? 6 : 4);
-  const labelTop = dotY + 14;
-  const height = Math.max(points.length ? labelTop + Math.max(1, labelRows.length) * LABEL_H + 8 : dotY + 6, 104);
-  let html = '';
-  for (const { it, x0, x1, r } of eraOut) {
-    const e = it.e, wpx = x1 - x0, isSel = e.id === sel;
-    const via = it.via ? ' · via ' + SCOPES.get(it.via).name : '';
-    html += `<button class="era${it.rolled ? ' rolled' : ''}${isSel ? ' sel' : ''}" data-id="${e.id}" title="${esc(e.title + ' (' + e.when + ')' + via)}" style="left:${x0}px;width:${wpx}px;top:${top + r * ERA_H}px;background:${color}${it.rolled ? '14' : '26'};border-color:${color}${it.rolled ? '66' : '80'};color:${color}">${wpx > 30 ? esc(e.title) : ''}</button>`;
-  }
-  for (const { it, x, lx, r } of ptOut) {
-    const e = it.e, isSel = e.id === sel, cls = (it.rolled ? ' rolled' : '') + (isSel ? ' sel' : '');
-    const via = it.via ? ' · via ' + SCOPES.get(it.via).name : '';
-    const tip = esc(e.title + ' — ' + e.when + via);
-    if (r >= 0) {
-      const ly = labelTop + r * LABEL_H;
-      html += `<div class="ev-stem" style="left:${x}px;top:${dotY + 6}px;height:${ly - dotY - 4}px;border-color:${color}"></div>`;
-      html += `<button class="ev-label${cls}" data-id="${e.id}" title="${tip}" style="left:${lx}px;top:${ly}px">${esc(e.title)}</button>`;
+    if (e.era && (e.y1 - e.y0) * s >= 14) {
+      const a = e.y0, b = e.y1 + 3 / s;
+      let r = fits(eraRows, a, b);
+      if (r < 0 && eraRows.length < MAX_ERA_ROWS) { eraRows.push([]); r = eraRows.length - 1; }
+      if (r >= 0) { eraRows[r].push([a, b]); eras.push({ it, r, label: (e.y1 - e.y0) * s > 30 }); continue; }
     }
-    html += `<button class="ev-dot${cls}" data-id="${e.id}" aria-label="${tip}" title="${tip}" style="left:${x - 5.5}px;top:${dotY - 5}px;background:${color};border-color:${it.rolled ? color : 'var(--bg)'}"></button>`;
+    // a point, or an era too short (or crowded out) to draw as a bar
+    const lw = textW(e.title), a = e.y0 - 4 / s, b = e.y0 + (lw + 4) / s;
+    let r = fits(labelRows, a, b);
+    if (r < 0 && labelRows.length < MAX_LABEL_ROWS) { labelRows.push([]); r = labelRows.length - 1; }
+    if (r >= 0) labelRows[r].push([a, b]);
+    points.push({ it, r });
   }
-  return { html, height, count: eraOut.length + ptOut.length };
+  const L = { eraRowCount: eraRows.length, eras, points };
+  layoutCache.set(key, L);
+  return L;
 }
 
-function render() {
-  const { start, end, cursor } = state, span = end - start;
+// Lane DOM is rebuilt only when the lanes or the zoom level change.
+let built = { sig: '', lanes: [] };
+function laneTop() { return labelWidth() === 0 ? 30 : 10; } // on phones the lane name sits on top of the track
+function buildLanes(level, colors) {
+  const top = laneTop();
+  if (!state.lanes.length) {
+    $('lanes').innerHTML = '<div class="empty">No lanes yet. <button class="btn" onclick="openPicker()">Add a lane</button></div>';
+    built.lanes = [];
+    return;
+  }
+  const out = [];
+  $('lanes').innerHTML = state.lanes.map((lane, i) => {
+    const s = SCOPES.get(lane.scope), color = colors[i], L = layoutLane(lane, level);
+    const kids = CHILDREN.get(s.id).length;
+    const dotY = top + L.eraRowCount * ERA_H + (L.eraRowCount ? 6 : 4), labelTop = dotY + 14;
+    let html = '';
+    for (const { it, r, label } of L.eras) {
+      const e = it.e, via = it.via ? ' · via ' + SCOPES.get(it.via).name : '';
+      html += `<button class="era${it.rolled ? ' rolled' : ''}" data-id="${e.id}" title="${esc(e.title + ' (' + e.when + ')' + via)}" style="top:${top + r * ERA_H}px;background:${color}${it.rolled ? '14' : '26'};border-color:${color}${it.rolled ? '66' : '80'};color:${color}">${label ? esc(e.title) : ''}</button>`;
+    }
+    html += '<div class="pts">';
+    for (const { it, r } of L.points) {
+      const e = it.e, cls = it.rolled ? ' rolled' : '';
+      const tip = esc(e.title + ' — ' + e.when + (it.via ? ' · via ' + SCOPES.get(it.via).name : ''));
+      if (r >= 0) {
+        const ly = labelTop + r * LABEL_H;
+        html += `<div class="ev-stem" style="top:${dotY + 6}px;height:${ly - dotY - 4}px;border-color:${color}"></div>`;
+        html += `<button class="ev-label${cls}" data-id="${e.id}" title="${tip}" style="top:${ly}px">${esc(e.title)}</button>`;
+      }
+      html += `<button class="ev-dot${cls}" data-id="${e.id}" aria-label="${tip}" title="${tip}" style="top:${dotY - 5}px;background:${color};border-color:${it.rolled ? color : 'var(--bg)'}"></button>`;
+    }
+    html += '</div>';
+    out.push({ L, dotY, labelTop });
+    return `<div class="lane" data-i="${i}">
+      <div class="lane-label">
+        <button class="grip" draggable="true" data-i="${i}" aria-label="Drag to reorder ${esc(s.name)}" title="Drag to reorder"><svg width="12" height="18" viewBox="0 0 12 18" fill="currentColor" aria-hidden="true"><circle cx="3" cy="4" r="1.4"/><circle cx="9" cy="4" r="1.4"/><circle cx="3" cy="9" r="1.4"/><circle cx="9" cy="9" r="1.4"/><circle cx="3" cy="14" r="1.4"/><circle cx="9" cy="14" r="1.4"/></svg></button>
+        <div style="min-width:0;flex:1">
+          <div class="lane-name"><span class="dot" style="background:${color}"></span><span>${esc(s.name)}</span></div>
+          <div class="lane-kind">${esc(scopeKind(s))}</div>
+          <div class="lane-meta"></div>
+          ${kids ? `<label class="rollup" title="Include events from ${kids} sub-region${kids > 1 ? 's' : ''}"><input type="checkbox" data-rollup="${i}" ${lane.rollup ? 'checked' : ''}>Include sub-regions</label>` : ''}
+        </div>
+        <div class="lane-actions">
+          <button class="icon-btn" data-remove="${esc(s.id)}" aria-label="Remove ${esc(s.name)}" title="Remove lane"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg></button>
+        </div>
+      </div>
+      <div class="track">
+        <div class="mobile-name"><span class="dot" style="background:${color};width:8px;height:8px"></span>${esc(s.name)}<button class="icon-btn" data-remove="${esc(s.id)}" aria-label="Remove ${esc(s.name)}"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg></button></div>
+        ${html}
+      </div>
+    </div>`;
+  }).join('');
+  // pair each layout entry with its elements, in the order they were written
+  $('lanes').querySelectorAll('.lane').forEach((laneEl, i) => {
+    const b = out[i], track = laneEl.querySelector('.track');
+    b.el = laneEl; b.meta = laneEl.querySelector('.lane-meta'); b.pts = track.querySelector('.pts'); b.height = 0; b.shift = 0;
+    const eraEls = track.querySelectorAll('.era'), stems = track.querySelectorAll('.ev-stem');
+    const labels = track.querySelectorAll('.ev-label'), dots = track.querySelectorAll('.ev-dot');
+    b.eras = b.L.eras.map((x, k) => ({ y0: x.it.e.y0, y1: x.it.e.y1, r: x.r, el: eraEls[k], shown: true, tiny: false }));
+    let li = 0;
+    b.points = b.L.points.map((x, k) => {
+      const p = { y: x.it.e.y0, r: x.r, dot: dots[k], shown: true };
+      if (x.r >= 0) { p.stem = stems[li]; p.label = labels[li]; p.lw = textW(x.it.e.title); li++; }
+      return p;
+    });
+  });
+  built.lanes = out;
+  applySelection();
+}
+function applySelection() {
+  document.querySelectorAll('#lanes .sel').forEach((el) => el.classList.remove('sel'));
+  if (state.selected) document.querySelectorAll(`#lanes [data-id="${CSS.escape(state.selected)}"]`).forEach((el) => el.classList.add('sel'));
+}
+
+// Per frame: move elements with transforms; hide the ones far off-screen.
+function positionLanes(w) {
+  const { start, end } = state, s = w / (end - start), lo = -w * 0.5, hi = w * 1.5;
+  const show = (o, on, ...els) => { if (o.shown !== on) { o.shown = on; els.forEach((el) => el && (el.style.display = on ? '' : 'none')); } };
+  for (const b of built.lanes) {
+    for (const e of b.eras) {
+      const x0 = (e.y0 - start) * s, x1 = (e.y1 - start) * s;
+      const on = x1 >= lo && x0 <= hi;
+      show(e, on, e.el);
+      if (!on) continue;
+      // keep long eras inside the window so their label stays readable
+      const a = Math.max(x0, -4), bb = Math.min(x1, w + 4);
+      e.el.style.transform = `translateX(${a}px)`;
+      e.el.style.width = Math.max(3, bb - a) + 'px';
+      const tiny = bb - a < 30;
+      if (tiny !== e.tiny) { e.tiny = tiny; e.el.classList.toggle('tiny', tiny); }
+    }
+    for (const p of b.points) {
+      const x = (p.y - start) * s;
+      const on = x >= lo && x <= hi;
+      show(p, on, p.dot, p.stem, p.label);
+      if (!on) continue;
+      p.dot.style.transform = `translateX(${x - 5.5}px)`;
+      if (p.label) { p.stem.style.transform = `translateX(${x}px)`; p.label.style.transform = `translateX(${x - 4}px)`; }
+    }
+  }
+}
+
+// Lane height and counts only change once the view has settled, and animate.
+function settleLanes(w) {
+  const { start, end } = state, s = w / (end - start);
+  const inView = (x) => x >= -w * 0.1 && x <= w * 1.1;
+  for (const b of built.lanes) {
+    let rows = 0, eraRows = 0, n = 0;
+    for (const p of b.points) { const x = (p.y - start) * s; if (inView(x)) { n++; if (p.r >= 0) rows = Math.max(rows, p.r + 1); } }
+    for (const e of b.eras) if ((e.y1 - start) * s >= 0 && (e.y0 - start) * s <= w) { n++; eraRows = Math.max(eraRows, e.r + 1); }
+    // slide the dots and labels up past era rows that are empty in this view
+    const shift = (b.L.eraRowCount - eraRows) * ERA_H;
+    if (shift !== b.shift) { b.shift = shift; b.pts.style.transform = `translateY(${-shift}px)`; }
+    const h = Math.max(104, b.L.points.length ? b.labelTop - shift + Math.max(1, rows) * LABEL_H + 8 : b.dotY - shift + 6);
+    if (h !== b.height) { b.height = h; b.el.style.height = h + 'px'; }
+    b.meta.textContent = n + ' in view';
+  }
+}
+
+function frame() {
+  rafId = 0;
+  // animate towards the target range, or coast after a drag
+  let moving = false;
+  if (velocity) {
+    [target.start, target.end] = clampRange(target.start + velocity, target.end + velocity);
+    state.start = target.start; state.end = target.end;
+    velocity *= 0.92;
+    if (Math.abs(velocity) / (state.end - state.start) < 0.0002) velocity = 0;
+    moving = !!velocity;
+  } else {
+    const ds = target.start - state.start, de = target.end - state.end, span = target.end - target.start;
+    if (Math.abs(ds) + Math.abs(de) > span * 0.0005) {
+      state.start += ds * 0.25; state.end += de * 0.25; moving = true;
+    } else { state.start = target.start; state.end = target.end; }
+  }
+  if (panelsDirty) { panelsDirty = false; renderPanels(); }
+  renderView();
+  clearTimeout(settleTimer);
+  if (moving) requestView();
+  else settleTimer = setTimeout(() => { settleLanes(trackWidth()); renderMeanwhile(colorsFor(), state.end - state.start); renderMinimapBars(trackWidth()); renderMinimapBrush(trackWidth()); }, 120);
+}
+
+function renderPanels() {
   const colors = colorsFor();
   renderDetail(colors); // first: opening the panel changes the track width
+  const w = trackWidth();
+  renderMeanwhile(colors, state.end - state.start);
+  renderMinimapBars(w);
+  applySelection();
+}
+
+function renderView() {
+  const { start, end, cursor } = state, span = end - start;
+  const colors = colorsFor();
   const w = trackWidth(), lw = labelWidth(), X = (y) => (y - start) / span * w;
-  // header bits
   $('span-label').textContent = fmtSpan(span);
   $('range-label').textContent = fmtPoint(start, span) + ' – ' + fmtPoint(end, span);
-  renderPresets(span);
-  // ruler + grid
+  renderPresets(target.end - target.start);
   const tk = ticks(start, end, w);
   $('ruler').innerHTML = tk.map((t) => `<div class="tick" style="left:${t.x}px;height:${t.major ? 10 : 5}px"></div><div class="tick-label" style="left:${t.x}px">${t.text}</div>`).join('');
   const grid = $('grid'); grid.style.left = lw + 'px'; grid.style.width = w + 'px';
   grid.innerHTML = tk.filter((t) => t.major).map((t) => `<div class="gridline" style="left:${t.x}px"></div>`).join('');
   const marks = $('marks'); marks.style.left = lw + 'px'; marks.style.width = w + 'px';
-  // lanes
-  if (!state.lanes.length) {
-    $('lanes').innerHTML = '<div class="empty">No lanes yet. <button class="btn" onclick="openPicker()">Add a lane</button></div>';
-  } else {
-    $('lanes').innerHTML = state.lanes.map((lane, i) => {
-      const s = SCOPES.get(lane.scope), color = colors[i];
-      const L = layoutLane(lane, color, w);
-      const kids = CHILDREN.get(s.id).length;
-      return `<div class="lane" data-i="${i}" style="height:${L.height}px">
-        <div class="lane-label">
-          <button class="grip" draggable="true" data-i="${i}" aria-label="Drag to reorder ${esc(s.name)}" title="Drag to reorder"><svg width="12" height="18" viewBox="0 0 12 18" fill="currentColor" aria-hidden="true"><circle cx="3" cy="4" r="1.4"/><circle cx="9" cy="4" r="1.4"/><circle cx="3" cy="9" r="1.4"/><circle cx="9" cy="9" r="1.4"/><circle cx="3" cy="14" r="1.4"/><circle cx="9" cy="14" r="1.4"/></svg></button>
-          <div style="min-width:0;flex:1">
-            <div class="lane-name"><span class="dot" style="background:${color}"></span><span>${esc(s.name)}</span></div>
-            <div class="lane-kind">${esc(scopeKind(s))}</div>
-            <div class="lane-meta">${L.count} in view</div>
-            ${kids ? `<label class="rollup" title="Include events from ${kids} sub-region${kids > 1 ? 's' : ''}"><input type="checkbox" data-rollup="${i}" ${lane.rollup ? 'checked' : ''}>Include sub-regions</label>` : ''}
-          </div>
-          <div class="lane-actions">
-            <button class="icon-btn" data-remove="${esc(s.id)}" aria-label="Remove ${esc(s.name)}" title="Remove lane"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg></button>
-          </div>
-        </div>
-        <div class="track">
-          <div class="mobile-name"><span class="dot" style="background:${color};width:8px;height:8px"></span>${esc(s.name)}<button class="icon-btn" data-remove="${esc(s.id)}" aria-label="Remove ${esc(s.name)}"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg></button></div>
-          ${L.html}
-        </div>
-      </div>`;
-    }).join('');
-  }
-  // cursor
+  const level = zoomLevel(w / span);
+  const sig = state.lanes.map((l) => l.scope + (l.rollup ? '' : '!')).join() + '|' + level + '|' + laneTop();
+  if (sig !== built.sig) { built.sig = sig; buildLanes(level, colors); positionLanes(w); settleLanes(w); }
+  else positionLanes(w);
   const cx = X(cursor), cl = $('cursor-line');
   cl.style.display = cx >= 0 && cx <= w ? 'block' : 'none';
   cl.style.left = cx + 'px';
   $('cursor-pill').textContent = fmtPoint(cursor, span);
-  renderMeanwhile(colors, span);
-  renderMinimap(w);
+  $('mw-when').textContent = fmtPoint(cursor, span);
+  renderMinimapBrush(w);
   writeHash();
 }
 
@@ -654,7 +767,6 @@ function laneExtent() {
 
 function renderMeanwhile(colors, span) {
   const c = state.cursor;
-  $('mw-when').textContent = fmtPoint(c, span);
   const win = Math.max(span / 8, 1);
   $('cards').innerHTML = state.lanes.map((lane, i) => {
     const s = SCOPES.get(lane.scope), items = laneItems(lane.scope, lane.rollup);
@@ -676,9 +788,11 @@ function renderMeanwhile(colors, span) {
   }).join('');
 }
 
-function renderMinimap(w) {
+let mini = { lo: 1800, hi: 2025 };
+function renderMinimapBars(w) {
   const [a, b] = laneExtent();
   const lo = Math.min(a, state.start), hi = Math.max(b, state.end), span = hi - lo;
+  mini = { lo, hi };
   const MX = (y) => (y - lo) / span * w;
   const nb = Math.max(20, Math.floor(w / 8)), bw = span / nb, bins = new Array(nb).fill(0);
   const seen = new Set();
@@ -689,11 +803,17 @@ function renderMinimap(w) {
   const mx = Math.max(1, ...bins);
   let html = '<div class="bg"></div>';
   bins.forEach((n, k) => { if (n) html += `<div class="bar" style="left:${MX(lo + k * bw) + 1}px;width:${Math.max(1, w / nb - 2)}px;height:${3 + n / mx * 28}px"></div>`; });
-  html += `<div class="brush" style="left:${MX(state.start)}px;width:${MX(state.end) - MX(state.start)}px"></div>`;
+  html += '<div class="brush" id="brush"></div>';
   ticks(lo, hi, w).forEach((t) => { html += `<div class="mt" style="left:${t.x}px">${t.text}</div>`; });
   $('minimap').innerHTML = html;
-  $('minimap').dataset.lo = lo; $('minimap').dataset.hi = hi;
   $('mini-range').textContent = fmtYear(Math.round(lo)) + ' – ' + fmtYear(Math.round(hi));
+  renderMinimapBrush(w);
+}
+function renderMinimapBrush(w) {
+  const br = $('brush'); if (!br) return;
+  const MX = (y) => clamp((y - mini.lo) / (mini.hi - mini.lo) * w, 0, w);
+  br.style.left = MX(state.start) + 'px';
+  br.style.width = (MX(state.end) - MX(state.start)) + 'px';
 }
 
 function renderDetail(colors) {
@@ -777,6 +897,7 @@ function applyCombo(c) {
   state.lanes = c.lanes.map((s) => ({ scope: s, rollup: true }));
   state.selected = null; state.cursor = c.at;
   setRange(c.from, c.to, true);
+  requestRender();
 }
 
 // ---------- search ----------
@@ -815,6 +936,7 @@ function pickSearch(i) {
     centerOn(e.era ? (e.y0 + e.y1) / 2 : e.y0, Math.max(span, e.era ? (e.y1 - e.y0) * 1.3 : 0));
   }
   $('search-input').value = ''; $('search-results').classList.remove('open'); $('search-input').blur();
+  requestRender();
 }
 
 // ---------- interaction ----------
@@ -825,8 +947,8 @@ function yAt(clientX) {
 function bind() {
   $('zoom-in').onclick = () => zoomAt(state.cursor >= state.start && state.cursor <= state.end ? state.cursor : (state.start + state.end) / 2, 0.5);
   $('zoom-out').onclick = () => zoomAt(state.cursor >= state.start && state.cursor <= state.end ? state.cursor : (state.start + state.end) / 2, 2);
-  $('pan-left').onclick = () => { const s = state.end - state.start; setRange(state.start - s / 4, state.end - s / 4, true); };
-  $('pan-right').onclick = () => { const s = state.end - state.start; setRange(state.start + s / 4, state.end + s / 4, true); };
+  $('pan-left').onclick = () => { const s = target.end - target.start; setRange(target.start - s / 4, target.end - s / 4, true); };
+  $('pan-right').onclick = () => { const s = target.end - target.start; setRange(target.start + s / 4, target.end + s / 4, true); };
   $('add-lane').onclick = openPicker;
   $('share-btn').onclick = async () => {
     writeHash();
@@ -875,7 +997,7 @@ function bind() {
     const span = state.end - state.start, w = trackWidth();
     const unit = ev.deltaMode === 1 ? 16 : ev.deltaMode === 2 ? 400 : 1;
     const dx = (ev.shiftKey ? ev.deltaY : ev.deltaX) * unit, dy = ev.shiftKey ? 0 : ev.deltaY * unit;
-    if (Math.abs(dx) > Math.abs(dy)) { const d = dx / w * span; setRange(state.start + d, state.end + d, true); }
+    if (Math.abs(dx) > Math.abs(dy)) { const d = dx / w * span; setRange(target.start + d, target.end + d, true); }
     else zoomAt(yAt(ev.clientX), Math.exp(dy * (ev.ctrlKey ? 0.01 : 0.0018)));
   }, { passive: false });
 
@@ -906,7 +1028,7 @@ function bind() {
       if (d > 10) {
         const ns = clamp(pinch.span * pinch.d / d, MIN_SPAN, MAX_Y - MIN_Y);
         const r = $('ruler').getBoundingClientRect(), f = ((a.x + b.x) / 2 - r.left) / r.width;
-        setRange(pinch.anchor - f * ns, pinch.anchor + (1 - f) * ns, true);
+        setRange(pinch.anchor - f * ns, pinch.anchor + (1 - f) * ns, true, true);
       }
       dragMoved = true;
       return;
@@ -915,8 +1037,11 @@ function bind() {
     if (!dragMoved && Math.abs(ev.clientX - last.x) < 5 && Math.abs(ev.clientY - last.y) < 5) return;
     if (!dragMoved && ev.pointerType === 'touch' && Math.abs(ev.clientY - last.y) > Math.abs(ev.clientX - last.x)) { pts.delete(ev.pointerId); return; }
     if (!dragMoved) { dragMoved = true; tl.classList.add('dragging'); try { tl.setPointerCapture(ev.pointerId); } catch (_) {} }
-    const d = -dx / w * (state.end - state.start);
-    setRange(state.start + d, state.end + d, true);
+    const d = -dx / w * (state.end - state.start), now = performance.now();
+    setRange(state.start + d, state.end + d, true, true);
+    // smoothed speed in years per 60fps frame, for momentum on release
+    const dt = Math.max(1, now - (last.time || now - 16));
+    last.v = 0.6 * (d / dt * 16.7) + 0.4 * (last.v || 0); last.time = now;
   });
   const up = (ev) => {
     if (!pts.has(ev.pointerId)) return;
@@ -924,6 +1049,7 @@ function bind() {
     if (pts.size < 2) pinch = null;
     if (!pts.size) {
       tl.classList.remove('dragging');
+      if (dragMoved && !pinch && last && last.v && performance.now() - last.time < 80) { velocity = last.v; requestView(); }
       if (!dragMoved && last && !last.t.closest('[data-id]') && !last.t.closest('button')) {
         state.cursor = yAt(ev.clientX); requestRender();
       }
@@ -938,9 +1064,9 @@ function bind() {
   const mm = $('minimap');
   let mmDown = false;
   const mmMove = (ev) => {
-    const r = mm.getBoundingClientRect(), lo = +mm.dataset.lo, hi = +mm.dataset.hi;
+    const r = mm.getBoundingClientRect(), { lo, hi } = mini;
     const y = lo + (ev.clientX - r.left) / r.width * (hi - lo), span = state.end - state.start;
-    setRange(y - span / 2, y + span / 2, false);
+    setRange(y - span / 2, y + span / 2, false, true);
   };
   mm.addEventListener('pointerdown', (ev) => { mmDown = true; mm.setPointerCapture(ev.pointerId); mmMove(ev); });
   mm.addEventListener('pointermove', (ev) => { if (mmDown) mmMove(ev); });
@@ -950,8 +1076,8 @@ function bind() {
   window.addEventListener('keydown', (ev) => {
     if (ev.target.closest('input, dialog')) return;
     const s = state.end - state.start;
-    if (ev.key === 'ArrowLeft') { setRange(state.start - s / 10, state.end - s / 10, true); ev.preventDefault(); }
-    else if (ev.key === 'ArrowRight') { setRange(state.start + s / 10, state.end + s / 10, true); ev.preventDefault(); }
+    if (ev.key === 'ArrowLeft') { setRange(target.start - s / 10, target.end - s / 10, true); ev.preventDefault(); }
+    else if (ev.key === 'ArrowRight') { setRange(target.start + s / 10, target.end + s / 10, true); ev.preventDefault(); }
     else if (ev.key === '+' || ev.key === '=') $('zoom-in').click();
     else if (ev.key === '-' || ev.key === '_') $('zoom-out').click();
     else if (ev.key === 'Escape' && state.selected) { state.selected = null; requestRender(); }
@@ -987,6 +1113,7 @@ function bind() {
 
   window.addEventListener('resize', requestRender);
   window.addEventListener('hashchange', () => { readHash(); requestRender(); });
+  window.addEventListener('resize', () => { built.sig = ''; });
 }
 
 // ---------- boot ----------
@@ -994,7 +1121,7 @@ fetch('data.json').then((r) => r.json()).then((data) => {
   prepare(data);
   readHash();
   bind();
-  render();
+  requestRender();
   document.fonts && document.fonts.ready.then(requestRender);
 }).catch((err) => {
   $('lanes').innerHTML = '<div class="empty">Could not load data.json. Serve this folder over http (e.g. <code>python3 -m http.server</code>).</div>';
