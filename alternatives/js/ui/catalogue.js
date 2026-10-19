@@ -4,12 +4,13 @@
 import { h, clear, debounce, append } from './dom.js';
 import { icon, productThumb, boolValue, skuTag, emptyState } from './components.js';
 import { CATEGORY_LABELS, formatVolume, formatNumber, formatPrice } from '../domain/attributes.js';
+import { openProductDialog } from './productDialog.js';
 import { applyFilters, filtersFromParams, filtersToParams, nominalVolumes, DEFAULT_FILTERS } from '../domain/search.js';
 
 const PAGE = 50;
 
 export async function renderCatalogue(root, ctx, { query }) {
-  const state = { filters: filtersFromParams(query), limit: PAGE };
+  const state = { filters: filtersFromParams(query), limit: PAGE, productId: null };
 
   const head = h('div', { class: 'page-head' },
     h('h1', {}, 'Find an alternative'),
@@ -77,10 +78,14 @@ export async function renderCatalogue(root, ctx, { query }) {
     const s = p.specifications;
     const isTip = p.category === 'pipette_tip';
     const n = counts.get(p.id);
-    const open = () => ctx.navigate(`#/product/${p.id}`);
+    const open = () => openProduct(p.id);
     const tr = h('tr', { class: 'clickable', on: { click: (e) => { if (!e.target.closest('a, button')) open(); } } },
       h('td', { class: 'cell-first' }, h('div', { class: 'cell-product' }, productThumb(p),
-        h('div', {}, h('a', { href: `#/product/${p.id}` }, p.name),
+        h('div', {}, h('a', {
+          href: `#/product/${p.id}`,
+          // A plain click opens the dialog; ctrl/cmd-click still opens the full page in a new tab.
+          on: { click: (e) => { if (!e.metaKey && !e.ctrlKey && !e.shiftKey) { e.preventDefault(); open(); } } },
+        }, p.name),
           h('div', { class: 'sub' }, skuTag(p.sku), `${p.family} · ${p.subcategory}`)))),
       h('td', { 'data-label': 'Volume', class: 'num' }, formatVolume(s.volumeMinUl, s.volumeMaxUl)),
       h('td', { 'data-label': 'Sterile' }, isTip ? boolValue(s.sterile) : h('span', { class: 'muted' }, '—')),
@@ -124,13 +129,24 @@ export async function renderCatalogue(root, ctx, { query }) {
     state.filters = next;
     state.limit = PAGE;
     syncToggle();
-    ctx.replaceQuery('/', filtersToParams(state.filters));
+    syncUrl();
     render();
   };
   form.addEventListener('input', debounce(update, 150));
   form.addEventListener('change', update);
   form.addEventListener('submit', (e) => { e.preventDefault(); update(); });
 
+  // The open product is kept in the URL (?product=…) so a link reopens the dialog.
+  function syncUrl() {
+    const params = filtersToParams(state.filters);
+    if (state.productId) params.set('product', state.productId);
+    ctx.replaceQuery('/', params);
+  }
+  function openProduct(id) {
+    openProductDialog(ctx, id, { onChange: (shown) => { state.productId = shown; syncUrl(); } });
+  }
+
   render();
-  if (!state.filters.q) form.querySelector('#f-q').focus({ preventScroll: true });
+  if (query.get('product')) openProduct(query.get('product'));
+  else if (!state.filters.q) form.querySelector('#f-q').focus({ preventScroll: true });
 }

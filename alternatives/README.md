@@ -29,11 +29,15 @@ python3 -m http.server 8000
 ## Using it
 
 - **Search page:** one search box. Filters for category, range, volume, sterile and filtered sit behind an **Advanced search** button; they open automatically when a shared link already applies them, and the button shows how many are active. Each row shows the product's price and how many alternatives it has. The filters are kept in the URL, so "Back to search" returns to the same view.
-- **Product page:** the product, then its **Alternatives** section: the requested product in its own panel, the fields it was matched on, and then a separate table with only the matching products (columns line up with the requested product). Columns that are not part of the rules (packaging and price) are highlighted where they differ. Full specifications follow.
+- **Product dialog:** clicking a search result opens the product in a dialog over the search page, so you never lose your search. It has two tabs:
+  - **Alternatives**, shown first: the requested product in its own panel, the fields it was matched on, and a separate table with only the matching products. Columns line up, and packaging and price are highlighted where they differ.
+  - **Product details**: the description and all specifications.
+
+  Export PDF sits in the dialog header. Clicking an alternative shows it in the same dialog, with a link back. The open product is kept in the URL (`?product=…`), so a link reopens the dialog. Ctrl/Cmd-click on a product name still opens the full product page (`#/product/<id>`) in a new tab.
 
 ## Export PDF
 
-The product page has an **Export PDF** button for emailing a summary to a customer. One click builds a one-page A4 summary (the requested product, the rules it was matched on, and all alternatives with prices) and opens the browser's print dialog, where the rep chooses **Save as PDF**. The suggested file name is `Alternatives – <SKU>`.
+The product dialog (and product page) has an **Export PDF** button for emailing a summary to a customer. One click builds a one-page A4 summary (the requested product, the rules it was matched on, and all alternatives with prices) and opens the browser's print dialog, where the rep chooses **Save as PDF**. The suggested file name is `Alternatives – <SKU>`.
 
 This uses the browser's own print engine (`js/ui/exportSheet.js` plus the print styles in `css/styles.css`), so there is no PDF library, and the PDF has real, selectable text. Browsers can't attach files to emails by themselves, so the rep attaches the saved PDF in their email client.
 
@@ -71,7 +75,9 @@ js/domain/search.js            search and filters (pure functions)
 js/domain/validation.js        integrity checks for the catalogue
 js/domain/attributes.js        labels and formatting
 js/ui/catalogue.js             search page
-js/ui/productDetail.js         product page with alternatives
+js/ui/productDialog.js         product dialog (Alternatives / Product details tabs)
+js/ui/productParts.js          pieces shared by the dialog and the product page
+js/ui/productDetail.js         full product page (direct links)
 js/ui/exportSheet.js           one-page PDF summary (via the browser's print dialog)
 js/ui/components.js, dom.js    small DOM helpers (text nodes only for data and input)
 js/ui/illustrations.js         generic SVG files for assets/ (used by the generator only)

@@ -6,6 +6,7 @@ import { emptyState } from './ui/components.js';
 import { validateCatalogue } from './domain/validation.js';
 import { renderCatalogue } from './ui/catalogue.js';
 import { renderProductDetail } from './ui/productDetail.js';
+import { closeProductDialog } from './ui/productDialog.js';
 
 const repo = createCatalogueRepository({ baseUrl: './data/' });
 const view = document.getElementById('view');
@@ -45,6 +46,7 @@ async function route() {
   const token = ++renderToken;
   if (match?.r.render === renderCatalogue) catalogueHash = location.hash || '#/';
 
+  closeProductDialog();
   clear(view);
   view.setAttribute('aria-busy', 'true');
   if (path !== lastPath) window.scrollTo(0, 0);
