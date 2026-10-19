@@ -28,7 +28,7 @@ python3 -m http.server 8000
 
 ## Using it
 
-- **Search page:** one search box plus filters for category, range, volume, sterile and filtered. Each row shows how many alternatives the product has. The filters are kept in the URL, so "Back to search" returns to the same view.
+- **Search page:** one search box. Filters for category, range, volume, sterile and filtered sit behind an **Advanced search** button; they open automatically when a shared link already applies them, and the button shows how many are active. Each row shows how many alternatives the product has. The filters are kept in the URL, so "Back to search" returns to the same view.
 - **Product page:** the product, then its **Alternatives**: a table with the requested product on the first row and every matching product below it. The fields that were matched on are listed above the table. Columns that are not part of the rules (such as packaging) are highlighted where they differ. Full specifications follow.
 
 ## Matching rules

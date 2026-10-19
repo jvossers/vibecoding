@@ -31,17 +31,37 @@ export async function renderCatalogue(root, ctx, { query }) {
   const ranges = [...new Set(products.map((p) => p.family))].sort();
   const anyYesNo = [['', 'Any'], ['yes', 'Yes'], ['no', 'No']];
 
-  const form = h('form', { class: 'filter-bar', role: 'search' },
-    h('div', { class: 'field search-field' },
-      h('label', { for: 'f-q' }, 'Search'),
-      h('input', { id: 'f-q', name: 'q', type: 'search', value: state.filters.q, placeholder: 'SKU, name or “200 µL sterile”', autocomplete: 'off' }),
-      icon('search')),
+  // Only the search box shows by default; the other filters sit behind "Advanced search".
+  const ADVANCED = ['category', 'family', 'volume', 'sterile', 'filtered'];
+  const advancedCount = (f) => ADVANCED.filter((k) => f[k] !== DEFAULT_FILTERS[k]).length;
+  const toggleLabel = h('span', {});
+  const toggle = h('button', { type: 'button', class: 'btn advanced-toggle', 'aria-controls': 'advanced-filters' }, icon('sliders'), toggleLabel);
+  const advanced = h('div', { class: 'filter-bar', id: 'advanced-filters' },
     select('category', 'Category', [['', 'All'], ...Object.entries(CATEGORY_LABELS).map(([v, t]) => [v, `${t}s`])]),
     select('family', 'Range', [['', 'All'], ...ranges.map((r) => [r, r])]),
     select('volume', 'Volume', [['', 'All'], ...nominalVolumes(products).map((v) => [String(v), `${formatNumber(v)} µL`])]),
     select('sterile', 'Sterile', anyYesNo),
     select('filtered', 'Filtered', anyYesNo),
   );
+  const form = h('form', { role: 'search' },
+    h('div', { class: 'search-row' },
+      h('div', { class: 'field search-field' },
+        h('label', { for: 'f-q', class: 'visually-hidden' }, 'Search'),
+        h('input', { id: 'f-q', name: 'q', type: 'search', value: state.filters.q, placeholder: 'Search by SKU, name or attribute — e.g. “200 µL sterile”', autocomplete: 'off' }),
+        icon('search')),
+      toggle),
+    advanced);
+
+  // Starts open only when a shared link already applies advanced filters, so none are hidden.
+  let open = advancedCount(state.filters) > 0;
+  const syncToggle = () => {
+    advanced.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    const n = advancedCount(state.filters);
+    toggleLabel.textContent = `${open ? 'Hide advanced search' : 'Advanced search'}${n ? ` (${n})` : ''}`;
+  };
+  toggle.addEventListener('click', () => { open = !open; syncToggle(); });
+  syncToggle();
 
   const resultsHead = h('div', { class: 'results-head' });
   const table = h('table', { class: 'data stack' });
@@ -102,6 +122,7 @@ export async function renderCatalogue(root, ctx, { query }) {
     if (JSON.stringify(next) === JSON.stringify(state.filters)) return;
     state.filters = next;
     state.limit = PAGE;
+    syncToggle();
     ctx.replaceQuery('/', filtersToParams(state.filters));
     render();
   };
