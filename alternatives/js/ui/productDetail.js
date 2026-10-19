@@ -49,33 +49,39 @@ export async function renderProductDetail(root, ctx, { params }) {
       h('div', { class: 'card-head' }, h('h2', { id: 'alt-title' }, 'Alternatives')),
       h('p', { class: 'note' }, `Alternatives are only worked out for pipette tips. This is a ${CATEGORY_LABELS[product.category].toLowerCase()}.`));
   } else {
+    // Requested product, then the rules it was matched on, then the alternatives. The two
+    // tables share column widths so values line up vertically.
+    const cell = (p, [label, get, kind], highlight) => {
+      const v = get(p.specifications, p);
+      const ref = get(s, product);
+      const differs = highlight && v !== ref;
+      return h('td', { 'data-label': label, class: differs ? 'differs' : null, title: differs ? 'Differs from the requested product' : null },
+        kind === 'bool' ? boolValue(v) : valueOrUnknown(v));
+    };
+    const productCell = (p, requested) => h('td', { class: 'cell-first' }, h('div', { class: 'cell-product' }, productThumb(p),
+      h('div', {}, requested ? h('div', { class: 'product-name' }, p.name) : h('a', { href: `#/product/${p.id}` }, p.name),
+        h('div', { class: 'sub' }, skuTag(p.sku), p.family))));
+    const table = (rows, caption) => h('div', { class: 'table-wrap' }, h('table', { class: 'data alts stack' },
+      h('caption', { class: 'visually-hidden' }, caption),
+      h('colgroup', {}, ['38%', '14%', '9%', '9%', '11%', '11%', '8%'].map((w) => h('col', { style: { width: w } }))),
+      h('thead', {}, h('tr', {}, h('th', { scope: 'col' }, 'Product'), ALT_COLUMNS.map(([label]) => h('th', { scope: 'col' }, label)))),
+      h('tbody', {}, rows)));
+
     append(altCard,
       h('div', { class: 'card-head' },
         h('h2', { id: 'alt-title' }, `Alternatives (${alternatives.length})`),
-        h('p', {}, 'Products that match this one on every rule. Check availability in the stock system.')),
-      h('div', { class: 'matched-on' }, 'Matched on:', rules.map((r) => h('span', { class: 'chip chip-match' }, icon('check'), r.label))));
-
-    if (!alternatives.length) {
-      altCard.append(emptyState({ title: 'No alternatives', body: 'No other product matches this one on all of the fields above.' }));
-    } else {
-      const cell = (p, [label, get, kind], highlight) => {
-        const v = get(p.specifications, p);
-        const ref = get(s, product);
-        const differs = highlight && v !== ref;
-        return h('td', { 'data-label': label, class: differs ? 'differs' : null, title: differs ? 'Differs from the requested product' : null },
-          kind === 'bool' ? boolValue(v) : valueOrUnknown(v));
-      };
-      const productCell = (p, requested) => h('td', { class: 'cell-first' }, h('div', { class: 'cell-product' }, productThumb(p),
-        h('div', {}, requested ? h('span', { class: 'tag' }, 'Requested product') : null,
-          requested ? h('div', { style: { fontWeight: '650', color: 'var(--navy-900)', lineHeight: '1.3' } }, p.name) : h('a', { href: `#/product/${p.id}` }, p.name),
-          h('div', { class: 'sub' }, skuTag(p.sku), p.family))));
-
-      altCard.append(h('div', { class: 'table-wrap' }, h('table', { class: 'data alts stack' },
-        h('thead', {}, h('tr', {}, h('th', { scope: 'col' }, 'Product'), ALT_COLUMNS.map(([label]) => h('th', { scope: 'col' }, label)))),
-        h('tbody', {},
-          h('tr', { class: 'requested' }, productCell(product, true), ALT_COLUMNS.map((c) => cell(product, c, false))),
-          alternatives.map((alt) => h('tr', {}, productCell(alt, false), ALT_COLUMNS.map((c) => cell(alt, c, true))))))));
-    }
+        h('p', {}, 'Products that match the requested product on every rule. Check availability in the stock system.')),
+      h('div', { class: 'compare-panel requested-panel' },
+        h('div', { class: 'panel-label' }, 'Requested product'),
+        table(h('tr', {}, productCell(product, true), ALT_COLUMNS.map((c) => cell(product, c, false))), 'Requested product')),
+      h('div', { class: 'matched-on' },
+        h('span', { class: 'arrow', 'aria-hidden': 'true' }, icon('arrow-down')),
+        'Matched on:', rules.map((r) => h('span', { class: 'chip chip-match' }, icon('check'), r.label))),
+      h('div', { class: 'compare-panel alternatives-panel' },
+        h('div', { class: 'panel-label' }, 'Alternatives', h('span', { class: 'count' }, String(alternatives.length))),
+        alternatives.length
+          ? table(alternatives.map((alt) => h('tr', {}, productCell(alt, false), ALT_COLUMNS.map((c) => cell(alt, c, true)))), 'Alternatives')
+          : emptyState({ title: 'No alternatives', body: 'No other product matches this one on all of the fields above.' })));
   }
 
   // ---- Specifications
