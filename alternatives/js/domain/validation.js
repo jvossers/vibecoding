@@ -7,7 +7,7 @@ export const CATEGORIES = ['pipette_tip', 'pipette', 'accessory'];
 export const TIP_FORMATS = ['standard', 'extended', 'wide_bore', 'other'];
 export const PACKAGING_TYPES = ['rack', 'refill', 'bulk', 'box', 'other'];
 
-const ENVELOPE = ['id', 'sku', 'name', 'brand', 'family', 'category', 'subcategory', 'description', 'imagePath', 'tags', 'specifications'];
+const ENVELOPE = ['id', 'sku', 'name', 'brand', 'family', 'category', 'subcategory', 'description', 'price', 'imagePath', 'tags', 'specifications'];
 
 // Reads the pack size stated in a product name, e.g. "Rack of 96", "(960 tips)", "Bulk Bag of 1,000".
 export function packSizeFromName(name) {
@@ -31,6 +31,7 @@ export function validateProduct(p, { families = {} } = {}) {
   if (p.brand !== BRAND) err(`brand must be the fictional ${BRAND}`);
   if (!CATEGORIES.includes(p.category)) err(`unknown category ${p.category}`);
   if (!Array.isArray(p.tags)) err('tags must be an array');
+  if (typeof p.price !== 'number' || !(p.price > 0)) err('price must be a positive number (GBP)');
 
   const s = p.specifications ?? {};
   if (!isUnknown(s.volumeMinUl) && !isUnknown(s.volumeMaxUl) && s.volumeMinUl > s.volumeMaxUl) err('volumeMinUl > volumeMaxUl');

@@ -3,7 +3,7 @@
 
 import { h, clear, debounce, append } from './dom.js';
 import { icon, productThumb, boolValue, skuTag, emptyState } from './components.js';
-import { CATEGORY_LABELS, formatVolume, formatNumber } from '../domain/attributes.js';
+import { CATEGORY_LABELS, formatVolume, formatNumber, formatPrice } from '../domain/attributes.js';
 import { applyFilters, filtersFromParams, filtersToParams, nominalVolumes, DEFAULT_FILTERS } from '../domain/search.js';
 
 const PAGE = 50;
@@ -85,6 +85,7 @@ export async function renderCatalogue(root, ctx, { query }) {
       h('td', { 'data-label': 'Volume', class: 'num' }, formatVolume(s.volumeMinUl, s.volumeMaxUl)),
       h('td', { 'data-label': 'Sterile' }, isTip ? boolValue(s.sterile) : h('span', { class: 'muted' }, '—')),
       h('td', { 'data-label': 'Filtered' }, isTip ? boolValue(s.filtered) : h('span', { class: 'muted' }, '—')),
+      h('td', { 'data-label': 'Price', class: 'num' }, formatPrice(p.price)),
       h('td', { 'data-label': 'Alternatives' }, !isTip
         ? h('span', { class: 'muted' }, '—')
         : n ? h('span', { class: 'chip chip-count' }, `${n} alternative${n === 1 ? '' : 's'}`) : h('span', { class: 'muted small' }, 'None')));
@@ -103,14 +104,14 @@ export async function renderCatalogue(root, ctx, { query }) {
     clear(pager);
     pager.hidden = list.length <= state.limit;
     if (!list.length) {
-      table.append(h('tbody', {}, h('tr', {}, h('td', { colspan: '5' }, emptyState({
+      table.append(h('tbody', {}, h('tr', {}, h('td', { colspan: '6' }, emptyState({
         title: 'No products match',
         body: 'Try a shorter search or clear the filters.',
       })))));
       return;
     }
     table.append(
-      h('thead', {}, h('tr', {}, ['Product', 'Volume', 'Sterile', 'Filtered', 'Alternatives'].map((t) => h('th', { scope: 'col' }, t)))),
+      h('thead', {}, h('tr', {}, ['Product', 'Volume', 'Sterile', 'Filtered', 'Price', 'Alternatives'].map((t) => h('th', { scope: 'col' }, t)))),
       h('tbody', {}, list.slice(0, state.limit).map(row)));
     append(pager, h('span', {}, `Showing ${Math.min(state.limit, list.length)} of ${list.length}`),
       h('button', { type: 'button', class: 'btn btn-sm', on: { click: () => { state.limit = Infinity; render(); } } }, `Show all ${list.length}`));

@@ -67,6 +67,20 @@ describe('catalogue', () => {
     }
   });
 
+  test('every product has a positive GBP price, in pence', () => {
+    for (const p of data.products) {
+      assert.ok(typeof p.price === 'number' && p.price > 0, p.sku);
+      assert.ok(Math.abs(p.price * 100 - Math.round(p.price * 100)) < 1e-6, p.sku);
+    }
+  });
+
+  test('prices are consistent: sterile costs more, bigger packs cost more', () => {
+    const bySku = Object.fromEntries(data.products.map((p) => [p.sku, p]));
+    assert.ok(bySku['QMT-CF0200-S96'].price > bySku['QMT-CF0200-R96'].price);
+    assert.ok(bySku['QMT-AL0200-S960'].price > bySku['QMT-AL0200-S96'].price);
+    assert.ok(bySku['QMT-AL0200-S960'].price < bySku['QMT-AL0200-S96'].price * 10);
+  });
+
   test('SKUs and ids are unique', () => {
     assert.equal(new Set(data.products.map((p) => p.sku)).size, data.products.length);
     assert.equal(new Set(data.products.map((p) => p.id)).size, data.products.length);

@@ -168,6 +168,36 @@ const TIP_FAMILIES = [
 // ---------------------------------------------------------------------------
 
 const vcode = (v) => String(v).padStart(4, '0');
+
+// Synthetic list prices in GBP, per pack (tips) or per unit (instruments, accessories).
+// Derived from the product's attributes so they stay consistent: a 10-rack pack costs about
+// ten racks less a discount, sterile costs more than non-sterile, and so on.
+const TIP_RACK_PRICE = {
+  Corefit: 6.4, Aerolock: 14.9, Slipstream: 12.5, Longreach: 11.8, Openbore: 13.2,
+  Lockline: 15.6, Microdose: 19.5, Multiflex: 9.8, Macro: 16.5, Terra: 7.2,
+};
+const VOLUME_FACTOR = { 10: 0.9, 20: 0.95, 100: 1, 200: 1, 300: 1.05, 1000: 1.1, 1200: 1.2, 5000: 1.35, 10000: 1.6 };
+const PIPETTE_PRICE = {
+  'ifam-axis': 245, 'ifam-axis-multi': 690, 'ifam-vector': 545, 'ifam-vector-lock': 585,
+  'ifam-fixa': 149, 'ifam-axis-macro': 329, 'ifam-microdose': 425,
+};
+const ACCESSORY_PRICE = {
+  'Pipette stand': 64, 'Carousel stand': 118, 'Charging stand': 189, 'Empty tip rack': 9.5, 'Refill station': 24,
+  'Service kit': 38, Tool: 29, 'Calibration kit': 245, 'Cone filters': 17.5,
+};
+const toPrice = (n) => Math.round(n * 20) / 20; // nearest 5p
+
+export function priceFor(p) {
+  const s = p.specifications;
+  if (p.category === 'pipette') {
+    const channels = s.channelCount > 8 ? 1.15 : 1;
+    return toPrice(PIPETTE_PRICE[s.instrumentFamilyId] * channels + (s.volumeMaxUl >= 1000 ? 15 : 0));
+  }
+  if (p.category === 'accessory') return toPrice(ACCESSORY_PRICE[s.accessoryType]);
+  const perTip = (TIP_RACK_PRICE[p.family] * (VOLUME_FACTOR[s.volumeMaxUl] ?? 1) * (s.sterile ? 1.25 : 1) * (s.filtered ? 1.1 : 1)) / 96;
+  const packDiscount = { rack: s.unitsPerPack > 96 ? 0.92 : 1, refill: 0.85, bulk: 0.7, box: 1 }[s.packagingType] ?? 1;
+  return toPrice(perTip * s.unitsPerPack * packDiscount);
+}
 const volLabel = (v) => (v >= 5000 ? `${v / 1000} mL` : `${v} µL`);
 const slug = (sku) => `p-${sku.toLowerCase()}`;
 
@@ -350,6 +380,7 @@ export function generateCatalogue(seed = SEED) {
 
   for (const p of products) {
     p.imagePath = `assets/illustrations/${illustrationKind(p)}.svg`;
+    p.price = priceFor(p);
     if (p.category === 'pipette_tip') p.tags = tipTags(p);
   }
 

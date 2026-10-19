@@ -4,7 +4,7 @@ import { h, append } from './dom.js';
 import { icon, productThumb, boolValue, skuTag, valueOrUnknown, emptyState } from './components.js';
 import {
   CATEGORY_LABELS, INTERFACE_LABELS, TIP_FORMAT_LABELS, PACKAGING_LABELS,
-  formatVolume, formatNumber, formatEnum, formatLength, formatList, isUnknown, familyNames,
+  formatVolume, formatNumber, formatEnum, formatPrice, formatLength, formatList, isUnknown, familyNames,
 } from '../domain/attributes.js';
 import { rulesFor } from '../domain/matching.js';
 
@@ -14,8 +14,8 @@ const ALT_COLUMNS = [
   ['Sterile', (s) => s.sterile, 'bool'],
   ['Filtered', (s) => s.filtered, 'bool'],
   ['Low retention', (s) => s.lowRetention, 'bool'],
-  ['Format', (s) => formatEnum(TIP_FORMAT_LABELS, s.tipFormat)],
   ['Packaging', (s) => (isUnknown(s.packagingType) ? 'Not recorded' : `${formatEnum(PACKAGING_LABELS, s.packagingType)} · ${formatNumber(s.unitsPerPack)}`)],
+  ['Price', (s, p) => formatPrice(p.price)],
 ];
 
 export async function renderProductDetail(root, ctx, { params }) {
@@ -36,6 +36,7 @@ export async function renderProductDetail(root, ctx, { params }) {
       h('div', { class: 'eyebrow' }, `${product.family} · ${CATEGORY_LABELS[product.category]}`),
       h('h1', { id: 'p-title' }, product.name),
       h('div', { class: 'meta' }, skuTag(product.sku, { copy: true }),
+        h('span', { class: 'price' }, formatPrice(product.price), h('span', { class: 'per' }, isTip ? ' per pack' : ' each')),
         isTip ? h('span', { class: `chip ${alternatives.length ? 'chip-count' : ''}` }, `${alternatives.length || 'No'} alternative${alternatives.length === 1 ? '' : 's'}`) : null),
       h('p', { class: 'desc' }, product.description))));
 
@@ -58,8 +59,8 @@ export async function renderProductDetail(root, ctx, { params }) {
       altCard.append(emptyState({ title: 'No alternatives', body: 'No other product matches this one on all of the fields above.' }));
     } else {
       const cell = (p, [label, get, kind], highlight) => {
-        const v = get(p.specifications);
-        const ref = get(s);
+        const v = get(p.specifications, p);
+        const ref = get(s, product);
         const differs = highlight && v !== ref;
         return h('td', { 'data-label': label, class: differs ? 'differs' : null, title: differs ? 'Differs from the requested product' : null },
           kind === 'bool' ? boolValue(v) : valueOrUnknown(v));

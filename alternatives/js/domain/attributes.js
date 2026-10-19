@@ -31,6 +31,13 @@ export const INTERFACE_LABELS = {
   capillary_piston: 'Capillary-piston',
 };
 
+export const CURRENCY = 'GBP';
+
+export function formatPrice(amount) {
+  if (amount === null || amount === undefined) return 'Not recorded';
+  return Number(amount).toLocaleString('en-GB', { style: 'currency', currency: CURRENCY });
+}
+
 export const isUnknown = (v) => v === null || v === undefined;
 
 export function formatNumber(n) {

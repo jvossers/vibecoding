@@ -28,8 +28,8 @@ python3 -m http.server 8000
 
 ## Using it
 
-- **Search page:** one search box. Filters for category, range, volume, sterile and filtered sit behind an **Advanced search** button; they open automatically when a shared link already applies them, and the button shows how many are active. Each row shows how many alternatives the product has. The filters are kept in the URL, so "Back to search" returns to the same view.
-- **Product page:** the product, then its **Alternatives**: a table with the requested product on the first row and every matching product below it. The fields that were matched on are listed above the table. Columns that are not part of the rules (such as packaging) are highlighted where they differ. Full specifications follow.
+- **Search page:** one search box. Filters for category, range, volume, sterile and filtered sit behind an **Advanced search** button; they open automatically when a shared link already applies them, and the button shows how many are active. Each row shows the product's price and how many alternatives it has. The filters are kept in the URL, so "Back to search" returns to the same view.
+- **Product page:** the product, then its **Alternatives**: a table with the requested product on the first row and every matching product below it. The fields that were matched on are listed above the table. Columns that are not part of the rules (packaging and price) are highlighted where they differ. Full specifications follow.
 
 ## Matching rules
 
@@ -68,7 +68,7 @@ js/ui/catalogue.js             search page
 js/ui/productDetail.js         product page with alternatives
 js/ui/components.js, dom.js    small DOM helpers (text nodes only for data and input)
 js/ui/illustrations.js         generated geometric product silhouettes (SVG)
-data/products.json             127 synthetic SKUs (91 tips, 26 pipettes, 10 accessories)
+data/products.json             127 synthetic SKUs (91 tips, 26 pipettes, 10 accessories), each with a price
 data/instrument-families.json  7 fictional pipette families and their tip interfaces
 scripts/generateSyntheticCatalogue.js  deterministic generator
 tests/*.test.js                node:test suites
@@ -76,6 +76,10 @@ tests/*.test.js                node:test suites
 
 - **Data access:** views only call the async methods of `createCatalogueRepository()` (`listProducts`, `getProduct`, `alternativesFor`, …). If alternatives later come from another system, only that module changes.
 - **Rendering:** all product data and user input reach the page as text nodes.
+
+## Prices
+
+Every product has a synthetic list price in GBP (`price` on the product): per pack for tips, and per unit for pipettes and accessories. The generator derives prices from the product's attributes (range, volume, sterile, filtered, pack size and packaging), so they stay consistent. For example, a 10-rack pack costs a little less than ten single racks.
 
 ## Limitations
 

@@ -44,7 +44,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 5.75
   },
   {
     "id": "p-qmt-cf0010-s96",
@@ -91,7 +92,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 7.2
   },
   {
     "id": "p-qmt-cf0010-f960",
@@ -138,7 +140,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 48.95
   },
   {
     "id": "p-qmt-cf0010-b1000",
@@ -185,7 +188,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 42
   },
   {
     "id": "p-qmt-cf0020-r96",
@@ -232,7 +236,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 6.1
   },
   {
     "id": "p-qmt-cf0020-s96",
@@ -279,7 +284,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 7.6
   },
   {
     "id": "p-qmt-cf0020-f960",
@@ -326,7 +332,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 51.7
   },
   {
     "id": "p-qmt-cf0020-b1000",
@@ -373,7 +380,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 44.35
   },
   {
     "id": "p-qmt-cf0200-r96",
@@ -420,7 +428,8 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": true
-    }
+    },
+    "price": 6.4
   },
   {
     "id": "p-qmt-cf0200-s96",
@@ -467,7 +476,8 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    }
+    },
+    "price": 8
   },
   {
     "id": "p-qmt-cf0200-f960",
@@ -514,7 +524,8 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": true
-    }
+    },
+    "price": 54.4
   },
   {
     "id": "p-qmt-cf0200-b1000",
@@ -561,7 +572,8 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": true
-    }
+    },
+    "price": 46.65
   },
   {
     "id": "p-qmt-cf0300-r96",
@@ -608,7 +620,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 6.7
   },
   {
     "id": "p-qmt-cf0300-f960",
@@ -655,7 +668,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 57.1
   },
   {
     "id": "p-qmt-cf1000-r96",
@@ -702,7 +716,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    }
+    },
+    "price": 7.05
   },
   {
     "id": "p-qmt-cf1000-s96",
@@ -749,7 +764,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    }
+    },
+    "price": 8.8
   },
   {
     "id": "p-qmt-cf1000-f960",
@@ -796,7 +812,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    }
+    },
+    "price": 59.85
   },
   {
     "id": "p-qmt-cf1000-b1000",
@@ -843,7 +860,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    }
+    },
+    "price": 51.35
   },
   {
     "id": "p-qmt-cf1200-r96",
@@ -890,7 +908,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    }
+    },
+    "price": 7.7
   },
   {
     "id": "p-qmt-cf1200-b1000",
@@ -937,7 +956,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    }
+    },
+    "price": 56
   },
   {
     "id": "p-qmt-al0010-s96",
@@ -988,7 +1008,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 18.45
   },
   {
     "id": "p-qmt-al0010-s960",
@@ -1039,7 +1060,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 169.65
   },
   {
     "id": "p-qmt-al0010-r96",
@@ -1087,7 +1109,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 14.75
   },
   {
     "id": "p-qmt-al0020-s96",
@@ -1138,7 +1161,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 19.45
   },
   {
     "id": "p-qmt-al0020-s960",
@@ -1189,7 +1213,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 179.05
   },
   {
     "id": "p-qmt-al0020-r96",
@@ -1237,7 +1262,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 15.55
   },
   {
     "id": "p-qmt-al0100-s96",
@@ -1288,7 +1314,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 20.5
   },
   {
     "id": "p-qmt-al0100-s960",
@@ -1339,7 +1366,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 188.5
   },
   {
     "id": "p-qmt-al0100-r96",
@@ -1387,7 +1415,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 16.4
   },
   {
     "id": "p-qmt-al0200-s96",
@@ -1438,7 +1467,8 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    }
+    },
+    "price": 20.5
   },
   {
     "id": "p-qmt-al0200-s960",
@@ -1489,7 +1519,8 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    }
+    },
+    "price": 188.5
   },
   {
     "id": "p-qmt-al0200-r96",
@@ -1537,7 +1568,8 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    }
+    },
+    "price": 16.4
   },
   {
     "id": "p-qmt-al1000-s96",
@@ -1588,7 +1620,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    }
+    },
+    "price": 22.55
   },
   {
     "id": "p-qmt-al1000-s960",
@@ -1639,7 +1672,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    }
+    },
+    "price": 207.35
   },
   {
     "id": "p-qmt-al1000-r96",
@@ -1687,7 +1721,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    }
+    },
+    "price": 18.05
   },
   {
     "id": "p-qmt-al1200-s96",
@@ -1738,7 +1773,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    }
+    },
+    "price": 24.6
   },
   {
     "id": "p-qmt-ss0010-fs96",
@@ -1790,7 +1826,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 15.45
   },
   {
     "id": "p-qmt-ss0010-r96",
@@ -1838,7 +1875,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 11.25
   },
   {
     "id": "p-qmt-ss0010-s96",
@@ -1888,7 +1926,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 14.05
   },
   {
     "id": "p-qmt-ss0020-fs96",
@@ -1940,7 +1979,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 16.35
   },
   {
     "id": "p-qmt-ss0020-r96",
@@ -1988,7 +2028,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 11.9
   },
   {
     "id": "p-qmt-ss0020-s96",
@@ -2038,7 +2079,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 14.85
   },
   {
     "id": "p-qmt-ss0200-fs96",
@@ -2090,7 +2132,8 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    }
+    },
+    "price": 17.2
   },
   {
     "id": "p-qmt-ss0200-r96",
@@ -2138,7 +2181,8 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": true
-    }
+    },
+    "price": 12.5
   },
   {
     "id": "p-qmt-ss0200-s96",
@@ -2188,7 +2232,8 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    }
+    },
+    "price": 15.65
   },
   {
     "id": "p-qmt-ss1000-fs96",
@@ -2240,7 +2285,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    }
+    },
+    "price": 18.9
   },
   {
     "id": "p-qmt-ss1000-r96",
@@ -2288,7 +2334,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    }
+    },
+    "price": 13.75
   },
   {
     "id": "p-qmt-ss1000-s96",
@@ -2338,7 +2385,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    }
+    },
+    "price": 17.2
   },
   {
     "id": "p-qmt-lr0010-fs96",
@@ -2388,7 +2436,8 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 14.6
   },
   {
     "id": "p-qmt-lr0010-r96",
@@ -2436,7 +2485,8 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 10.6
   },
   {
     "id": "p-qmt-lr0020-fs96",
@@ -2486,7 +2536,8 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 15.4
   },
   {
     "id": "p-qmt-lr0020-r96",
@@ -2534,7 +2585,8 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 11.2
   },
   {
     "id": "p-qmt-lr0200-fs96",
@@ -2584,7 +2636,8 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Yellow tint",
       "autoclavable": false
-    }
+    },
+    "price": 16.25
   },
   {
     "id": "p-qmt-lr0200-r96",
@@ -2632,7 +2685,8 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Yellow tint",
       "autoclavable": true
-    }
+    },
+    "price": 11.8
   },
   {
     "id": "p-qmt-lr1000-fs96",
@@ -2682,7 +2736,8 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Blue tint",
       "autoclavable": false
-    }
+    },
+    "price": 17.85
   },
   {
     "id": "p-qmt-lr1000-r96",
@@ -2730,7 +2785,8 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Blue tint",
       "autoclavable": true
-    }
+    },
+    "price": 13
   },
   {
     "id": "p-qmt-ob0200-fs96",
@@ -2778,7 +2834,8 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    }
+    },
+    "price": 18.15
   },
   {
     "id": "p-qmt-ob0200-r96",
@@ -2824,7 +2881,8 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": true
-    }
+    },
+    "price": 13.2
   },
   {
     "id": "p-qmt-ob1000-fs96",
@@ -2872,7 +2930,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    }
+    },
+    "price": 19.95
   },
   {
     "id": "p-qmt-ob1000-r96",
@@ -2918,7 +2977,8 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    }
+    },
+    "price": 14.5
   },
   {
     "id": "p-qmt-lk0010-fs96",
@@ -2964,7 +3024,8 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 19.3
   },
   {
     "id": "p-qmt-lk0010-r96",
@@ -3008,7 +3069,8 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 14.05
   },
   {
     "id": "p-qmt-lk0010-f960",
@@ -3052,7 +3114,8 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 119.35
   },
   {
     "id": "p-qmt-lk0200-fs96",
@@ -3098,7 +3161,8 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Yellow tint",
       "autoclavable": false
-    }
+    },
+    "price": 21.45
   },
   {
     "id": "p-qmt-lk0200-r96",
@@ -3142,7 +3206,8 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Yellow tint",
       "autoclavable": true
-    }
+    },
+    "price": 15.6
   },
   {
     "id": "p-qmt-lk0200-f960",
@@ -3186,7 +3251,8 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Yellow tint",
       "autoclavable": true
-    }
+    },
+    "price": 132.6
   },
   {
     "id": "p-qmt-lk1000-fs96",
@@ -3232,7 +3298,8 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Blue tint",
       "autoclavable": false
-    }
+    },
+    "price": 23.6
   },
   {
     "id": "p-qmt-lk1000-r96",
@@ -3276,7 +3343,8 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Blue tint",
       "autoclavable": true
-    }
+    },
+    "price": 17.15
   },
   {
     "id": "p-qmt-lk1000-f960",
@@ -3320,7 +3388,8 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Blue tint",
       "autoclavable": true
-    }
+    },
+    "price": 145.85
   },
   {
     "id": "p-qmt-cp0010-x200",
@@ -3364,7 +3433,8 @@
       "compatibilityNotes": "Positive displacement: requires a Microdose pipette.",
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 36.55
   },
   {
     "id": "p-qmt-cp0010-sx96",
@@ -3408,7 +3478,8 @@
       "compatibilityNotes": "Positive displacement: requires a Microdose pipette.",
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 21.95
   },
   {
     "id": "p-qmt-cp0100-x200",
@@ -3452,7 +3523,8 @@
       "compatibilityNotes": "Positive displacement: requires a Microdose pipette.",
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 40.65
   },
   {
     "id": "p-qmt-cp0100-sx96",
@@ -3496,7 +3568,8 @@
       "compatibilityNotes": "Positive displacement: requires a Microdose pipette.",
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 24.4
   },
   {
     "id": "p-qmt-cp1000-x200",
@@ -3540,7 +3613,8 @@
       "compatibilityNotes": "Positive displacement: requires a Microdose pipette.",
       "colour": "Blue tint",
       "autoclavable": false
-    }
+    },
+    "price": 44.7
   },
   {
     "id": "p-qmt-cp1000-sx96",
@@ -3584,7 +3658,8 @@
       "compatibilityNotes": "Positive displacement: requires a Microdose pipette.",
       "colour": "Blue tint",
       "autoclavable": false
-    }
+    },
+    "price": 26.8
   },
   {
     "id": "p-qmt-mf0020-r96",
@@ -3629,7 +3704,8 @@
       "compatibilityNotes": "Optimised for multichannel heads; single-channel Axis fit not characterised.",
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 9.3
   },
   {
     "id": "p-qmt-mf0020-fs96",
@@ -3676,7 +3752,8 @@
       "compatibilityNotes": "Optimised for multichannel heads; single-channel Axis fit not characterised.",
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 12.8
   },
   {
     "id": "p-qmt-mf0300-r96",
@@ -3721,7 +3798,8 @@
       "compatibilityNotes": "Optimised for multichannel heads; single-channel Axis fit not characterised.",
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 10.3
   },
   {
     "id": "p-qmt-mf0300-fs96",
@@ -3768,7 +3846,8 @@
       "compatibilityNotes": "Optimised for multichannel heads; single-channel Axis fit not characterised.",
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 14.15
   },
   {
     "id": "p-qmt-mf1200-r96",
@@ -3813,7 +3892,8 @@
       "compatibilityNotes": "Optimised for multichannel heads; single-channel Axis fit not characterised.",
       "colour": "Blue tint",
       "autoclavable": true
-    }
+    },
+    "price": 11.75
   },
   {
     "id": "p-qmt-mf1200-fs96",
@@ -3860,7 +3940,8 @@
       "compatibilityNotes": "Optimised for multichannel heads; single-channel Axis fit not characterised.",
       "colour": "Blue tint",
       "autoclavable": false
-    }
+    },
+    "price": 16.15
   },
   {
     "id": "p-qmt-mx5000-x50",
@@ -3904,7 +3985,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 11.6
   },
   {
     "id": "p-qmt-mx5000-fs24",
@@ -3950,7 +4032,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 7.65
   },
   {
     "id": "p-qmt-mx10000-x50",
@@ -3994,7 +4077,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    }
+    },
+    "price": 13.75
   },
   {
     "id": "p-qmt-mx10000-fs24",
@@ -4040,7 +4124,8 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    }
+    },
+    "price": 9.1
   },
   {
     "id": "p-qmt-tr0010-f960",
@@ -4087,7 +4172,8 @@
       "compatibilityNotes": null,
       "colour": "Green tint",
       "autoclavable": true
-    }
+    },
+    "price": 55.1
   },
   {
     "id": "p-qmt-tr0010-s96",
@@ -4134,7 +4220,8 @@
       "compatibilityNotes": null,
       "colour": "Green tint",
       "autoclavable": false
-    }
+    },
+    "price": 8.1
   },
   {
     "id": "p-qmt-tr0200-f960",
@@ -4181,7 +4268,8 @@
       "compatibilityNotes": null,
       "colour": "Green tint",
       "autoclavable": true
-    }
+    },
+    "price": 61.2
   },
   {
     "id": "p-qmt-tr0200-s96",
@@ -4228,7 +4316,8 @@
       "compatibilityNotes": null,
       "colour": "Green tint",
       "autoclavable": false
-    }
+    },
+    "price": 9
   },
   {
     "id": "p-qmt-tr1000-f960",
@@ -4275,7 +4364,8 @@
       "compatibilityNotes": null,
       "colour": "Green tint",
       "autoclavable": true
-    }
+    },
+    "price": 67.3
   },
   {
     "id": "p-qmt-tr1000-s96",
@@ -4322,7 +4412,8 @@
       "compatibilityNotes": null,
       "colour": "Green tint",
       "autoclavable": false
-    }
+    },
+    "price": 9.9
   },
   {
     "id": "p-qmp-ax0002",
@@ -4348,7 +4439,8 @@
       "instrumentFamilyId": "ifam-axis",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": null
-    }
+    },
+    "price": 245
   },
   {
     "id": "p-qmp-ax0010",
@@ -4374,7 +4466,8 @@
       "instrumentFamilyId": "ifam-axis",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": null
-    }
+    },
+    "price": 245
   },
   {
     "id": "p-qmp-ax0020",
@@ -4400,7 +4493,8 @@
       "instrumentFamilyId": "ifam-axis",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.5% at nominal volume."
-    }
+    },
+    "price": 245
   },
   {
     "id": "p-qmp-ax0100",
@@ -4426,7 +4520,8 @@
       "instrumentFamilyId": "ifam-axis",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": null
-    }
+    },
+    "price": 245
   },
   {
     "id": "p-qmp-ax0200",
@@ -4452,7 +4547,8 @@
       "instrumentFamilyId": "ifam-axis",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.1% at nominal volume."
-    }
+    },
+    "price": 245
   },
   {
     "id": "p-qmp-ax1000",
@@ -4478,7 +4574,8 @@
       "instrumentFamilyId": "ifam-axis",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": null
-    }
+    },
+    "price": 260
   },
   {
     "id": "p-qmp-am0810",
@@ -4504,7 +4601,8 @@
       "instrumentFamilyId": "ifam-axis-multi",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 2.1% at nominal volume."
-    }
+    },
+    "price": 690
   },
   {
     "id": "p-qmp-am0820",
@@ -4530,7 +4628,8 @@
       "instrumentFamilyId": "ifam-axis-multi",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 2.1% at nominal volume."
-    }
+    },
+    "price": 690
   },
   {
     "id": "p-qmp-am1230",
@@ -4556,7 +4655,8 @@
       "instrumentFamilyId": "ifam-axis-multi",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.6% at nominal volume."
-    }
+    },
+    "price": 793.5
   },
   {
     "id": "p-qmp-am0812",
@@ -4582,7 +4682,8 @@
       "instrumentFamilyId": "ifam-axis-multi",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.2% at nominal volume."
-    }
+    },
+    "price": 705
   },
   {
     "id": "p-qmp-ve0010",
@@ -4608,7 +4709,8 @@
       "instrumentFamilyId": "ifam-vector",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.8% at nominal volume."
-    }
+    },
+    "price": 545
   },
   {
     "id": "p-qmp-ve0200",
@@ -4634,7 +4736,8 @@
       "instrumentFamilyId": "ifam-vector",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.0% at nominal volume."
-    }
+    },
+    "price": 545
   },
   {
     "id": "p-qmp-ve1000",
@@ -4660,7 +4763,8 @@
       "instrumentFamilyId": "ifam-vector",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 2.0% at nominal volume."
-    }
+    },
+    "price": 560
   },
   {
     "id": "p-qmp-vl0010",
@@ -4686,7 +4790,8 @@
       "instrumentFamilyId": "ifam-vector-lock",
       "tipInterfaceType": "lock_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 0.6% at nominal volume."
-    }
+    },
+    "price": 585
   },
   {
     "id": "p-qmp-vl0200",
@@ -4712,7 +4817,8 @@
       "instrumentFamilyId": "ifam-vector-lock",
       "tipInterfaceType": "lock_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 0.8% at nominal volume."
-    }
+    },
+    "price": 585
   },
   {
     "id": "p-qmp-vl1000",
@@ -4738,7 +4844,8 @@
       "instrumentFamilyId": "ifam-vector-lock",
       "tipInterfaceType": "lock_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 0.8% at nominal volume."
-    }
+    },
+    "price": 600
   },
   {
     "id": "p-qmp-fx0010",
@@ -4764,7 +4871,8 @@
       "instrumentFamilyId": "ifam-fixa",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.9% at nominal volume."
-    }
+    },
+    "price": 149
   },
   {
     "id": "p-qmp-fx0020",
@@ -4790,7 +4898,8 @@
       "instrumentFamilyId": "ifam-fixa",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.5% at nominal volume."
-    }
+    },
+    "price": 149
   },
   {
     "id": "p-qmp-fx0100",
@@ -4816,7 +4925,8 @@
       "instrumentFamilyId": "ifam-fixa",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": null
-    }
+    },
+    "price": 149
   },
   {
     "id": "p-qmp-fx0200",
@@ -4842,7 +4952,8 @@
       "instrumentFamilyId": "ifam-fixa",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": null
-    }
+    },
+    "price": 149
   },
   {
     "id": "p-qmp-fx1000",
@@ -4868,7 +4979,8 @@
       "instrumentFamilyId": "ifam-fixa",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.5% at nominal volume."
-    }
+    },
+    "price": 164
   },
   {
     "id": "p-qmp-ma5000",
@@ -4894,7 +5006,8 @@
       "instrumentFamilyId": "ifam-axis-macro",
       "tipInterfaceType": "macro_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 2.1% at nominal volume."
-    }
+    },
+    "price": 344
   },
   {
     "id": "p-qmp-ma10k0",
@@ -4920,7 +5033,8 @@
       "instrumentFamilyId": "ifam-axis-macro",
       "tipInterfaceType": "macro_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.3% at nominal volume."
-    }
+    },
+    "price": 344
   },
   {
     "id": "p-qmp-md0010",
@@ -4946,7 +5060,8 @@
       "instrumentFamilyId": "ifam-microdose",
       "tipInterfaceType": "capillary_piston",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.5% at nominal volume."
-    }
+    },
+    "price": 425
   },
   {
     "id": "p-qmp-md0100",
@@ -4972,7 +5087,8 @@
       "instrumentFamilyId": "ifam-microdose",
       "tipInterfaceType": "capillary_piston",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.3% at nominal volume."
-    }
+    },
+    "price": 425
   },
   {
     "id": "p-qmp-md1000",
@@ -4998,7 +5114,8 @@
       "instrumentFamilyId": "ifam-microdose",
       "tipInterfaceType": "capillary_piston",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 0.8% at nominal volume."
-    }
+    },
+    "price": 440
   },
   {
     "id": "p-qma-st-lin6",
@@ -5028,7 +5145,8 @@
       ],
       "material": "Polycarbonate and steel",
       "notes": null
-    }
+    },
+    "price": 64
   },
   {
     "id": "p-qma-st-car6",
@@ -5058,7 +5176,8 @@
       ],
       "material": "Polycarbonate and steel",
       "notes": null
-    }
+    },
+    "price": 118
   },
   {
     "id": "p-qma-st-chg2",
@@ -5084,7 +5203,8 @@
       ],
       "material": "Polycarbonate and steel",
       "notes": null
-    }
+    },
+    "price": 189
   },
   {
     "id": "p-qma-rk-e96",
@@ -5114,7 +5234,8 @@
       ],
       "material": "Polycarbonate and steel",
       "notes": null
-    }
+    },
+    "price": 9.5
   },
   {
     "id": "p-qma-rk-ref",
@@ -5144,7 +5265,8 @@
       ],
       "material": "Polycarbonate and steel",
       "notes": null
-    }
+    },
+    "price": 24
   },
   {
     "id": "p-qma-kt-lks",
@@ -5168,7 +5290,8 @@
       ],
       "material": "Mixed",
       "notes": null
-    }
+    },
+    "price": 38
   },
   {
     "id": "p-qma-kt-mde",
@@ -5192,7 +5315,8 @@
       ],
       "material": "Mixed",
       "notes": null
-    }
+    },
+    "price": 29
   },
   {
     "id": "p-qma-kt-org",
@@ -5218,7 +5342,8 @@
       ],
       "material": "Mixed",
       "notes": null
-    }
+    },
+    "price": 38
   },
   {
     "id": "p-qma-kt-cal",
@@ -5254,7 +5379,8 @@
       ],
       "material": "Mixed",
       "notes": null
-    }
+    },
+    "price": 245
   },
   {
     "id": "p-qma-kt-mxf",
@@ -5278,6 +5404,7 @@
       ],
       "material": "Mixed",
       "notes": null
-    }
+    },
+    "price": 17.5
   }
 ]
