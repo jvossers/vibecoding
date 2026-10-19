@@ -1,0 +1,1892 @@
+[
+  {
+    "id": "rel-001",
+    "sourceProductId": "p-qmt-cf0010-r96",
+    "targetProductId": "p-qmp-ax0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 10 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-30T06:00:00.000Z"
+  },
+  {
+    "id": "rel-002",
+    "sourceProductId": "p-qmt-cf0010-r96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 10 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-30T05:00:00.000Z"
+  },
+  {
+    "id": "rel-003",
+    "sourceProductId": "p-qmt-cf0010-r96",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 10 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-30T04:00:00.000Z"
+  },
+  {
+    "id": "rel-004",
+    "sourceProductId": "p-qmt-cf0020-r96",
+    "targetProductId": "p-qmp-ax0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 20 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-30T03:00:00.000Z"
+  },
+  {
+    "id": "rel-005",
+    "sourceProductId": "p-qmt-cf0020-r96",
+    "targetProductId": "p-qmp-ax0020",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 20 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-30T02:00:00.000Z"
+  },
+  {
+    "id": "rel-006",
+    "sourceProductId": "p-qmt-cf0020-r96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 20 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-30T01:00:00.000Z"
+  },
+  {
+    "id": "rel-007",
+    "sourceProductId": "p-qmt-cf0200-r96",
+    "targetProductId": "p-qmp-ax0100",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-30T00:00:00.000Z"
+  },
+  {
+    "id": "rel-008",
+    "sourceProductId": "p-qmt-cf0200-r96",
+    "targetProductId": "p-qmp-ax0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-29T23:00:00.000Z"
+  },
+  {
+    "id": "rel-009",
+    "sourceProductId": "p-qmt-cf0200-r96",
+    "targetProductId": "p-qmp-am0820",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 200 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-29T22:00:00.000Z"
+  },
+  {
+    "id": "rel-010",
+    "sourceProductId": "p-qmt-cf0300-r96",
+    "targetProductId": "p-qmp-ax0100",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 300 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-29T21:00:00.000Z"
+  },
+  {
+    "id": "rel-011",
+    "sourceProductId": "p-qmt-cf0300-r96",
+    "targetProductId": "p-qmp-ax0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 300 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-29T20:00:00.000Z"
+  },
+  {
+    "id": "rel-012",
+    "sourceProductId": "p-qmt-cf0300-r96",
+    "targetProductId": "p-qmp-am0820",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 300 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-29T19:00:00.000Z"
+  },
+  {
+    "id": "rel-013",
+    "sourceProductId": "p-qmt-cf1000-r96",
+    "targetProductId": "p-qmp-ax1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 1000 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-29T18:00:00.000Z"
+  },
+  {
+    "id": "rel-014",
+    "sourceProductId": "p-qmt-cf1000-r96",
+    "targetProductId": "p-qmp-am1230",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 1000 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-29T17:00:00.000Z"
+  },
+  {
+    "id": "rel-015",
+    "sourceProductId": "p-qmt-cf1000-r96",
+    "targetProductId": "p-qmp-ve1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 1000 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-29T16:00:00.000Z"
+  },
+  {
+    "id": "rel-016",
+    "sourceProductId": "p-qmt-cf1200-r96",
+    "targetProductId": "p-qmp-ax1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 1200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-29T15:00:00.000Z"
+  },
+  {
+    "id": "rel-017",
+    "sourceProductId": "p-qmt-cf1200-r96",
+    "targetProductId": "p-qmp-am0812",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 1200 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-29T14:00:00.000Z"
+  },
+  {
+    "id": "rel-018",
+    "sourceProductId": "p-qmt-cf1200-r96",
+    "targetProductId": "p-qmp-ve1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit 1200 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-29T13:00:00.000Z"
+  },
+  {
+    "id": "rel-019",
+    "sourceProductId": "p-qmt-al0010-r96",
+    "targetProductId": "p-qmp-ax0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 10 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-29T12:00:00.000Z"
+  },
+  {
+    "id": "rel-020",
+    "sourceProductId": "p-qmt-al0010-r96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 10 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-29T11:00:00.000Z"
+  },
+  {
+    "id": "rel-021",
+    "sourceProductId": "p-qmt-al0010-r96",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 10 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-29T10:00:00.000Z"
+  },
+  {
+    "id": "rel-022",
+    "sourceProductId": "p-qmt-al0020-r96",
+    "targetProductId": "p-qmp-ax0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 20 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-29T09:00:00.000Z"
+  },
+  {
+    "id": "rel-023",
+    "sourceProductId": "p-qmt-al0020-r96",
+    "targetProductId": "p-qmp-ax0020",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 20 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-29T08:00:00.000Z"
+  },
+  {
+    "id": "rel-024",
+    "sourceProductId": "p-qmt-al0020-r96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 20 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-29T07:00:00.000Z"
+  },
+  {
+    "id": "rel-025",
+    "sourceProductId": "p-qmt-al0100-r96",
+    "targetProductId": "p-qmp-ax0100",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 100 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-29T06:00:00.000Z"
+  },
+  {
+    "id": "rel-026",
+    "sourceProductId": "p-qmt-al0100-r96",
+    "targetProductId": "p-qmp-fx0100",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 100 µL tips listed for the Fixa family.",
+    "createdAt": "2026-09-29T05:00:00.000Z"
+  },
+  {
+    "id": "rel-027",
+    "sourceProductId": "p-qmt-al0200-r96",
+    "targetProductId": "p-qmp-ax0100",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-29T04:00:00.000Z"
+  },
+  {
+    "id": "rel-028",
+    "sourceProductId": "p-qmt-al0200-r96",
+    "targetProductId": "p-qmp-ax0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-29T03:00:00.000Z"
+  },
+  {
+    "id": "rel-029",
+    "sourceProductId": "p-qmt-al0200-r96",
+    "targetProductId": "p-qmp-am0820",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 200 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-29T02:00:00.000Z"
+  },
+  {
+    "id": "rel-030",
+    "sourceProductId": "p-qmt-al1000-r96",
+    "targetProductId": "p-qmp-ax1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 1000 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-29T01:00:00.000Z"
+  },
+  {
+    "id": "rel-031",
+    "sourceProductId": "p-qmt-al1000-r96",
+    "targetProductId": "p-qmp-am1230",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 1000 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-29T00:00:00.000Z"
+  },
+  {
+    "id": "rel-032",
+    "sourceProductId": "p-qmt-al1000-r96",
+    "targetProductId": "p-qmp-ve1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock 1000 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-28T23:00:00.000Z"
+  },
+  {
+    "id": "rel-033",
+    "sourceProductId": "p-qmt-ss0010-fs96",
+    "targetProductId": "p-qmp-ax0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 10 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-28T22:00:00.000Z"
+  },
+  {
+    "id": "rel-034",
+    "sourceProductId": "p-qmt-ss0010-fs96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 10 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-28T21:00:00.000Z"
+  },
+  {
+    "id": "rel-035",
+    "sourceProductId": "p-qmt-ss0010-fs96",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 10 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-28T20:00:00.000Z"
+  },
+  {
+    "id": "rel-036",
+    "sourceProductId": "p-qmt-ss0010-r96",
+    "targetProductId": "p-qmp-ax0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 10 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-28T19:00:00.000Z"
+  },
+  {
+    "id": "rel-037",
+    "sourceProductId": "p-qmt-ss0010-r96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 10 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-28T18:00:00.000Z"
+  },
+  {
+    "id": "rel-038",
+    "sourceProductId": "p-qmt-ss0010-r96",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 10 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-28T17:00:00.000Z"
+  },
+  {
+    "id": "rel-039",
+    "sourceProductId": "p-qmt-ss0020-fs96",
+    "targetProductId": "p-qmp-ax0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 20 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-28T16:00:00.000Z"
+  },
+  {
+    "id": "rel-040",
+    "sourceProductId": "p-qmt-ss0020-fs96",
+    "targetProductId": "p-qmp-ax0020",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 20 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-28T15:00:00.000Z"
+  },
+  {
+    "id": "rel-041",
+    "sourceProductId": "p-qmt-ss0020-fs96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 20 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-28T14:00:00.000Z"
+  },
+  {
+    "id": "rel-042",
+    "sourceProductId": "p-qmt-ss0020-r96",
+    "targetProductId": "p-qmp-ax0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 20 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-28T13:00:00.000Z"
+  },
+  {
+    "id": "rel-043",
+    "sourceProductId": "p-qmt-ss0020-r96",
+    "targetProductId": "p-qmp-ax0020",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 20 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-28T12:00:00.000Z"
+  },
+  {
+    "id": "rel-044",
+    "sourceProductId": "p-qmt-ss0020-r96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 20 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-28T11:00:00.000Z"
+  },
+  {
+    "id": "rel-045",
+    "sourceProductId": "p-qmt-ss0200-fs96",
+    "targetProductId": "p-qmp-ax0100",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-28T10:00:00.000Z"
+  },
+  {
+    "id": "rel-046",
+    "sourceProductId": "p-qmt-ss0200-fs96",
+    "targetProductId": "p-qmp-ax0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-28T09:00:00.000Z"
+  },
+  {
+    "id": "rel-047",
+    "sourceProductId": "p-qmt-ss0200-fs96",
+    "targetProductId": "p-qmp-am0820",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 200 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-28T08:00:00.000Z"
+  },
+  {
+    "id": "rel-048",
+    "sourceProductId": "p-qmt-ss0200-r96",
+    "targetProductId": "p-qmp-ax0100",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-28T07:00:00.000Z"
+  },
+  {
+    "id": "rel-049",
+    "sourceProductId": "p-qmt-ss0200-r96",
+    "targetProductId": "p-qmp-ax0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-28T06:00:00.000Z"
+  },
+  {
+    "id": "rel-050",
+    "sourceProductId": "p-qmt-ss0200-r96",
+    "targetProductId": "p-qmp-am0820",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 200 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-28T05:00:00.000Z"
+  },
+  {
+    "id": "rel-051",
+    "sourceProductId": "p-qmt-ss1000-fs96",
+    "targetProductId": "p-qmp-ax1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 1000 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-28T04:00:00.000Z"
+  },
+  {
+    "id": "rel-052",
+    "sourceProductId": "p-qmt-ss1000-fs96",
+    "targetProductId": "p-qmp-am1230",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 1000 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-28T03:00:00.000Z"
+  },
+  {
+    "id": "rel-053",
+    "sourceProductId": "p-qmt-ss1000-fs96",
+    "targetProductId": "p-qmp-ve1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 1000 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-28T02:00:00.000Z"
+  },
+  {
+    "id": "rel-054",
+    "sourceProductId": "p-qmt-ss1000-r96",
+    "targetProductId": "p-qmp-ax1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 1000 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-28T01:00:00.000Z"
+  },
+  {
+    "id": "rel-055",
+    "sourceProductId": "p-qmt-ss1000-r96",
+    "targetProductId": "p-qmp-am1230",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 1000 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-28T00:00:00.000Z"
+  },
+  {
+    "id": "rel-056",
+    "sourceProductId": "p-qmt-ss1000-r96",
+    "targetProductId": "p-qmp-ve1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Slipstream 1000 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-27T23:00:00.000Z"
+  },
+  {
+    "id": "rel-057",
+    "sourceProductId": "p-qmt-lr0010-fs96",
+    "targetProductId": "p-qmp-ax0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 10 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-27T22:00:00.000Z"
+  },
+  {
+    "id": "rel-058",
+    "sourceProductId": "p-qmt-lr0010-fs96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 10 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-27T21:00:00.000Z"
+  },
+  {
+    "id": "rel-059",
+    "sourceProductId": "p-qmt-lr0010-fs96",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 10 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-27T20:00:00.000Z"
+  },
+  {
+    "id": "rel-060",
+    "sourceProductId": "p-qmt-lr0010-r96",
+    "targetProductId": "p-qmp-ax0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 10 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-27T19:00:00.000Z"
+  },
+  {
+    "id": "rel-061",
+    "sourceProductId": "p-qmt-lr0010-r96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 10 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-27T18:00:00.000Z"
+  },
+  {
+    "id": "rel-062",
+    "sourceProductId": "p-qmt-lr0010-r96",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 10 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-27T17:00:00.000Z"
+  },
+  {
+    "id": "rel-063",
+    "sourceProductId": "p-qmt-lr0020-fs96",
+    "targetProductId": "p-qmp-ax0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 20 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-27T16:00:00.000Z"
+  },
+  {
+    "id": "rel-064",
+    "sourceProductId": "p-qmt-lr0020-fs96",
+    "targetProductId": "p-qmp-ax0020",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 20 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-27T15:00:00.000Z"
+  },
+  {
+    "id": "rel-065",
+    "sourceProductId": "p-qmt-lr0020-fs96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 20 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-27T14:00:00.000Z"
+  },
+  {
+    "id": "rel-066",
+    "sourceProductId": "p-qmt-lr0020-r96",
+    "targetProductId": "p-qmp-ax0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 20 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-27T13:00:00.000Z"
+  },
+  {
+    "id": "rel-067",
+    "sourceProductId": "p-qmt-lr0020-r96",
+    "targetProductId": "p-qmp-ax0020",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 20 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-27T12:00:00.000Z"
+  },
+  {
+    "id": "rel-068",
+    "sourceProductId": "p-qmt-lr0020-r96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 20 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-27T11:00:00.000Z"
+  },
+  {
+    "id": "rel-069",
+    "sourceProductId": "p-qmt-lr0200-fs96",
+    "targetProductId": "p-qmp-ax0100",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-27T10:00:00.000Z"
+  },
+  {
+    "id": "rel-070",
+    "sourceProductId": "p-qmt-lr0200-fs96",
+    "targetProductId": "p-qmp-ax0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-27T09:00:00.000Z"
+  },
+  {
+    "id": "rel-071",
+    "sourceProductId": "p-qmt-lr0200-fs96",
+    "targetProductId": "p-qmp-am0820",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 200 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-27T08:00:00.000Z"
+  },
+  {
+    "id": "rel-072",
+    "sourceProductId": "p-qmt-lr0200-r96",
+    "targetProductId": "p-qmp-ax0100",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-27T07:00:00.000Z"
+  },
+  {
+    "id": "rel-073",
+    "sourceProductId": "p-qmt-lr0200-r96",
+    "targetProductId": "p-qmp-ax0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-27T06:00:00.000Z"
+  },
+  {
+    "id": "rel-074",
+    "sourceProductId": "p-qmt-lr0200-r96",
+    "targetProductId": "p-qmp-am0820",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 200 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-27T05:00:00.000Z"
+  },
+  {
+    "id": "rel-075",
+    "sourceProductId": "p-qmt-lr1000-fs96",
+    "targetProductId": "p-qmp-ax1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 1000 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-27T04:00:00.000Z"
+  },
+  {
+    "id": "rel-076",
+    "sourceProductId": "p-qmt-lr1000-fs96",
+    "targetProductId": "p-qmp-am1230",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 1000 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-27T03:00:00.000Z"
+  },
+  {
+    "id": "rel-077",
+    "sourceProductId": "p-qmt-lr1000-fs96",
+    "targetProductId": "p-qmp-ve1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 1000 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-27T02:00:00.000Z"
+  },
+  {
+    "id": "rel-078",
+    "sourceProductId": "p-qmt-lr1000-r96",
+    "targetProductId": "p-qmp-ax1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 1000 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-27T01:00:00.000Z"
+  },
+  {
+    "id": "rel-079",
+    "sourceProductId": "p-qmt-lr1000-r96",
+    "targetProductId": "p-qmp-am1230",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 1000 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-27T00:00:00.000Z"
+  },
+  {
+    "id": "rel-080",
+    "sourceProductId": "p-qmt-lr1000-r96",
+    "targetProductId": "p-qmp-ve1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Longreach 1000 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-26T23:00:00.000Z"
+  },
+  {
+    "id": "rel-081",
+    "sourceProductId": "p-qmt-ob0200-fs96",
+    "targetProductId": "p-qmp-ax0100",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Openbore 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-26T22:00:00.000Z"
+  },
+  {
+    "id": "rel-082",
+    "sourceProductId": "p-qmt-ob0200-fs96",
+    "targetProductId": "p-qmp-ax0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Openbore 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-26T21:00:00.000Z"
+  },
+  {
+    "id": "rel-083",
+    "sourceProductId": "p-qmt-ob0200-fs96",
+    "targetProductId": "p-qmp-ve0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Openbore 200 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-26T20:00:00.000Z"
+  },
+  {
+    "id": "rel-084",
+    "sourceProductId": "p-qmt-ob0200-r96",
+    "targetProductId": "p-qmp-ax0100",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Openbore 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-26T19:00:00.000Z"
+  },
+  {
+    "id": "rel-085",
+    "sourceProductId": "p-qmt-ob0200-r96",
+    "targetProductId": "p-qmp-ax0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Openbore 200 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-26T18:00:00.000Z"
+  },
+  {
+    "id": "rel-086",
+    "sourceProductId": "p-qmt-ob0200-r96",
+    "targetProductId": "p-qmp-ve0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Openbore 200 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-26T17:00:00.000Z"
+  },
+  {
+    "id": "rel-087",
+    "sourceProductId": "p-qmt-ob1000-fs96",
+    "targetProductId": "p-qmp-ax1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Openbore 1000 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-26T16:00:00.000Z"
+  },
+  {
+    "id": "rel-088",
+    "sourceProductId": "p-qmt-ob1000-fs96",
+    "targetProductId": "p-qmp-ve1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Openbore 1000 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-26T15:00:00.000Z"
+  },
+  {
+    "id": "rel-089",
+    "sourceProductId": "p-qmt-ob1000-r96",
+    "targetProductId": "p-qmp-ax1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Openbore 1000 µL tips listed for the Axis family.",
+    "createdAt": "2026-09-26T14:00:00.000Z"
+  },
+  {
+    "id": "rel-090",
+    "sourceProductId": "p-qmt-ob1000-r96",
+    "targetProductId": "p-qmp-ve1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Openbore 1000 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-26T13:00:00.000Z"
+  },
+  {
+    "id": "rel-091",
+    "sourceProductId": "p-qmt-lk0010-fs96",
+    "targetProductId": "p-qmp-vl0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Lockline 10 µL tips listed for the Vector Lock family.",
+    "createdAt": "2026-09-26T12:00:00.000Z"
+  },
+  {
+    "id": "rel-092",
+    "sourceProductId": "p-qmt-lk0010-r96",
+    "targetProductId": "p-qmp-vl0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Lockline 10 µL tips listed for the Vector Lock family.",
+    "createdAt": "2026-09-26T11:00:00.000Z"
+  },
+  {
+    "id": "rel-093",
+    "sourceProductId": "p-qmt-lk0200-fs96",
+    "targetProductId": "p-qmp-vl0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Lockline 200 µL tips listed for the Vector Lock family.",
+    "createdAt": "2026-09-26T10:00:00.000Z"
+  },
+  {
+    "id": "rel-094",
+    "sourceProductId": "p-qmt-lk0200-r96",
+    "targetProductId": "p-qmp-vl0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Lockline 200 µL tips listed for the Vector Lock family.",
+    "createdAt": "2026-09-26T09:00:00.000Z"
+  },
+  {
+    "id": "rel-095",
+    "sourceProductId": "p-qmt-lk1000-fs96",
+    "targetProductId": "p-qmp-vl1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Lockline 1000 µL tips listed for the Vector Lock family.",
+    "createdAt": "2026-09-26T08:00:00.000Z"
+  },
+  {
+    "id": "rel-096",
+    "sourceProductId": "p-qmt-lk1000-r96",
+    "targetProductId": "p-qmp-vl1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Lockline 1000 µL tips listed for the Vector Lock family.",
+    "createdAt": "2026-09-26T07:00:00.000Z"
+  },
+  {
+    "id": "rel-097",
+    "sourceProductId": "p-qmt-cp0010-x200",
+    "targetProductId": "p-qmp-md0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Microdose 10 µL tips listed for the Microdose family.",
+    "createdAt": "2026-09-26T06:00:00.000Z"
+  },
+  {
+    "id": "rel-098",
+    "sourceProductId": "p-qmt-cp0100-x200",
+    "targetProductId": "p-qmp-md0100",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Microdose 100 µL tips listed for the Microdose family.",
+    "createdAt": "2026-09-26T05:00:00.000Z"
+  },
+  {
+    "id": "rel-099",
+    "sourceProductId": "p-qmt-cp1000-x200",
+    "targetProductId": "p-qmp-md1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Microdose 1000 µL tips listed for the Microdose family.",
+    "createdAt": "2026-09-26T04:00:00.000Z"
+  },
+  {
+    "id": "rel-100",
+    "sourceProductId": "p-qmt-mf0020-r96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 20 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-26T03:00:00.000Z"
+  },
+  {
+    "id": "rel-101",
+    "sourceProductId": "p-qmt-mf0020-r96",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 20 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-26T02:00:00.000Z"
+  },
+  {
+    "id": "rel-102",
+    "sourceProductId": "p-qmt-mf0020-fs96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 20 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-26T01:00:00.000Z"
+  },
+  {
+    "id": "rel-103",
+    "sourceProductId": "p-qmt-mf0020-fs96",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 20 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-26T00:00:00.000Z"
+  },
+  {
+    "id": "rel-104",
+    "sourceProductId": "p-qmt-mf0300-r96",
+    "targetProductId": "p-qmp-am0820",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 300 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-25T23:00:00.000Z"
+  },
+  {
+    "id": "rel-105",
+    "sourceProductId": "p-qmt-mf0300-r96",
+    "targetProductId": "p-qmp-am1230",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 300 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-25T22:00:00.000Z"
+  },
+  {
+    "id": "rel-106",
+    "sourceProductId": "p-qmt-mf0300-r96",
+    "targetProductId": "p-qmp-ve0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 300 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-25T21:00:00.000Z"
+  },
+  {
+    "id": "rel-107",
+    "sourceProductId": "p-qmt-mf0300-fs96",
+    "targetProductId": "p-qmp-am0820",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 300 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-25T20:00:00.000Z"
+  },
+  {
+    "id": "rel-108",
+    "sourceProductId": "p-qmt-mf0300-fs96",
+    "targetProductId": "p-qmp-am1230",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 300 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-25T19:00:00.000Z"
+  },
+  {
+    "id": "rel-109",
+    "sourceProductId": "p-qmt-mf0300-fs96",
+    "targetProductId": "p-qmp-ve0200",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 300 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-25T18:00:00.000Z"
+  },
+  {
+    "id": "rel-110",
+    "sourceProductId": "p-qmt-mf1200-r96",
+    "targetProductId": "p-qmp-am0812",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 1200 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-25T17:00:00.000Z"
+  },
+  {
+    "id": "rel-111",
+    "sourceProductId": "p-qmt-mf1200-r96",
+    "targetProductId": "p-qmp-ve1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 1200 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-25T16:00:00.000Z"
+  },
+  {
+    "id": "rel-112",
+    "sourceProductId": "p-qmt-mf1200-fs96",
+    "targetProductId": "p-qmp-am0812",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 1200 µL tips listed for the Axis Multi family.",
+    "createdAt": "2026-09-25T15:00:00.000Z"
+  },
+  {
+    "id": "rel-113",
+    "sourceProductId": "p-qmt-mf1200-fs96",
+    "targetProductId": "p-qmp-ve1000",
+    "type": "compatible_with",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Multiflex 1200 µL tips listed for the Vector family.",
+    "createdAt": "2026-09-25T14:00:00.000Z"
+  },
+  {
+    "id": "rel-114",
+    "sourceProductId": "p-qma-st-lin6",
+    "targetProductId": "p-qmp-ax0002",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Axis pipettes.",
+    "createdAt": "2026-09-25T13:00:00.000Z"
+  },
+  {
+    "id": "rel-115",
+    "sourceProductId": "p-qma-st-lin6",
+    "targetProductId": "p-qmp-am0810",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Axis Multi pipettes.",
+    "createdAt": "2026-09-25T12:00:00.000Z"
+  },
+  {
+    "id": "rel-116",
+    "sourceProductId": "p-qma-st-lin6",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Vector pipettes.",
+    "createdAt": "2026-09-25T11:00:00.000Z"
+  },
+  {
+    "id": "rel-117",
+    "sourceProductId": "p-qma-st-car6",
+    "targetProductId": "p-qmp-ax0002",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Axis pipettes.",
+    "createdAt": "2026-09-25T10:00:00.000Z"
+  },
+  {
+    "id": "rel-118",
+    "sourceProductId": "p-qma-st-car6",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Vector pipettes.",
+    "createdAt": "2026-09-25T09:00:00.000Z"
+  },
+  {
+    "id": "rel-119",
+    "sourceProductId": "p-qma-st-car6",
+    "targetProductId": "p-qmp-vl0010",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Vector Lock pipettes.",
+    "createdAt": "2026-09-25T08:00:00.000Z"
+  },
+  {
+    "id": "rel-120",
+    "sourceProductId": "p-qma-st-chg2",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Vector pipettes.",
+    "createdAt": "2026-09-25T07:00:00.000Z"
+  },
+  {
+    "id": "rel-121",
+    "sourceProductId": "p-qma-st-chg2",
+    "targetProductId": "p-qmp-vl0010",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Vector Lock pipettes.",
+    "createdAt": "2026-09-25T06:00:00.000Z"
+  },
+  {
+    "id": "rel-122",
+    "sourceProductId": "p-qma-rk-e96",
+    "targetProductId": "p-qmp-ax0002",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Axis pipettes.",
+    "createdAt": "2026-09-25T05:00:00.000Z"
+  },
+  {
+    "id": "rel-123",
+    "sourceProductId": "p-qma-rk-e96",
+    "targetProductId": "p-qmp-am0810",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Axis Multi pipettes.",
+    "createdAt": "2026-09-25T04:00:00.000Z"
+  },
+  {
+    "id": "rel-124",
+    "sourceProductId": "p-qma-rk-e96",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Vector pipettes.",
+    "createdAt": "2026-09-25T03:00:00.000Z"
+  },
+  {
+    "id": "rel-125",
+    "sourceProductId": "p-qma-rk-ref",
+    "targetProductId": "p-qmp-ax0002",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Axis pipettes.",
+    "createdAt": "2026-09-25T02:00:00.000Z"
+  },
+  {
+    "id": "rel-126",
+    "sourceProductId": "p-qma-rk-ref",
+    "targetProductId": "p-qmp-am0810",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Axis Multi pipettes.",
+    "createdAt": "2026-09-25T01:00:00.000Z"
+  },
+  {
+    "id": "rel-127",
+    "sourceProductId": "p-qma-rk-ref",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Vector pipettes.",
+    "createdAt": "2026-09-25T00:00:00.000Z"
+  },
+  {
+    "id": "rel-128",
+    "sourceProductId": "p-qma-kt-lks",
+    "targetProductId": "p-qmp-vl0010",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Vector Lock pipettes.",
+    "createdAt": "2026-09-24T23:00:00.000Z"
+  },
+  {
+    "id": "rel-129",
+    "sourceProductId": "p-qma-kt-mde",
+    "targetProductId": "p-qmp-md0010",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Microdose pipettes.",
+    "createdAt": "2026-09-24T22:00:00.000Z"
+  },
+  {
+    "id": "rel-130",
+    "sourceProductId": "p-qma-kt-org",
+    "targetProductId": "p-qmp-ax0002",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Axis pipettes.",
+    "createdAt": "2026-09-24T21:00:00.000Z"
+  },
+  {
+    "id": "rel-131",
+    "sourceProductId": "p-qma-kt-org",
+    "targetProductId": "p-qmp-am0810",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Axis Multi pipettes.",
+    "createdAt": "2026-09-24T20:00:00.000Z"
+  },
+  {
+    "id": "rel-132",
+    "sourceProductId": "p-qma-kt-cal",
+    "targetProductId": "p-qmp-ax0002",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Axis pipettes.",
+    "createdAt": "2026-09-24T19:00:00.000Z"
+  },
+  {
+    "id": "rel-133",
+    "sourceProductId": "p-qma-kt-cal",
+    "targetProductId": "p-qmp-am0810",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Axis Multi pipettes.",
+    "createdAt": "2026-09-24T18:00:00.000Z"
+  },
+  {
+    "id": "rel-134",
+    "sourceProductId": "p-qma-kt-cal",
+    "targetProductId": "p-qmp-ve0010",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Vector pipettes.",
+    "createdAt": "2026-09-24T17:00:00.000Z"
+  },
+  {
+    "id": "rel-135",
+    "sourceProductId": "p-qma-kt-mxf",
+    "targetProductId": "p-qmp-ma5000",
+    "type": "accessory_for",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: fits Axis Macro pipettes.",
+    "createdAt": "2026-09-24T16:00:00.000Z"
+  },
+  {
+    "id": "rel-136",
+    "sourceProductId": "p-qmt-cf0010-r96",
+    "targetProductId": "p-qmt-cf0010-s96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T15:00:00.000Z"
+  },
+  {
+    "id": "rel-137",
+    "sourceProductId": "p-qmt-cf0010-r96",
+    "targetProductId": "p-qmt-cf0010-f960",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T14:00:00.000Z"
+  },
+  {
+    "id": "rel-138",
+    "sourceProductId": "p-qmt-cf0010-r96",
+    "targetProductId": "p-qmt-cf0010-b1000",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T13:00:00.000Z"
+  },
+  {
+    "id": "rel-139",
+    "sourceProductId": "p-qmt-cf0020-r96",
+    "targetProductId": "p-qmt-cf0020-s96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T12:00:00.000Z"
+  },
+  {
+    "id": "rel-140",
+    "sourceProductId": "p-qmt-cf0020-r96",
+    "targetProductId": "p-qmt-cf0020-f960",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T11:00:00.000Z"
+  },
+  {
+    "id": "rel-141",
+    "sourceProductId": "p-qmt-cf0020-r96",
+    "targetProductId": "p-qmt-cf0020-b1000",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T10:00:00.000Z"
+  },
+  {
+    "id": "rel-142",
+    "sourceProductId": "p-qmt-cf0200-r96",
+    "targetProductId": "p-qmt-cf0200-s96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T09:00:00.000Z"
+  },
+  {
+    "id": "rel-143",
+    "sourceProductId": "p-qmt-cf0200-r96",
+    "targetProductId": "p-qmt-cf0200-f960",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T08:00:00.000Z"
+  },
+  {
+    "id": "rel-144",
+    "sourceProductId": "p-qmt-cf0200-r96",
+    "targetProductId": "p-qmt-cf0200-b1000",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T07:00:00.000Z"
+  },
+  {
+    "id": "rel-145",
+    "sourceProductId": "p-qmt-cf0300-r96",
+    "targetProductId": "p-qmt-cf0300-f960",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T06:00:00.000Z"
+  },
+  {
+    "id": "rel-146",
+    "sourceProductId": "p-qmt-cf1000-r96",
+    "targetProductId": "p-qmt-cf1000-s96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T05:00:00.000Z"
+  },
+  {
+    "id": "rel-147",
+    "sourceProductId": "p-qmt-cf1000-r96",
+    "targetProductId": "p-qmt-cf1000-f960",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T04:00:00.000Z"
+  },
+  {
+    "id": "rel-148",
+    "sourceProductId": "p-qmt-cf1000-r96",
+    "targetProductId": "p-qmt-cf1000-b1000",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T03:00:00.000Z"
+  },
+  {
+    "id": "rel-149",
+    "sourceProductId": "p-qmt-cf1200-r96",
+    "targetProductId": "p-qmt-cf1200-b1000",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T02:00:00.000Z"
+  },
+  {
+    "id": "rel-150",
+    "sourceProductId": "p-qmt-al0010-s96",
+    "targetProductId": "p-qmt-al0010-s960",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T01:00:00.000Z"
+  },
+  {
+    "id": "rel-151",
+    "sourceProductId": "p-qmt-al0010-s96",
+    "targetProductId": "p-qmt-al0010-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "rel-152",
+    "sourceProductId": "p-qmt-al0020-s96",
+    "targetProductId": "p-qmt-al0020-s960",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T23:00:00.000Z"
+  },
+  {
+    "id": "rel-153",
+    "sourceProductId": "p-qmt-al0020-s96",
+    "targetProductId": "p-qmt-al0020-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T22:00:00.000Z"
+  },
+  {
+    "id": "rel-154",
+    "sourceProductId": "p-qmt-al0100-s96",
+    "targetProductId": "p-qmt-al0100-s960",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T21:00:00.000Z"
+  },
+  {
+    "id": "rel-155",
+    "sourceProductId": "p-qmt-al0100-s96",
+    "targetProductId": "p-qmt-al0100-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T20:00:00.000Z"
+  },
+  {
+    "id": "rel-156",
+    "sourceProductId": "p-qmt-al0200-s96",
+    "targetProductId": "p-qmt-al0200-s960",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T19:00:00.000Z"
+  },
+  {
+    "id": "rel-157",
+    "sourceProductId": "p-qmt-al0200-s96",
+    "targetProductId": "p-qmt-al0200-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T18:00:00.000Z"
+  },
+  {
+    "id": "rel-158",
+    "sourceProductId": "p-qmt-al1000-s96",
+    "targetProductId": "p-qmt-al1000-s960",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T17:00:00.000Z"
+  },
+  {
+    "id": "rel-159",
+    "sourceProductId": "p-qmt-al1000-s96",
+    "targetProductId": "p-qmt-al1000-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T16:00:00.000Z"
+  },
+  {
+    "id": "rel-160",
+    "sourceProductId": "p-qmt-ss0010-fs96",
+    "targetProductId": "p-qmt-ss0010-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T15:00:00.000Z"
+  },
+  {
+    "id": "rel-161",
+    "sourceProductId": "p-qmt-ss0010-fs96",
+    "targetProductId": "p-qmt-ss0010-s96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T14:00:00.000Z"
+  },
+  {
+    "id": "rel-162",
+    "sourceProductId": "p-qmt-ss0020-fs96",
+    "targetProductId": "p-qmt-ss0020-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T13:00:00.000Z"
+  },
+  {
+    "id": "rel-163",
+    "sourceProductId": "p-qmt-ss0020-fs96",
+    "targetProductId": "p-qmt-ss0020-s96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T12:00:00.000Z"
+  },
+  {
+    "id": "rel-164",
+    "sourceProductId": "p-qmt-ss0200-fs96",
+    "targetProductId": "p-qmt-ss0200-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T11:00:00.000Z"
+  },
+  {
+    "id": "rel-165",
+    "sourceProductId": "p-qmt-ss0200-fs96",
+    "targetProductId": "p-qmt-ss0200-s96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T10:00:00.000Z"
+  },
+  {
+    "id": "rel-166",
+    "sourceProductId": "p-qmt-ss1000-fs96",
+    "targetProductId": "p-qmt-ss1000-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T09:00:00.000Z"
+  },
+  {
+    "id": "rel-167",
+    "sourceProductId": "p-qmt-ss1000-fs96",
+    "targetProductId": "p-qmt-ss1000-s96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T08:00:00.000Z"
+  },
+  {
+    "id": "rel-168",
+    "sourceProductId": "p-qmt-lr0010-fs96",
+    "targetProductId": "p-qmt-lr0010-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T07:00:00.000Z"
+  },
+  {
+    "id": "rel-169",
+    "sourceProductId": "p-qmt-lr0020-fs96",
+    "targetProductId": "p-qmt-lr0020-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T06:00:00.000Z"
+  },
+  {
+    "id": "rel-170",
+    "sourceProductId": "p-qmt-lr0200-fs96",
+    "targetProductId": "p-qmt-lr0200-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T05:00:00.000Z"
+  },
+  {
+    "id": "rel-171",
+    "sourceProductId": "p-qmt-lr1000-fs96",
+    "targetProductId": "p-qmt-lr1000-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T04:00:00.000Z"
+  },
+  {
+    "id": "rel-172",
+    "sourceProductId": "p-qmt-ob0200-fs96",
+    "targetProductId": "p-qmt-ob0200-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T03:00:00.000Z"
+  },
+  {
+    "id": "rel-173",
+    "sourceProductId": "p-qmt-ob1000-fs96",
+    "targetProductId": "p-qmt-ob1000-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T02:00:00.000Z"
+  },
+  {
+    "id": "rel-174",
+    "sourceProductId": "p-qmt-lk0010-fs96",
+    "targetProductId": "p-qmt-lk0010-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T01:00:00.000Z"
+  },
+  {
+    "id": "rel-175",
+    "sourceProductId": "p-qmt-lk0010-fs96",
+    "targetProductId": "p-qmt-lk0010-f960",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-23T00:00:00.000Z"
+  },
+  {
+    "id": "rel-176",
+    "sourceProductId": "p-qmt-lk0200-fs96",
+    "targetProductId": "p-qmt-lk0200-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T23:00:00.000Z"
+  },
+  {
+    "id": "rel-177",
+    "sourceProductId": "p-qmt-lk0200-fs96",
+    "targetProductId": "p-qmt-lk0200-f960",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T22:00:00.000Z"
+  },
+  {
+    "id": "rel-178",
+    "sourceProductId": "p-qmt-lk1000-fs96",
+    "targetProductId": "p-qmt-lk1000-r96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T21:00:00.000Z"
+  },
+  {
+    "id": "rel-179",
+    "sourceProductId": "p-qmt-lk1000-fs96",
+    "targetProductId": "p-qmt-lk1000-f960",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T20:00:00.000Z"
+  },
+  {
+    "id": "rel-180",
+    "sourceProductId": "p-qmt-cp0010-x200",
+    "targetProductId": "p-qmt-cp0010-sx96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T19:00:00.000Z"
+  },
+  {
+    "id": "rel-181",
+    "sourceProductId": "p-qmt-cp0100-x200",
+    "targetProductId": "p-qmt-cp0100-sx96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T18:00:00.000Z"
+  },
+  {
+    "id": "rel-182",
+    "sourceProductId": "p-qmt-cp1000-x200",
+    "targetProductId": "p-qmt-cp1000-sx96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T17:00:00.000Z"
+  },
+  {
+    "id": "rel-183",
+    "sourceProductId": "p-qmt-mf0020-r96",
+    "targetProductId": "p-qmt-mf0020-fs96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T16:00:00.000Z"
+  },
+  {
+    "id": "rel-184",
+    "sourceProductId": "p-qmt-mf0300-r96",
+    "targetProductId": "p-qmt-mf0300-fs96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T15:00:00.000Z"
+  },
+  {
+    "id": "rel-185",
+    "sourceProductId": "p-qmt-mf1200-r96",
+    "targetProductId": "p-qmt-mf1200-fs96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T14:00:00.000Z"
+  },
+  {
+    "id": "rel-186",
+    "sourceProductId": "p-qmt-mx5000-x50",
+    "targetProductId": "p-qmt-mx5000-fs24",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T13:00:00.000Z"
+  },
+  {
+    "id": "rel-187",
+    "sourceProductId": "p-qmt-mx10000-x50",
+    "targetProductId": "p-qmt-mx10000-fs24",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T12:00:00.000Z"
+  },
+  {
+    "id": "rel-188",
+    "sourceProductId": "p-qmt-tr0010-f960",
+    "targetProductId": "p-qmt-tr0010-s96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T11:00:00.000Z"
+  },
+  {
+    "id": "rel-189",
+    "sourceProductId": "p-qmt-tr0200-f960",
+    "targetProductId": "p-qmt-tr0200-s96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T10:00:00.000Z"
+  },
+  {
+    "id": "rel-190",
+    "sourceProductId": "p-qmt-tr1000-f960",
+    "targetProductId": "p-qmt-tr1000-s96",
+    "type": "same_family",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same range and nominal volume; different sterility, filtration or pack.",
+    "createdAt": "2026-09-22T09:00:00.000Z"
+  },
+  {
+    "id": "rel-191",
+    "sourceProductId": "p-qmt-cf0200-r96",
+    "targetProductId": "p-qmt-hc0200-a",
+    "type": "supersedes",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit replaced this legacy record.",
+    "createdAt": "2026-09-22T08:00:00.000Z"
+  },
+  {
+    "id": "rel-192",
+    "sourceProductId": "p-qmt-al0200-s96",
+    "targetProductId": "p-qmt-hc0200-b",
+    "type": "supersedes",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock replaced this legacy filter tip.",
+    "createdAt": "2026-09-22T07:00:00.000Z"
+  },
+  {
+    "id": "rel-193",
+    "sourceProductId": "p-qmt-al0010-s96",
+    "targetProductId": "p-qmt-hc0010-a",
+    "type": "supersedes",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock replaced this legacy sterile tip.",
+    "createdAt": "2026-09-22T06:00:00.000Z"
+  },
+  {
+    "id": "rel-194",
+    "sourceProductId": "p-qmt-cf1000-b1000",
+    "targetProductId": "p-qmt-hc1000-a",
+    "type": "supersedes",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Corefit bulk replaced this legacy bulk tip.",
+    "createdAt": "2026-09-22T05:00:00.000Z"
+  },
+  {
+    "id": "rel-195",
+    "sourceProductId": "p-qmt-al1000-s96",
+    "targetProductId": "p-qmt-hc1000-b",
+    "type": "supersedes",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Aerolock replaced this legacy filter tip.",
+    "createdAt": "2026-09-22T04:00:00.000Z"
+  },
+  {
+    "id": "rel-196",
+    "sourceProductId": "p-qmt-ob1000-r96",
+    "targetProductId": "p-qmt-hc1000-c",
+    "type": "supersedes",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: Openbore replaced this legacy wide-bore tip.",
+    "createdAt": "2026-09-22T03:00:00.000Z"
+  },
+  {
+    "id": "rel-197",
+    "sourceProductId": "p-qmt-cf1200-r96",
+    "targetProductId": "p-qmt-cf1200-b1000",
+    "type": "supersedes",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic demo: racked format replaces the discontinued bulk pack.",
+    "createdAt": "2026-09-22T02:00:00.000Z"
+  },
+  {
+    "id": "rel-198",
+    "sourceProductId": "p-qmt-al0200-s96",
+    "targetProductId": "p-qmt-al0200-s960",
+    "type": "published_substitute",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic note: same tip in a 10-rack pack.",
+    "createdAt": "2026-09-22T01:00:00.000Z"
+  },
+  {
+    "id": "rel-199",
+    "sourceProductId": "p-qmt-al0200-s96",
+    "targetProductId": "p-qmt-tr0200-s96",
+    "type": "published_substitute",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic note from an old sales sheet. The rules block it: Terra 200 is unfiltered.",
+    "createdAt": "2026-09-22T00:00:00.000Z"
+  },
+  {
+    "id": "rel-200",
+    "sourceProductId": "p-qmt-cf0200-s96",
+    "targetProductId": "p-qmt-tr0200-s96",
+    "type": "published_substitute",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic note: sterile Terra rack as a lower-impact option.",
+    "createdAt": "2026-09-21T23:00:00.000Z"
+  },
+  {
+    "id": "rel-201",
+    "sourceProductId": "p-qmt-ss0200-fs96",
+    "targetProductId": "p-qmt-al0200-s96",
+    "type": "published_substitute",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic note: standard-retention filter tip if low retention is not essential.",
+    "createdAt": "2026-09-21T22:00:00.000Z"
+  },
+  {
+    "id": "rel-202",
+    "sourceProductId": "p-qmt-al1000-s96",
+    "targetProductId": "p-qmt-al1000-s960",
+    "type": "published_substitute",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Synthetic note: same tip in a 10-rack pack.",
+    "createdAt": "2026-09-21T21:00:00.000Z"
+  },
+  {
+    "id": "rel-203",
+    "sourceProductId": "p-qmt-cf0200-f960",
+    "targetProductId": "p-qma-rk-ref",
+    "type": "related",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Refill inserts load onto the refill station base.",
+    "createdAt": "2026-09-21T20:00:00.000Z"
+  },
+  {
+    "id": "rel-204",
+    "sourceProductId": "p-qmt-tr0200-f960",
+    "targetProductId": "p-qma-rk-ref",
+    "type": "related",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Refill inserts load onto the refill station base.",
+    "createdAt": "2026-09-21T19:00:00.000Z"
+  },
+  {
+    "id": "rel-205",
+    "sourceProductId": "p-qmt-cf0200-b1000",
+    "targetProductId": "p-qma-rk-e96",
+    "type": "related",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Bulk tips can be racked into empty autoclavable racks.",
+    "createdAt": "2026-09-21T18:00:00.000Z"
+  },
+  {
+    "id": "rel-206",
+    "sourceProductId": "p-qmt-cf1000-b1000",
+    "targetProductId": "p-qma-rk-e96",
+    "type": "related",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Bulk tips can be racked into empty autoclavable racks.",
+    "createdAt": "2026-09-21T17:00:00.000Z"
+  },
+  {
+    "id": "rel-207",
+    "sourceProductId": "p-qmt-mx5000-x50",
+    "targetProductId": "p-qma-kt-mxf",
+    "type": "related",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Cone filter discs protect the macro cone.",
+    "createdAt": "2026-09-21T16:00:00.000Z"
+  },
+  {
+    "id": "rel-208",
+    "sourceProductId": "p-qmt-cp0100-x200",
+    "targetProductId": "p-qma-kt-mde",
+    "type": "related",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Ejector tool for removing used capillary pistons.",
+    "createdAt": "2026-09-21T15:00:00.000Z"
+  },
+  {
+    "id": "rel-209",
+    "sourceProductId": "p-qmt-lk0200-r96",
+    "targetProductId": "p-qma-kt-lks",
+    "type": "related",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Service kit for the Q-Lock cone.",
+    "createdAt": "2026-09-21T14:00:00.000Z"
+  },
+  {
+    "id": "rel-210",
+    "sourceProductId": "p-qmt-cf0200-r96",
+    "targetProductId": "p-qmt-tr0200-f960",
+    "type": "related",
+    "origin": "synthetic_demo",
+    "evidenceNote": "Same nominal volume in a reduced-impact range.",
+    "createdAt": "2026-09-21T13:00:00.000Z"
+  }
+]

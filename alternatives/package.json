@@ -1,0 +1,10 @@
+{
+  "name": "parity-alternatives-poc",
+  "private": true,
+  "description": "Static proof of concept. No dependencies: this file only tells Node to treat .js files as ES modules.",
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generateSyntheticCatalogue.js",
+    "test": "node --test tests/*.test.js"
+  }
+}

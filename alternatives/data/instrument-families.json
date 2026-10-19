@@ -1,0 +1,51 @@
+[
+  {
+    "id": "ifam-axis",
+    "name": "Axis",
+    "kind": "Manual single-channel, adjustable",
+    "tipInterfaceType": "universal_cone",
+    "description": "Fictional manual air-displacement pipettes with a universal Q-Cone tip cone."
+  },
+  {
+    "id": "ifam-axis-multi",
+    "name": "Axis Multi",
+    "kind": "Manual multichannel",
+    "tipInterfaceType": "universal_cone",
+    "description": "Fictional 8- and 12-channel manual pipettes sharing the Q-Cone interface."
+  },
+  {
+    "id": "ifam-vector",
+    "name": "Vector",
+    "kind": "Electronic single-channel",
+    "tipInterfaceType": "universal_cone",
+    "description": "Fictional motorised pipettes with programmable modes and a Q-Cone tip cone."
+  },
+  {
+    "id": "ifam-vector-lock",
+    "name": "Vector Lock",
+    "kind": "Electronic, secure-lock cone",
+    "tipInterfaceType": "lock_cone",
+    "description": "Fictional electronic pipettes with a Q-Lock cone that only seats Lockline tips."
+  },
+  {
+    "id": "ifam-fixa",
+    "name": "Fixa",
+    "kind": "Fixed-volume",
+    "tipInterfaceType": "universal_cone",
+    "description": "Fictional fixed-volume pipettes for routine single-volume steps."
+  },
+  {
+    "id": "ifam-axis-macro",
+    "name": "Axis Macro",
+    "kind": "Manual large-volume",
+    "tipInterfaceType": "macro_cone",
+    "description": "Fictional 5 mL and 10 mL pipettes with a wide macro cone."
+  },
+  {
+    "id": "ifam-microdose",
+    "name": "Microdose",
+    "kind": "Positive displacement",
+    "tipInterfaceType": "capillary_piston",
+    "description": "Fictional positive-displacement pipettes using disposable capillary pistons."
+  }
+]
