@@ -82,6 +82,25 @@
       user-select: none;
     }
 
+    /* ── High score display ── */
+    #high-score-display {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: white;
+      text-shadow:
+        2px 2px 0 var(--title-stroke),
+        -1px -1px 0 var(--title-stroke),
+        1px -1px 0 var(--title-stroke),
+        -1px 1px 0 var(--title-stroke);
+      z-index: 20;
+      display: none;
+      user-select: none;
+    }
+
     /* ── Splash screen ── */
     .splash {
       position: absolute;
@@ -337,6 +356,7 @@
 
   <div id="ui">
     <div id="score-display">0</div>
+    <div id="high-score-display">Best: 0</div>
 
     <div class="splash" id="splash">
       <h1 class="title">Flappy<br>Cockatiels</h1>
@@ -532,6 +552,7 @@ let groundX = 0;
 // ── DOM refs ──
 const splashEl = document.getElementById('splash');
 const scoreEl = document.getElementById('score-display');
+const highScoreEl = document.getElementById('high-score-display');
 const gameOverEl = document.getElementById('game-over');
 const finalScoreEl = document.getElementById('final-score');
 const bestScoreEl = document.getElementById('best-score');
@@ -558,11 +579,14 @@ function startGame() {
   gameOverEl.style.display = 'none';
   scoreEl.style.display = 'block';
   scoreEl.textContent = '0';
+  highScoreEl.style.display = 'block';
+  highScoreEl.textContent = 'Best: ' + bestScore;
 }
 
 function die() {
   state = STATE.DEAD;
   scoreEl.style.display = 'none';
+  highScoreEl.style.display = 'none';
   if (score > bestScore) {
     bestScore = score;
     localStorage.setItem('flappyCockatielsBest', bestScore);
@@ -677,6 +701,7 @@ function update(dt) {
       p.scored = true;
       score++;
       scoreEl.textContent = score;
+      if (score > bestScore) highScoreEl.textContent = 'Best: ' + score;
     }
 
     if (p.x + pipeW < -20) {
