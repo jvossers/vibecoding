@@ -106,9 +106,6 @@ code { font-family: var(--font-mono); font-size: 0.92em; }
 .btn-sm { height: 32px; padding: 0 12px; font-size: 13px; }
 .btn-primary { background: var(--navy-900); border-color: var(--navy-900); color: #FFFFFF; }
 .btn-primary:hover { background: var(--navy-800); border-color: var(--navy-800); color: #FFFFFF; }
-.icon-btn { width: 34px; height: 34px; display: inline-grid; place-items: center; border: 0; border-radius: var(--radius-sm); background: none; color: var(--muted); cursor: pointer; }
-.icon-btn:hover { background: var(--neutral-bg); color: var(--navy-900); }
-.icon-btn svg { width: 18px; height: 18px; }
 .link-btn { background: none; border: 0; padding: 0; color: var(--blue-500); font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
 .link-btn:hover { color: var(--navy-800); }
 
@@ -242,19 +239,6 @@ dl.specs dt:last-of-type, dl.specs dd:last-of-type { border-bottom: 0; }
 .unknown-text { color: var(--muted); font-style: italic; font-weight: 500; }
 .note { padding: 18px 22px; color: var(--muted); }
 
-/* ------------------------------------------------------------ Export dialog */
-
-dialog.export-dialog { width: min(480px, calc(100vw - 32px)); padding: 0; border: 0; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); color: var(--text); }
-dialog.export-dialog::backdrop { background: rgba(0, 28, 56, 0.5); }
-.dlg-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
-.export-form { display: grid; gap: 14px; padding: 18px 20px 20px; }
-.export-form input[type="text"], .export-form textarea {
-  width: 100%; padding: 9px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); font: inherit; color: var(--text);
-}
-.export-form textarea { resize: vertical; min-height: 84px; }
-.export-form input:focus, .export-form textarea:focus { outline: none; border-color: var(--blue-500); box-shadow: 0 0 0 3px rgba(39, 124, 181, 0.18); }
-.dlg-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
-
 /* -------------------------------------------------- Printable PDF summary sheet */
 
 #print-root { display: none; }
@@ -308,8 +292,6 @@ dialog.export-dialog::backdrop { background: rgba(0, 28, 56, 0.5); }
 .print-sheet .ps-pn { font-weight: 650; color: var(--ps-navy); display: block; margin-bottom: .8mm; }
 .print-sheet .ps-idx { color: var(--ps-muted); font-weight: 700; width: 6mm; }
 .print-sheet .ps-none { border: 1pt solid var(--ps-border); border-left: 3pt solid var(--ps-green); padding: 4mm; color: var(--ps-muted); }
-.print-sheet .ps-note { margin-top: 5mm; border: 1pt dashed #9DB8CF; border-radius: 2mm; padding: 3mm 4mm; font-size: 9pt; white-space: pre-line; break-inside: avoid; }
-.print-sheet .ps-note b { display: block; font-size: 7.5pt; letter-spacing: .1em; text-transform: uppercase; color: var(--ps-navy); margin-bottom: 1mm; }
 .print-sheet .ps-foot { margin-top: 8mm; padding-top: 3mm; border-top: .8pt solid var(--ps-border); font-size: 7.5pt; color: var(--ps-muted); display: flex; justify-content: space-between; gap: 6mm; break-inside: avoid; }
 .print-sheet .ps-legend { display: inline-block; width: 3mm; height: 3mm; background: var(--ps-pale); border: .6pt solid #C9DDEE; vertical-align: -.4mm; margin-right: 1mm; }
 .print-sheet .ps-demo { white-space: nowrap; }

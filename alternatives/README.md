@@ -33,7 +33,7 @@ python3 -m http.server 8000
 
 ## Export PDF
 
-The product page has an **Export PDF** button for emailing a summary to a customer. It opens a short form where "Prepared for", "Prepared by" and a note are all optional; "Prepared by" is remembered in this browser. It then builds a one-page A4 summary: the requested product, the rules it was matched on, all alternatives with prices, and the note. Finally it opens the browser's print dialog, where the rep chooses **Save as PDF**. The suggested file name is `Alternatives – <SKU>`.
+The product page has an **Export PDF** button for emailing a summary to a customer. One click builds a one-page A4 summary (the requested product, the rules it was matched on, and all alternatives with prices) and opens the browser's print dialog, where the rep chooses **Save as PDF**. The suggested file name is `Alternatives – <SKU>`.
 
 This uses the browser's own print engine (`js/ui/exportSheet.js` plus the print styles in `css/styles.css`), so there is no PDF library, and the PDF has real, selectable text. Browsers can't attach files to emails by themselves, so the rep attaches the saved PDF in their email client.
 

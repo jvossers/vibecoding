@@ -7,7 +7,7 @@ import {
   formatVolume, formatNumber, formatEnum, formatPrice, formatLength, formatList, isUnknown, familyNames,
 } from '../domain/attributes.js';
 import { rulesFor } from '../domain/matching.js';
-import { openExportDialog } from './exportSheet.js';
+import { exportPdf } from './exportSheet.js';
 
 // Columns of the alternatives table. Rule fields always agree; the others may differ.
 const ALT_COLUMNS = [
@@ -75,7 +75,7 @@ export async function renderProductDetail(root, ctx, { params }) {
           h('p', {}, 'Products that match the requested product on every rule. Check availability in the stock system.')),
         h('button', {
           type: 'button', class: 'btn btn-primary',
-          on: { click: () => openExportDialog({ product, alternatives, families, rules }) },
+          on: { click: () => exportPdf({ product, alternatives, families, rules }) },
         }, icon('download'), 'Export PDF')),
       h('div', { class: 'compare-panel requested-panel' },
         h('div', { class: 'panel-label' }, 'Requested product'),
