@@ -4,79 +4,29 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Parity — Alternatives Finder (synthetic demo)</title>
-  <meta name="description" content="Internal sales-assistant prototype for finding rule-checked alternatives to unavailable lab consumables. Synthetic catalogue only.">
+  <meta name="description" content="Internal sales-assistant prototype for finding rule-based alternatives to lab consumables. Synthetic catalogue only.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%23002C58'/%3E%3Cpath d='M9 10h12l-5 21h-2z' fill='%23fff'/%3E%3Cpath d='M19 10h12l-5 21h-2z' fill='none' stroke='%2363A9DA' stroke-width='2.4' stroke-linejoin='round'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <a class="skip-link" href="#view">Skip to content</a>
-  <div class="shell" id="shell">
-    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
-      <a class="brand" href="#/" aria-label="Parity — Alternatives Finder, home">
-        <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
-          <rect width="40" height="40" rx="10" fill="#073B70"/>
-          <rect x="0.75" y="0.75" width="38.5" height="38.5" rx="9.25" fill="none" stroke="#277CB5" stroke-opacity="0.6" stroke-width="1.5"/>
-          <path d="M8.5 10h12.5l-5.4 21.5h-1.7z" fill="#FFFFFF"/>
-          <path d="M19 10h12.5l-5.4 21.5h-1.7z" fill="none" stroke="#7FB6DC" stroke-width="2.2" stroke-linejoin="round"/>
-          <path d="M8.5 14.5h12" stroke="#073B70" stroke-width="1.6"/>
-        </svg>
-        <span>
-          <span class="brand-name">Parity</span>
-          <span class="brand-sub">Alternatives desk</span>
-        </span>
-      </a>
+  <header class="topbar">
+    <a class="brand" href="#/" aria-label="Parity — Alternatives Finder, home">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <rect width="40" height="40" rx="10" fill="#073B70"/>
+        <rect x="0.75" y="0.75" width="38.5" height="38.5" rx="9.25" fill="none" stroke="#277CB5" stroke-opacity="0.6" stroke-width="1.5"/>
+        <path d="M8.5 10h12.5l-5.4 21.5h-1.7z" fill="#FFFFFF"/>
+        <path d="M19 10h12.5l-5.4 21.5h-1.7z" fill="none" stroke="#7FB6DC" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M8.5 14.5h12" stroke="#073B70" stroke-width="1.6"/>
+      </svg>
+      <span class="brand-name">Parity</span>
+      <span class="brand-sub">Alternatives finder</span>
+    </a>
+    <span class="demo-badge" title="All products, codes and specifications are fictional">Demo — Synthetic Catalogue</span>
+  </header>
 
-      <nav class="nav" aria-label="Sections">
-        <div class="nav-label">Workspace</div>
-        <a href="#/" data-nav="catalogue">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
-          Catalogue
-        </a>
-        <a href="#/alternatives" data-nav="alternatives">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg>
-          Find alternatives
-        </a>
-        <a href="#/review" data-nav="review">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3.5 6 1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/></svg>
-          Review queue
-          <span class="count" id="review-count" title="Eligible candidates awaiting review">–</span>
-        </a>
-      </nav>
-
-      <section class="recent" aria-labelledby="recent-label">
-        <div class="nav-label" id="recent-label">Recently viewed</div>
-        <ul id="recent-list"></ul>
-      </section>
-
-      <div class="sidebar-foot">
-        <p><strong>Demo — Synthetic Catalogue.</strong> Fictional brand, products and specifications. Results are potential alternatives that need human review.</p>
-        <button type="button" class="btn-ghost-light" id="reset-demo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
-          Reset demo data
-        </button>
-      </div>
-    </aside>
-
-    <div class="main">
-      <header class="topbar">
-        <button type="button" class="btn btn-ghost icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        </button>
-        <form class="global-search" id="global-search" role="search" autocomplete="off">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
-          <label class="visually-hidden" for="global-q">Search the catalogue</label>
-          <input id="global-q" type="search" placeholder="Search SKU, name, range or attribute — e.g. “200 µL sterile filter”"
-                 role="combobox" aria-expanded="false" aria-controls="global-suggest" aria-autocomplete="list" enterkeyhint="search">
-          <kbd aria-hidden="true">/</kbd>
-          <ul class="suggest" id="global-suggest" role="listbox" aria-label="Suggestions" hidden></ul>
-        </form>
-        <span class="demo-badge" title="All products, codes and specifications are fictional">Demo — Synthetic Catalogue</span>
-      </header>
-
-      <main class="view" id="view" tabindex="-1" aria-live="polite" aria-busy="true"></main>
-    </div>
-  </div>
+  <main class="view" id="view" tabindex="-1" aria-live="polite" aria-busy="true"></main>
 
   <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 

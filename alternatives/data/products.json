@@ -8,8 +8,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 10 µL format covers 0.1–10 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 279,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -46,15 +44,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-23T00:06:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf0010-s96",
@@ -65,8 +55,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 10 µL format covers 0.1–10 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 62,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -103,20 +91,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-24T09:55:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf0010-f960",
@@ -127,8 +102,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 10 µL format covers 0.1–10 µL. Supplied as 10 refill inserts of 96 for re-use with an existing rack. Non-sterile: suitable where sterility is not required.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -165,15 +138,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-28T09:35:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf0010-b1000",
@@ -184,8 +149,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 10 µL format covers 0.1–10 µL. Supplied loose in a resealable bag of 1,000. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 468,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -222,20 +185,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-08-25T08:24:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf0020-r96",
@@ -246,8 +196,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 20 µL format covers 0.5–20 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 432,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -284,15 +232,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-27T17:22:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf0020-s96",
@@ -303,8 +243,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 20 µL format covers 0.5–20 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 421,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -341,25 +279,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-08T05:14:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf0020-f960",
@@ -370,8 +290,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 20 µL format covers 0.5–20 µL. Supplied as 10 refill inserts of 96 for re-use with an existing rack. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 58,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -408,20 +326,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-26T20:33:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf0020-b1000",
@@ -432,8 +337,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 20 µL format covers 0.5–20 µL. Supplied loose in a resealable bag of 1,000. Non-sterile: suitable where sterility is not required.",
-    "status": "low_stock",
-    "stockQuantity": 9,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -470,20 +373,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-19T05:25:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf0200-r96",
@@ -494,8 +384,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 200 µL format covers 2–200 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 392,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -532,15 +420,7 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-17T13:44:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf0200-s96",
@@ -551,8 +431,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 200 µL format covers 2–200 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -589,20 +467,7 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-06T05:10:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf0200-f960",
@@ -613,8 +478,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 200 µL format covers 2–200 µL. Supplied as 10 refill inserts of 96 for re-use with an existing rack. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 54,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -651,15 +514,7 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-18T11:23:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf0200-b1000",
@@ -670,8 +525,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 200 µL format covers 2–200 µL. Supplied loose in a resealable bag of 1,000. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 394,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -708,20 +561,7 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-26T16:34:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf0300-r96",
@@ -732,8 +572,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 300 µL format covers 5–300 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -770,15 +608,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-30T03:54:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf0300-f960",
@@ -789,8 +619,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 300 µL format covers 5–300 µL. Supplied as 10 refill inserts of 96 for re-use with an existing rack. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 494,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -827,20 +655,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-14T00:19:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf1000-r96",
@@ -851,8 +666,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 1000 µL format covers 100–1,000 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -889,20 +702,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-06T21:23:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf1000-s96",
@@ -913,8 +713,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 1000 µL format covers 100–1,000 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 115,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -951,20 +749,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-01T22:40:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf1000-f960",
@@ -975,8 +760,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 1000 µL format covers 100–1,000 µL. Supplied as 10 refill inserts of 96 for re-use with an existing rack. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 408,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -1013,15 +796,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-23T21:36:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf1000-b1000",
@@ -1032,8 +807,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 1000 µL format covers 100–1,000 µL. Supplied loose in a resealable bag of 1,000. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 237,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -1070,15 +843,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-05T09:12:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf1200-r96",
@@ -1089,8 +854,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 1200 µL format covers 100–1,200 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 245,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -1127,15 +890,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-23T04:09:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cf1200-b1000",
@@ -1146,8 +901,6 @@
     "category": "pipette_tip",
     "subcategory": "Standard tips",
     "description": "Corefit is the everyday Quellmark tip: a smooth-bore virgin polypropylene body with a ribbed collar that seats evenly on the Q-Cone. This 1200 µL format covers 100–1,200 µL. Supplied loose in a resealable bag of 1,000. Non-sterile: suitable where sterility is not required.",
-    "status": "discontinued",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "corefit",
@@ -1184,15 +937,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Corefit tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-29T09:29:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al0010-s96",
@@ -1203,8 +948,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 10 µL format covers 0.1–10 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -1245,20 +988,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-20T06:03:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al0010-s960",
@@ -1269,8 +999,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 10 µL format covers 0.1–10 µL with a sintered polyethylene frit. Supplied as 10 hinged racks of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 25,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -1311,20 +1039,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-12T04:06:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al0010-r96",
@@ -1335,8 +1050,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 10 µL format covers 0.1–10 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 456,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -1374,15 +1087,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-29T00:17:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al0020-s96",
@@ -1393,8 +1098,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 20 µL format covers 0.5–20 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 351,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -1435,20 +1138,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-18T23:05:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al0020-s960",
@@ -1459,8 +1149,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 20 µL format covers 0.5–20 µL with a sintered polyethylene frit. Supplied as 10 hinged racks of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -1501,20 +1189,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-04T22:10:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al0020-r96",
@@ -1525,8 +1200,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 20 µL format covers 0.5–20 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": null,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -1564,15 +1237,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-12T13:23:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al0100-s96",
@@ -1583,8 +1248,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 100 µL format covers 1–100 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -1625,20 +1288,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-16T10:23:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al0100-s960",
@@ -1649,8 +1299,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 100 µL format covers 1–100 µL with a sintered polyethylene frit. Supplied as 10 hinged racks of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 246,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -1691,20 +1339,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-23T14:52:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al0100-r96",
@@ -1715,8 +1350,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 100 µL format covers 1–100 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 151,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -1754,20 +1387,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-03T05:04:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al0200-s96",
@@ -1778,8 +1398,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 200 µL format covers 2–200 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -1820,20 +1438,7 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-29T06:56:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al0200-s960",
@@ -1844,8 +1449,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 200 µL format covers 2–200 µL with a sintered polyethylene frit. Supplied as 10 hinged racks of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 462,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -1886,25 +1489,7 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-24T16:30:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al0200-r96",
@@ -1915,8 +1500,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 200 µL format covers 2–200 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 222,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -1954,15 +1537,7 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-29T13:43:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al1000-s96",
@@ -1973,8 +1548,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 1000 µL format covers 100–1,000 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -2015,20 +1588,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-27T21:20:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al1000-s960",
@@ -2039,8 +1599,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 1000 µL format covers 100–1,000 µL with a sintered polyethylene frit. Supplied as 10 hinged racks of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": null,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -2081,20 +1639,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-27T05:48:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al1000-r96",
@@ -2105,8 +1650,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 1000 µL format covers 100–1,000 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 330,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -2144,20 +1687,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-16T14:24:00.000Z"
+    }
   },
   {
     "id": "p-qmt-al1200-s96",
@@ -2168,8 +1698,6 @@
     "category": "pipette_tip",
     "subcategory": "Filter tips",
     "description": "Aerolock filter tips place a sintered polyethylene frit high in the bore to keep aerosols and splashes away from the pipette shaft. This 1200 µL format covers 100–1,200 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "low_stock",
-    "stockQuantity": 9,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "aerolock",
@@ -2210,20 +1738,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Aerolock tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-25T15:38:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ss0010-fs96",
@@ -2234,8 +1749,6 @@
     "category": "pipette_tip",
     "subcategory": "Low-retention tips",
     "description": "Slipstream tips use a low-binding polymer blend so viscous and detergent-rich samples leave less residue in the tip. This 10 µL format covers 0.1–10 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 428,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "slipstream",
@@ -2277,20 +1790,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Slipstream tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-25T12:14:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ss0010-r96",
@@ -2301,8 +1801,6 @@
     "category": "pipette_tip",
     "subcategory": "Low-retention tips",
     "description": "Slipstream tips use a low-binding polymer blend so viscous and detergent-rich samples leave less residue in the tip. This 10 µL format covers 0.1–10 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 41,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "slipstream",
@@ -2340,20 +1838,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Slipstream tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-21T22:49:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ss0010-s96",
@@ -2364,8 +1849,6 @@
     "category": "pipette_tip",
     "subcategory": "Low-retention tips",
     "description": "Slipstream tips use a low-binding polymer blend so viscous and detergent-rich samples leave less residue in the tip. This 10 µL format covers 0.1–10 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "low_stock",
-    "stockQuantity": 4,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "slipstream",
@@ -2405,25 +1888,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Slipstream tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-24T16:04:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ss0020-fs96",
@@ -2434,8 +1899,6 @@
     "category": "pipette_tip",
     "subcategory": "Low-retention tips",
     "description": "Slipstream tips use a low-binding polymer blend so viscous and detergent-rich samples leave less residue in the tip. This 20 µL format covers 0.5–20 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 482,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "slipstream",
@@ -2477,25 +1940,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Slipstream tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-08-28T17:00:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ss0020-r96",
@@ -2506,8 +1951,6 @@
     "category": "pipette_tip",
     "subcategory": "Low-retention tips",
     "description": "Slipstream tips use a low-binding polymer blend so viscous and detergent-rich samples leave less residue in the tip. This 20 µL format covers 0.5–20 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 44,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "slipstream",
@@ -2545,20 +1988,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Slipstream tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-20T00:01:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ss0020-s96",
@@ -2569,8 +1999,6 @@
     "category": "pipette_tip",
     "subcategory": "Low-retention tips",
     "description": "Slipstream tips use a low-binding polymer blend so viscous and detergent-rich samples leave less residue in the tip. This 20 µL format covers 0.5–20 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 240,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "slipstream",
@@ -2610,20 +2038,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Slipstream tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-21T13:49:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ss0200-fs96",
@@ -2634,8 +2049,6 @@
     "category": "pipette_tip",
     "subcategory": "Low-retention tips",
     "description": "Slipstream tips use a low-binding polymer blend so viscous and detergent-rich samples leave less residue in the tip. This 200 µL format covers 2–200 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "slipstream",
@@ -2677,20 +2090,7 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Slipstream tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-11T22:39:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ss0200-r96",
@@ -2701,8 +2101,6 @@
     "category": "pipette_tip",
     "subcategory": "Low-retention tips",
     "description": "Slipstream tips use a low-binding polymer blend so viscous and detergent-rich samples leave less residue in the tip. This 200 µL format covers 2–200 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 336,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "slipstream",
@@ -2740,20 +2138,7 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Slipstream tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-21T12:21:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ss0200-s96",
@@ -2764,8 +2149,6 @@
     "category": "pipette_tip",
     "subcategory": "Low-retention tips",
     "description": "Slipstream tips use a low-binding polymer blend so viscous and detergent-rich samples leave less residue in the tip. This 200 µL format covers 2–200 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "low_stock",
-    "stockQuantity": 6,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "slipstream",
@@ -2805,20 +2188,7 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Slipstream tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-28T18:16:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ss1000-fs96",
@@ -2829,8 +2199,6 @@
     "category": "pipette_tip",
     "subcategory": "Low-retention tips",
     "description": "Slipstream tips use a low-binding polymer blend so viscous and detergent-rich samples leave less residue in the tip. This 1000 µL format covers 100–1,000 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 301,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "slipstream",
@@ -2872,25 +2240,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Slipstream tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-23T11:42:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ss1000-r96",
@@ -2901,8 +2251,6 @@
     "category": "pipette_tip",
     "subcategory": "Low-retention tips",
     "description": "Slipstream tips use a low-binding polymer blend so viscous and detergent-rich samples leave less residue in the tip. This 1000 µL format covers 100–1,000 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "slipstream",
@@ -2940,20 +2288,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Slipstream tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-08T22:49:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ss1000-s96",
@@ -2964,8 +2299,6 @@
     "category": "pipette_tip",
     "subcategory": "Low-retention tips",
     "description": "Slipstream tips use a low-binding polymer blend so viscous and detergent-rich samples leave less residue in the tip. This 1000 µL format covers 100–1,000 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "low_stock",
-    "stockQuantity": 11,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "slipstream",
@@ -3005,20 +2338,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Slipstream tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-01T04:57:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lr0010-fs96",
@@ -3029,8 +2349,6 @@
     "category": "pipette_tip",
     "subcategory": "Extended-length tips",
     "description": "Longreach extended tips reach the bottom of deep-well plates and tall tubes without the pipette shaft touching the vessel. This 10 µL format covers 0.1–10 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 185,
     "imagePath": "assets/illustrations/tip-extended.svg",
     "tags": [
       "longreach",
@@ -3070,20 +2388,7 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Longreach tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-05T19:16:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lr0010-r96",
@@ -3094,8 +2399,6 @@
     "category": "pipette_tip",
     "subcategory": "Extended-length tips",
     "description": "Longreach extended tips reach the bottom of deep-well plates and tall tubes without the pipette shaft touching the vessel. This 10 µL format covers 0.1–10 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 469,
     "imagePath": "assets/illustrations/tip-extended.svg",
     "tags": [
       "longreach",
@@ -3133,20 +2436,7 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Longreach tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-22T13:57:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lr0020-fs96",
@@ -3157,8 +2447,6 @@
     "category": "pipette_tip",
     "subcategory": "Extended-length tips",
     "description": "Longreach extended tips reach the bottom of deep-well plates and tall tubes without the pipette shaft touching the vessel. This 20 µL format covers 0.5–20 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 454,
     "imagePath": "assets/illustrations/tip-extended.svg",
     "tags": [
       "longreach",
@@ -3198,20 +2486,7 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Longreach tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-12T22:11:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lr0020-r96",
@@ -3222,8 +2497,6 @@
     "category": "pipette_tip",
     "subcategory": "Extended-length tips",
     "description": "Longreach extended tips reach the bottom of deep-well plates and tall tubes without the pipette shaft touching the vessel. This 20 µL format covers 0.5–20 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 411,
     "imagePath": "assets/illustrations/tip-extended.svg",
     "tags": [
       "longreach",
@@ -3261,15 +2534,7 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Longreach tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-23T04:03:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lr0200-fs96",
@@ -3280,8 +2545,6 @@
     "category": "pipette_tip",
     "subcategory": "Extended-length tips",
     "description": "Longreach extended tips reach the bottom of deep-well plates and tall tubes without the pipette shaft touching the vessel. This 200 µL format covers 2–200 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-extended.svg",
     "tags": [
       "longreach",
@@ -3321,20 +2584,7 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Yellow tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Longreach tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-24T10:05:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lr0200-r96",
@@ -3345,8 +2595,6 @@
     "category": "pipette_tip",
     "subcategory": "Extended-length tips",
     "description": "Longreach extended tips reach the bottom of deep-well plates and tall tubes without the pipette shaft touching the vessel. This 200 µL format covers 2–200 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 171,
     "imagePath": "assets/illustrations/tip-extended.svg",
     "tags": [
       "longreach",
@@ -3384,15 +2632,7 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Yellow tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Longreach tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-26T02:58:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lr1000-fs96",
@@ -3403,8 +2643,6 @@
     "category": "pipette_tip",
     "subcategory": "Extended-length tips",
     "description": "Longreach extended tips reach the bottom of deep-well plates and tall tubes without the pipette shaft touching the vessel. This 1000 µL format covers 100–1,000 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 106,
     "imagePath": "assets/illustrations/tip-extended.svg",
     "tags": [
       "longreach",
@@ -3444,20 +2682,7 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Blue tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Longreach tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-21T13:35:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lr1000-r96",
@@ -3468,8 +2693,6 @@
     "category": "pipette_tip",
     "subcategory": "Extended-length tips",
     "description": "Longreach extended tips reach the bottom of deep-well plates and tall tubes without the pipette shaft touching the vessel. This 1000 µL format covers 100–1,000 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 471,
     "imagePath": "assets/illustrations/tip-extended.svg",
     "tags": [
       "longreach",
@@ -3507,15 +2730,7 @@
       "compatibilityNotes": "Extended length: confirm tip ejector clearance on Axis Multi before switching.",
       "colour": "Blue tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Longreach tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-26T03:11:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ob0200-fs96",
@@ -3526,8 +2741,6 @@
     "category": "pipette_tip",
     "subcategory": "Wide-bore tips",
     "description": "Openbore tips have a widened orifice for cell suspensions, genomic DNA and viscous liquids where shear and clogging matter. This 200 µL format covers 5–200 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 181,
     "imagePath": "assets/illustrations/tip-widebore.svg",
     "tags": [
       "openbore",
@@ -3565,20 +2778,7 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Openbore tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-06T22:07:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ob0200-r96",
@@ -3589,8 +2789,6 @@
     "category": "pipette_tip",
     "subcategory": "Wide-bore tips",
     "description": "Openbore tips have a widened orifice for cell suspensions, genomic DNA and viscous liquids where shear and clogging matter. This 200 µL format covers 5–200 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 284,
     "imagePath": "assets/illustrations/tip-widebore.svg",
     "tags": [
       "openbore",
@@ -3626,15 +2824,7 @@
       "compatibilityNotes": null,
       "colour": "Yellow tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Openbore tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-13T03:30:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ob1000-fs96",
@@ -3645,8 +2835,6 @@
     "category": "pipette_tip",
     "subcategory": "Wide-bore tips",
     "description": "Openbore tips have a widened orifice for cell suspensions, genomic DNA and viscous liquids where shear and clogging matter. This 1000 µL format covers 100–1,000 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-widebore.svg",
     "tags": [
       "openbore",
@@ -3684,25 +2872,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Openbore tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-23T10:37:00.000Z"
+    }
   },
   {
     "id": "p-qmt-ob1000-r96",
@@ -3713,8 +2883,6 @@
     "category": "pipette_tip",
     "subcategory": "Wide-bore tips",
     "description": "Openbore tips have a widened orifice for cell suspensions, genomic DNA and viscous liquids where shear and clogging matter. This 1000 µL format covers 100–1,000 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 416,
     "imagePath": "assets/illustrations/tip-widebore.svg",
     "tags": [
       "openbore",
@@ -3750,15 +2918,7 @@
       "compatibilityNotes": null,
       "colour": "Blue tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Openbore tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-21T21:36:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lk0010-fs96",
@@ -3769,8 +2929,6 @@
     "category": "pipette_tip",
     "subcategory": "Secure-lock tips",
     "description": "Lockline tips click onto the Q-Lock cone of Vector Lock pipettes; they do not seat on the universal Q-Cone. This 10 µL format covers 0.1–10 µL with a self-sealing polymer barrier. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 394,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "lockline",
@@ -3806,20 +2964,7 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Lockline tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-13T01:51:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lk0010-r96",
@@ -3830,8 +2975,6 @@
     "category": "pipette_tip",
     "subcategory": "Secure-lock tips",
     "description": "Lockline tips click onto the Q-Lock cone of Vector Lock pipettes; they do not seat on the universal Q-Cone. This 10 µL format covers 0.1–10 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 98,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "lockline",
@@ -3865,20 +3008,7 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Lockline tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-02T14:18:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lk0010-f960",
@@ -3889,8 +3019,6 @@
     "category": "pipette_tip",
     "subcategory": "Secure-lock tips",
     "description": "Lockline tips click onto the Q-Lock cone of Vector Lock pipettes; they do not seat on the universal Q-Cone. This 10 µL format covers 0.1–10 µL. Supplied as 10 refill inserts of 96 for re-use with an existing rack. Non-sterile: suitable where sterility is not required.",
-    "status": "low_stock",
-    "stockQuantity": 12,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "lockline",
@@ -3924,15 +3052,7 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Lockline tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-23T23:03:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lk0200-fs96",
@@ -3943,8 +3063,6 @@
     "category": "pipette_tip",
     "subcategory": "Secure-lock tips",
     "description": "Lockline tips click onto the Q-Lock cone of Vector Lock pipettes; they do not seat on the universal Q-Cone. This 200 µL format covers 2–200 µL with a self-sealing polymer barrier. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "lockline",
@@ -3980,20 +3098,7 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Yellow tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Lockline tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-17T06:00:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lk0200-r96",
@@ -4004,8 +3109,6 @@
     "category": "pipette_tip",
     "subcategory": "Secure-lock tips",
     "description": "Lockline tips click onto the Q-Lock cone of Vector Lock pipettes; they do not seat on the universal Q-Cone. This 200 µL format covers 2–200 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 39,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "lockline",
@@ -4039,15 +3142,7 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Yellow tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Lockline tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-26T22:19:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lk0200-f960",
@@ -4058,8 +3153,6 @@
     "category": "pipette_tip",
     "subcategory": "Secure-lock tips",
     "description": "Lockline tips click onto the Q-Lock cone of Vector Lock pipettes; they do not seat on the universal Q-Cone. This 200 µL format covers 2–200 µL. Supplied as 10 refill inserts of 96 for re-use with an existing rack. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 45,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "lockline",
@@ -4093,20 +3186,7 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Yellow tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Lockline tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-08-22T15:56:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lk1000-fs96",
@@ -4117,8 +3197,6 @@
     "category": "pipette_tip",
     "subcategory": "Secure-lock tips",
     "description": "Lockline tips click onto the Q-Lock cone of Vector Lock pipettes; they do not seat on the universal Q-Cone. This 1000 µL format covers 100–1,000 µL with a self-sealing polymer barrier. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "low_stock",
-    "stockQuantity": 2,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "lockline",
@@ -4154,20 +3232,7 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Blue tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Lockline tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-16T13:26:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lk1000-r96",
@@ -4178,8 +3243,6 @@
     "category": "pipette_tip",
     "subcategory": "Secure-lock tips",
     "description": "Lockline tips click onto the Q-Lock cone of Vector Lock pipettes; they do not seat on the universal Q-Cone. This 1000 µL format covers 100–1,000 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "low_stock",
-    "stockQuantity": 2,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "lockline",
@@ -4213,20 +3276,7 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Blue tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Lockline tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-02T19:48:00.000Z"
+    }
   },
   {
     "id": "p-qmt-lk1000-f960",
@@ -4237,8 +3287,6 @@
     "category": "pipette_tip",
     "subcategory": "Secure-lock tips",
     "description": "Lockline tips click onto the Q-Lock cone of Vector Lock pipettes; they do not seat on the universal Q-Cone. This 1000 µL format covers 100–1,000 µL. Supplied as 10 refill inserts of 96 for re-use with an existing rack. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 383,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "lockline",
@@ -4272,15 +3320,7 @@
       "compatibilityNotes": "Q-Lock cone only. Not for universal-cone pipettes.",
       "colour": "Blue tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Lockline tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-26T19:48:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cp0010-x200",
@@ -4291,8 +3331,6 @@
     "category": "pipette_tip",
     "subcategory": "Capillary pistons",
     "description": "Microdose capillary pistons bring their own disposable piston, so the sample never contacts an air cushion. For Microdose pipettes only. This 10 µL format covers 1–10 µL. Supplied in a box of 200. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 373,
     "imagePath": "assets/illustrations/capillary.svg",
     "tags": [
       "microdose",
@@ -4326,15 +3364,7 @@
       "compatibilityNotes": "Positive displacement: requires a Microdose pipette.",
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Microdose tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-30T03:48:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cp0010-sx96",
@@ -4345,8 +3375,6 @@
     "category": "pipette_tip",
     "subcategory": "Capillary pistons",
     "description": "Microdose capillary pistons bring their own disposable piston, so the sample never contacts an air cushion. For Microdose pipettes only. This 10 µL format covers 1–10 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 190,
     "imagePath": "assets/illustrations/capillary.svg",
     "tags": [
       "microdose",
@@ -4380,25 +3408,7 @@
       "compatibilityNotes": "Positive displacement: requires a Microdose pipette.",
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Microdose tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-01T11:11:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cp0100-x200",
@@ -4409,8 +3419,6 @@
     "category": "pipette_tip",
     "subcategory": "Capillary pistons",
     "description": "Microdose capillary pistons bring their own disposable piston, so the sample never contacts an air cushion. For Microdose pipettes only. This 100 µL format covers 10–100 µL. Supplied in a box of 200. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 387,
     "imagePath": "assets/illustrations/capillary.svg",
     "tags": [
       "microdose",
@@ -4444,15 +3452,7 @@
       "compatibilityNotes": "Positive displacement: requires a Microdose pipette.",
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Microdose tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-08T03:32:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cp0100-sx96",
@@ -4463,8 +3463,6 @@
     "category": "pipette_tip",
     "subcategory": "Capillary pistons",
     "description": "Microdose capillary pistons bring their own disposable piston, so the sample never contacts an air cushion. For Microdose pipettes only. This 100 µL format covers 10–100 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/capillary.svg",
     "tags": [
       "microdose",
@@ -4498,20 +3496,7 @@
       "compatibilityNotes": "Positive displacement: requires a Microdose pipette.",
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Microdose tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-17T13:52:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cp1000-x200",
@@ -4522,8 +3507,6 @@
     "category": "pipette_tip",
     "subcategory": "Capillary pistons",
     "description": "Microdose capillary pistons bring their own disposable piston, so the sample never contacts an air cushion. For Microdose pipettes only. This 1000 µL format covers 100–1,000 µL. Supplied in a box of 200. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 340,
     "imagePath": "assets/illustrations/capillary.svg",
     "tags": [
       "microdose",
@@ -4557,15 +3540,7 @@
       "compatibilityNotes": "Positive displacement: requires a Microdose pipette.",
       "colour": "Blue tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Microdose tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-18T10:43:00.000Z"
+    }
   },
   {
     "id": "p-qmt-cp1000-sx96",
@@ -4576,8 +3551,6 @@
     "category": "pipette_tip",
     "subcategory": "Capillary pistons",
     "description": "Microdose capillary pistons bring their own disposable piston, so the sample never contacts an air cushion. For Microdose pipettes only. This 1000 µL format covers 100–1,000 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 342,
     "imagePath": "assets/illustrations/capillary.svg",
     "tags": [
       "microdose",
@@ -4611,20 +3584,7 @@
       "compatibilityNotes": "Positive displacement: requires a Microdose pipette.",
       "colour": "Blue tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Microdose tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-09T22:59:00.000Z"
+    }
   },
   {
     "id": "p-qmt-mf0020-r96",
@@ -4635,8 +3595,6 @@
     "category": "pipette_tip",
     "subcategory": "Multichannel tips",
     "description": "Multiflex tips are moulded with a flexible collar that seals evenly across all channels of a multichannel head. This 20 µL format covers 0.5–20 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": null,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "multiflex",
@@ -4671,15 +3629,7 @@
       "compatibilityNotes": "Optimised for multichannel heads; single-channel Axis fit not characterised.",
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Multiflex tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-15T04:42:00.000Z"
+    }
   },
   {
     "id": "p-qmt-mf0020-fs96",
@@ -4690,8 +3640,6 @@
     "category": "pipette_tip",
     "subcategory": "Multichannel tips",
     "description": "Multiflex tips are moulded with a flexible collar that seals evenly across all channels of a multichannel head. This 20 µL format covers 0.5–20 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 282,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "multiflex",
@@ -4728,25 +3676,7 @@
       "compatibilityNotes": "Optimised for multichannel heads; single-channel Axis fit not characterised.",
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Multiflex tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-08-24T14:47:00.000Z"
+    }
   },
   {
     "id": "p-qmt-mf0300-r96",
@@ -4757,8 +3687,6 @@
     "category": "pipette_tip",
     "subcategory": "Multichannel tips",
     "description": "Multiflex tips are moulded with a flexible collar that seals evenly across all channels of a multichannel head. This 300 µL format covers 5–300 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 313,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "multiflex",
@@ -4793,15 +3721,7 @@
       "compatibilityNotes": "Optimised for multichannel heads; single-channel Axis fit not characterised.",
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Multiflex tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-28T21:47:00.000Z"
+    }
   },
   {
     "id": "p-qmt-mf0300-fs96",
@@ -4812,8 +3732,6 @@
     "category": "pipette_tip",
     "subcategory": "Multichannel tips",
     "description": "Multiflex tips are moulded with a flexible collar that seals evenly across all channels of a multichannel head. This 300 µL format covers 5–300 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "multiflex",
@@ -4850,20 +3768,7 @@
       "compatibilityNotes": "Optimised for multichannel heads; single-channel Axis fit not characterised.",
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Multiflex tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-25T13:45:00.000Z"
+    }
   },
   {
     "id": "p-qmt-mf1200-r96",
@@ -4874,8 +3779,6 @@
     "category": "pipette_tip",
     "subcategory": "Multichannel tips",
     "description": "Multiflex tips are moulded with a flexible collar that seals evenly across all channels of a multichannel head. This 1200 µL format covers 100–1,200 µL. Supplied in a single hinged rack of 96. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 399,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "multiflex",
@@ -4910,15 +3813,7 @@
       "compatibilityNotes": "Optimised for multichannel heads; single-channel Axis fit not characterised.",
       "colour": "Blue tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Multiflex tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-14T02:55:00.000Z"
+    }
   },
   {
     "id": "p-qmt-mf1200-fs96",
@@ -4929,8 +3824,6 @@
     "category": "pipette_tip",
     "subcategory": "Multichannel tips",
     "description": "Multiflex tips are moulded with a flexible collar that seals evenly across all channels of a multichannel head. This 1200 µL format covers 100–1,200 µL with a sintered polyethylene frit. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": null,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "multiflex",
@@ -4967,20 +3860,7 @@
       "compatibilityNotes": "Optimised for multichannel heads; single-channel Axis fit not characterised.",
       "colour": "Blue tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Multiflex tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-31T17:47:00.000Z"
+    }
   },
   {
     "id": "p-qmt-mx5000-x50",
@@ -4991,8 +3871,6 @@
     "category": "pipette_tip",
     "subcategory": "Macro tips",
     "description": "Macro tips cover 5 mL and 10 mL work on Axis Macro pipettes, with a broad collar for the macro cone. This 5 mL format covers 500–5,000 µL. Supplied in a box of 50. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 185,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "macro",
@@ -5026,15 +3904,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Macro tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-29T21:04:00.000Z"
+    }
   },
   {
     "id": "p-qmt-mx5000-fs24",
@@ -5045,8 +3915,6 @@
     "category": "pipette_tip",
     "subcategory": "Macro tips",
     "description": "Macro tips cover 5 mL and 10 mL work on Axis Macro pipettes, with a broad collar for the macro cone. This 5 mL format covers 500–5,000 µL with a sintered polyethylene frit. Supplied as 1 hinged racks of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "macro",
@@ -5082,20 +3950,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Macro tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-21T04:11:00.000Z"
+    }
   },
   {
     "id": "p-qmt-mx10000-x50",
@@ -5106,8 +3961,6 @@
     "category": "pipette_tip",
     "subcategory": "Macro tips",
     "description": "Macro tips cover 5 mL and 10 mL work on Axis Macro pipettes, with a broad collar for the macro cone. This 10 mL format covers 1,000–10,000 µL. Supplied in a box of 50. Non-sterile: suitable where sterility is not required.",
-    "status": "low_stock",
-    "stockQuantity": 5,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "macro",
@@ -5141,15 +3994,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Macro tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-02T06:59:00.000Z"
+    }
   },
   {
     "id": "p-qmt-mx10000-fs24",
@@ -5160,8 +4005,6 @@
     "category": "pipette_tip",
     "subcategory": "Macro tips",
     "description": "Macro tips cover 5 mL and 10 mL work on Axis Macro pipettes, with a broad collar for the macro cone. This 10 mL format covers 1,000–10,000 µL with a sintered polyethylene frit. Supplied as 1 hinged racks of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 103,
     "imagePath": "assets/illustrations/tip-filtered.svg",
     "tags": [
       "macro",
@@ -5197,20 +4040,7 @@
       "compatibilityNotes": null,
       "colour": "Natural",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Macro tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-26T09:05:00.000Z"
+    }
   },
   {
     "id": "p-qmt-tr0010-f960",
@@ -5221,8 +4051,6 @@
     "category": "pipette_tip",
     "subcategory": "Reduced-impact tips",
     "description": "Terra tips use bio-attributed polypropylene and refill inserts that reuse the original rack to cut packaging. This 10 µL format covers 0.1–10 µL. Supplied as 10 refill inserts of 96 for re-use with an existing rack. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 31,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "terra",
@@ -5259,15 +4087,7 @@
       "compatibilityNotes": null,
       "colour": "Green tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Terra tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-06T19:49:00.000Z"
+    }
   },
   {
     "id": "p-qmt-tr0010-s96",
@@ -5278,8 +4098,6 @@
     "category": "pipette_tip",
     "subcategory": "Reduced-impact tips",
     "description": "Terra tips use bio-attributed polypropylene and refill inserts that reuse the original rack to cut packaging. This 10 µL format covers 0.1–10 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": null,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "terra",
@@ -5316,20 +4134,7 @@
       "compatibilityNotes": null,
       "colour": "Green tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Terra tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-31T03:56:00.000Z"
+    }
   },
   {
     "id": "p-qmt-tr0200-f960",
@@ -5340,8 +4145,6 @@
     "category": "pipette_tip",
     "subcategory": "Reduced-impact tips",
     "description": "Terra tips use bio-attributed polypropylene and refill inserts that reuse the original rack to cut packaging. This 200 µL format covers 2–200 µL. Supplied as 10 refill inserts of 96 for re-use with an existing rack. Non-sterile: suitable where sterility is not required.",
-    "status": "in_stock",
-    "stockQuantity": 106,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "terra",
@@ -5378,20 +4181,7 @@
       "compatibilityNotes": null,
       "colour": "Green tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Terra tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-08-24T15:35:00.000Z"
+    }
   },
   {
     "id": "p-qmt-tr0200-s96",
@@ -5402,8 +4192,6 @@
     "category": "pipette_tip",
     "subcategory": "Reduced-impact tips",
     "description": "Terra tips use bio-attributed polypropylene and refill inserts that reuse the original rack to cut packaging. This 200 µL format covers 2–200 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "terra",
@@ -5440,25 +4228,7 @@
       "compatibilityNotes": null,
       "colour": "Green tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Terra tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-08-30T04:14:00.000Z"
+    }
   },
   {
     "id": "p-qmt-tr1000-f960",
@@ -5469,8 +4239,6 @@
     "category": "pipette_tip",
     "subcategory": "Reduced-impact tips",
     "description": "Terra tips use bio-attributed polypropylene and refill inserts that reuse the original rack to cut packaging. This 1000 µL format covers 100–1,000 µL. Supplied as 10 refill inserts of 96 for re-use with an existing rack. Non-sterile: suitable where sterility is not required.",
-    "status": "low_stock",
-    "stockQuantity": 11,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "terra",
@@ -5507,15 +4275,7 @@
       "compatibilityNotes": null,
       "colour": "Green tint",
       "autoclavable": true
-    },
-    "documentation": [
-      {
-        "title": "Terra tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-05T23:18:00.000Z"
+    }
   },
   {
     "id": "p-qmt-tr1000-s96",
@@ -5526,8 +4286,6 @@
     "category": "pipette_tip",
     "subcategory": "Reduced-impact tips",
     "description": "Terra tips use bio-attributed polypropylene and refill inserts that reuse the original rack to cut packaging. This 1000 µL format covers 100–1,000 µL. Supplied in a single hinged rack of 96. Sterile pack: tips stay sealed until the lid is opened.",
-    "status": "in_stock",
-    "stockQuantity": 303,
     "imagePath": "assets/illustrations/tip-standard.svg",
     "tags": [
       "terra",
@@ -5564,592 +4322,7 @@
       "compatibilityNotes": null,
       "colour": "Green tint",
       "autoclavable": false
-    },
-    "documentation": [
-      {
-        "title": "Terra tip data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Sterility statement — demo placeholder",
-        "type": "statement",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-06T08:22:00.000Z"
-  },
-  {
-    "id": "p-qmt-hc0200-a",
-    "sku": "QMT-HC0200-A",
-    "name": "Heritage 200 µL Tips (legacy record)",
-    "brand": "Quellmark",
-    "family": "Heritage",
-    "category": "pipette_tip",
-    "subcategory": "Legacy tips",
-    "description": "Legacy Heritage record migrated from an older synthetic system. Several attributes were not captured at import and are shown as \"Not recorded\" rather than assumed.",
-    "status": "discontinued",
-    "stockQuantity": null,
-    "imagePath": null,
-    "tags": [
-      "heritage",
-      "legacy tips",
-      "200 µl",
-      "non-filtered",
-      "legacy",
-      "incomplete record"
-    ],
-    "specifications": {
-      "volumeMinUl": null,
-      "volumeMaxUl": 200,
-      "sterile": null,
-      "filtered": false,
-      "filterMaterial": null,
-      "lowRetention": false,
-      "material": "Polypropylene",
-      "tipLengthMm": null,
-      "tipFormat": "standard",
-      "packagingType": null,
-      "unitsPerPack": null,
-      "racksPerPack": null,
-      "sterilizationMethod": null,
-      "cleanlinessClaims": [],
-      "compatibleInstrumentFamilies": [],
-      "compatibilityNotes": "Compatibility not captured in the legacy record.",
-      "colour": null,
-      "autoclavable": null
-    },
-    "documentation": [],
-    "updatedAt": "2026-08-31T12:58:00.000Z"
-  },
-  {
-    "id": "p-qmt-hc0200-b",
-    "sku": "QMT-HC0200-B",
-    "name": "Heritage 200 µL Filter Tips, Rack of 96 (legacy record)",
-    "brand": "Quellmark",
-    "family": "Heritage",
-    "category": "pipette_tip",
-    "subcategory": "Filter tips",
-    "description": "Legacy Heritage record migrated from an older synthetic system. Several attributes were not captured at import and are shown as \"Not recorded\" rather than assumed.",
-    "status": "discontinued",
-    "stockQuantity": 0,
-    "imagePath": null,
-    "tags": [
-      "heritage",
-      "filter tips",
-      "200 µl",
-      "filtered",
-      "filter",
-      "rack",
-      "legacy",
-      "incomplete record"
-    ],
-    "specifications": {
-      "volumeMinUl": 2,
-      "volumeMaxUl": 200,
-      "sterile": null,
-      "filtered": true,
-      "filterMaterial": null,
-      "lowRetention": false,
-      "material": "Polypropylene",
-      "tipLengthMm": null,
-      "tipFormat": "standard",
-      "packagingType": "rack",
-      "unitsPerPack": 96,
-      "racksPerPack": 1,
-      "sterilizationMethod": null,
-      "cleanlinessClaims": [],
-      "compatibleInstrumentFamilies": [
-        "ifam-axis"
-      ],
-      "compatibilityNotes": null,
-      "colour": null,
-      "autoclavable": null
-    },
-    "documentation": [],
-    "updatedAt": "2026-09-20T01:44:00.000Z"
-  },
-  {
-    "id": "p-qmt-hc0010-a",
-    "sku": "QMT-HC0010-A",
-    "name": "Heritage 10 µL Tips, Sterile, Rack of 96 (legacy record)",
-    "brand": "Quellmark",
-    "family": "Heritage",
-    "category": "pipette_tip",
-    "subcategory": "Legacy tips",
-    "description": "Legacy Heritage record migrated from an older synthetic system. Several attributes were not captured at import and are shown as \"Not recorded\" rather than assumed.",
-    "status": "discontinued",
-    "stockQuantity": 0,
-    "imagePath": null,
-    "tags": [
-      "heritage",
-      "legacy tips",
-      "10 µl",
-      "sterile",
-      "rack",
-      "legacy",
-      "incomplete record"
-    ],
-    "specifications": {
-      "volumeMinUl": 0.1,
-      "volumeMaxUl": 10,
-      "sterile": true,
-      "filtered": null,
-      "filterMaterial": null,
-      "lowRetention": false,
-      "material": "Polypropylene",
-      "tipLengthMm": null,
-      "tipFormat": "standard",
-      "packagingType": "rack",
-      "unitsPerPack": 96,
-      "racksPerPack": 1,
-      "sterilizationMethod": null,
-      "cleanlinessClaims": [],
-      "compatibleInstrumentFamilies": [
-        "ifam-axis",
-        "ifam-axis-multi",
-        "ifam-vector",
-        "ifam-fixa"
-      ],
-      "compatibilityNotes": null,
-      "colour": null,
-      "autoclavable": null
-    },
-    "documentation": [],
-    "updatedAt": "2026-09-24T03:16:00.000Z"
-  },
-  {
-    "id": "p-qmt-hc1000-a",
-    "sku": "QMT-HC1000-A",
-    "name": "Heritage 1000 µL Tips, Non-sterile, Bulk Bag of 1,000 (legacy record)",
-    "brand": "Quellmark",
-    "family": "Heritage",
-    "category": "pipette_tip",
-    "subcategory": "Legacy tips",
-    "description": "Legacy Heritage record migrated from an older synthetic system. Several attributes were not captured at import and are shown as \"Not recorded\" rather than assumed.",
-    "status": "discontinued",
-    "stockQuantity": null,
-    "imagePath": null,
-    "tags": [
-      "heritage",
-      "legacy tips",
-      "1000 µl",
-      "non-filtered",
-      "non-sterile",
-      "bulk",
-      "legacy",
-      "incomplete record"
-    ],
-    "specifications": {
-      "volumeMinUl": 100,
-      "volumeMaxUl": 1000,
-      "sterile": false,
-      "filtered": false,
-      "filterMaterial": null,
-      "lowRetention": false,
-      "material": "Polypropylene",
-      "tipLengthMm": null,
-      "tipFormat": "standard",
-      "packagingType": "bulk",
-      "unitsPerPack": 1000,
-      "racksPerPack": null,
-      "sterilizationMethod": null,
-      "cleanlinessClaims": [],
-      "compatibleInstrumentFamilies": [],
-      "compatibilityNotes": "Compatibility not captured in the legacy record.",
-      "colour": null,
-      "autoclavable": null
-    },
-    "documentation": [],
-    "updatedAt": "2026-09-15T17:14:00.000Z"
-  },
-  {
-    "id": "p-qmt-hc1000-b",
-    "sku": "QMT-HC1000-B",
-    "name": "Heritage 1000 µL Filter Tips, Sterile, Rack of 96 (legacy record)",
-    "brand": "Quellmark",
-    "family": "Heritage",
-    "category": "pipette_tip",
-    "subcategory": "Filter tips",
-    "description": "Legacy Heritage record migrated from an older synthetic system. Several attributes were not captured at import and are shown as \"Not recorded\" rather than assumed.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
-    "imagePath": null,
-    "tags": [
-      "heritage",
-      "filter tips",
-      "1000 µl",
-      "filtered",
-      "filter",
-      "sterile",
-      "rack",
-      "legacy",
-      "incomplete record"
-    ],
-    "specifications": {
-      "volumeMinUl": null,
-      "volumeMaxUl": 1000,
-      "sterile": true,
-      "filtered": true,
-      "filterMaterial": "Polyethylene",
-      "lowRetention": null,
-      "material": "Polypropylene",
-      "tipLengthMm": null,
-      "tipFormat": "standard",
-      "packagingType": "rack",
-      "unitsPerPack": 96,
-      "racksPerPack": 1,
-      "sterilizationMethod": null,
-      "cleanlinessClaims": [],
-      "compatibleInstrumentFamilies": [
-        "ifam-axis",
-        "ifam-vector"
-      ],
-      "compatibilityNotes": null,
-      "colour": null,
-      "autoclavable": null
-    },
-    "documentation": [],
-    "updatedAt": "2026-08-30T13:32:00.000Z"
-  },
-  {
-    "id": "p-qmt-hc0020-a",
-    "sku": "QMT-HC0020-A",
-    "name": "Heritage 20 µL Tips (legacy record)",
-    "brand": "Quellmark",
-    "family": "Heritage",
-    "category": "pipette_tip",
-    "subcategory": "Legacy tips",
-    "description": "Legacy Heritage record migrated from an older synthetic system. Several attributes were not captured at import and are shown as \"Not recorded\" rather than assumed.",
-    "status": "discontinued",
-    "stockQuantity": null,
-    "imagePath": null,
-    "tags": [
-      "heritage",
-      "legacy tips",
-      "20 µl",
-      "legacy",
-      "incomplete record"
-    ],
-    "specifications": {
-      "volumeMinUl": 0.5,
-      "volumeMaxUl": 20,
-      "sterile": null,
-      "filtered": null,
-      "filterMaterial": null,
-      "lowRetention": null,
-      "material": null,
-      "tipLengthMm": null,
-      "tipFormat": "standard",
-      "packagingType": null,
-      "unitsPerPack": null,
-      "racksPerPack": null,
-      "sterilizationMethod": null,
-      "cleanlinessClaims": null,
-      "compatibleInstrumentFamilies": [],
-      "compatibilityNotes": "Compatibility not captured in the legacy record.",
-      "colour": null,
-      "autoclavable": null
-    },
-    "documentation": [],
-    "updatedAt": "2026-09-12T00:15:00.000Z"
-  },
-  {
-    "id": "p-qmt-hc0300-a",
-    "sku": "QMT-HC0300-A",
-    "name": "Heritage 300 µL Filter Tips, Sterile, Rack of 96 (legacy record)",
-    "brand": "Quellmark",
-    "family": "Heritage",
-    "category": "pipette_tip",
-    "subcategory": "Filter tips",
-    "description": "Legacy Heritage record migrated from an older synthetic system. Several attributes were not captured at import and are shown as \"Not recorded\" rather than assumed.",
-    "status": "in_stock",
-    "stockQuantity": 14,
-    "imagePath": null,
-    "tags": [
-      "heritage",
-      "filter tips",
-      "300 µl",
-      "filtered",
-      "filter",
-      "sterile",
-      "rack",
-      "legacy",
-      "incomplete record"
-    ],
-    "specifications": {
-      "volumeMinUl": 5,
-      "volumeMaxUl": 300,
-      "sterile": true,
-      "filtered": true,
-      "filterMaterial": null,
-      "lowRetention": false,
-      "material": "Polypropylene",
-      "tipLengthMm": null,
-      "tipFormat": "standard",
-      "packagingType": "rack",
-      "unitsPerPack": 96,
-      "racksPerPack": 1,
-      "sterilizationMethod": null,
-      "cleanlinessClaims": [],
-      "compatibleInstrumentFamilies": [],
-      "compatibilityNotes": "Compatibility not captured in the legacy record.",
-      "colour": null,
-      "autoclavable": null
-    },
-    "documentation": [],
-    "updatedAt": "2026-09-24T04:05:00.000Z"
-  },
-  {
-    "id": "p-qmt-hc0200-c",
-    "sku": "QMT-HC0200-C",
-    "name": "Heritage 200 µL Tips, Rack of 96 (legacy record)",
-    "brand": "Quellmark",
-    "family": "Heritage",
-    "category": "pipette_tip",
-    "subcategory": "Legacy tips",
-    "description": "Legacy Heritage record migrated from an older synthetic system. Several attributes were not captured at import and are shown as \"Not recorded\" rather than assumed.",
-    "status": "low_stock",
-    "stockQuantity": 3,
-    "imagePath": null,
-    "tags": [
-      "heritage",
-      "legacy tips",
-      "200 µl",
-      "non-filtered",
-      "low retention",
-      "rack",
-      "legacy",
-      "incomplete record"
-    ],
-    "specifications": {
-      "volumeMinUl": 2,
-      "volumeMaxUl": 200,
-      "sterile": null,
-      "filtered": false,
-      "filterMaterial": null,
-      "lowRetention": true,
-      "material": "Polypropylene",
-      "tipLengthMm": null,
-      "tipFormat": "standard",
-      "packagingType": "rack",
-      "unitsPerPack": 96,
-      "racksPerPack": 1,
-      "sterilizationMethod": null,
-      "cleanlinessClaims": [],
-      "compatibleInstrumentFamilies": [
-        "ifam-axis",
-        "ifam-axis-multi",
-        "ifam-vector",
-        "ifam-fixa"
-      ],
-      "compatibilityNotes": null,
-      "colour": null,
-      "autoclavable": null
-    },
-    "documentation": [],
-    "updatedAt": "2026-09-25T11:32:00.000Z"
-  },
-  {
-    "id": "p-qmt-hc0010-b",
-    "sku": "QMT-HC0010-B",
-    "name": "Heritage 10 µL Filter Tips, Non-sterile, Rack of 96 (legacy record)",
-    "brand": "Quellmark",
-    "family": "Heritage",
-    "category": "pipette_tip",
-    "subcategory": "Filter tips",
-    "description": "Legacy Heritage record migrated from an older synthetic system. Several attributes were not captured at import and are shown as \"Not recorded\" rather than assumed.",
-    "status": "discontinued",
-    "stockQuantity": 0,
-    "imagePath": null,
-    "tags": [
-      "heritage",
-      "filter tips",
-      "10 µl",
-      "filtered",
-      "filter",
-      "non-sterile",
-      "rack",
-      "legacy",
-      "incomplete record"
-    ],
-    "specifications": {
-      "volumeMinUl": 0.1,
-      "volumeMaxUl": 10,
-      "sterile": false,
-      "filtered": true,
-      "filterMaterial": "Polyethylene",
-      "lowRetention": false,
-      "material": "Polypropylene",
-      "tipLengthMm": null,
-      "tipFormat": null,
-      "packagingType": "rack",
-      "unitsPerPack": 96,
-      "racksPerPack": 1,
-      "sterilizationMethod": null,
-      "cleanlinessClaims": [],
-      "compatibleInstrumentFamilies": [
-        "ifam-axis"
-      ],
-      "compatibilityNotes": null,
-      "colour": null,
-      "autoclavable": null
-    },
-    "documentation": [],
-    "updatedAt": "2026-09-15T04:49:00.000Z"
-  },
-  {
-    "id": "p-qmt-hc1000-c",
-    "sku": "QMT-HC1000-C",
-    "name": "Heritage 1000 µL Tips, Rack of 96 (legacy record)",
-    "brand": "Quellmark",
-    "family": "Heritage",
-    "category": "pipette_tip",
-    "subcategory": "Legacy tips",
-    "description": "Legacy Heritage record migrated from an older synthetic system. Several attributes were not captured at import and are shown as \"Not recorded\" rather than assumed.",
-    "status": "discontinued",
-    "stockQuantity": null,
-    "imagePath": null,
-    "tags": [
-      "heritage",
-      "legacy tips",
-      "1000 µl",
-      "non-filtered",
-      "wide bore",
-      "rack",
-      "legacy",
-      "incomplete record"
-    ],
-    "specifications": {
-      "volumeMinUl": 100,
-      "volumeMaxUl": 1000,
-      "sterile": null,
-      "filtered": false,
-      "filterMaterial": null,
-      "lowRetention": false,
-      "material": "Polypropylene",
-      "tipLengthMm": null,
-      "tipFormat": "wide_bore",
-      "packagingType": "rack",
-      "unitsPerPack": 96,
-      "racksPerPack": 1,
-      "sterilizationMethod": null,
-      "cleanlinessClaims": [],
-      "compatibleInstrumentFamilies": [
-        "ifam-axis"
-      ],
-      "compatibilityNotes": null,
-      "colour": null,
-      "autoclavable": null
-    },
-    "documentation": [],
-    "updatedAt": "2026-08-23T03:01:00.000Z"
-  },
-  {
-    "id": "p-qmt-hc0200-d",
-    "sku": "QMT-HC0200-D",
-    "name": "Heritage 200 µL Filter Tips, Sterile, Rack of 96 (legacy record)",
-    "brand": "Quellmark",
-    "family": "Heritage",
-    "category": "pipette_tip",
-    "subcategory": "Filter tips",
-    "description": "Legacy Heritage record migrated from an older synthetic system. Several attributes were not captured at import and are shown as \"Not recorded\" rather than assumed.",
-    "status": "out_of_stock",
-    "stockQuantity": null,
-    "imagePath": null,
-    "tags": [
-      "heritage",
-      "filter tips",
-      "filtered",
-      "filter",
-      "sterile",
-      "rack",
-      "legacy",
-      "incomplete record"
-    ],
-    "specifications": {
-      "volumeMinUl": null,
-      "volumeMaxUl": null,
-      "sterile": true,
-      "filtered": true,
-      "filterMaterial": null,
-      "lowRetention": false,
-      "material": "Polypropylene",
-      "tipLengthMm": null,
-      "tipFormat": "standard",
-      "packagingType": "rack",
-      "unitsPerPack": 96,
-      "racksPerPack": 1,
-      "sterilizationMethod": null,
-      "cleanlinessClaims": [],
-      "compatibleInstrumentFamilies": [
-        "ifam-axis",
-        "ifam-axis-multi",
-        "ifam-vector",
-        "ifam-fixa"
-      ],
-      "compatibilityNotes": null,
-      "colour": null,
-      "autoclavable": null
-    },
-    "documentation": [],
-    "updatedAt": "2026-09-11T21:46:00.000Z"
-  },
-  {
-    "id": "p-qmt-hc0020-b",
-    "sku": "QMT-HC0020-B",
-    "name": "Heritage 20 µL Filter Tips, Sterile, Rack of 96 (legacy record)",
-    "brand": "Quellmark",
-    "family": "Heritage",
-    "category": "pipette_tip",
-    "subcategory": "Filter tips",
-    "description": "Legacy Heritage record migrated from an older synthetic system. Several attributes were not captured at import and are shown as \"Not recorded\" rather than assumed.",
-    "status": "in_stock",
-    "stockQuantity": null,
-    "imagePath": null,
-    "tags": [
-      "heritage",
-      "filter tips",
-      "20 µl",
-      "filtered",
-      "filter",
-      "sterile",
-      "rack",
-      "legacy",
-      "incomplete record"
-    ],
-    "specifications": {
-      "volumeMinUl": 0.5,
-      "volumeMaxUl": 20,
-      "sterile": true,
-      "filtered": true,
-      "filterMaterial": null,
-      "lowRetention": false,
-      "material": null,
-      "tipLengthMm": null,
-      "tipFormat": "standard",
-      "packagingType": "rack",
-      "unitsPerPack": 96,
-      "racksPerPack": 1,
-      "sterilizationMethod": null,
-      "cleanlinessClaims": null,
-      "compatibleInstrumentFamilies": [
-        "ifam-axis",
-        "ifam-axis-multi",
-        "ifam-vector",
-        "ifam-fixa"
-      ],
-      "compatibilityNotes": null,
-      "colour": null,
-      "autoclavable": null
-    },
-    "documentation": [],
-    "updatedAt": "2026-08-21T22:06:00.000Z"
+    }
   },
   {
     "id": "p-qmp-ax0002",
@@ -6159,9 +4332,7 @@
     "family": "Axis",
     "category": "pipette",
     "subcategory": "Adjustable pipettes",
-    "description": "Fictional manual air-displacement pipettes with a universal Q-Cone tip cone. This model covers 0.2–2 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 332,
+    "description": "Fictional manual air-displacement pipettes with a universal Q-Cone tip cone. This model covers 0.2–2 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "axis",
@@ -6177,20 +4348,7 @@
       "instrumentFamilyId": "ifam-axis",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": null
-    },
-    "documentation": [
-      {
-        "title": "Axis product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-18T15:32:00.000Z"
+    }
   },
   {
     "id": "p-qmp-ax0010",
@@ -6200,9 +4358,7 @@
     "family": "Axis",
     "category": "pipette",
     "subcategory": "Adjustable pipettes",
-    "description": "Fictional manual air-displacement pipettes with a universal Q-Cone tip cone. This model covers 1–10 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 33,
+    "description": "Fictional manual air-displacement pipettes with a universal Q-Cone tip cone. This model covers 1–10 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "axis",
@@ -6218,20 +4374,7 @@
       "instrumentFamilyId": "ifam-axis",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": null
-    },
-    "documentation": [
-      {
-        "title": "Axis product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-30T05:01:00.000Z"
+    }
   },
   {
     "id": "p-qmp-ax0020",
@@ -6241,9 +4384,7 @@
     "family": "Axis",
     "category": "pipette",
     "subcategory": "Adjustable pipettes",
-    "description": "Fictional manual air-displacement pipettes with a universal Q-Cone tip cone. This model covers 2–20 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "low_stock",
-    "stockQuantity": 4,
+    "description": "Fictional manual air-displacement pipettes with a universal Q-Cone tip cone. This model covers 2–20 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "axis",
@@ -6259,20 +4400,7 @@
       "instrumentFamilyId": "ifam-axis",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.5% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Axis product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-04T21:25:00.000Z"
+    }
   },
   {
     "id": "p-qmp-ax0100",
@@ -6282,9 +4410,7 @@
     "family": "Axis",
     "category": "pipette",
     "subcategory": "Adjustable pipettes",
-    "description": "Fictional manual air-displacement pipettes with a universal Q-Cone tip cone. This model covers 10–100 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 58,
+    "description": "Fictional manual air-displacement pipettes with a universal Q-Cone tip cone. This model covers 10–100 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "axis",
@@ -6300,20 +4426,7 @@
       "instrumentFamilyId": "ifam-axis",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": null
-    },
-    "documentation": [
-      {
-        "title": "Axis product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-05T00:12:00.000Z"
+    }
   },
   {
     "id": "p-qmp-ax0200",
@@ -6323,9 +4436,7 @@
     "family": "Axis",
     "category": "pipette",
     "subcategory": "Adjustable pipettes",
-    "description": "Fictional manual air-displacement pipettes with a universal Q-Cone tip cone. This model covers 20–200 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 112,
+    "description": "Fictional manual air-displacement pipettes with a universal Q-Cone tip cone. This model covers 20–200 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "axis",
@@ -6341,20 +4452,7 @@
       "instrumentFamilyId": "ifam-axis",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.1% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Axis product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-28T16:54:00.000Z"
+    }
   },
   {
     "id": "p-qmp-ax1000",
@@ -6364,9 +4462,7 @@
     "family": "Axis",
     "category": "pipette",
     "subcategory": "Adjustable pipettes",
-    "description": "Fictional manual air-displacement pipettes with a universal Q-Cone tip cone. This model covers 100–1,000 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 332,
+    "description": "Fictional manual air-displacement pipettes with a universal Q-Cone tip cone. This model covers 100–1,000 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "axis",
@@ -6382,25 +4478,7 @@
       "instrumentFamilyId": "ifam-axis",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": null
-    },
-    "documentation": [
-      {
-        "title": "Axis product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-20T21:45:00.000Z"
+    }
   },
   {
     "id": "p-qmp-am0810",
@@ -6410,9 +4488,7 @@
     "family": "Axis Multi",
     "category": "pipette",
     "subcategory": "Multichannel pipettes",
-    "description": "Fictional 8- and 12-channel manual pipettes sharing the Q-Cone interface. This model covers 1–10 µL across 8 channels. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 241,
+    "description": "Fictional 8- and 12-channel manual pipettes sharing the Q-Cone interface. This model covers 1–10 µL across 8 channels. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-multi.svg",
     "tags": [
       "axis multi",
@@ -6428,20 +4504,7 @@
       "instrumentFamilyId": "ifam-axis-multi",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 2.1% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Axis Multi product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-26T15:21:00.000Z"
+    }
   },
   {
     "id": "p-qmp-am0820",
@@ -6451,9 +4514,7 @@
     "family": "Axis Multi",
     "category": "pipette",
     "subcategory": "Multichannel pipettes",
-    "description": "Fictional 8- and 12-channel manual pipettes sharing the Q-Cone interface. This model covers 20–200 µL across 8 channels. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 193,
+    "description": "Fictional 8- and 12-channel manual pipettes sharing the Q-Cone interface. This model covers 20–200 µL across 8 channels. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-multi.svg",
     "tags": [
       "axis multi",
@@ -6469,20 +4530,7 @@
       "instrumentFamilyId": "ifam-axis-multi",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 2.1% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Axis Multi product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-24T00:35:00.000Z"
+    }
   },
   {
     "id": "p-qmp-am1230",
@@ -6492,9 +4540,7 @@
     "family": "Axis Multi",
     "category": "pipette",
     "subcategory": "Multichannel pipettes",
-    "description": "Fictional 8- and 12-channel manual pipettes sharing the Q-Cone interface. This model covers 30–300 µL across 12 channels. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 238,
+    "description": "Fictional 8- and 12-channel manual pipettes sharing the Q-Cone interface. This model covers 30–300 µL across 12 channels. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-multi.svg",
     "tags": [
       "axis multi",
@@ -6510,20 +4556,7 @@
       "instrumentFamilyId": "ifam-axis-multi",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.6% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Axis Multi product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-23T11:42:00.000Z"
+    }
   },
   {
     "id": "p-qmp-am0812",
@@ -6533,9 +4566,7 @@
     "family": "Axis Multi",
     "category": "pipette",
     "subcategory": "Multichannel pipettes",
-    "description": "Fictional 8- and 12-channel manual pipettes sharing the Q-Cone interface. This model covers 100–1,200 µL across 8 channels. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 149,
+    "description": "Fictional 8- and 12-channel manual pipettes sharing the Q-Cone interface. This model covers 100–1,200 µL across 8 channels. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-multi.svg",
     "tags": [
       "axis multi",
@@ -6551,20 +4582,7 @@
       "instrumentFamilyId": "ifam-axis-multi",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.2% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Axis Multi product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-23T20:56:00.000Z"
+    }
   },
   {
     "id": "p-qmp-ve0010",
@@ -6574,9 +4592,7 @@
     "family": "Vector",
     "category": "pipette",
     "subcategory": "Electronic pipettes",
-    "description": "Fictional motorised pipettes with programmable modes and a Q-Cone tip cone. This model covers 0.5–10 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 251,
+    "description": "Fictional motorised pipettes with programmable modes and a Q-Cone tip cone. This model covers 0.5–10 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-electronic.svg",
     "tags": [
       "vector",
@@ -6592,25 +4608,7 @@
       "instrumentFamilyId": "ifam-vector",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.8% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Vector product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-27T20:55:00.000Z"
+    }
   },
   {
     "id": "p-qmp-ve0200",
@@ -6620,9 +4618,7 @@
     "family": "Vector",
     "category": "pipette",
     "subcategory": "Electronic pipettes",
-    "description": "Fictional motorised pipettes with programmable modes and a Q-Cone tip cone. This model covers 10–200 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "out_of_stock",
-    "stockQuantity": 0,
+    "description": "Fictional motorised pipettes with programmable modes and a Q-Cone tip cone. This model covers 10–200 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-electronic.svg",
     "tags": [
       "vector",
@@ -6638,20 +4634,7 @@
       "instrumentFamilyId": "ifam-vector",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.0% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Vector product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-06T02:51:00.000Z"
+    }
   },
   {
     "id": "p-qmp-ve1000",
@@ -6661,9 +4644,7 @@
     "family": "Vector",
     "category": "pipette",
     "subcategory": "Electronic pipettes",
-    "description": "Fictional motorised pipettes with programmable modes and a Q-Cone tip cone. This model covers 50–1,000 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 410,
+    "description": "Fictional motorised pipettes with programmable modes and a Q-Cone tip cone. This model covers 50–1,000 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-electronic.svg",
     "tags": [
       "vector",
@@ -6679,20 +4660,7 @@
       "instrumentFamilyId": "ifam-vector",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 2.0% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Vector product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-30T04:10:00.000Z"
+    }
   },
   {
     "id": "p-qmp-vl0010",
@@ -6702,9 +4670,7 @@
     "family": "Vector Lock",
     "category": "pipette",
     "subcategory": "Electronic pipettes",
-    "description": "Fictional electronic pipettes with a Q-Lock cone that only seats Lockline tips. This model covers 0.5–10 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 489,
+    "description": "Fictional electronic pipettes with a Q-Lock cone that only seats Lockline tips. This model covers 0.5–10 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-electronic.svg",
     "tags": [
       "vector lock",
@@ -6720,25 +4686,7 @@
       "instrumentFamilyId": "ifam-vector-lock",
       "tipInterfaceType": "lock_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 0.6% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Vector Lock product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-29T03:14:00.000Z"
+    }
   },
   {
     "id": "p-qmp-vl0200",
@@ -6748,9 +4696,7 @@
     "family": "Vector Lock",
     "category": "pipette",
     "subcategory": "Electronic pipettes",
-    "description": "Fictional electronic pipettes with a Q-Lock cone that only seats Lockline tips. This model covers 10–200 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 96,
+    "description": "Fictional electronic pipettes with a Q-Lock cone that only seats Lockline tips. This model covers 10–200 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-electronic.svg",
     "tags": [
       "vector lock",
@@ -6766,20 +4712,7 @@
       "instrumentFamilyId": "ifam-vector-lock",
       "tipInterfaceType": "lock_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 0.8% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Vector Lock product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-28T19:40:00.000Z"
+    }
   },
   {
     "id": "p-qmp-vl1000",
@@ -6789,9 +4722,7 @@
     "family": "Vector Lock",
     "category": "pipette",
     "subcategory": "Electronic pipettes",
-    "description": "Fictional electronic pipettes with a Q-Lock cone that only seats Lockline tips. This model covers 50–1,000 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 472,
+    "description": "Fictional electronic pipettes with a Q-Lock cone that only seats Lockline tips. This model covers 50–1,000 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-electronic.svg",
     "tags": [
       "vector lock",
@@ -6807,25 +4738,7 @@
       "instrumentFamilyId": "ifam-vector-lock",
       "tipInterfaceType": "lock_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 0.8% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Vector Lock product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-08-31T04:19:00.000Z"
+    }
   },
   {
     "id": "p-qmp-fx0010",
@@ -6835,9 +4748,7 @@
     "family": "Fixa",
     "category": "pipette",
     "subcategory": "Fixed-volume pipettes",
-    "description": "Fictional fixed-volume pipettes for routine single-volume steps. This model covers a fixed 10 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 343,
+    "description": "Fictional fixed-volume pipettes for routine single-volume steps. This model covers a fixed 10 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "fixa",
@@ -6853,20 +4764,7 @@
       "instrumentFamilyId": "ifam-fixa",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.9% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Fixa product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-17T03:13:00.000Z"
+    }
   },
   {
     "id": "p-qmp-fx0020",
@@ -6876,9 +4774,7 @@
     "family": "Fixa",
     "category": "pipette",
     "subcategory": "Fixed-volume pipettes",
-    "description": "Fictional fixed-volume pipettes for routine single-volume steps. This model covers a fixed 20 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 284,
+    "description": "Fictional fixed-volume pipettes for routine single-volume steps. This model covers a fixed 20 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "fixa",
@@ -6894,20 +4790,7 @@
       "instrumentFamilyId": "ifam-fixa",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.5% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Fixa product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-27T19:54:00.000Z"
+    }
   },
   {
     "id": "p-qmp-fx0100",
@@ -6917,9 +4800,7 @@
     "family": "Fixa",
     "category": "pipette",
     "subcategory": "Fixed-volume pipettes",
-    "description": "Fictional fixed-volume pipettes for routine single-volume steps. This model covers a fixed 100 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 121,
+    "description": "Fictional fixed-volume pipettes for routine single-volume steps. This model covers a fixed 100 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "fixa",
@@ -6935,20 +4816,7 @@
       "instrumentFamilyId": "ifam-fixa",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": null
-    },
-    "documentation": [
-      {
-        "title": "Fixa product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-07T17:32:00.000Z"
+    }
   },
   {
     "id": "p-qmp-fx0200",
@@ -6958,9 +4826,7 @@
     "family": "Fixa",
     "category": "pipette",
     "subcategory": "Fixed-volume pipettes",
-    "description": "Fictional fixed-volume pipettes for routine single-volume steps. This model covers a fixed 200 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 396,
+    "description": "Fictional fixed-volume pipettes for routine single-volume steps. This model covers a fixed 200 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "fixa",
@@ -6976,20 +4842,7 @@
       "instrumentFamilyId": "ifam-fixa",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": null
-    },
-    "documentation": [
-      {
-        "title": "Fixa product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-21T23:51:00.000Z"
+    }
   },
   {
     "id": "p-qmp-fx1000",
@@ -6999,9 +4852,7 @@
     "family": "Fixa",
     "category": "pipette",
     "subcategory": "Fixed-volume pipettes",
-    "description": "Fictional fixed-volume pipettes for routine single-volume steps. This model covers a fixed 1,000 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 394,
+    "description": "Fictional fixed-volume pipettes for routine single-volume steps. This model covers a fixed 1,000 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "fixa",
@@ -7017,25 +4868,7 @@
       "instrumentFamilyId": "ifam-fixa",
       "tipInterfaceType": "universal_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.5% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Fixa product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-08-25T20:09:00.000Z"
+    }
   },
   {
     "id": "p-qmp-ma5000",
@@ -7045,9 +4878,7 @@
     "family": "Axis Macro",
     "category": "pipette",
     "subcategory": "Adjustable pipettes",
-    "description": "Fictional 5 mL and 10 mL pipettes with a wide macro cone. This model covers 500–5,000 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 82,
+    "description": "Fictional 5 mL and 10 mL pipettes with a wide macro cone. This model covers 500–5,000 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-macro.svg",
     "tags": [
       "axis macro",
@@ -7063,25 +4894,7 @@
       "instrumentFamilyId": "ifam-axis-macro",
       "tipInterfaceType": "macro_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 2.1% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Axis Macro product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-08-26T07:07:00.000Z"
+    }
   },
   {
     "id": "p-qmp-ma10k0",
@@ -7091,9 +4904,7 @@
     "family": "Axis Macro",
     "category": "pipette",
     "subcategory": "Adjustable pipettes",
-    "description": "Fictional 5 mL and 10 mL pipettes with a wide macro cone. This model covers 1,000–10,000 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 218,
+    "description": "Fictional 5 mL and 10 mL pipettes with a wide macro cone. This model covers 1,000–10,000 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-macro.svg",
     "tags": [
       "axis macro",
@@ -7109,20 +4920,7 @@
       "instrumentFamilyId": "ifam-axis-macro",
       "tipInterfaceType": "macro_cone",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.3% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Axis Macro product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-22T17:18:00.000Z"
+    }
   },
   {
     "id": "p-qmp-md0010",
@@ -7132,9 +4930,7 @@
     "family": "Microdose",
     "category": "pipette",
     "subcategory": "Adjustable pipettes",
-    "description": "Fictional positive-displacement pipettes using disposable capillary pistons. This model covers 1–10 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 483,
+    "description": "Fictional positive-displacement pipettes using disposable capillary pistons. This model covers 1–10 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "microdose",
@@ -7150,20 +4946,7 @@
       "instrumentFamilyId": "ifam-microdose",
       "tipInterfaceType": "capillary_piston",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.5% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Microdose product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-14T11:24:00.000Z"
+    }
   },
   {
     "id": "p-qmp-md0100",
@@ -7173,9 +4956,7 @@
     "family": "Microdose",
     "category": "pipette",
     "subcategory": "Adjustable pipettes",
-    "description": "Fictional positive-displacement pipettes using disposable capillary pistons. This model covers 10–100 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 281,
+    "description": "Fictional positive-displacement pipettes using disposable capillary pistons. This model covers 10–100 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "microdose",
@@ -7191,20 +4972,7 @@
       "instrumentFamilyId": "ifam-microdose",
       "tipInterfaceType": "capillary_piston",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 1.3% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Microdose product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-19T07:48:00.000Z"
+    }
   },
   {
     "id": "p-qmp-md1000",
@@ -7214,9 +4982,7 @@
     "family": "Microdose",
     "category": "pipette",
     "subcategory": "Adjustable pipettes",
-    "description": "Fictional positive-displacement pipettes using disposable capillary pistons. This model covers 100–1,000 µL. Instruments are listed for compatibility only and are never offered as substitutes for consumables.",
-    "status": "in_stock",
-    "stockQuantity": 316,
+    "description": "Fictional positive-displacement pipettes using disposable capillary pistons. This model covers 100–1,000 µL. Instruments are listed for reference; alternatives are only worked out for pipette tips.",
     "imagePath": "assets/illustrations/pipette-single.svg",
     "tags": [
       "microdose",
@@ -7232,20 +4998,7 @@
       "instrumentFamilyId": "ifam-microdose",
       "tipInterfaceType": "capillary_piston",
       "accuracyNotes": "Synthetic demo figure: systematic error ≤ 0.8% at nominal volume."
-    },
-    "documentation": [
-      {
-        "title": "Microdose product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "User guide (synthetic)",
-        "type": "manual",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-26T03:13:00.000Z"
+    }
   },
   {
     "id": "p-qma-st-lin6",
@@ -7255,9 +5008,7 @@
     "family": "Benchware",
     "category": "accessory",
     "subcategory": "Pipette stand",
-    "description": "Linear Pipette Stand, 6 Positions for Axis, Axis Multi, Vector, Fixa pipettes. An accessory, listed for compatibility; it does not replace a consumable.",
-    "status": "in_stock",
-    "stockQuantity": 398,
+    "description": "Linear Pipette Stand, 6 Positions for Axis, Axis Multi, Vector, Fixa pipettes. Listed for reference.",
     "imagePath": "assets/illustrations/accessory-stand.svg",
     "tags": [
       "accessory",
@@ -7277,20 +5028,7 @@
       ],
       "material": "Polycarbonate and steel",
       "notes": null
-    },
-    "documentation": [
-      {
-        "title": "Benchware product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-09-24T16:32:00.000Z"
+    }
   },
   {
     "id": "p-qma-st-car6",
@@ -7300,9 +5038,7 @@
     "family": "Benchware",
     "category": "accessory",
     "subcategory": "Carousel stand",
-    "description": "Carousel Pipette Stand, 6 Positions for Axis, Vector, Vector Lock, Axis Macro pipettes. An accessory, listed for compatibility; it does not replace a consumable.",
-    "status": "in_stock",
-    "stockQuantity": 484,
+    "description": "Carousel Pipette Stand, 6 Positions for Axis, Vector, Vector Lock, Axis Macro pipettes. Listed for reference.",
     "imagePath": "assets/illustrations/accessory-stand.svg",
     "tags": [
       "accessory",
@@ -7322,15 +5058,7 @@
       ],
       "material": "Polycarbonate and steel",
       "notes": null
-    },
-    "documentation": [
-      {
-        "title": "Benchware product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-10T14:13:00.000Z"
+    }
   },
   {
     "id": "p-qma-st-chg2",
@@ -7340,9 +5068,7 @@
     "family": "Benchware",
     "category": "accessory",
     "subcategory": "Charging stand",
-    "description": "Vector Charging Stand, 2 Positions for Vector, Vector Lock pipettes. An accessory, listed for compatibility; it does not replace a consumable.",
-    "status": "in_stock",
-    "stockQuantity": 167,
+    "description": "Vector Charging Stand, 2 Positions for Vector, Vector Lock pipettes. Listed for reference.",
     "imagePath": "assets/illustrations/accessory-stand.svg",
     "tags": [
       "accessory",
@@ -7358,15 +5084,7 @@
       ],
       "material": "Polycarbonate and steel",
       "notes": null
-    },
-    "documentation": [
-      {
-        "title": "Benchware product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-08T15:35:00.000Z"
+    }
   },
   {
     "id": "p-qma-rk-e96",
@@ -7376,9 +5094,7 @@
     "family": "Benchware",
     "category": "accessory",
     "subcategory": "Empty tip rack",
-    "description": "Empty Autoclavable Tip Rack, 96 Positions for Axis, Axis Multi, Vector, Fixa pipettes. An accessory, listed for compatibility; it does not replace a consumable.",
-    "status": "in_stock",
-    "stockQuantity": 77,
+    "description": "Empty Autoclavable Tip Rack, 96 Positions for Axis, Axis Multi, Vector, Fixa pipettes. Listed for reference.",
     "imagePath": "assets/illustrations/accessory-rack.svg",
     "tags": [
       "accessory",
@@ -7398,15 +5114,7 @@
       ],
       "material": "Polycarbonate and steel",
       "notes": null
-    },
-    "documentation": [
-      {
-        "title": "Benchware product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-02T18:53:00.000Z"
+    }
   },
   {
     "id": "p-qma-rk-ref",
@@ -7416,9 +5124,7 @@
     "family": "Benchware",
     "category": "accessory",
     "subcategory": "Refill station",
-    "description": "Refill Station Base for 96-insert Refills for Axis, Axis Multi, Vector, Fixa pipettes. An accessory, listed for compatibility; it does not replace a consumable.",
-    "status": "low_stock",
-    "stockQuantity": 5,
+    "description": "Refill Station Base for 96-insert Refills for Axis, Axis Multi, Vector, Fixa pipettes. Listed for reference.",
     "imagePath": "assets/illustrations/accessory-rack.svg",
     "tags": [
       "accessory",
@@ -7438,15 +5144,7 @@
       ],
       "material": "Polycarbonate and steel",
       "notes": null
-    },
-    "documentation": [
-      {
-        "title": "Benchware product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-06T17:26:00.000Z"
+    }
   },
   {
     "id": "p-qma-kt-lks",
@@ -7456,9 +5154,7 @@
     "family": "Benchware",
     "category": "accessory",
     "subcategory": "Service kit",
-    "description": "Q-Lock Cone Service Kit for Vector Lock pipettes. An accessory, listed for compatibility; it does not replace a consumable.",
-    "status": "in_stock",
-    "stockQuantity": 78,
+    "description": "Q-Lock Cone Service Kit for Vector Lock pipettes. Listed for reference.",
     "imagePath": "assets/illustrations/accessory-kit.svg",
     "tags": [
       "accessory",
@@ -7472,20 +5168,7 @@
       ],
       "material": "Mixed",
       "notes": null
-    },
-    "documentation": [
-      {
-        "title": "Benchware product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      },
-      {
-        "title": "Lot information sheet — not attached",
-        "type": "lot_sheet",
-        "path": null
-      }
-    ],
-    "updatedAt": "2026-08-23T16:27:00.000Z"
+    }
   },
   {
     "id": "p-qma-kt-mde",
@@ -7495,9 +5178,7 @@
     "family": "Benchware",
     "category": "accessory",
     "subcategory": "Tool",
-    "description": "Microdose Piston Ejector Tool for Microdose pipettes. An accessory, listed for compatibility; it does not replace a consumable.",
-    "status": "in_stock",
-    "stockQuantity": 468,
+    "description": "Microdose Piston Ejector Tool for Microdose pipettes. Listed for reference.",
     "imagePath": "assets/illustrations/accessory-kit.svg",
     "tags": [
       "accessory",
@@ -7511,15 +5192,7 @@
       ],
       "material": "Mixed",
       "notes": null
-    },
-    "documentation": [
-      {
-        "title": "Benchware product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-24T15:10:00.000Z"
+    }
   },
   {
     "id": "p-qma-kt-org",
@@ -7529,9 +5202,7 @@
     "family": "Benchware",
     "category": "accessory",
     "subcategory": "Service kit",
-    "description": "Cone O-ring Service Kit for Axis for Axis, Axis Multi pipettes. An accessory, listed for compatibility; it does not replace a consumable.",
-    "status": "in_stock",
-    "stockQuantity": 147,
+    "description": "Cone O-ring Service Kit for Axis for Axis, Axis Multi pipettes. Listed for reference.",
     "imagePath": "assets/illustrations/accessory-kit.svg",
     "tags": [
       "accessory",
@@ -7547,15 +5218,7 @@
       ],
       "material": "Mixed",
       "notes": null
-    },
-    "documentation": [
-      {
-        "title": "Benchware product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-20T05:57:00.000Z"
+    }
   },
   {
     "id": "p-qma-kt-cal",
@@ -7565,9 +5228,7 @@
     "family": "Benchware",
     "category": "accessory",
     "subcategory": "Calibration kit",
-    "description": "Gravimetric Check Kit (synthetic demo) for Axis, Axis Multi, Vector, Vector Lock, Fixa, Axis Macro, Microdose pipettes. An accessory, listed for compatibility; it does not replace a consumable.",
-    "status": "low_stock",
-    "stockQuantity": 2,
+    "description": "Gravimetric Check Kit (synthetic demo) for Axis, Axis Multi, Vector, Vector Lock, Fixa, Axis Macro, Microdose pipettes. Listed for reference.",
     "imagePath": "assets/illustrations/accessory-kit.svg",
     "tags": [
       "accessory",
@@ -7593,15 +5254,7 @@
       ],
       "material": "Mixed",
       "notes": null
-    },
-    "documentation": [
-      {
-        "title": "Benchware product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-09-04T17:52:00.000Z"
+    }
   },
   {
     "id": "p-qma-kt-mxf",
@@ -7611,9 +5264,7 @@
     "family": "Benchware",
     "category": "accessory",
     "subcategory": "Cone filters",
-    "description": "Macro Cone Filter Discs, Pack of 25 for Axis Macro pipettes. An accessory, listed for compatibility; it does not replace a consumable.",
-    "status": "in_stock",
-    "stockQuantity": 80,
+    "description": "Macro Cone Filter Discs, Pack of 25 for Axis Macro pipettes. Listed for reference.",
     "imagePath": "assets/illustrations/accessory-kit.svg",
     "tags": [
       "accessory",
@@ -7627,14 +5278,6 @@
       ],
       "material": "Mixed",
       "notes": null
-    },
-    "documentation": [
-      {
-        "title": "Benchware product data sheet (synthetic)",
-        "type": "data_sheet",
-        "path": "assets/docs/placeholder.html"
-      }
-    ],
-    "updatedAt": "2026-08-28T08:10:00.000Z"
+    }
   }
 ]

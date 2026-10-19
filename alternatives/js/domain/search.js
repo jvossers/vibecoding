@@ -1,10 +1,6 @@
 // Catalogue search and filtering. Pure functions so they can be tested in Node.
 
-import { isUnknown } from './attributes.js';
-
-export const DEFAULT_FILTERS = {
-  q: '', category: '', status: '', volMin: null, volMax: null, sterile: '', filtered: '', family: '', fits: '',
-};
+export const DEFAULT_FILTERS = { q: '', category: '', family: '', volume: '', sterile: '', filtered: '' };
 
 const KEYWORDS = {
   sterile: (s) => s.sterile === true,
@@ -35,7 +31,7 @@ function haystack(p) {
   if (!h) {
     const s = p.specifications ?? {};
     const text = normalise([p.sku, p.name, p.family, p.subcategory, p.category.replace('_', ' '), ...p.tags,
-      s.volumeMaxUl, s.material, s.filterMaterial].filter((x) => !isUnknown(x)).join(' '));
+      s.volumeMaxUl, s.material, s.filterMaterial].filter((x) => x !== null && x !== undefined).join(' '));
     h = { text, words: new Set(text.split(/[^a-z0-9.µ-]+/)) };
     haystacks.set(p, h);
   }
@@ -64,34 +60,21 @@ export function queryRank(p, query) {
   return 0;
 }
 
-function triState(value, want) {
-  if (!want) return true;
-  if (want === 'unknown') return isUnknown(value);
-  return value === (want === 'yes');
+// Nominal volumes present in the catalogue, for the volume filter.
+export function nominalVolumes(products) {
+  return [...new Set(products.map((p) => p.specifications?.volumeMaxUl).filter((v) => typeof v === 'number'))].sort((a, b) => a - b);
 }
 
 export function applyFilters(products, filters) {
   const f = { ...DEFAULT_FILTERS, ...filters };
-  const lo = isUnknown(f.volMin) || f.volMin === '' ? null : Number(f.volMin);
-  const hi = isUnknown(f.volMax) || f.volMax === '' ? null : Number(f.volMax);
+  const yesNo = (value, want) => !want || value === (want === 'yes');
   const out = products.filter((p) => {
     const s = p.specifications ?? {};
     if (f.category && p.category !== f.category) return false;
-    if (f.status === 'unavailable') { if (!['out_of_stock', 'discontinued'].includes(p.status)) return false; }
-    else if (f.status && p.status !== f.status) return false;
     if (f.family && p.family !== f.family) return false;
-    if (f.fits) {
-      const fams = p.category === 'pipette' ? [s.instrumentFamilyId] : s.compatibleInstrumentFamilies ?? [];
-      if (!fams.includes(f.fits)) return false;
-    }
-    if (f.sterile && (p.category !== 'pipette_tip' || !triState(s.sterile, f.sterile))) return false;
-    if (f.filtered && (p.category !== 'pipette_tip' || !triState(s.filtered, f.filtered))) return false;
-    if (lo !== null || hi !== null) {
-      const min = s.volumeMinUl ?? s.volumeMaxUl, max = s.volumeMaxUl ?? s.volumeMinUl;
-      if (isUnknown(min) || isUnknown(max)) return false;
-      if (lo !== null && max < lo) return false;
-      if (hi !== null && min > hi) return false;
-    }
+    if (f.volume && s.volumeMaxUl !== Number(f.volume)) return false;
+    if (f.sterile && (p.category !== 'pipette_tip' || !yesNo(s.sterile, f.sterile))) return false;
+    if (f.filtered && (p.category !== 'pipette_tip' || !yesNo(s.filtered, f.filtered))) return false;
     return matchesQuery(p, f.q);
   });
   if (f.q) {
@@ -104,15 +87,13 @@ export function filtersFromParams(params) {
   const f = { ...DEFAULT_FILTERS };
   for (const key of Object.keys(DEFAULT_FILTERS)) {
     const v = params.get(key);
-    if (v !== null && v !== '') f[key] = key === 'volMin' || key === 'volMax' ? Number(v) : v;
+    if (v) f[key] = v;
   }
   return f;
 }
 
 export function filtersToParams(filters) {
   const params = new URLSearchParams();
-  for (const [key, v] of Object.entries(filters)) {
-    if (v !== null && v !== '' && v !== undefined && !Number.isNaN(v) && v !== DEFAULT_FILTERS[key]) params.set(key, String(v));
-  }
+  for (const [key, v] of Object.entries(filters)) if (v && v !== DEFAULT_FILTERS[key]) params.set(key, String(v));
   return params;
 }

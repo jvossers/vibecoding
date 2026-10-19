@@ -11,8 +11,6 @@ export function readData(file) {
 export function loadCatalogue() {
   return {
     products: readData('products.json'),
-    relationships: readData('relationships.json'),
-    alternatives: readData('alternatives.json'),
     families: readData('instrument-families.json'),
   };
 }
@@ -45,7 +43,6 @@ export function tip(spec = {}, envelope = {}) {
     family: 'Test',
     category: 'pipette_tip',
     subcategory: 'Test tips',
-    status: 'in_stock',
     tags: [],
     specifications: {
       volumeMinUl: 2,
@@ -82,7 +79,6 @@ export function pipette(spec = {}) {
     family: 'Alpha',
     category: 'pipette',
     subcategory: 'Adjustable pipettes',
-    status: 'in_stock',
     tags: [],
     specifications: { volumeMinUl: 20, volumeMaxUl: 200, channelCount: 1, adjustableVolume: true, instrumentFamilyId: 'fam-a', tipInterfaceType: 'universal_cone', accuracyNotes: null, ...spec },
   };
