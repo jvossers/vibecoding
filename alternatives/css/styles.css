@@ -104,6 +104,11 @@ code { font-family: var(--font-mono); font-size: 0.92em; }
 .btn:hover { border-color: var(--navy-800); color: var(--navy-800); }
 .btn svg { width: 16px; height: 16px; }
 .btn-sm { height: 32px; padding: 0 12px; font-size: 13px; }
+.btn-primary { background: var(--navy-900); border-color: var(--navy-900); color: #FFFFFF; }
+.btn-primary:hover { background: var(--navy-800); border-color: var(--navy-800); color: #FFFFFF; }
+.icon-btn { width: 34px; height: 34px; display: inline-grid; place-items: center; border: 0; border-radius: var(--radius-sm); background: none; color: var(--muted); cursor: pointer; }
+.icon-btn:hover { background: var(--neutral-bg); color: var(--navy-900); }
+.icon-btn svg { width: 18px; height: 18px; }
 .link-btn { background: none; border: 0; padding: 0; color: var(--blue-500); font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
 .link-btn:hover { color: var(--navy-800); }
 
@@ -140,8 +145,8 @@ code { font-family: var(--font-mono); font-size: 0.92em; }
 
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
 .card + .card { margin-top: 20px; }
-.card-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; padding: 18px 22px; border-bottom: 1px solid var(--border); }
-.card-head p { color: var(--muted); font-size: 14px; }
+.card-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; padding: 18px 22px; border-bottom: 1px solid var(--border); }
+.card-head p { color: var(--muted); font-size: 14px; margin-top: 4px; }
 
 /* ---------------------------------------------------------------- Filters */
 
@@ -236,6 +241,78 @@ dl.specs dd { font-weight: 600; font-size: 14px; }
 dl.specs dt:last-of-type, dl.specs dd:last-of-type { border-bottom: 0; }
 .unknown-text { color: var(--muted); font-style: italic; font-weight: 500; }
 .note { padding: 18px 22px; color: var(--muted); }
+
+/* ------------------------------------------------------------ Export dialog */
+
+dialog.export-dialog { width: min(480px, calc(100vw - 32px)); padding: 0; border: 0; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); color: var(--text); }
+dialog.export-dialog::backdrop { background: rgba(0, 28, 56, 0.5); }
+.dlg-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.export-form { display: grid; gap: 14px; padding: 18px 20px 20px; }
+.export-form input[type="text"], .export-form textarea {
+  width: 100%; padding: 9px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); font: inherit; color: var(--text);
+}
+.export-form textarea { resize: vertical; min-height: 84px; }
+.export-form input:focus, .export-form textarea:focus { outline: none; border-color: var(--blue-500); box-shadow: 0 0 0 3px rgba(39, 124, 181, 0.18); }
+.dlg-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
+
+/* -------------------------------------------------- Printable PDF summary sheet */
+
+#print-root { display: none; }
+
+@page { size: A4; margin: 14mm 14mm 16mm; }
+
+@media print {
+  body.printing-sheet { background: #FFFFFF; }
+  body.printing-sheet > :not(#print-root) { display: none !important; }
+  body.printing-sheet #print-root { display: block; }
+}
+
+.print-sheet {
+  --ps-navy: #002C58; --ps-pale: #E8F2F9; --ps-border: #D9E3EC; --ps-muted: #61758A; --ps-green: #217A58; --ps-greenbg: #E5F2EC;
+  width: 182mm; margin: 0 auto; color: var(--text); font-size: 10pt; line-height: 1.4;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.print-sheet .ps-head { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 5mm; border-bottom: 2.5pt solid var(--ps-navy); }
+.print-sheet .ps-brand { display: flex; align-items: center; gap: 3mm; }
+.print-sheet .ps-brand svg { width: 11mm; height: 11mm; }
+.print-sheet .ps-brand-name { font-size: 15pt; font-weight: 700; color: var(--ps-navy); line-height: 1; }
+.print-sheet .ps-brand-sub { font-size: 7.5pt; letter-spacing: .12em; text-transform: uppercase; color: var(--ps-muted); margin-top: 1mm; }
+.print-sheet .ps-meta { text-align: right; font-size: 8.5pt; color: var(--ps-muted); line-height: 1.6; }
+.print-sheet .ps-meta b { color: var(--text); font-weight: 600; }
+.print-sheet h1 { font-size: 17pt; color: var(--ps-navy); margin: 6mm 0 1mm; }
+.print-sheet .ps-lede { color: var(--ps-muted); margin: 0 0 5mm; }
+.print-sheet .ps-label { display: flex; align-items: center; gap: 2mm; font-size: 7.5pt; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin: 0 0 2mm; }
+.print-sheet .ps-label-requested { color: var(--ps-navy); }
+.print-sheet .ps-label-alts { color: var(--ps-green); }
+.print-sheet .ps-n { background: var(--ps-greenbg); border-radius: 10mm; padding: 0 2mm; letter-spacing: 0; }
+.print-sheet .ps-requested { border: 1pt solid #BFD6EA; border-left: 3pt solid var(--ps-navy); border-radius: 2mm; background: #F4F9FD; padding: 4mm; display: grid; grid-template-columns: 22mm 1fr auto; gap: 4mm; align-items: start; break-inside: avoid; }
+.print-sheet .ps-requested .thumb { width: 22mm !important; height: 22mm !important; border-radius: 1.5mm; }
+.print-sheet .ps-pname { font-size: 12pt; font-weight: 700; color: var(--ps-navy); line-height: 1.25; }
+.print-sheet .ps-sub { margin-top: 1.2mm; color: var(--ps-muted); font-size: 8.5pt; }
+.print-sheet .ps-sku { font-family: var(--font-mono); font-size: 8pt; font-weight: 600; color: var(--ps-navy); background: var(--ps-pale); border: .6pt solid #C9DDEE; border-radius: 1mm; padding: .3mm 1.5mm; white-space: nowrap; }
+.print-sheet .ps-price { font-size: 13pt; font-weight: 700; color: var(--ps-navy); text-align: right; white-space: nowrap; }
+.print-sheet .ps-price small { display: block; font-size: 7.5pt; font-weight: 500; color: var(--ps-muted); }
+.print-sheet .ps-specs { display: grid; grid-template-columns: repeat(4, auto); gap: 1.5mm 6mm; margin: 2.5mm 0 0; font-size: 8.5pt; }
+.print-sheet .ps-specs div { display: grid; gap: .3mm; }
+.print-sheet .ps-specs dt { color: var(--ps-muted); font-size: 7pt; text-transform: uppercase; letter-spacing: .06em; }
+.print-sheet .ps-specs dd { margin: 0; font-weight: 600; }
+.print-sheet .ps-matched { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5mm; margin: 4mm 0 5mm; font-size: 8.5pt; color: var(--ps-muted); }
+.print-sheet .ps-chip { background: var(--ps-greenbg); color: var(--ps-green); border-radius: 10mm; padding: .6mm 2.5mm; font-weight: 600; font-size: 8pt; }
+.print-sheet .ps-table { width: 100%; border-collapse: collapse; font-size: 8.5pt; border: 1pt solid var(--ps-border); border-left: 3pt solid var(--ps-green); }
+.print-sheet .ps-table th { text-align: left; font-size: 7pt; letter-spacing: .07em; text-transform: uppercase; color: var(--ps-muted); font-weight: 700; padding: 2mm 2.5mm; background: #F6FBF8; border-bottom: 1pt solid var(--ps-border); }
+.print-sheet .ps-table td { padding: 2.5mm; border-bottom: .6pt solid #E3EAF1; vertical-align: top; }
+.print-sheet .ps-table tr { break-inside: avoid; }
+.print-sheet .ps-table .num { text-align: right; white-space: nowrap; }
+.print-sheet .ps-table .vol { white-space: nowrap; }
+.print-sheet .ps-table .diff { background: var(--ps-pale); font-weight: 650; }
+.print-sheet .ps-pn { font-weight: 650; color: var(--ps-navy); display: block; margin-bottom: .8mm; }
+.print-sheet .ps-idx { color: var(--ps-muted); font-weight: 700; width: 6mm; }
+.print-sheet .ps-none { border: 1pt solid var(--ps-border); border-left: 3pt solid var(--ps-green); padding: 4mm; color: var(--ps-muted); }
+.print-sheet .ps-note { margin-top: 5mm; border: 1pt dashed #9DB8CF; border-radius: 2mm; padding: 3mm 4mm; font-size: 9pt; white-space: pre-line; break-inside: avoid; }
+.print-sheet .ps-note b { display: block; font-size: 7.5pt; letter-spacing: .1em; text-transform: uppercase; color: var(--ps-navy); margin-bottom: 1mm; }
+.print-sheet .ps-foot { margin-top: 8mm; padding-top: 3mm; border-top: .8pt solid var(--ps-border); font-size: 7.5pt; color: var(--ps-muted); display: flex; justify-content: space-between; gap: 6mm; break-inside: avoid; }
+.print-sheet .ps-legend { display: inline-block; width: 3mm; height: 3mm; background: var(--ps-pale); border: .6pt solid #C9DDEE; vertical-align: -.4mm; margin-right: 1mm; }
+.print-sheet .ps-demo { white-space: nowrap; }
 
 /* ------------------------------------------------------------------ Toast */
 

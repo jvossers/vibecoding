@@ -31,6 +31,12 @@ python3 -m http.server 8000
 - **Search page:** one search box. Filters for category, range, volume, sterile and filtered sit behind an **Advanced search** button; they open automatically when a shared link already applies them, and the button shows how many are active. Each row shows the product's price and how many alternatives it has. The filters are kept in the URL, so "Back to search" returns to the same view.
 - **Product page:** the product, then its **Alternatives** section: the requested product in its own panel, the fields it was matched on, and then a separate table with only the matching products (columns line up with the requested product). Columns that are not part of the rules (packaging and price) are highlighted where they differ. Full specifications follow.
 
+## Export PDF
+
+The product page has an **Export PDF** button for emailing a summary to a customer. It opens a short form where "Prepared for", "Prepared by" and a note are all optional; "Prepared by" is remembered in this browser. It then builds a one-page A4 summary: the requested product, the rules it was matched on, all alternatives with prices, and the note. Finally it opens the browser's print dialog, where the rep chooses **Save as PDF**. The suggested file name is `Alternatives – <SKU>`.
+
+This uses the browser's own print engine (`js/ui/exportSheet.js` plus the print styles in `css/styles.css`), so there is no PDF library, and the PDF has real, selectable text. Browsers can't attach files to emails by themselves, so the rep attaches the saved PDF in their email client.
+
 ## Matching rules
 
 A product is an alternative only if it is in the same category and **every** rule passes. There are no scores, confidence levels or partial matches.
@@ -66,6 +72,7 @@ js/domain/validation.js        integrity checks for the catalogue
 js/domain/attributes.js        labels and formatting
 js/ui/catalogue.js             search page
 js/ui/productDetail.js         product page with alternatives
+js/ui/exportSheet.js           one-page PDF summary (via the browser's print dialog)
 js/ui/components.js, dom.js    small DOM helpers (text nodes only for data and input)
 js/ui/illustrations.js         generated geometric product silhouettes (SVG)
 data/products.json             127 synthetic SKUs (91 tips, 26 pipettes, 10 accessories), each with a price
