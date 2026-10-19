@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#05060d">
+  <title>Tilt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #05060d;
+      --ink: #e8ecff;
+      --ink-dim: rgba(232, 236, 255, 0.55);
+      --accent: #5ef0ff;
+      --accent-2: #ff5fb4;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Mono', ui-monospace, monospace;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      touch-action: none;
+      overscroll-behavior: none;
+    }
+
+    canvas { display: block; position: fixed; inset: 0; touch-action: none; }
+
+    #start {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      padding: 24px;
+      text-align: center;
+      background: radial-gradient(ellipse at 50% 60%, rgba(30, 40, 110, 0.35), transparent 70%);
+      transition: opacity 0.6s ease;
+      z-index: 2;
+    }
+    #start.gone { opacity: 0; pointer-events: none; }
+
+    h1 {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: clamp(64px, 22vw, 140px);
+      letter-spacing: -0.04em;
+      line-height: 0.9;
+      background: linear-gradient(160deg, var(--accent) 10%, #8a7dff 50%, var(--accent-2) 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      transform: rotate(-6deg);
+    }
+
+    #start p {
+      max-width: 22em;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--ink-dim);
+    }
+
+    #go {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      background: rgba(94, 240, 255, 0.08);
+      border: 1px solid rgba(94, 240, 255, 0.5);
+      border-radius: 999px;
+      padding: 16px 36px;
+      cursor: pointer;
+      box-shadow: 0 0 40px rgba(94, 240, 255, 0.15);
+    }
+    #go:active { transform: scale(0.97); }
+
+    #hints {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: max(20px, env(safe-area-inset-bottom));
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 16px;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      opacity: 0;
+      transition: opacity 1.2s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+    #hints.show { opacity: 1; }
+    #hints span {
+      padding: 6px 10px;
+      border: 1px solid rgba(232, 236, 255, 0.15);
+      border-radius: 999px;
+      background: rgba(5, 6, 13, 0.5);
+    }
+  </style>
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+  </script>
+</head>
+<body>
+  <div id="start">
+    <h1>Tilt</h1>
+    <p id="intro">A box of glowing sand. Tilt your phone to pour it, twist to swirl, shake to scatter, touch to gather.</p>
+    <button id="go">Tap to start</button>
+  </div>
+  <div id="hints"></div>
+
+  <script type="module">
+    import * as THREE from 'three';
+
+    // ---- Settings -------------------------------------------------------
+    const isTouch = matchMedia('(pointer: coarse)').matches;
+    const N = isTouch ? 14000 : 22000;
+    const HY = 1;            // box half-height (world units)
+    const HZ = 0.3;          // box half-depth
+    const CELLS_Y = 40;      // pressure grid resolution along the height
+    const G = 3.2;           // gravity strength
+    const FILL = 0.4;        // fraction of the box the sand settles into
+    const DAMP = 0.9;        // velocity damping per second
+    const BOUNCE = 0.35;     // wall restitution
+    const SWIRL = 1.4;       // how strongly a twist drags the sand around
+    const PULL = 6;          // touch attractor strength
+    const SHAKE_THRESHOLD = 14; // m/s² of acceleration that counts as a shake
+
+    // ---- Renderer & scene ----------------------------------------------
+    const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setClearColor(0x05060d);
+    document.body.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 50);
+
+    let HX = 1;
+    let nx, ny, nz, CSX, CSY, CSZ, rho, pressure, wallBoost;
+
+    const positions = new Float32Array(N * 3);
+    const colors = new Float32Array(N * 3);
+    const vel = new Float32Array(N * 3);
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3).setUsage(THREE.DynamicDrawUsage));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3).setUsage(THREE.DynamicDrawUsage));
+
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        uSize: { value: isTouch ? 15 : 13 },
+        uPixelRatio: { value: renderer.getPixelRatio() },
+        uFlash: { value: 0 },
+      },
+      vertexShader: /* glsl */`
+        uniform float uSize;
+        uniform float uPixelRatio;
+        attribute vec3 color;
+        varying vec3 vColor;
+        varying float vDepth;
+        void main() {
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          gl_Position = projectionMatrix * mv;
+          gl_PointSize = uSize * uPixelRatio / -mv.z;
+          vColor = color;
+          vDepth = smoothstep(-${HZ.toFixed(2)}, ${HZ.toFixed(2)}, position.z);
+        }
+      `,
+      fragmentShader: /* glsl */`
+        uniform float uFlash;
+        varying vec3 vColor;
+        varying float vDepth;
+        void main() {
+          float d = length(gl_PointCoord - 0.5);
+          float a = smoothstep(0.5, 0.0, d);
+          vec3 c = vColor * (0.55 + 0.45 * vDepth) + uFlash;
+          gl_FragColor = vec4(c, a * 0.8);
+        }
+      `,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    scene.add(new THREE.Points(geometry, material));
+
+    let boxLines = null;
+
+    function resize() {
+      const w = innerWidth, h = innerHeight;
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      HX = HY * camera.aspect;
+      // Fit the front face of the box exactly to the screen.
+      camera.position.set(0, 0, HZ + HY / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
+      camera.lookAt(0, 0, 0);
+      camera.updateProjectionMatrix();
+
+      // Grid nodes sit exactly on the walls. A wall node only gathers density
+      // from one side, so it's doubled per wall to stop sand sticking to edges.
+      const cs = (2 * HY) / CELLS_Y;
+      nx = Math.max(2, Math.round((2 * HX) / cs)) + 1;
+      ny = CELLS_Y + 1;
+      nz = Math.max(2, Math.round((2 * HZ) / cs)) + 1;
+      CSX = (2 * HX) / (nx - 1); CSY = (2 * HY) / (ny - 1); CSZ = (2 * HZ) / (nz - 1);
+      rho = new Float32Array(nx * ny * nz);
+      pressure = new Float32Array(nx * ny * nz);
+      wallBoost = new Float32Array(nx * ny * nz);
+      for (let k = 0; k < nz; k++) for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+        wallBoost[i + j * nx + k * nx * ny] =
+          (i === 0 || i === nx - 1 ? 2 : 1) * (j === 0 || j === ny - 1 ? 2 : 1) * (k === 0 || k === nz - 1 ? 2 : 1);
+      }
+
+      if (boxLines) { scene.remove(boxLines); boxLines.geometry.dispose(); }
+      boxLines = new THREE.LineSegments(
+        new THREE.EdgesGeometry(new THREE.BoxGeometry(2 * HX, 2 * HY, 2 * HZ)),
+        new THREE.LineBasicMaterial({ color: 0x8fa0ff, transparent: true, opacity: 0.12 })
+      );
+      scene.add(boxLines);
+    }
+    resize();
+    addEventListener('resize', resize);
+
+    for (let i = 0; i < N; i++) {
+      positions[i * 3] = (Math.random() * 2 - 1) * HX;
+      positions[i * 3 + 1] = (Math.random() * 2 - 1) * HY;
+      positions[i * 3 + 2] = (Math.random() * 2 - 1) * HZ;
+    }
+
+    // ---- Input: tilt, twist, shake, touch ------------------------------
+    const gTarget = new THREE.Vector3(0, -1, -0.3).normalize();
+    const g = gTarget.clone();
+    let spin = 0;            // rad/s around the screen axis
+    let sensorsActive = false;
+    let lastShake = 0;
+    let flash = 0;
+    const pointer = { down: false, x: 0, y: 0 };
+
+    function screenAngle() {
+      const a = screen.orientation ? screen.orientation.angle : window.orientation;
+      return THREE.MathUtils.degToRad(a || 0);
+    }
+
+    // Device frame -> screen frame, so tilt still feels right in landscape.
+    function toScreen(dx, dy) {
+      const a = screenAngle(), c = Math.cos(a), s = Math.sin(a);
+      return [dx * c - dy * s, dx * s + dy * c];
+    }
+
+    function onOrientation(e) {
+      if (e.beta === null || e.gamma === null) return;
+      sensorsActive = true;
+      const b = THREE.MathUtils.degToRad(e.beta);
+      const gm = THREE.MathUtils.degToRad(e.gamma);
+      // Direction of "down" in the device's own coordinates.
+      const [sx, sy] = toScreen(Math.cos(b) * Math.sin(gm), -Math.sin(b));
+      gTarget.set(sx, sy, -Math.cos(b) * Math.cos(gm));
+    }
+
+    function onMotion(e) {
+      const r = e.rotationRate;
+      if (r && r.alpha !== null) spin = THREE.MathUtils.degToRad(r.alpha);
+
+      let mag = 0;
+      const a = e.acceleration;
+      if (a && a.x !== null) {
+        mag = Math.hypot(a.x, a.y, a.z);
+      } else if (e.accelerationIncludingGravity && e.accelerationIncludingGravity.x !== null) {
+        const ag = e.accelerationIncludingGravity;
+        mag = Math.abs(Math.hypot(ag.x, ag.y, ag.z) - 9.81);
+      }
+      const now = performance.now();
+      if (mag > SHAKE_THRESHOLD && now - lastShake > 350) {
+        lastShake = now;
+        burst(Math.min(mag / SHAKE_THRESHOLD, 2.5));
+      }
+    }
+
+    function burst(strength) {
+      for (let i = 0; i < N * 3; i++) vel[i] += (Math.random() * 2 - 1) * 1.6 * strength;
+      flash = Math.min(0.35, 0.15 * strength);
+    }
+
+    function pointerToWorld(e) {
+      pointer.x = (e.clientX / innerWidth * 2 - 1) * HX;
+      pointer.y = -(e.clientY / innerHeight * 2 - 1) * HY;
+    }
+
+    const canvas = renderer.domElement;
+    canvas.addEventListener('pointerdown', e => { pointer.down = true; pointerToWorld(e); });
+    addEventListener('pointerup', () => { pointer.down = false; });
+    addEventListener('pointercancel', () => { pointer.down = false; });
+    addEventListener('pointermove', e => {
+      pointerToWorld(e);
+      // Without motion sensors the mouse position stands in for tilt.
+      if (!sensorsActive && e.pointerType === 'mouse') {
+        gTarget.set(pointer.x / HX, pointer.y / HY, -0.8);
+      }
+    });
+    canvas.addEventListener('dblclick', () => burst(1.5));
+    addEventListener('keydown', e => { if (e.code === 'Space') burst(1.5); });
+
+    // ---- Start: motion permission (iOS needs a tap) --------------------
+    async function requestMotion() {
+      const asks = [];
+      if (typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) {
+        asks.push(DeviceOrientationEvent.requestPermission());
+      }
+      if (typeof DeviceMotionEvent !== 'undefined' && DeviceMotionEvent.requestPermission) {
+        asks.push(DeviceMotionEvent.requestPermission());
+      }
+      try {
+        const results = await Promise.all(asks);
+        return results.every(r => r === 'granted');
+      } catch {
+        return false;
+      }
+    }
+
+    let wakeLock = null;
+    async function keepAwake() {
+      try { wakeLock = await navigator.wakeLock?.request('screen'); } catch { /* not supported */ }
+    }
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && wakeLock) keepAwake();
+    });
+
+    document.getElementById('go').addEventListener('click', async () => {
+      const granted = await requestMotion();
+      if (granted) {
+        addEventListener('deviceorientation', onOrientation);
+        addEventListener('devicemotion', onMotion);
+      }
+      keepAwake();
+      document.getElementById('start').classList.add('gone');
+
+      // Give sensors a moment to report before choosing which hints to show.
+      setTimeout(() => {
+        const hints = document.getElementById('hints');
+        const list = sensorsActive
+          ? ['Tilt to pour', 'Twist to swirl', 'Shake to scatter', 'Touch to gather']
+          : isTouch
+            ? ['Motion access off', 'Touch to gather']
+            : ['Move mouse to tilt', 'Hold to gather', 'Space to scatter'];
+        hints.innerHTML = list.map(t => `<span>${t}</span>`).join('');
+        hints.classList.add('show');
+        setTimeout(() => hints.classList.remove('show'), 6000);
+      }, 800);
+    });
+
+    // ---- Simulation ----------------------------------------------------
+    // Particles push apart through a coarse density grid: each particle
+    // deposits into its 8 neighbouring cells, and over-dense cells push
+    // particles down the pressure gradient. Cheap, and it behaves like sand/fluid.
+    function step(dt) {
+      const restDensity = N / ((nx - 1) * (ny - 1) * (nz - 1) * FILL);
+      const K = G / (0.6 * restDensity);
+      const sxy = nx * ny;
+
+      rho.fill(0);
+      for (let i = 0; i < N; i++) {
+        const p = i * 3;
+        const fx = (positions[p] + HX) / CSX, fy = (positions[p + 1] + HY) / CSY, fz = (positions[p + 2] + HZ) / CSZ;
+        const ix = Math.min(Math.max(fx | 0, 0), nx - 2);
+        const iy = Math.min(Math.max(fy | 0, 0), ny - 2);
+        const iz = Math.min(Math.max(fz | 0, 0), nz - 2);
+        const tx = Math.min(Math.max(fx - ix, 0), 1), ty = Math.min(Math.max(fy - iy, 0), 1), tz = Math.min(Math.max(fz - iz, 0), 1);
+        const c = ix + iy * nx + iz * sxy;
+        const ux = 1 - tx, uy = 1 - ty, uz = 1 - tz;
+        rho[c] += ux * uy * uz;
+        rho[c + 1] += tx * uy * uz;
+        rho[c + nx] += ux * ty * uz;
+        rho[c + nx + 1] += tx * ty * uz;
+        rho[c + sxy] += ux * uy * tz;
+        rho[c + sxy + 1] += tx * uy * tz;
+        rho[c + sxy + nx] += ux * ty * tz;
+        rho[c + sxy + nx + 1] += tx * ty * tz;
+      }
+      for (let c = 0; c < rho.length; c++) pressure[c] = Math.max(0, rho[c] * wallBoost[c] - restDensity) * K;
+
+      const gx = g.x * G, gy = g.y * G, gz = g.z * G;
+      const damp = Math.exp(-DAMP * dt);
+      const swirl = -spin * SWIRL;
+      const P = pressure;
+
+      for (let i = 0; i < N; i++) {
+        const p = i * 3;
+        let x = positions[p], y = positions[p + 1], z = positions[p + 2];
+
+        // Gradient of the trilinear-interpolated pressure field.
+        const fx = (x + HX) / CSX, fy = (y + HY) / CSY, fz = (z + HZ) / CSZ;
+        const ix = Math.min(Math.max(fx | 0, 0), nx - 2);
+        const iy = Math.min(Math.max(fy | 0, 0), ny - 2);
+        const iz = Math.min(Math.max(fz | 0, 0), nz - 2);
+        const tx = Math.min(Math.max(fx - ix, 0), 1), ty = Math.min(Math.max(fy - iy, 0), 1), tz = Math.min(Math.max(fz - iz, 0), 1);
+        const ux = 1 - tx, uy = 1 - ty, uz = 1 - tz;
+        const c = ix + iy * nx + iz * sxy;
+        const p000 = P[c], p100 = P[c + 1], p010 = P[c + nx], p110 = P[c + nx + 1];
+        const p001 = P[c + sxy], p101 = P[c + sxy + 1], p011 = P[c + sxy + nx], p111 = P[c + sxy + nx + 1];
+        const dpx = (uy * uz * (p100 - p000) + ty * uz * (p110 - p010) + uy * tz * (p101 - p001) + ty * tz * (p111 - p011)) / CSX;
+        const dpy = (ux * uz * (p010 - p000) + tx * uz * (p110 - p100) + ux * tz * (p011 - p001) + tx * tz * (p111 - p101)) / CSY;
+        const dpz = (ux * uy * (p001 - p000) + tx * uy * (p101 - p100) + ux * ty * (p011 - p010) + tx * ty * (p111 - p110)) / CSZ;
+
+        let ax = gx - dpx + swirl * -y;
+        let ay = gy - dpy + swirl * x;
+        let az = gz - dpz;
+
+        if (pointer.down) {
+          const dx = pointer.x - x, dy = pointer.y - y;
+          const r = Math.hypot(dx, dy) + 0.08;
+          ax += (dx * PULL - dy * 2) / r;
+          ay += (dy * PULL + dx * 2) / r;
+          az -= z * 4;
+        }
+
+        let vx = (vel[p] + ax * dt) * damp;
+        let vy = (vel[p + 1] + ay * dt) * damp;
+        let vz = (vel[p + 2] + az * dt) * damp;
+
+        x += vx * dt; y += vy * dt; z += vz * dt;
+        if (x < -HX) { x = -HX; vx = -vx * BOUNCE; } else if (x > HX) { x = HX; vx = -vx * BOUNCE; }
+        if (y < -HY) { y = -HY; vy = -vy * BOUNCE; } else if (y > HY) { y = HY; vy = -vy * BOUNCE; }
+        if (z < -HZ) { z = -HZ; vz = -vz * BOUNCE; } else if (z > HZ) { z = HZ; vz = -vz * BOUNCE; }
+
+        positions[p] = x; positions[p + 1] = y; positions[p + 2] = z;
+        vel[p] = vx; vel[p + 1] = vy; vel[p + 2] = vz;
+      }
+    }
+
+    // Speed -> colour: deep indigo at rest, cyan when flowing, hot pink when flung.
+    function paint() {
+      for (let i = 0; i < N; i++) {
+        const p = i * 3;
+        const s = Math.min(Math.hypot(vel[p], vel[p + 1], vel[p + 2]) / 2.2, 1);
+        if (s < 0.5) {
+          const t = s * 2;
+          colors[p] = 0.24 + t * 0.0;
+          colors[p + 1] = 0.30 + t * 0.64;
+          colors[p + 2] = 0.95 + t * 0.05;
+        } else {
+          const t = (s - 0.5) * 2;
+          colors[p] = 0.24 + t * 0.76;
+          colors[p + 1] = 0.94 - t * 0.57;
+          colors[p + 2] = 1.0 - t * 0.29;
+        }
+      }
+    }
+
+    // ---- Loop ----------------------------------------------------------
+    let last = performance.now();
+    function frame(now) {
+      const dt = Math.min((now - last) / 1000, 1 / 30);
+      last = now;
+
+      g.lerp(gTarget, 1 - Math.exp(-dt * 12));
+      spin *= Math.exp(-dt * 4);   // decays if motion events stop
+      step(dt / 2);
+      step(dt / 2);
+      paint();
+
+      flash *= Math.exp(-dt * 6);
+      material.uniforms.uFlash.value = flash;
+      geometry.attributes.position.needsUpdate = true;
+      geometry.attributes.color.needsUpdate = true;
+      renderer.render(scene, camera);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  </script>
+</body>
+</html>
