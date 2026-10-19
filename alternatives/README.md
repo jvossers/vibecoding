@@ -74,7 +74,7 @@ js/ui/catalogue.js             search page
 js/ui/productDetail.js         product page with alternatives
 js/ui/exportSheet.js           one-page PDF summary (via the browser's print dialog)
 js/ui/components.js, dom.js    small DOM helpers (text nodes only for data and input)
-js/ui/illustrations.js         generated geometric product silhouettes (SVG)
+js/ui/illustrations.js         generic SVG files for assets/ (used by the generator only)
 data/products.json             127 synthetic SKUs (91 tips, 26 pipettes, 10 accessories), each with a price
 data/instrument-families.json  7 fictional pipette families and their tip interfaces
 scripts/generateSyntheticCatalogue.js  deterministic generator
@@ -83,6 +83,7 @@ tests/*.test.js                node:test suites
 
 - **Data access:** views only call the async methods of `createCatalogueRepository()` (`listProducts`, `getProduct`, `alternativesFor`, …). If alternatives later come from another system, only that module changes.
 - **Rendering:** all product data and user input reach the page as text nodes.
+- **Product photos:** there are no real photos yet. Every product image slot shows a labelled "Product photo placeholder" box (`productThumb()` in `js/ui/components.js`), which is the one place to change once real photos exist.
 
 ## Prices
 

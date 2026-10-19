@@ -140,6 +140,20 @@ code { font-family: var(--font-mono); font-size: 0.92em; }
 .thumb { display: block; flex: none; border-radius: 8px; overflow: hidden; background: var(--blue-100); }
 .thumb svg { display: block; width: 100%; height: 100%; }
 
+/* Product photo placeholders (no real photos yet) */
+.photo-ph {
+  display: grid; place-content: center; justify-items: center; gap: 6px; text-align: center;
+  background: repeating-linear-gradient(135deg, #F4F8FB 0 8px, #EAF1F7 8px 16px);
+  border: 1.5px dashed #9DB8CF; color: #5A7590; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; line-height: 1.15;
+}
+.photo-ph svg { width: 34%; height: auto; opacity: .7; }
+.photo-ph-text { display: grid; }
+.photo-ph-sm { font-size: 8px; letter-spacing: .04em; border-width: 1px; }
+.photo-ph-md { font-size: 9px; gap: 3px; }
+.photo-ph-md svg { width: 30%; }
+.photo-ph-lg { font-size: 12px; gap: 8px; }
+.photo-ph-lg svg { width: 28%; }
+
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
 .card + .card { margin-top: 20px; }
 .card-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; padding: 18px 22px; border-bottom: 1px solid var(--border); }
@@ -325,6 +339,7 @@ dl.specs dt:last-of-type, dl.specs dd:last-of-type { border-bottom: 0; }
   .advanced-toggle { height: 38px; }
   .product-head { grid-template-columns: 88px minmax(0, 1fr); gap: 16px; padding: 16px; }
   .product-head .thumb { width: 88px !important; height: 88px !important; }
+  .product-head .photo-ph-lg { font-size: 8.5px; gap: 4px; }
   .product-head h1 { font-size: 21px; }
   .spec-grid { grid-template-columns: minmax(0, 1fr); }
   .spec-group:nth-child(odd) { border-right: 0; }
