@@ -1,0 +1,34 @@
+{
+  "groups": ["Teaching", "Explainers", "Tools", "Toys & games"],
+
+  "hidden": [
+    "chatreel",
+    "wietsma"
+  ],
+
+  "projects": {
+    "alevels":       { "title": "Trio",                   "group": "Teaching",     "description": "Score an A-level combination for university and careers, and see the best subject to add next." },
+    "alternatives":  { "title": "Parity",                 "group": "Tools",        "description": "Sales-assistant prototype that finds rule-based alternatives to lab consumables." },
+    "arrays":        { "title": "Array Lab",              "group": "Teaching",     "description": "Write a Python list of colours and watch it become a row, a grid or a cube." },
+    "beats":         { "title": "BEATS",                  "group": "Toys & games", "description": "A retro, CRT-styled tracker for making beats on your phone." },
+    "bird":          { "title": "Flappy Cockatiels",      "group": "Toys & games", "description": "Flappy Bird, but with a pair of cockatiels." },
+    "chemistry":     { "title": "Reactivity of Metals",   "group": "Teaching",     "description": "AQA GCSE Chemistry revision pages and a quiz on the reactivity series." },
+    "cpu":           { "title": "CPU & RAM Simulator",    "group": "Teaching",     "description": "Step through how a CPU fetches and runs instructions from memory." },
+    "cs":            { "title": "GCSE CS Simulations",    "group": "Teaching",     "description": "Interactive simulations for the OCR GCSE Computer Science course." },
+    "dailycheck":    { "title": "Vinker",                 "group": "Tools",        "description": "A daily checklist for tasks you repeat several times a day." },
+    "emv":           { "title": "Cryptogram",             "group": "Explainers",   "description": "Insert a chip card and watch every cryptographic step of an EMV payment." },
+    "examtutor":     { "title": "Full Marks",             "group": "Teaching",     "description": "Rank answers by the marks they'd earn and learn GCSE exam technique." },
+    "fauxreel":      { "title": "Faux Reel",              "group": "Tools",        "description": "Turn a chat transcript into a fake phone screen recording, exported as GIF or video." },
+    "foodgame":      { "title": "Feed Me Right!",         "group": "Toys & games", "description": "Tap the healthy food and dodge the junk before the character explodes." },
+    "geo":           { "title": "Geography Blackjack",    "group": "Toys & games", "description": "Fill a target country with other countries' land area without going over 100%." },
+    "http":          { "title": "HTTP Requests",          "group": "Teaching",     "description": "Ten click-along pages for watching HTTP requests in DevTools." },
+    "mass":          { "title": "Understanding the Mass", "group": "Explainers",   "description": "A guided timeline through the structure of a Catholic Mass." },
+    "meanwhile":     { "title": "Meanwhile",              "group": "Explainers",   "description": "Compare countries, regions and people on a zoomable timeline of history." },
+    "piano":         { "title": "Sight Reading Practice", "group": "Teaching",     "description": "Name notes on the treble and bass clef against the clock." },
+    "pillartwordle": { "title": "Pillar Twordle",         "group": "Toys & games", "description": "A Wordle-style game about the global minimum tax." },
+    "rivercrossing": { "title": "River Crossing",         "group": "Toys & games", "description": "The classic river-crossing logic puzzle." },
+    "stikstof":      { "title": "Stikstof",               "group": "Explainers",   "description": "Visual explainer (in Dutch) on the nitrogen crisis, and why the UK doesn't have one." },
+    "tilt":          { "title": "Tilt",                   "group": "Toys & games", "description": "Particle toys that pour, swirl and scatter as you move your phone." },
+    "timeline":      { "title": "Timeline Puzzle",        "group": "Toys & games", "description": "Drag historical events into the right order." }
+  }
+}
