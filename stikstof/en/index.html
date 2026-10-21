@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stikstof — why the Netherlands is stuck on nitrogen and the UK isn't</title>
+<meta name="description" content="A visual explainer of the Dutch nitrogen crisis, and why the United Kingdom doesn't have the same problem. With maps, tables and diagrams.">
+<link rel="alternate" hreflang="nl" href="https://labs.vossers.com/stikstof/">
+<link rel="alternate" hreflang="en" href="https://labs.vossers.com/stikstof/en/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   PALET — heideveld & kadasterpapier
+   ============================================================ */
+:root{
+  --paper:      #E7E0CE;
+  --paper-hi:   #F3EEE1;
+  --paper-lo:   #DCD3BC;
+  --ink:        #14130D;
+  --ink-2:      #45412F;
+  --ink-3:      #7A7461;
+
+  --nl:         #B8410B;   /* roest — Nederland */
+  --nl-lo:      #F0D6C4;
+  --uk:         #23566B;   /* leisteenblauw — VK */
+  --uk-lo:      #CFDDE2;
+  --heide:      #6B3766;   /* heidepaars — natuur */
+  --mosterd:    #C99A16;   /* alarm */
+  --gras:       #4E6B27;
+
+  --rule:       rgba(20,19,13,.16);
+  --rule-soft:  rgba(20,19,13,.08);
+
+  --serif: "Newsreader", Georgia, serif;
+  --disp:  "Bricolage Grotesque", "Helvetica Neue", sans-serif;
+  --mono:  "IBM Plex Mono", ui-monospace, monospace;
+
+  --pad: clamp(1.25rem, 4vw, 3rem);
+  --measure: 62ch;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background-color:var(--paper);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-size:clamp(1.02rem,.55vw + .92rem,1.18rem);
+  line-height:1.62;
+  font-weight:400;
+  overflow-x:hidden;
+  /* millimeterpapier: fijn raster + iets zwaardere lijn per 5 */
+  background-image:
+    linear-gradient(var(--rule-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule-soft) 1px, transparent 1px);
+  background-size: 28px 28px, 28px 28px;
+}
+/* korrel */
+body::after{
+  content:""; position:fixed; inset:0; z-index:9999; pointer-events:none;
+  opacity:.42; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   MEETLAT — voortgangsbalk bovenaan
+   ============================================================ */
+.meetlat{
+  position:fixed; top:0; left:0; right:0; height:26px; z-index:900;
+  background:linear-gradient(to bottom, var(--paper-hi), var(--paper-hi) 60%, transparent);
+  border-bottom:1px solid var(--rule);
+  display:flex; align-items:center;
+}
+.meetlat .streepjes{
+  position:absolute; inset:0;
+  background-image:repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px 2.5%);
+}
+.meetlat .naald{
+  position:absolute; top:0; bottom:0; left:0; width:0;
+  border-right:2px solid var(--nl);
+  background:linear-gradient(90deg, rgba(184,65,11,.13), rgba(184,65,11,.05));
+  transition:width .08s linear;
+}
+.meetlat .aflezing{
+  position:absolute; right:10px; top:50%; transform:translateY(-50%);
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.1em;
+  color:var(--ink-3); background:var(--paper-hi); padding-left:8px;
+}
+
+/* ============================================================
+   TAALKEUZE — NL / EN
+   ============================================================ */
+.taal{
+  position:fixed; top:34px; right:10px; z-index:901; display:flex;
+  font-family:var(--mono); font-size:.64rem; font-weight:600; letter-spacing:.14em;
+  background:var(--paper-hi); border:1px solid var(--rule);
+  box-shadow:2px 2px 0 rgba(20,19,13,.055);
+}
+.taal a{padding:.45em .75em; color:var(--ink-3); text-decoration:none}
+.taal a + a{border-left:1px solid var(--rule)}
+.taal a:hover{color:var(--nl)}
+.taal a[aria-current]{background:var(--ink); color:var(--paper-hi)}
+
+/* ============================================================
+   BASIS-TYPOGRAFIE
+   ============================================================ */
+.wrap{ width:min(1180px, 100% - 2*var(--pad)); margin-inline:auto; }
+.kolom{ max-width:var(--measure); }
+
+h2{
+  font-family:var(--disp); font-weight:800;
+  font-size:clamp(1.9rem, 3.4vw, 3.1rem);
+  line-height:1.02; letter-spacing:-.025em;
+  margin:0 0 .6em; text-wrap:balance;
+}
+h3{
+  font-family:var(--disp); font-weight:600;
+  font-size:clamp(1.12rem,1.4vw,1.4rem); line-height:1.18;
+  letter-spacing:-.01em; margin:2.4em 0 .5em;
+}
+p{margin:0 0 1.05em}
+strong{font-weight:500; background:linear-gradient(transparent 62%, rgba(201,154,22,.4) 62%);}
+em{font-style:italic}
+a{color:var(--nl); text-underline-offset:3px; text-decoration-thickness:1px}
+
+.label{
+  font-family:var(--mono); font-size:.66rem; font-weight:600;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--ink-3);
+}
+.lead{
+  font-size:clamp(1.15rem,1.05vw + .95rem,1.5rem); line-height:1.45;
+  font-weight:300; color:var(--ink-2); max-width:34ch;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  min-height:100svh; position:relative;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:6rem 0 3rem; overflow:hidden;
+}
+.pluim{position:absolute; inset:0; z-index:0; opacity:.5; pointer-events:none}
+.hero .wrap{position:relative; z-index:1}
+
+.woordmerk{
+  font-family:var(--disp); font-weight:800;
+  font-size:clamp(3.6rem, 15.5vw, 15rem);
+  line-height:.82; letter-spacing:-.05em; margin:.08em 0 .1em;
+  display:flex; flex-wrap:wrap;
+}
+.woordmerk span{
+  display:inline-block; transform:translateY(1.05em) rotate(2deg); opacity:0;
+  animation:letterOp .95s cubic-bezier(.2,.85,.25,1) forwards;
+}
+.woordmerk span:nth-child(1){animation-delay:.06s} .woordmerk span:nth-child(2){animation-delay:.12s}
+.woordmerk span:nth-child(3){animation-delay:.18s} .woordmerk span:nth-child(4){animation-delay:.24s}
+.woordmerk span:nth-child(5){animation-delay:.30s} .woordmerk span:nth-child(6){animation-delay:.36s}
+.woordmerk span:nth-child(7){animation-delay:.42s} .woordmerk span:nth-child(8){animation-delay:.48s}
+@keyframes letterOp{to{transform:translateY(0) rotate(0); opacity:1}}
+
+.hero-formule{
+  font-family:var(--mono); font-size:clamp(.72rem,1.1vw,.92rem);
+  color:var(--nl); letter-spacing:.06em; margin-bottom:.4rem;
+}
+.hero-onder{
+  display:grid; grid-template-columns:1fr; gap:2rem 3rem;
+  border-top:1px solid var(--rule); padding-top:1.6rem; margin-top:1.6rem;
+  animation:opkomst 1s .6s both;
+}
+@media(min-width:820px){ .hero-onder{grid-template-columns:1.35fr .9fr; align-items:start} }
+.hero-meta{font-family:var(--mono); font-size:.68rem; line-height:2; color:var(--ink-3); letter-spacing:.04em}
+.hero-meta b{color:var(--ink); font-weight:600}
+@keyframes opkomst{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+
+.scrolltip{
+  margin-top:2.6rem; font-family:var(--mono); font-size:.66rem;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--ink-3);
+  display:flex; align-items:center; gap:.7rem;
+  animation:opkomst 1s 1.1s both;
+}
+.scrolltip::after{
+  content:""; width:44px; height:1px; background:var(--ink-3);
+  transform-origin:left; animation:rek 1.8s ease-in-out infinite;
+}
+@keyframes rek{0%,100%{transform:scaleX(.3)} 50%{transform:scaleX(1)}}
+
+/* ============================================================
+   SECTIES
+   ============================================================ */
+section.hoofdstuk{ padding:clamp(4rem,9vh,7.5rem) 0; position:relative; }
+section.hoofdstuk + section.hoofdstuk{ border-top:1px solid var(--rule); }
+
+.kop{ display:grid; gap:.4rem 2.5rem; margin-bottom:2.2rem; }
+@media(min-width:900px){
+  .kop{ grid-template-columns:78px 1fr; }
+  .kop .nr{ text-align:right; padding-top:.75rem; }
+}
+.kop .nr{
+  font-family:var(--mono); font-size:.7rem; font-weight:600;
+  letter-spacing:.12em; color:var(--nl);
+}
+.kop .nr::before{content:"↓ "; opacity:.5}
+
+/* onthullen bij scrollen */
+.onthul{opacity:0; transform:translateY(22px); transition:opacity .75s cubic-bezier(.2,.8,.3,1), transform .75s cubic-bezier(.2,.8,.3,1)}
+.onthul.zichtbaar{opacity:1; transform:none}
+.onthul[data-vertraag="1"]{transition-delay:.09s}
+.onthul[data-vertraag="2"]{transition-delay:.18s}
+.onthul[data-vertraag="3"]{transition-delay:.27s}
+.onthul[data-vertraag="4"]{transition-delay:.36s}
+
+/* ============================================================
+   BOUWSTENEN
+   ============================================================ */
+.kaart{
+  background:var(--paper-hi); border:1px solid var(--rule);
+  padding:1.4rem 1.5rem; position:relative;
+  box-shadow:3px 3px 0 rgba(20,19,13,.055);
+}
+.kaart .kaartlabel{
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--ink-3); margin-bottom:.5rem; display:block;
+}
+.kaart p:last-child{margin-bottom:0}
+
+.rooster-3{display:grid; gap:1rem; grid-template-columns:1fr}
+@media(min-width:760px){.rooster-3{grid-template-columns:repeat(3,1fr)}}
+.rooster-2{display:grid; gap:1.6rem; grid-template-columns:1fr}
+@media(min-width:860px){.rooster-2{grid-template-columns:1fr 1fr}}
+
+/* cijferblokken */
+.cijferrij{display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); gap:0; border:1px solid var(--rule); background:var(--paper-hi)}
+.cijfer{padding:1.3rem 1.2rem; border-right:1px solid var(--rule); border-bottom:1px solid var(--rule)}
+.cijfer .waarde{
+  font-family:var(--disp); font-weight:800; letter-spacing:-.03em;
+  font-size:clamp(1.9rem,3.6vw,2.9rem); line-height:1; color:var(--nl);
+  display:block; font-variant-numeric:tabular-nums;
+}
+.cijfer.blauw .waarde{color:var(--uk)}
+.cijfer .eenheid{font-family:var(--mono); font-size:.72rem; color:var(--ink-2); display:block; margin-top:.15rem}
+.cijfer .uitleg{font-size:.84rem; line-height:1.4; color:var(--ink-2); margin-top:.5rem}
+
+/* citaat / kernpunt */
+.kernpunt{
+  border-left:3px solid var(--nl); padding:.2rem 0 .2rem 1.4rem;
+  font-family:var(--disp); font-weight:600; letter-spacing:-.015em;
+  font-size:clamp(1.15rem,1.7vw,1.55rem); line-height:1.28;
+  margin:2.2rem 0; max-width:30ch;
+}
+.kernpunt.blauw{border-color:var(--uk)}
+
+/* tabellen */
+.tabelhoes{overflow-x:auto; border:1px solid var(--rule); background:var(--paper-hi); margin:1.4rem 0}
+table{border-collapse:collapse; width:100%; min-width:640px; font-size:.9rem}
+caption{
+  caption-side:top; text-align:left; padding:.9rem 1rem .1rem;
+  font-family:var(--mono); font-size:.63rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--ink-3);
+}
+th,td{padding:.72rem 1rem; text-align:left; border-bottom:1px solid var(--rule-soft); vertical-align:top}
+thead th{
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase;
+  font-weight:600; border-bottom:1px solid var(--rule); white-space:nowrap;
+}
+thead th:nth-child(2){color:var(--nl)} thead th:nth-child(3){color:var(--uk)}
+tbody tr:hover{background:rgba(20,19,13,.028)}
+td:first-child{font-weight:500; width:30%}
+tbody tr:last-child td{border-bottom:none}
+td .mono{font-family:var(--mono); font-size:.86em}
+
+/* figuren */
+figure{margin:2rem 0}
+.figvak{overflow-x:auto; overflow-y:hidden; padding-bottom:.35rem}
+figure svg{display:block; width:100%; height:auto; overflow:visible}
+/* Op smalle schermen worden de diagrammen onleesbaar als ze meeschalen;
+   geef ze daarom een minimumbreedte en laat het vak horizontaal scrollen. */
+@media(max-width:760px){
+  .figvak{ margin-inline:calc(-1 * var(--pad)); padding-inline:var(--pad); }
+  .figvak svg{ min-width:620px; }
+}
+figcaption{
+  font-family:var(--mono); font-size:.66rem; line-height:1.65; color:var(--ink-3);
+  margin-top:.85rem; padding-top:.6rem; border-top:1px solid var(--rule);
+  max-width:78ch;
+}
+figcaption b{color:var(--ink-2); font-weight:600}
+
+.svgtxt{font-family:var(--mono); font-size:10px; fill:var(--ink-2); letter-spacing:.04em}
+.svgtxt.klein{font-size:8.5px; fill:var(--ink-3)}
+.svgtxt.kop{font-family:var(--disp); font-size:13px; font-weight:600; fill:var(--ink); letter-spacing:0}
+.svgtxt.groot{font-family:var(--disp); font-size:22px; font-weight:800; letter-spacing:-.02em}
+
+/* tijdlijn */
+.tijdlijn{list-style:none; margin:1.5rem 0 0; padding:0; position:relative}
+.tijdlijn::before{content:""; position:absolute; left:5px; top:8px; bottom:8px; width:1px; background:var(--rule)}
+.tijdlijn li{position:relative; padding:0 0 1.5rem 2.1rem}
+.tijdlijn li::before{
+  content:""; position:absolute; left:0; top:.55em; width:11px; height:11px;
+  border-radius:50%; background:var(--paper); border:2px solid var(--ink-3);
+}
+.tijdlijn li[data-kern]::before{background:var(--nl); border-color:var(--nl); box-shadow:0 0 0 4px rgba(184,65,11,.16)}
+.tijdlijn .jaar{font-family:var(--mono); font-size:.74rem; font-weight:600; color:var(--nl); display:block; letter-spacing:.06em}
+.tijdlijn li:not([data-kern]) .jaar{color:var(--ink-3)}
+.tijdlijn .gebeurtenis{font-size:.95rem; line-height:1.5}
+.tijdlijn .gebeurtenis b{font-weight:500}
+
+/* vlag-chips */
+.chip{
+  font-family:var(--mono); font-size:.62rem; font-weight:600; letter-spacing:.12em;
+  text-transform:uppercase; padding:.2em .55em; border:1px solid currentColor;
+  display:inline-block; vertical-align:2px;
+}
+.chip.nl{color:var(--nl)} .chip.uk{color:var(--uk)}
+
+/* slotlijst */
+.sloten{list-style:none; padding:0; margin:1.6rem 0 0; counter-reset:slot}
+.sloten li{
+  counter-increment:slot; position:relative; padding:1.15rem 0 1.15rem 3.6rem;
+  border-bottom:1px solid var(--rule);
+}
+.sloten li::before{
+  content:counter(slot,decimal-leading-zero);
+  position:absolute; left:0; top:1.15rem;
+  font-family:var(--mono); font-size:.78rem; font-weight:600; color:var(--nl);
+  border:1px solid var(--rule); padding:.25em .45em; line-height:1;
+}
+.sloten b{font-family:var(--disp); font-weight:600; letter-spacing:-.01em; display:block; margin-bottom:.15rem; font-size:1.05rem}
+.sloten span{font-size:.94rem; color:var(--ink-2); line-height:1.5}
+
+/* voettekst */
+footer{border-top:2px solid var(--ink); padding:3rem 0 4rem; margin-top:2rem; background:var(--paper-lo)}
+.bronnen{list-style:none; padding:0; margin:1rem 0 0; columns:2; column-gap:2.5rem; font-family:var(--mono); font-size:.68rem; line-height:1.85; color:var(--ink-3)}
+@media(max-width:700px){.bronnen{columns:1}}
+.bronnen li{break-inside:avoid; margin-bottom:.35rem}
+.disclaimer{font-size:.8rem; color:var(--ink-3); max-width:60ch; margin-top:1.6rem; line-height:1.6}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important}
+  .onthul{opacity:1; transform:none}
+  .woordmerk span{opacity:1; transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="meetlat" aria-hidden="true">
+  <div class="streepjes"></div>
+  <div class="naald" id="naald"></div>
+  <div class="aflezing" id="aflezing">00%</div>
+</div>
+
+<nav class="taal" aria-label="Language / Taal">
+  <a href="../" lang="nl" hreflang="nl" title="Nederlands">NL</a>
+  <a href="./" lang="en" hreflang="en" aria-current="page" title="English">EN</a>
+</nav>
+
+<!-- ══════════════════════════ HERO ══════════════════════════ -->
+<header class="hero">
+  <svg class="pluim" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="pl" x1="0" y1="1" x2="0.4" y2="0">
+        <stop offset="0%" stop-color="#B8410B" stop-opacity=".30"/>
+        <stop offset="55%" stop-color="#C99A16" stop-opacity=".13"/>
+        <stop offset="100%" stop-color="#6B3766" stop-opacity="0"/>
+      </linearGradient>
+      <filter id="waas"><feGaussianBlur stdDeviation="26"/></filter>
+    </defs>
+    <g filter="url(#waas)" fill="url(#pl)">
+      <ellipse cx="250" cy="760" rx="300" ry="230">
+        <animate attributeName="cy" values="760;700;760" dur="17s" repeatCount="indefinite"/>
+        <animate attributeName="rx" values="300;360;300" dur="21s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="700" cy="820" rx="380" ry="270">
+        <animate attributeName="cy" values="820;745;820" dur="23s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="1080" cy="790" rx="290" ry="240">
+        <animate attributeName="cy" values="790;720;790" dur="19s" repeatCount="indefinite"/>
+      </ellipse>
+    </g>
+    <!-- opstijgende NH3-deeltjes -->
+    <g fill="#B8410B" opacity=".28">
+      <circle cx="180" cy="700" r="2.5"><animate attributeName="cy" values="780;120" dur="14s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;.5;0" dur="14s" repeatCount="indefinite"/></circle>
+      <circle cx="420" cy="700" r="2"><animate attributeName="cy" values="800;60" dur="18s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;.4;0" dur="18s" repeatCount="indefinite"/></circle>
+      <circle cx="760" cy="700" r="3"><animate attributeName="cy" values="790;180" dur="16s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;.45;0" dur="16s" repeatCount="indefinite"/></circle>
+      <circle cx="990" cy="700" r="2.2"><animate attributeName="cy" values="810;90" dur="20s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;.4;0" dur="20s" repeatCount="indefinite"/></circle>
+    </g>
+  </svg>
+
+  <div class="wrap">
+    <div class="hero-formule">N₂ &nbsp;·&nbsp; NH₃ &nbsp;·&nbsp; NOₓ &nbsp;—&nbsp; NL / UK &nbsp;·&nbsp; 1945 → 2026</div>
+    <h1 class="woordmerk" aria-label="Nitrogen">
+      <span>N</span><span>I</span><span>T</span><span>R</span><span>O</span><span>G</span><span>E</span><span>N</span>
+    </h1>
+    <div class="hero-onder">
+      <p class="lead">Why an invisible gas has frozen building, farming <em>and</em> politics in the Netherlands — and why you hardly hear a word about it in England.</p>
+      <div class="hero-meta">
+        <b>SUBJECT</b> &nbsp;nitrogen deposition &amp; nature law<br>
+        <b>COMPARISON</b> &nbsp;Netherlands ↔ United Kingdom<br>
+        <b>READING TIME</b> &nbsp;about 12 minutes<br>
+        <b>LEVEL</b> &nbsp;no prior knowledge needed
+      </div>
+    </div>
+    <div class="scrolltip">Scroll to begin</div>
+  </div>
+</header>
+
+<main>
+
+<!-- ══════════════════════════ 01 ══════════════════════════ -->
+<section class="hoofdstuk">
+  <div class="wrap">
+    <div class="kop onthul">
+      <div class="nr">01 / 11</div>
+      <div>
+        <h2>Nitrogen itself isn't the problem</h2>
+        <p class="kolom">The air around you is <strong>78% nitrogen</strong>. That's nitrogen gas, N₂: two nitrogen atoms bound together so tightly that almost nothing can break them apart. You breathe it in and out all day. Completely harmless.</p>
+        <p class="kolom">The problem is the <em>reactive</em> forms. When nitrogen combines with hydrogen or oxygen, you get compounds that really do something in nature. Two of them matter — and they behave in completely different ways.</p>
+      </div>
+    </div>
+
+    <div class="rooster-3">
+      <div class="kaart onthul" data-vertraag="1">
+        <span class="kaartlabel">Form 01 — harmless</span>
+        <h3 style="margin-top:0">N₂ &nbsp;nitrogen gas</h3>
+        <p style="font-size:.92rem">Found in ordinary air. Does nothing, reacts with nothing, settles nowhere. This is <em>not</em> what the crisis is about.</p>
+      </div>
+      <div class="kaart onthul" data-vertraag="2" style="border-color:var(--nl); border-width:1.5px">
+        <span class="kaartlabel" style="color:var(--nl)">Form 02 — the lead character</span>
+        <h3 style="margin-top:0">NH₃ &nbsp;ammonia</h3>
+        <p style="font-size:.92rem">Released when <strong>dung and urine</strong> meet — in the barn, in the slurry pit, on the fields. Sharp smell. Sticks to everything. Comes back down <em>close to the source</em>.</p>
+      </div>
+      <div class="kaart onthul" data-vertraag="3">
+        <span class="kaartlabel">Form 03 — the traveller</span>
+        <h3 style="margin-top:0">NO<sub>x</sub> &nbsp;nitrogen oxides</h3>
+        <p style="font-size:.92rem">Produced by <strong>combustion</strong>: cars, ships, factories, gas boilers. Stays in the air for a long time and drifts hundreds of kilometres.</p>
+      </div>
+    </div>
+
+    <p class="kernpunt onthul">That difference in travel distance is the key to the whole story.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 02 ══════════════════════════ -->
+<section class="hoofdstuk">
+  <div class="wrap">
+    <div class="kop onthul">
+      <div class="nr">02 / 11</div>
+      <div>
+        <h2>Ammonia lands in your own back garden</h2>
+        <p class="kolom">Exhaust fumes blow away. Emissions from a barn mostly stay at home. A large share of the ammonia from a Dutch barn comes back to earth within a few kilometres — often still in the same province.</p>
+        <p class="kolom">For a small, crowded country with a lot of animals, that's disastrous. You mainly pollute <strong>your own nature reserves</strong>. A large country with the same barns would spread the emissions over far more ground.</p>
+      </div>
+    </div>
+
+    <figure class="onthul">
+      <div class="figvak"><svg viewBox="0 0 900 300" role="img" aria-label="Diagram: ammonia settles within a few kilometres, nitrogen oxides travel hundreds of kilometres">
+        <!-- grondlijn -->
+        <line x1="40" y1="245" x2="880" y2="245" stroke="#45412F" stroke-width="1.2"/>
+        <!-- schaal -->
+        <g class="svgtxt klein" text-anchor="middle">
+          <line x1="60"  y1="245" x2="60"  y2="253" stroke="#7A7461"/><text x="60"  y="268">0 km</text>
+          <line x1="200" y1="245" x2="200" y2="253" stroke="#7A7461"/><text x="200" y="268">5 km</text>
+          <line x1="350" y1="245" x2="350" y2="253" stroke="#7A7461"/><text x="350" y="268">25 km</text>
+          <line x1="540" y1="245" x2="540" y2="253" stroke="#7A7461"/><text x="540" y="268">100 km</text>
+          <line x1="760" y1="245" x2="760" y2="253" stroke="#7A7461"/><text x="760" y="268">400 km</text>
+        </g>
+
+        <!-- NH3 pluim: steil, kort -->
+        <path d="M60,245 C 90,120 130,105 190,155 C 240,196 290,228 360,240 L360,245 Z" fill="#B8410B" opacity=".22"/>
+        <path d="M60,245 C 90,120 130,105 190,155 C 240,196 290,228 360,240" fill="none" stroke="#B8410B" stroke-width="2"/>
+        <!-- NOx pluim: laag, lang -->
+        <path d="M60,245 C 160,205 260,196 430,205 C 590,213 720,228 870,241 L870,245 Z" fill="#23566B" opacity=".16"/>
+        <path d="M60,245 C 160,205 260,196 430,205 C 590,213 720,228 870,241" fill="none" stroke="#23566B" stroke-width="2" stroke-dasharray="6 4"/>
+
+        <!-- bron -->
+        <rect x="46" y="222" width="28" height="23" fill="#45412F"/>
+        <path d="M42,222 L60,208 L78,222 Z" fill="#45412F"/>
+        <text class="svgtxt klein" x="60" y="288" text-anchor="middle">source</text>
+
+        <!-- labels -->
+        <text class="svgtxt kop" x="128" y="86" style="fill:#B8410B">NH₃ · ammonia</text>
+        <text class="svgtxt" x="128" y="102">from manure — settles right next to the barn</text>
+        <line x1="122" y1="92" x2="100" y2="112" stroke="#B8410B" stroke-width="1"/>
+
+        <text class="svgtxt kop" x="565" y="168" style="fill:#23566B">NO<tspan font-size="9">x</tspan> · traffic &amp; industry</text>
+        <text class="svgtxt" x="565" y="184">keeps going, far across the border</text>
+        <line x1="600" y1="192" x2="620" y2="206" stroke="#23566B" stroke-width="1"/>
+
+        <!-- natuurgebied dichtbij -->
+        <g transform="translate(240,0)">
+          <path d="M0,245 l6,-16 l6,16 M14,245 l6,-20 l6,20 M28,245 l6,-14 l6,14" fill="none" stroke="#4E6B27" stroke-width="1.6"/>
+          <text class="svgtxt klein" x="20" y="288" text-anchor="middle" style="fill:#4E6B27">nature reserve</text>
+        </g>
+      </svg></div>
+      <figcaption><b>Schematic.</b> Ammonia from barns and manure mostly comes back down within a few kilometres; nitrogen oxides from combustion stay airborne much longer. Roughly a third of the nitrogen deposited in the Netherlands comes from abroad — and Dutch emissions blow out of the country too. The height of the curves shows the amount of deposition, not an exact measurement.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 03 ══════════════════════════ -->
+<section class="hoofdstuk">
+  <div class="wrap">
+    <div class="kop onthul">
+      <div class="nr">03 / 11</div>
+      <div>
+        <h2>The route: from cow to heathland</h2>
+        <p class="kolom">The mechanism is simple, and that's exactly what makes it hard to deny. There are only five steps between a barn and a disappearing plant.</p>
+      </div>
+    </div>
+
+    <figure class="onthul">
+      <div class="figvak"><svg viewBox="0 0 960 250" role="img" aria-label="Five steps: livestock, manure, ammonia, deposition, nature changes">
+        <defs>
+          <marker id="pijl" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 Z" fill="#7A7461"/>
+          </marker>
+        </defs>
+        <g>
+          <!-- 1 -->
+          <g transform="translate(20,50)">
+            <rect width="146" height="116" fill="#F3EEE1" stroke="#14130D" stroke-width="1.2"/>
+            <text class="svgtxt klein" x="10" y="20">01</text>
+            <g transform="translate(52,38)" stroke="#B8410B" stroke-width="2" fill="none">
+              <path d="M0,26 h44 M6,26 v14 M38,26 v14 M0,26 c0,-14 10,-20 22,-20 c12,0 22,6 22,20"/>
+              <circle cx="14" cy="16" r="1.6" fill="#B8410B"/><circle cx="30" cy="16" r="1.6" fill="#B8410B"/>
+            </g>
+            <text class="svgtxt kop" x="73" y="100" text-anchor="middle">Lots of livestock</text>
+            <text class="svgtxt klein" x="73" y="112" text-anchor="middle">on little land</text>
+          </g>
+          <line x1="172" y1="108" x2="196" y2="108" stroke="#7A7461" stroke-width="1.2" marker-end="url(#pijl)"/>
+          <!-- 2 -->
+          <g transform="translate(202,50)">
+            <rect width="146" height="116" fill="#F3EEE1" stroke="#14130D" stroke-width="1.2"/>
+            <text class="svgtxt klein" x="10" y="20">02</text>
+            <g transform="translate(50,34)" stroke="#45412F" stroke-width="2" fill="none">
+              <path d="M4,34 h40 v10 h-40 z"/><path d="M10,34 c0,-12 6,-18 14,-18 c8,0 14,6 14,18"/>
+              <circle cx="24" cy="10" r="2" fill="#45412F"/>
+            </g>
+            <text class="svgtxt kop" x="73" y="100" text-anchor="middle">Dung + urine</text>
+            <text class="svgtxt klein" x="73" y="112" text-anchor="middle">more than the land can take</text>
+          </g>
+          <line x1="354" y1="108" x2="378" y2="108" stroke="#7A7461" stroke-width="1.2" marker-end="url(#pijl)"/>
+          <!-- 3 -->
+          <g transform="translate(384,50)">
+            <rect width="146" height="116" fill="#F0D6C4" stroke="#B8410B" stroke-width="1.6"/>
+            <text class="svgtxt klein" x="10" y="20" style="fill:#B8410B">03</text>
+            <g transform="translate(58,30)" stroke="#B8410B" stroke-width="2" fill="none" stroke-linecap="round">
+              <path d="M4,38 c0,-10 -6,-14 0,-22 c6,-8 0,-12 0,-16"/>
+              <path d="M16,38 c0,-12 -6,-16 0,-24 c6,-8 0,-10 0,-14"/>
+              <path d="M28,38 c0,-10 -6,-14 0,-22 c6,-8 0,-12 0,-16"/>
+            </g>
+            <text class="svgtxt kop" x="73" y="100" text-anchor="middle" style="fill:#B8410B">NH₃ escapes</text>
+            <text class="svgtxt klein" x="73" y="112" text-anchor="middle">into the air</text>
+          </g>
+          <line x1="536" y1="108" x2="560" y2="108" stroke="#7A7461" stroke-width="1.2" marker-end="url(#pijl)"/>
+          <!-- 4 -->
+          <g transform="translate(566,50)">
+            <rect width="146" height="116" fill="#F3EEE1" stroke="#14130D" stroke-width="1.2"/>
+            <text class="svgtxt klein" x="10" y="20">04</text>
+            <g transform="translate(48,32)" stroke="#45412F" stroke-width="1.8" fill="none" stroke-linecap="round">
+              <path d="M2,18 c0,-9 8,-14 15,-11 c3,-8 15,-8 17,1 c8,-1 12,6 8,12 z" fill="#DCD3BC"/>
+              <path d="M8,34 v8 M20,34 v10 M32,34 v8 M26,36 v9 M14,36 v9" stroke="#B8410B"/>
+            </g>
+            <text class="svgtxt kop" x="73" y="100" text-anchor="middle">Deposition</text>
+            <text class="svgtxt klein" x="73" y="112" text-anchor="middle">falls back to the ground</text>
+          </g>
+          <line x1="718" y1="108" x2="742" y2="108" stroke="#7A7461" stroke-width="1.2" marker-end="url(#pijl)"/>
+          <!-- 5 -->
+          <g transform="translate(748,50)">
+            <rect width="192" height="116" fill="#F3EEE1" stroke="#6B3766" stroke-width="1.6"/>
+            <text class="svgtxt klein" x="10" y="20" style="fill:#6B3766">05</text>
+            <g transform="translate(66,32)">
+              <path d="M0,42 l7,-20 l7,20" fill="none" stroke="#6B3766" stroke-width="1.8"/>
+              <path d="M22,42 c14,-8 20,-22 26,-26 c2,10 -4,22 -12,26 z" fill="#4E6B27" opacity=".55"/>
+              <path d="M22,42 h40" stroke="#4E6B27" stroke-width="1.8"/>
+            </g>
+            <text class="svgtxt kop" x="96" y="100" text-anchor="middle" style="fill:#6B3766">Grass crowds out heather</text>
+            <text class="svgtxt klein" x="96" y="112" text-anchor="middle">nitrogen acts as free fertiliser</text>
+          </g>
+        </g>
+      </svg></div>
+      <figcaption><b>Why is more nitrogen bad for nature?</b> Because nitrogen literally is fertiliser. Heathland, peat bogs and old sandy soils are <em>poor</em> soils: the plants and insects that live there are specialists in scarcity. Add nutrients year after year and fast growers like grass, nettles and brambles win — and the rare species disappear. The soil also acidifies, so trees root less well and birds such as the great tit lay eggs with shells that are too thin.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 04 ══════════════════════════ -->
+<section class="hoofdstuk">
+  <div class="wrap">
+    <div class="kop onthul">
+      <div class="nr">04 / 11</div>
+      <div>
+        <h2>Just how full is the Netherlands?</h2>
+        <p class="kolom">This is the first of five reasons why the Netherlands is stuck and the United Kingdom isn't. The Netherlands has the <strong>highest livestock density in the entire European Union</strong>. Not slightly the highest — by a wide margin.</p>
+      </div>
+    </div>
+
+    <div class="cijferrij onthul">
+      <div class="cijfer">
+        <span class="waarde" data-tel="3.4" data-decimalen="1">0</span>
+        <span class="eenheid">LSU per hectare · NL</span>
+        <span class="uitleg">Livestock units per hectare of farmland. The EU average is around 0.7.</span>
+      </div>
+      <div class="cijfer blauw">
+        <span class="waarde" data-tel="0.8" data-decimalen="1">0</span>
+        <span class="eenheid">LSU per hectare · UK</span>
+        <span class="uitleg">About a quarter of the Dutch density, and well below the EU average.</span>
+      </div>
+      <div class="cijfer">
+        <span class="waarde" data-tel="4930">0</span>
+        <span class="eenheid">kg NH₃ per km² · NL</span>
+        <span class="uitleg">Ammonia emissions per square kilometre — the highest in Europe after Malta.</span>
+      </div>
+      <div class="cijfer blauw">
+        <span class="waarde" data-tel="1100">0</span>
+        <span class="eenheid">kg NH₃ per km² · UK</span>
+        <span class="uitleg">Roughly a fifth of that, over a much larger land area.</span>
+      </div>
+    </div>
+
+    <figure class="onthul">
+      <div class="figvak"><svg viewBox="0 0 900 250" role="img" aria-label="Livestock density comparison: the Netherlands has more than four times as much livestock per hectare as the United Kingdom">
+        <text class="svgtxt kop" x="0" y="16">One hectare of farmland — how much animal stands on it?</text>
+        <!-- NL -->
+        <g transform="translate(0,42)">
+          <rect width="360" height="150" fill="#F0D6C4" stroke="#B8410B" stroke-width="1.6"/>
+          <g id="nlvee" fill="#B8410B"></g>
+          <text class="svgtxt kop" x="0" y="176" style="fill:#B8410B">NETHERLANDS — 3.4 LSU/ha</text>
+          <text class="svgtxt klein" x="0" y="190">highest in the European Union</text>
+        </g>
+        <!-- UK -->
+        <g transform="translate(430,42)">
+          <rect width="360" height="150" fill="#CFDDE2" stroke="#23566B" stroke-width="1.6"/>
+          <g id="ukvee" fill="#23566B"></g>
+          <text class="svgtxt kop" x="0" y="176" style="fill:#23566B">UNITED KINGDOM — approx. 0.8 LSU/ha</text>
+          <text class="svgtxt klein" x="0" y="190">grassland, sheep, plenty of room per animal</text>
+        </g>
+      </svg></div>
+      <figcaption><b>Each dot is the same amount of animal.</b> The Netherlands has about 100 million chickens, 11 million pigs and almost 4 million cattle — in a country home to 18 million people. British livestock farming is mostly grass-based: sheep on the hills, dairy cattle in the West Country and Wales, spread over a country almost six times the size.</figcaption>
+    </figure>
+
+    <div class="rooster-2" style="margin-top:2.4rem">
+      <div class="onthul">
+        <h3 style="margin-top:0">How did it get this way?</h3>
+        <p>After the Hunger Winter of 1944–45, <em>"never again hunger"</em> became government policy, quite literally. Dutch agriculture minister Sicco Mansholt — later the architect of Europe's Common Agricultural Policy — bet on scale, technology and exports.</p>
+        <p>That plan succeeded spectacularly. With around €125 billion in agricultural exports, the Netherlands is the <strong>second-largest agricultural exporter in the world</strong>, after the United States. From an area roughly twice the size of Wales.</p>
+      </div>
+      <div class="onthul" data-vertraag="1">
+        <h3 style="margin-top:0">The hidden trick: imported feed</h3>
+        <p>Dutch animals eat a large share of <strong>imported soya and grain</strong>, shipped in through Rotterdam. The feed comes from Brazilian and American fields — but the manure stays here.</p>
+        <p>The result is a country that feeds far more animals than its own land can carry. The bill sits in the slurry pit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 05 ══════════════════════════ -->
+<section class="hoofdstuk">
+  <div class="wrap">
+    <div class="kop onthul">
+      <div class="nr">05 / 11</div>
+      <div>
+        <h2>Reason two: nature sits next to the barn</h2>
+        <p class="kolom">Even with lots of livestock the problem would be manageable if the nature reserves were far away. But the Netherlands has no "far away".</p>
+        <p class="kolom">Dutch nature consists of <strong>162 relatively small, fragmented Natura 2000 sites</strong>, squeezed between villages, motorways and farmland. In the United Kingdom the most sensitive protected areas lie mainly in the Scottish Highlands, the Welsh mountains and along the coast — miles away from intensive livestock farming.</p>
+      </div>
+    </div>
+
+    <figure class="onthul">
+      <div class="figvak"><svg viewBox="0 0 900 330" role="img" aria-label="Area comparison of the Netherlands and the United Kingdom, plus a diagram of fragmentation">
+        <text class="svgtxt kop" x="0" y="14">Area to scale</text>
+        <!-- UK rechthoek -->
+        <rect x="0" y="28" width="292" height="243" fill="#CFDDE2" stroke="#23566B" stroke-width="1.6"/>
+        <text class="svgtxt" x="8" y="46" style="fill:#23566B">UNITED KINGDOM</text>
+        <text class="svgtxt klein" x="8" y="59" style="fill:#23566B">243,600 km²</text>
+        <!-- NL genest: oppervlak op schaal — 41.500 / 243.600 ≈ 17% van het VK-vlak -->
+        <rect x="0" y="148" width="98" height="123" fill="#F0D6C4" stroke="#B8410B" stroke-width="1.6"/>
+        <text class="svgtxt" x="8" y="166" style="fill:#B8410B">NETHERLANDS</text>
+        <text class="svgtxt klein" x="8" y="179" style="fill:#B8410B">41,500 km²</text>
+        <text class="svgtxt klein" x="0" y="292">The Netherlands fits into the United Kingdom almost six times.</text>
+
+        <!-- versnipperingsschema -->
+        <text class="svgtxt kop" x="360" y="14">Schematic: where is the nature?</text>
+        <!-- NL mozaïek -->
+        <g transform="translate(360,28)">
+          <rect width="230" height="200" fill="#F3EEE1" stroke="#14130D" stroke-width="1.2"/>
+          <g id="nlmoz"></g>
+          <text class="svgtxt" x="0" y="220" style="fill:#B8410B">NL · everything touches everything</text>
+          <text class="svgtxt klein" x="0" y="233">no farm far from protected nature</text>
+        </g>
+        <!-- UK mozaïek -->
+        <g transform="translate(640,28)">
+          <rect width="230" height="200" fill="#F3EEE1" stroke="#14130D" stroke-width="1.2"/>
+          <g id="ukmoz"></g>
+          <text class="svgtxt" x="0" y="220" style="fill:#23566B">UK · nature lies apart</text>
+          <text class="svgtxt klein" x="0" y="233">uplands and coast, far from the barns</text>
+        </g>
+        <!-- legenda -->
+        <g transform="translate(360,300)">
+          <rect width="11" height="11" style="fill:#4E6B27" opacity=".65"/><text class="svgtxt klein" x="17" y="9">protected nature</text>
+          <rect x="140" width="11" height="11" style="fill:#C99A16" opacity=".5"/><text class="svgtxt klein" x="157" y="9">intensive livestock</text>
+          <rect x="310" width="11" height="11" style="fill:#DCD3BC"/><text class="svgtxt klein" x="327" y="9">other</text>
+        </g>
+      </svg></div>
+      <figcaption><b>On the right is a diagram, not a map.</b> It shows the principle: in the Netherlands nature and livestock farming are mixed like a chessboard, so almost every site receives ammonia from its neighbours. In the UK the most sensitive habitats (blanket bog, Scottish upland heath) are concentrated in sparsely populated regions. In total the UK actually has <em>far more</em> protected land — but distance from the source does the work.</figcaption>
+    </figure>
+
+    <p class="kernpunt onthul">The Netherlands doesn't pollute more per cow. It just has almost no room between the cow and the nature.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 06 ══════════════════════════ -->
+<section class="hoofdstuk">
+  <div class="wrap">
+    <div class="kop onthul">
+      <div class="nr">06 / 11</div>
+      <div>
+        <h2>Reason three: the KDW — a number with legal teeth</h2>
+        <p class="kolom">Every habitat type has a <strong>critical deposition value</strong> (in Dutch: <em>kritische depositiewaarde</em>, KDW): the amount of nitrogen that can fall on it each year without the habitat deteriorating. It's expressed in <span class="mono">mol N per hectare per year</span>.</p>
+        <p class="kolom">Unlike most countries, the Netherlands <em>wrote that number into law</em> as a hard test. And it turns out that in about <strong>118 of the 161 sites</strong> deposition is structurally above the limit. For some habitat types, as much as three times higher.</p>
+      </div>
+    </div>
+
+    <figure class="onthul">
+      <div class="figvak"><svg viewBox="0 0 900 392" role="img" aria-label="Bar chart: critical deposition values per habitat type compared with average Dutch deposition">
+        <text class="svgtxt kop" x="0" y="16">What may fall on it — and what actually does?</text>
+
+        <!-- kopband met de twee gemiddelden, boven het diagram -->
+        <text class="svgtxt" x="483" y="44" style="fill:#23566B" text-anchor="end">UK average ▸</text>
+        <text class="svgtxt klein" x="483" y="56" style="fill:#23566B" text-anchor="end">approx. 800 mol/ha/yr</text>
+        <text class="svgtxt" x="657" y="44" style="fill:#B8410B">◂ average deposition NL</text>
+        <text class="svgtxt klein" x="657" y="56" style="fill:#B8410B">approx. 1,315 mol/ha/yr</text>
+
+        <!-- as -->
+        <g class="svgtxt klein" text-anchor="middle" style="fill:#7A7461">
+          <line x1="230" y1="70" x2="230" y2="330" stroke="#45412F" stroke-width="1"/>
+          <line x1="230" y1="330" x2="870" y2="330" stroke="#45412F" stroke-width="1"/>
+          <text x="230" y="346">0</text>
+          <text x="390" y="346">500</text>
+          <text x="550" y="346">1,000</text>
+          <text x="710" y="346">1,500</text>
+          <text x="870" y="346">2,000</text>
+          <line x1="390" y1="330" x2="390" y2="334" stroke="#7A7461"/>
+          <line x1="550" y1="330" x2="550" y2="334" stroke="#7A7461"/>
+          <line x1="710" y1="330" x2="710" y2="334" stroke="#7A7461"/>
+          <line x1="870" y1="330" x2="870" y2="334" stroke="#7A7461"/>
+          <text x="550" y="368">mol nitrogen per hectare per year</text>
+        </g>
+
+        <!-- balken: schaal 0,32 px per mol -->
+        <g id="kdwbalken"></g>
+
+        <!-- gemiddelde depositie NL ≈ 1.315 mol -->
+        <line x1="651" y1="64" x2="651" y2="336" stroke="#B8410B" stroke-width="2" stroke-dasharray="5 4"/>
+        <!-- gemiddelde VK ≈ 800 mol -->
+        <line x1="489" y1="64" x2="489" y2="336" stroke="#23566B" stroke-width="2" stroke-dasharray="5 4"/>
+      </svg></div>
+      <figcaption><b>Read the bars as the permitted limit.</b> Where the red dashed line extends well beyond a bar, that habitat type is structurally getting too much nitrogen. The excess is largest for moorland pools and raised bog. The UK average is lower, but certainly not zero — the difference lies mainly in what's legally attached to it.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 07 ══════════════════════════ -->
+<section class="hoofdstuk">
+  <div class="wrap">
+    <div class="kop onthul">
+      <div class="nr">07 / 11</div>
+      <div>
+        <h2>Reason four: 29 May 2019, the day the lock snapped shut</h2>
+        <p class="kolom">This is where an environmental problem becomes a <em>crisis</em>. The Netherlands had come up with a clever scheme: the <strong>PAS</strong> (<em>Programma Aanpak Stikstof</em>, the Nitrogen Action Programme). The reasoning: we promise to cut nitrogen in the future, so we may already issue permits now for new barns, roads and housing estates.</p>
+        <p class="kolom">On 29 May 2019 the Council of State — the country's highest administrative court — threw that out. Granting consent on the basis of <em>promised</em> future gains isn't allowed under the European Habitats Directive. You have to know for certain, beforehand, that nature won't be harmed.</p>
+        <p class="kolom">Overnight there was no longer a valid system for issuing permits. An estimated <strong>18,000 projects</strong> ground to a halt: housing, road widening, wind farms, business expansions. Not because new emissions were being added, but because nobody could prove any more that they were allowed.</p>
+      </div>
+    </div>
+
+    <ol class="tijdlijn onthul">
+      <li><span class="jaar">1945 – 1970</span><span class="gebeurtenis"><b>"Never again hunger."</b> Post-war reconstruction, land consolidation and Sicco Mansholt's policies turn the Netherlands into a farming machine.</span></li>
+      <li><span class="jaar">1992</span><span class="gebeurtenis">The EU adopts the <b>Habitats Directive</b>. Member states designate protected areas: the Natura 2000 network.</span></li>
+      <li><span class="jaar">1984 – 2015</span><span class="gebeurtenis">Milk quotas cap the growth of the dairy herd. When they <b>end in 2015</b>, the herd immediately grows again.</span></li>
+      <li><span class="jaar">2015</span><span class="gebeurtenis">The <b>PAS</b> comes into force: permits based on promised future reductions.</span></li>
+      <li data-kern><span class="jaar">November 2018</span><span class="gebeurtenis">The <b>Court of Justice of the European Union</b> rules, in the so-called Dutch nitrogen case, that consent may only be given once harm has been scientifically ruled out.</span></li>
+      <li data-kern><span class="jaar">29 May 2019</span><span class="gebeurtenis"><b>The Council of State declares the PAS invalid.</b> Around 18,000 projects stall. This is the starting gun of the nitrogen crisis.</span></li>
+      <li><span class="jaar">Oct 2019 &amp; July 2022</span><span class="gebeurtenis"><b>Huge farmer protests.</b> Tractors on the motorway, upside-down flags on lamp posts, blockades of distribution centres.</span></li>
+      <li><span class="jaar">2021</span><span class="gebeurtenis">The <b>Nitrogen Reduction and Nature Improvement Act</b> sets legal targets for 2025, 2030 and 2035.</span></li>
+      <li><span class="jaar">June 2022</span><span class="gebeurtenis">The notorious <b>nitrogen map</b>: reduction percentages per area of up to 70% or even 95%. The anger escalates.</span></li>
+      <li data-kern><span class="jaar">March 2023</span><span class="gebeurtenis">The <b>Farmer–Citizen Movement (BBB)</b> wins the provincial elections and becomes the largest party in the Senate.</span></li>
+      <li data-kern><span class="jaar">January 2025</span><span class="gebeurtenis"><b>Greenpeace wins against the State.</b> The court orders the government to bring half of all nitrogen-sensitive nature below the critical value by the end of 2030, on pain of a penalty payment.</span></li>
+      <li><span class="jaar">2025 – 2026</span><span class="gebeurtenis">The State appeals; the government wants to push the halving back to <b>2035</b>. Permitting remains difficult, and the debate goes on.</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 08 ══════════════════════════ -->
+<section class="hoofdstuk">
+  <div class="wrap">
+    <div class="kop onthul">
+      <div class="nr">08 / 11</div>
+      <div>
+        <h2>Reason five: the electoral system turns it into an earthquake</h2>
+        <p class="kolom">This is the reason most often forgotten — and perhaps the most important one for the <em>political</em> difference.</p>
+        <p class="kolom">The Netherlands elects its parliament by fully <strong>proportional representation</strong>: 150 seats, and with around 0.67% of the vote you're already in the House of Representatives. A new party that owns a single issue can become one of the most powerful parties within a single election. That's what BBB did in 2023.</p>
+        <p class="kolom">The UK votes by <strong>constituency, first past the post</strong>. A farmers' party with 10% of the vote, spread across the country, wins exactly zero seats. Rural discontent there gets absorbed into the existing big parties — visible as grumbling, not as a shift in power.</p>
+      </div>
+    </div>
+
+    <figure class="onthul">
+      <div class="figvak"><svg viewBox="0 0 900 260" role="img" aria-label="Comparison of electoral systems: proportional representation in the Netherlands versus first past the post in the UK">
+        <g transform="translate(0,0)">
+          <text class="svgtxt kop" x="0" y="14" style="fill:#B8410B">NETHERLANDS · proportional, 150 seats</text>
+          <text class="svgtxt klein" x="0" y="28">3% of the vote = about 5 seats. A new party counts straight away.</text>
+          <g id="zetels" transform="translate(0,42)"></g>
+          <text class="svgtxt klein" x="0" y="176" style="fill:#B8410B">■ BBB in 2023 — 7 of the 150 seats, and the largest party in the Senate</text>
+        </g>
+        <g transform="translate(500,0)">
+          <text class="svgtxt kop" x="0" y="14" style="fill:#23566B">UNITED KINGDOM · constituencies, first past the post</text>
+          <text class="svgtxt klein" x="0" y="28">In each constituency only the winner counts. The rest gets nothing.</text>
+          <g id="districten" transform="translate(0,42)"></g>
+          <text class="svgtxt klein" x="0" y="176"><tspan style="fill:#B8410B">■</tspan> farmers' party ± 10% in every seat — never the largest, so zero seats.</text>
+        </g>
+      </svg></div>
+      <figcaption><b>Same anger, different socket.</b> British farmers protested hard in 2024 and 2025 — including driving tractors to Westminster over inheritance tax on farmland. But that protest can't turn into a parliamentary party of its own. In the Netherlands it can, and that's why nitrogen sets the national political agenda there.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 09 ══════════════════════════ -->
+<section class="hoofdstuk">
+  <div class="wrap">
+    <div class="kop onthul">
+      <div class="nr">09 / 11</div>
+      <div>
+        <h2>But wait: the UK does have its own version</h2>
+        <p class="kolom">It would be too easy to say England doesn't know this problem. It knows it in <em>a different form</em>, and with far less noise.</p>
+      </div>
+    </div>
+
+    <div class="rooster-2">
+      <div class="kaart onthul" style="border-color:var(--uk); border-width:1.5px">
+        <span class="kaartlabel" style="color:var(--uk)">England</span>
+        <h3 style="margin-top:0">"Nutrient neutrality"</h3>
+        <p>Since 2018–2019, English councils in dozens of river catchments have been barred from approving homes that would add extra nitrogen or phosphorus to vulnerable waters. That covers the Solent, the River Wye, the Norfolk Broads and more.</p>
+        <p>An estimated <strong>100,000 or so homes</strong> have been delayed as a result. Exactly the same legal mechanism — and it's even based on the same European ruling as the Dutch case.</p>
+      </div>
+      <div class="onthul" data-vertraag="1">
+        <h3 style="margin-top:0">Four differences that change everything</h3>
+        <p><b>1. Water instead of air.</b> The English problem is about run-off into rivers, not deposition from the air. Water follows a catchment; ammonia follows the wind and so hits far more sites at once.</p>
+        <p><b>2. Regional, not national.</b> It affects particular catchments, not the whole country. In the Netherlands, permitting stopped everywhere.</p>
+        <p><b>3. Builders, not farmers.</b> The bill landed mainly with developers. In the Netherlands it immediately became about whether family farms had a right to exist — an existential question, not a business one.</p>
+        <p><b>4. Ministers can change the rules.</b> After Brexit, Westminster can amend nature law itself; and it did, with legislation that relaxes the test. The Netherlands is bound by European directives <em>and</em> by a national court that enforces them strictly.</p>
+      </div>
+    </div>
+
+    <p class="kernpunt blauw onthul">The UK has the same law, fewer animals per hectare, more distance to nature — and a parliament that's allowed to adjust the rules itself.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 10 ══════════════════════════ -->
+<section class="hoofdstuk">
+  <div class="wrap">
+    <div class="kop onthul">
+      <div class="nr">10 / 11</div>
+      <div>
+        <h2>The big comparison</h2>
+        <p class="kolom">Everything side by side. Figures are rounded and refer to the most recent years available; they're meant to show orders of magnitude, not to be accurate to the decimal point.</p>
+      </div>
+    </div>
+
+    <div class="tabelhoes onthul">
+      <table>
+        <caption>Table 1 — Land, farming and emissions</caption>
+        <thead><tr><th scope="col">Feature</th><th scope="col">Netherlands</th><th scope="col">United Kingdom</th></tr></thead>
+        <tbody>
+          <tr><td>Area</td><td class="mono">± 41,500 km²</td><td class="mono">± 243,600 km²</td></tr>
+          <tr><td>People per km²</td><td class="mono">± 525</td><td class="mono">± 285</td></tr>
+          <tr><td>Livestock density</td><td class="mono">3.4 LSU/ha — highest in the EU</td><td class="mono">± 0.8 LSU/ha</td></tr>
+          <tr><td>Type of livestock farming</td><td>Intensive; housed pigs, poultry and dairy cattle on little land</td><td>Mostly grass-based; sheep on the hills, dispersed dairy</td></tr>
+          <tr><td>Animal feed</td><td>Largely imported (soya, grain) — the manure stays behind</td><td>Mostly home-grown grass and crops</td></tr>
+          <tr><td>Ammonia per km²</td><td class="mono">± 4,930 kg</td><td class="mono">± 1,100 kg</td></tr>
+          <tr><td>Average deposition</td><td class="mono">± 1,315 mol N/ha/yr</td><td class="mono">± 800 mol N/ha/yr</td></tr>
+          <tr><td>Agricultural exports</td><td class="mono">± €125 bn — 2nd in the world</td><td class="mono">Net importer of food</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tabelhoes onthul">
+      <table>
+        <caption>Table 2 — Nature, law and politics</caption>
+        <thead><tr><th scope="col">Feature</th><th scope="col">Netherlands</th><th scope="col">United Kingdom</th></tr></thead>
+        <tbody>
+          <tr><td>Protected areas</td><td>162 Natura 2000 sites, small and fragmented</td><td>Hundreds of SACs and SPAs, often large and remote</td></tr>
+          <tr><td>Location relative to livestock</td><td>Directly next to and among farmland</td><td>Most sensitive habitats mainly in Scotland, Wales and on the coast</td></tr>
+          <tr><td>Legal framework</td><td>EU Habitats Directive, directly binding</td><td>Habitats Directive transposed into domestic law; amendable since Brexit</td></tr>
+          <tr><td>Hard limit</td><td>KDW enshrined in law as a test for permits</td><td>Critical loads exist as guidance, no national permitting lock</td></tr>
+          <tr><td>Tipping point</td><td class="mono">29 May 2019 — PAS invalid</td><td class="mono">2018–2019 — nutrient neutrality per catchment</td></tr>
+          <tr><td>What stalled</td><td class="mono">± 18,000 projects, nationwide</td><td class="mono">± 100,000 homes, regional</td></tr>
+          <tr><td>Electoral system</td><td>Proportional; threshold ± 0.67%</td><td>Constituencies; first past the post</td></tr>
+          <tr><td>Political consequence</td><td>BBB from nothing to largest party in the Senate (2023)</td><td>Discontent stays within the existing parties</td></tr>
+          <tr><td>Public temperature</td><td>Years of protests, upside-down flags, governments under pressure</td><td>Occasional protests (e.g. inheritance tax 2024–25), no national crisis</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 11 ══════════════════════════ -->
+<section class="hoofdstuk">
+  <div class="wrap">
+    <div class="kop onthul">
+      <div class="nr">11 / 11</div>
+      <div>
+        <h2>The five locks, together</h2>
+        <p class="kolom">None of these five factors would cause a crisis on its own. The Netherlands has all five at once. <em>That</em> is the whole answer.</p>
+      </div>
+    </div>
+
+    <ol class="sloten onthul">
+      <li><b>Extremely high livestock per hectare</b><span>More than four times the British density, fed on imported feed whose manure stays behind.</span></li>
+      <li><b>Ammonia doesn't travel far</b><span>Unlike exhaust fumes, manure emissions come down close by. You mainly pollute your own nature.</span></li>
+      <li><b>Nature and farms are neighbours</b><span>162 small, fragmented sites in a small country. There's no distance to hide behind.</span></li>
+      <li><b>A hard limit written into law</b><span>The KDW isn't a guideline but a test. If you're above it, the permit is legally impossible.</span></li>
+      <li><b>A court that turned the key</b><span>29 May 2019: the PAS invalid, and with it the entire permitting system. That's where the crisis began.</span></li>
+    </ol>
+
+    <p class="kernpunt onthul" style="margin-top:3rem; max-width:38ch">And then a sixth: an electoral system in which the angry half of the countryside can shift power within a single election.</p>
+
+    <div class="kolom onthul" style="margin-top:2.5rem">
+      <h3>Where do things stand now?</h3>
+      <p>As of 2026, the matter isn't resolved. In January 2025 the court ordered the State to bring half of all nitrogen-sensitive nature below the critical value by the end of 2030, with a penalty payment as the stick. The State appealed, and the government wants to push the targets back to 2035.</p>
+      <p>Meanwhile housing projects wait, farmers remain uncertain about the future of their businesses, and nature quality in many areas is still declining. It has become less an environmental problem and more a <strong>question of distribution</strong>: who gets the remaining room — the barn, the factory, the motorway or the housing estate?</p>
+      <p>If you want to remember one sentence about the difference with England: <em>the Netherlands has the same law, but far less room in which to let that law breathe.</em></p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="label">Notes &amp; sources</span>
+    <p class="disclaimer">This page is a simplified explanation for a general audience. Figures are rounded and come from different years (roughly 2019–2026); they're there to show proportions. For policy or legal use, consult the original sources below. Most sources are in Dutch.</p>
+    <ul class="bronnen">
+      <li>Raad van State (Council of State) — PAS rulings, 29 May 2019 (raadvanstate.nl/stikstof)</li>
+      <li>RIVM — nitrogen deposition and KDW exceedances</li>
+      <li>Compendium voor de Leefomgeving (CLO) — deposition 1990–2024; protected nature areas</li>
+      <li>Eurostat — Agri-environmental indicator: livestock patterns (LSU per hectare)</li>
+      <li>CBS / WUR — livestock numbers, agricultural exports, manure balance</li>
+      <li>WUR (2026) — "De Nederlandse stikstofcrisis: van verwarring naar verbinding"</li>
+      <li>NOS — Greenpeace wins nitrogen case against the State, January 2025</li>
+      <li>House of Commons Library — briefing "Nutrient neutrality and housing development" (CBP-9850)</li>
+      <li>Defra / UK-AIR — UK ammonia emission inventory</li>
+      <li>APIS (apis.ac.uk) — critical loads for UK habitats</li>
+      <li>JNCC — Special Areas of Conservation &amp; Special Protection Areas</li>
+      <li>Court of Justice of the EU — joined cases C-293/17 and C-294/17 (2018)</li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var rustig = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var NS = "http://www.w3.org/2000/svg";
+  function el(naam, attrs){
+    var n = document.createElementNS(NS, naam);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  }
+
+  /* ---------- meetlat ---------- */
+  var naald = document.getElementById("naald");
+  var aflezing = document.getElementById("aflezing");
+  function meet(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    var p = h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0;
+    naald.style.width = (p * 100) + "%";
+    aflezing.textContent = String(Math.round(p * 100)).padStart(2, "0") + "%";
+  }
+  var bezig = false;
+  window.addEventListener("scroll", function(){
+    if (bezig) return;
+    bezig = true;
+    requestAnimationFrame(function(){ meet(); bezig = false; });
+  }, {passive:true});
+  meet();
+
+  /* ---------- onthullen bij scrollen ---------- */
+  var kijker = new IntersectionObserver(function(items){
+    items.forEach(function(it){
+      if (!it.isIntersecting) return;
+      it.target.classList.add("zichtbaar");
+      kijker.unobserve(it.target);
+      if (it.target.querySelector("[data-tel]")) telOp(it.target);
+    });
+  }, {threshold:.15, rootMargin:"0px 0px -8% 0px"});
+  document.querySelectorAll(".onthul").forEach(function(n){ kijker.observe(n); });
+
+  /* ---------- cijfers laten oplopen ---------- */
+  function telOp(hoes){
+    hoes.querySelectorAll("[data-tel]").forEach(function(n){
+      var doel = parseFloat(n.dataset.tel);
+      var dec = parseInt(n.dataset.decimalen || "0", 10);
+      if (rustig){ n.textContent = doel.toLocaleString("en-GB", {minimumFractionDigits:dec, maximumFractionDigits:dec}); return; }
+      var start = performance.now(), duur = 1250;
+      (function stap(nu){
+        var t = Math.min(1, (nu - start) / duur);
+        var e = 1 - Math.pow(1 - t, 3);
+        n.textContent = (doel * e).toLocaleString("en-GB", {minimumFractionDigits:dec, maximumFractionDigits:dec});
+        if (t < 1) requestAnimationFrame(stap);
+      })(start);
+    });
+  }
+
+  /* ---------- 04 · veedichtheid: stippenraster ---------- */
+  /* Zelfde raster van 144 posities in beide vakken; alleen de bezetting
+     verschilt, zodat het verschil als díchtheid leest en niet als "minder rijen". */
+  function vulVee(id, stap, kleur){
+    var g = document.getElementById(id);
+    if (!g) return;
+    var kol = 18, rij = 8, i, x, y;
+    for (i = 0; i < kol * rij; i++){
+      if (i % stap !== 0) continue;
+      x = 14 + (i % kol) * 19;
+      y = 18 + Math.floor(i / kol) * 17;
+      g.appendChild(el("circle", {cx:x, cy:y, r:4.2, fill:kleur, opacity:".82"}));
+    }
+  }
+  vulVee("nlvee", 1, "#B8410B");                 // 3,4 GVE/ha → raster vol (144)
+  vulVee("ukvee", 4, "#23566B");                 // 0,8 GVE/ha → ca. een kwart (36)
+
+  /* ---------- 05 · mozaïek van natuur en veehouderij ---------- */
+  function vulMozaiek(id, dicht){
+    var g = document.getElementById(id);
+    if (!g) return;
+    var n = 10, cel = 22, i, j, t, kleur, op;
+    for (j = 0; j < 8; j++){
+      for (i = 0; i < n; i++){
+        if (dicht){
+          // NL: natuur en vee liggen door elkaar heen
+          t = ((i * 3 + j * 5) % 7);
+          kleur = t < 2 ? "#4E6B27" : (t < 5 ? "#C99A16" : "#DCD3BC");
+          op = t < 2 ? .65 : (t < 5 ? .5 : 1);
+        } else {
+          // VK: natuur samengeklonterd links-boven, vee rechts-onder, veel leegte
+          var natuur = (i < 3 && j < 3);
+          var vee = (i > 6 && j > 4);
+          kleur = natuur ? "#4E6B27" : (vee ? "#C99A16" : "#DCD3BC");
+          op = natuur ? .65 : (vee ? .5 : 1);
+        }
+        g.appendChild(el("rect", {
+          x: 4 + i * cel, y: 4 + j * cel, width: cel - 2, height: cel - 2,
+          fill: kleur, opacity: op
+        }));
+      }
+    }
+  }
+  vulMozaiek("nlmoz", true);
+  vulMozaiek("ukmoz", false);
+
+  /* ---------- 06 · KDW-balken ---------- */
+  var kdw = [
+    {naam:"Weakly buffered pools",  waarde:410},
+    {naam:"Active raised bog",      waarde:500},
+    {naam:"Purple moor-grass meadow", waarde:1071},
+    {naam:"Dry heath",              waarde:1071},
+    {naam:"Old oak woodland",       waarde:1071},
+    {naam:"Dune woodland",          waarde:1429}
+  ];
+  (function tekenKDW(){
+    var g = document.getElementById("kdwbalken");
+    if (!g) return;
+    var x0 = 230, schaal = 0.32, top = 80, hoogte = 22, tussen = 22;
+    kdw.forEach(function(d, i){
+      var y = top + i * (hoogte + tussen);
+      var breedte = d.waarde * schaal;
+      // grens-label
+      var t = el("text", {x:x0 - 12, y:y + 15, "text-anchor":"end", class:"svgtxt"});
+      t.textContent = d.naam;
+      g.appendChild(t);
+      // balk (toegestaan)
+      var r = el("rect", {x:x0, y:y, width:0, height:hoogte, fill:"#4E6B27", opacity:".62"});
+      g.appendChild(r);
+      // overschrijding tot 1315
+      if (d.waarde < 1315){
+        var over = el("rect", {
+          x:x0 + breedte, y:y, width:0, height:hoogte,
+          fill:"#B8410B", opacity:".26"
+        });
+        over.dataset.doel = (1315 - d.waarde) * schaal;
+        g.appendChild(over);
+      }
+      var w = el("text", {x:x0 + breedte + 8, y:y + 15, class:"svgtxt klein"});
+      w.textContent = d.waarde.toLocaleString("en-GB") + " mol";
+      w.setAttribute("opacity", "0");
+      g.appendChild(w);
+
+      if (rustig){
+        r.setAttribute("width", breedte);
+        w.setAttribute("opacity", "1");
+        return;
+      }
+      setTimeout(function(){
+        r.style.transition = "width .9s cubic-bezier(.2,.8,.3,1)";
+        r.setAttribute("width", breedte);
+        w.style.transition = "opacity .5s .6s"; w.setAttribute("opacity", "1");
+      }, 120 * i);
+    });
+    // overschrijdingsvlakken apart animeren
+    var overs = g.querySelectorAll("rect[data-doel]");
+    overs.forEach(function(o, i){
+      if (rustig){ o.setAttribute("width", o.dataset.doel); return; }
+      setTimeout(function(){
+        o.style.transition = "width .8s cubic-bezier(.2,.8,.3,1)";
+        o.setAttribute("width", o.dataset.doel);
+      }, 700 + 120 * i);
+    });
+  })();
+
+  /* ---------- 08 · kiesstelsels ---------- */
+  (function tekenStelsels(){
+    var z = document.getElementById("zetels");
+    if (z){
+      var kol = 25, r = 5.4, sp = 14.5;
+      for (var i = 0; i < 150; i++){
+        var x = 8 + (i % kol) * sp;
+        var y = 10 + Math.floor(i / kol) * sp;
+        // BBB kreeg 7 zetels in de Tweede Kamer (2023)
+        var bbb = i >= 143;
+        z.appendChild(el("circle", {
+          cx:x, cy:y, r:r,
+          fill: bbb ? "#B8410B" : "none",
+          stroke: bbb ? "#B8410B" : "#7A7461",
+          "stroke-width": bbb ? 1.4 : 1
+        }));
+      }
+    }
+    var d = document.getElementById("districten");
+    if (d){
+      // 5 voorbeelddistricten; in elk telt alleen de winnaar
+      for (var k = 0; k < 5; k++){
+        var bx = 4, by = 4 + k * 24;
+        d.appendChild(el("rect", {x:bx, y:by, width:344, height:18, fill:"#F3EEE1", stroke:"#7A7461", "stroke-width":.8}));
+        // winnaar van het district
+        d.appendChild(el("rect", {x:bx + 1, y:by + 1, width:146, height:16, fill:"#23566B", opacity:".85"}));
+        var wt = el("text", {x:bx + 8, y:by + 13, class:"svgtxt klein"});
+        wt.setAttribute("style", "fill:#F3EEE1");   // CSS wint van fill-attribuut
+        wt.textContent = "wins — takes the seat";
+        d.appendChild(wt);
+        // aandeel boerenpartij
+        d.appendChild(el("rect", {x:bx + 148, y:by + 1, width:30, height:16, fill:"#B8410B", opacity:".6"}));
+        // rest van de stemmen
+        var rt = el("text", {x:bx + 186, y:by + 13, class:"svgtxt klein"});
+        rt.textContent = "other parties — 0 seats";
+        d.appendChild(rt);
+      }
+    }
+  })();
+})();
+</script>
+</body>
+</html>

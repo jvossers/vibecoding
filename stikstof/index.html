@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stikstof — waarom Nederland vastloopt en het VK niet</title>
 <meta name="description" content="Een visuele uitleg over de Nederlandse stikstofcrisis, en waarom het Verenigd Koninkrijk hetzelfde probleem niet heeft. Met kaarten, tabellen en diagrammen.">
+<link rel="alternate" hreflang="nl" href="https://labs.vossers.com/stikstof/">
+<link rel="alternate" hreflang="en" href="https://labs.vossers.com/stikstof/en/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -87,6 +89,20 @@ body::after{
   font-family:var(--mono); font-size:.62rem; letter-spacing:.1em;
   color:var(--ink-3); background:var(--paper-hi); padding-left:8px;
 }
+
+/* ============================================================
+   TAALKEUZE — NL / EN
+   ============================================================ */
+.taal{
+  position:fixed; top:34px; right:10px; z-index:901; display:flex;
+  font-family:var(--mono); font-size:.64rem; font-weight:600; letter-spacing:.14em;
+  background:var(--paper-hi); border:1px solid var(--rule);
+  box-shadow:2px 2px 0 rgba(20,19,13,.055);
+}
+.taal a{padding:.45em .75em; color:var(--ink-3); text-decoration:none}
+.taal a + a{border-left:1px solid var(--rule)}
+.taal a:hover{color:var(--nl)}
+.taal a[aria-current]{background:var(--ink); color:var(--paper-hi)}
 
 /* ============================================================
    BASIS-TYPOGRAFIE
@@ -336,6 +352,11 @@ footer{border-top:2px solid var(--ink); padding:3rem 0 4rem; margin-top:2rem; ba
   <div class="naald" id="naald"></div>
   <div class="aflezing" id="aflezing">00%</div>
 </div>
+
+<nav class="taal" aria-label="Taal / Language">
+  <a href="./" lang="nl" hreflang="nl" aria-current="page" title="Nederlands">NL</a>
+  <a href="en/" lang="en" hreflang="en" title="English">EN</a>
+</nav>
 
 <!-- ══════════════════════════ HERO ══════════════════════════ -->
 <header class="hero">
@@ -626,7 +647,7 @@ footer{border-top:2px solid var(--ink); padding:3rem 0 4rem; margin-top:2rem; ba
       <div class="onthul">
         <h3 style="margin-top:0">Hoe is dat zo gekomen?</h3>
         <p>Na de hongerwinter van 1944–45 werd <em>"nooit meer honger"</em> letterlijk overheidsbeleid. De Nederlandse landbouwminister Sicco Mansholt — later architect van het Europese landbouwbeleid — zette in op schaalvergroting, techniek en export.</p>
-        <p>Dat plan is spectaculair geslaagd. Nederland is met circa €125 miljard aan landbouwexport het <strong>tweede exportland ter wereld</strong>, na de Verenigde Staten. Op een landoppervlak zo groot als Wales plus een beetje.</p>
+        <p>Dat plan is spectaculair geslaagd. Nederland is met circa €125 miljard aan landbouwexport het <strong>tweede exportland ter wereld</strong>, na de Verenigde Staten. Op een oppervlak van ongeveer twee keer Wales.</p>
       </div>
       <div class="onthul" data-vertraag="1">
         <h3 style="margin-top:0">De verborgen truc: geïmporteerd voer</h3>
