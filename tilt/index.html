@@ -143,6 +143,10 @@
       border-radius: 50%;
       background: var(--dot);
     }
+    @media (max-width: 440px) {
+      #modes button { padding: 8px 8px; }
+      #modes button::before { display: none; }
+    }
     #modes button[aria-pressed="true"] {
       color: var(--ink);
       background: var(--line);
@@ -204,7 +208,7 @@
 <body>
   <div id="start">
     <h1>Tilt</h1>
-    <p>Five boxes of stuff that move with your phone. Tilt to pour, twist to swirl, shake to scatter, touch to gather.</p>
+    <p>Six boxes of stuff that move with your phone. Tilt to pour, twist to swirl, shake to scatter, touch to gather.</p>
     <button id="go">Tap to start</button>
   </div>
   <nav id="modes" aria-label="Mode"></nav>
@@ -226,6 +230,8 @@
     //   size      particle diameter in world units (box height is 2), sizeVar randomises it per particle
     //   speedRef  speed that counts as "fast" for colouring
     //   trail     0 = clear every frame, >0 = fade the previous frame by this much (long exposure)
+    //   strand    if set, particles are threaded into strands of this many points, `segment` apart,
+    //             held together by distance constraints; `stiffness` (0–1) resists bending
     const MODES = [
       {
         id: 'sand', name: 'Sand', dot: '#5ef0ff', bg: 0x05060d, theme: 'dark',
@@ -314,11 +320,42 @@
             gl_FragColor = vec4(c * (0.55 + 0.45 * vDepth) + uFlash, 1.0);
           }`,
       },
+      {
+        id: 'string', name: 'String', dot: '#e07a4f', bg: 0x1a1614, theme: 'dark',
+        count: 5000, strand: 80, segment: 0.018, stiffness: 0.15,
+        cells: 24, G: 3.0, fill: 0.35, damp: 1.2, bounce: 0, swirl: 1.6, pull: 5,
+        cohesion: 0, jitter: 0, burst: 1.2, size: 0.036, sizeVar: 0, speedRef: 2.0, trail: 0,
+        box: [0xe8d9c4, 0.08], blend: 'opaque',
+        frag: /* glsl */`
+          float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+          void main() {
+            vec2 p = gl_PointCoord * 2.0 - 1.0;
+            p.y = -p.y;
+            float r2 = dot(p, p);
+            // Ragged edge so the yarn looks fuzzy rather than like a smooth tube.
+            if (r2 > 0.7 + 0.3 * hash(floor(gl_FragCoord.xy) + vSeed * 97.0)) discard;
+            vec3 n = vec3(p, sqrt(max(0.0, 1.0 - r2)));
+            float k = floor(vSeed * 7.0);
+            vec3 c = k < 1.0 ? vec3(0.80, 0.33, 0.20)
+                   : k < 2.0 ? vec3(0.86, 0.66, 0.24)
+                   : k < 3.0 ? vec3(0.18, 0.50, 0.52)
+                   : k < 4.0 ? vec3(0.90, 0.84, 0.72)
+                   : k < 5.0 ? vec3(0.50, 0.24, 0.40)
+                   : k < 6.0 ? vec3(0.85, 0.50, 0.55)
+                   : vec3(0.52, 0.62, 0.42);
+            float light = max(dot(n, normalize(vec3(-0.4, 0.6, 0.7))), 0.0);
+            c *= 0.5 + 0.6 * light;
+            gl_FragColor = vec4(c * (0.55 + 0.45 * vDepth) + uFlash, 1.0);
+          }`,
+      },
     ];
 
     // ---- Settings -------------------------------------------------------
     const isTouch = matchMedia('(pointer: coarse)').matches;
-    const countFor = m => Math.round(m.count * (isTouch ? 0.65 : 1));
+    const countFor = m => {
+      const c = Math.round(m.count * (isTouch ? 0.65 : 1));
+      return m.strand ? Math.max(1, Math.floor(c / m.strand)) * m.strand : c;
+    };
     const MAX_N = Math.max(...MODES.map(countFor));
     const HY = 1;            // box half-height (world units)
     const HZ = 0.3;          // box half-depth
@@ -374,7 +411,7 @@
     const vel = new Float32Array(MAX_N * 3);
     const speeds = new Float32Array(MAX_N);
     const seeds = new Float32Array(MAX_N);
-    for (let i = 0; i < MAX_N; i++) seeds[i] = Math.random();
+    const prev = new Float32Array(MAX_N * 3);   // start-of-step positions, for strand velocities
 
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3).setUsage(THREE.DynamicDrawUsage));
@@ -495,6 +532,39 @@
       }
     }
 
+    // Strands start as gently wandering threads so the constraints don't snap them.
+    function spawnStrands() {
+      const L = mode.strand, seg = mode.segment;
+      for (let s = 0; s * L < n; s++) {
+        let x = (Math.random() * 2 - 1) * HX * 0.8, y = (Math.random() * 2 - 1) * HY * 0.8, z = (Math.random() * 2 - 1) * HZ * 0.8;
+        let dx = Math.random() - 0.5, dy = Math.random() - 0.5, dz = Math.random() - 0.5;
+        for (let j = 0; j < L; j++) {
+          const p = (s * L + j) * 3;
+          positions[p] = x; positions[p + 1] = y; positions[p + 2] = z;
+          vel[p] = vel[p + 1] = vel[p + 2] = 0;
+          dx += (Math.random() - 0.5) * 0.8; dy += (Math.random() - 0.5) * 0.8; dz += (Math.random() - 0.5) * 0.8;
+          const len = Math.hypot(dx, dy, dz) || 1;
+          dx /= len; dy /= len; dz /= len;
+          if (Math.abs(x + dx * seg) > HX) dx = -dx;
+          if (Math.abs(y + dy * seg) > HY) dy = -dy;
+          if (Math.abs(z + dz * seg) > HZ) dz = -dz;
+          x += dx * seg; y += dy * seg; z += dz * seg;
+        }
+      }
+    }
+
+    // Seeds drive per-particle variety in the shaders; strand modes share one per strand.
+    function assignSeeds() {
+      const L = mode.strand;
+      let s = Math.random();
+      for (let i = 0; i < n; i++) {
+        if (!L) seeds[i] = Math.random();
+        else if (i % L === 0) s = Math.random();
+        if (L) seeds[i] = s;
+      }
+      geometry.attributes.aSeed.needsUpdate = true;
+    }
+
     let needsClear = true;
     const modeButtons = new Map();
 
@@ -504,7 +574,10 @@
       mode = next;
       n = countFor(mode);
       // Particles carry over between modes; any extra ones start scattered.
-      if (n > prevN) spawn(prevN, n);
+      // Strands always start fresh, since loose particles can't be threaded.
+      if (mode.strand) spawnStrands();
+      else if (n > prevN) spawn(prevN, n);
+      assignSeeds();
       geometry.setDrawRange(0, n);
 
       points.material = materialFor(mode);
@@ -719,6 +792,7 @@
       const swirl = -spin * m.swirl;
       const jitter = m.jitter, pull = m.pull, bounce = m.bounce;
       const P = pressure;
+      if (m.strand) prev.set(positions.subarray(0, n * 3));
 
       for (let i = 0; i < n; i++) {
         const p = i * 3;
@@ -767,6 +841,39 @@
 
         positions[p] = x; positions[p + 1] = y; positions[p + 2] = z;
         vel[p] = vx; vel[p + 1] = vy; vel[p + 2] = vz;
+      }
+
+      if (m.strand) {
+        // Position-based dynamics: pull linked points back to their rest spacing,
+        // then derive velocity from how far each point actually moved.
+        solveStrands(6);
+        const inv = 1 / dt;
+        for (let i = 0; i < n * 3; i++) vel[i] = (positions[i] - prev[i]) * inv;
+      }
+    }
+
+    function link(a, b, rest, k) {
+      const pa = a * 3, pb = b * 3;
+      const dx = positions[pb] - positions[pa], dy = positions[pb + 1] - positions[pa + 1], dz = positions[pb + 2] - positions[pa + 2];
+      const d = Math.hypot(dx, dy, dz) || 1e-9;
+      const corr = ((d - rest) / d) * k;
+      positions[pa] += dx * corr; positions[pa + 1] += dy * corr; positions[pa + 2] += dz * corr;
+      positions[pb] -= dx * corr; positions[pb + 1] -= dy * corr; positions[pb + 2] -= dz * corr;
+    }
+
+    function solveStrands(iterations) {
+      const L = mode.strand, seg = mode.segment, bend = mode.stiffness * 0.5;
+      for (let it = 0; it < iterations; it++) {
+        for (let base = 0; base < n; base += L) {
+          for (let j = 0; j < L - 1; j++) link(base + j, base + j + 1, seg, 0.5);
+          // Linking every other point resists sharp kinks without making the strand rigid.
+          for (let j = 0; j < L - 2; j++) link(base + j, base + j + 2, seg * 1.9, bend);
+        }
+        for (let p = 0; p < n * 3; p += 3) {
+          positions[p] = Math.min(Math.max(positions[p], -HX), HX);
+          positions[p + 1] = Math.min(Math.max(positions[p + 1], -HY), HY);
+          positions[p + 2] = Math.min(Math.max(positions[p + 2], -HZ), HZ);
+        }
       }
     }
 
