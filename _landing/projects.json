@@ -2,8 +2,7 @@
   "groups": ["Teaching", "Explainers", "Tools", "Toys & games"],
 
   "hidden": [
-    "chatreel",
-    "wietsma"
+    "chatreel"
   ],
 
   "projects": {
