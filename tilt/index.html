@@ -241,6 +241,8 @@
     //   vortex    how much a held finger swirls particles around it (default 2)
     //   align     particles carry an orientation (vAngle) that lines up with a magnet under the finger
     //   scenery   optional function returning a fixed Three.js object shown inside the box
+    //   pop       particles are bubbles: touch and shakes pop them, and they grow back on the low side
+    //   touchHint start-screen hint for what a touch does (default 'Touch to gather')
     const MODES = [
       {
         id: 'sand', name: 'Sand', dot: '#5ef0ff', bg: 0x05060d, theme: 'dark',
@@ -379,7 +381,7 @@
       {
         id: 'iron', name: 'Iron', dot: '#3a3b40', bg: 0xe8e3d6, theme: 'light',
         count: 7000, cells: 30, G: 2.8, fill: 0.35, damp: 2.0, bounce: 0.1, swirl: 1.2, pull: 3,
-        vortex: 0, align: true,
+        vortex: 0, align: true, touchHint: 'Touch for a magnet',
         cohesion: 0, jitter: 0, burst: 1.4, size: 0.036, sizeVar: 0.5, speedRef: 1.5, trail: 0,
         box: [0x2a2a2a, 0.15], blend: 'opaque',
         frag: /* glsl */`
@@ -395,6 +397,29 @@
             float glint = pow(0.5 + 0.5 * sin(vAngle * 2.0 + 1.3), 3.0);
             vec3 c = mix(vec3(0.09, 0.09, 0.1), vec3(0.55, 0.56, 0.6), glint * (1.0 - abs(q.y) / halfWidth));
             gl_FragColor = vec4(c * (0.7 + 0.3 * vDepth) + uFlash, 1.0);
+          }`,
+      },
+      {
+        id: 'bubbles', name: 'Bubbles', dot: '#b48cff', bg: 0x0b0f1a, theme: 'dark',
+        count: 600, cells: 16, G: -0.5, fill: 0.65, damp: 2.5, bounce: 0.3, swirl: 1.5, pull: 0,
+        vortex: 0, pop: true, touchHint: 'Touch to pop',
+        cohesion: 0, jitter: 0.4, burst: 1.0, size: 0.09, sizeVar: 0.8, speedRef: 1.0, trail: 0,
+        box: [0xb48cff, 0.1], blend: 'add',
+        frag: /* glsl */`
+          void main() {
+            vec2 p = gl_PointCoord * 2.0 - 1.0;
+            p.y = -p.y;
+            float r = length(p);
+            if (r > 1.0) discard;
+            // A soap film is nearly invisible face-on and bright toward the rim.
+            float rim = smoothstep(0.72, 0.97, r) * (1.0 - smoothstep(0.97, 1.0, r));
+            float a = r * r * r * 0.22 + rim * 0.55;
+            // Iridescence: hue shifts with film thickness, which swirls slowly.
+            float t = vSeed * 6.283 + uTime * 0.5 + atan(p.y, p.x) + r * 4.0;
+            vec3 film = mix(vec3(1.0), 0.5 + 0.5 * cos(t + vec3(0.0, 2.1, 4.2)), 0.75);
+            float highlight = 1.0 - smoothstep(0.0, 0.22, length(p - vec2(-0.4, 0.42)));
+            vec3 c = film * a + highlight * 0.6;
+            gl_FragColor = vec4(c * (0.6 + 0.4 * vDepth) + uFlash * rim, 1.0);
           }`,
       },
     ];
@@ -490,12 +515,14 @@
     const seeds = new Float32Array(MAX_N);
     const prev = new Float32Array(MAX_N * 3);   // start-of-step positions, for strand velocities
     const angles = new Float32Array(MAX_N);     // needle orientation for `align` modes
+    const scales = new Float32Array(MAX_N);     // per-particle size multiplier; bubbles regrow from 0
 
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3).setUsage(THREE.DynamicDrawUsage));
     geometry.setAttribute('aSpeed', new THREE.BufferAttribute(speeds, 1).setUsage(THREE.DynamicDrawUsage));
     geometry.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1));
     geometry.setAttribute('aAngle', new THREE.BufferAttribute(angles, 1).setUsage(THREE.DynamicDrawUsage));
+    geometry.setAttribute('aScale', new THREE.BufferAttribute(scales, 1).setUsage(THREE.DynamicDrawUsage));
 
     // Shared by every mode's material, so updating one value updates whichever is active.
     const uniforms = {
@@ -515,6 +542,7 @@
       attribute float aSpeed;
       attribute float aSeed;
       attribute float aAngle;
+      attribute float aScale;
       varying float vSpeed;
       varying float vSeed;
       varying float vDepth;
@@ -522,7 +550,7 @@
       void main() {
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * mv;
-        gl_PointSize = uSize * mix(1.0, 0.4 + aSeed * 1.2, uSizeVar) * uProj / -mv.z;
+        gl_PointSize = uSize * aScale * mix(1.0, 0.4 + aSeed * 1.2, uSizeVar) * uProj / -mv.z;
         vSpeed = aSpeed;
         vSeed = aSeed;
         vAngle = aAngle;
@@ -649,8 +677,10 @@
         if (L) seeds[i] = s;
       }
       for (let i = 0; i < n; i++) angles[i] = Math.random() * Math.PI;
+      scales.fill(1);
       geometry.attributes.aSeed.needsUpdate = true;
       geometry.attributes.aAngle.needsUpdate = true;
+      geometry.attributes.aScale.needsUpdate = true;
     }
 
     let needsClear = true;
@@ -769,6 +799,10 @@
       const kick = mode.burst * strength;
       for (let i = 0; i < n * 3; i++) vel[i] += (Math.random() * 2 - 1) * kick;
       if (mode.align) for (let i = 0; i < n; i++) angles[i] += (Math.random() * 2 - 1) * strength;
+      if (mode.pop) {
+        const share = Math.min(0.6, 0.2 * strength);
+        for (let i = 0; i < n; i++) if (Math.random() < share) pop(i);
+      }
       flash = Math.min(0.35, 0.15 * strength);
     }
 
@@ -837,9 +871,9 @@
       setTimeout(() => {
         const hints = document.getElementById('hints');
         const list = sensorsActive
-          ? ['Tilt to pour', 'Twist to swirl', 'Shake to scatter', 'Touch to gather']
+          ? ['Tilt to pour', 'Twist to swirl', 'Shake to scatter', mode.touchHint ?? 'Touch to gather']
           : isTouch
-            ? ['Motion access off', 'Touch to gather']
+            ? ['Motion access off', mode.touchHint ?? 'Touch to gather']
             : ['Move mouse to tilt', 'Hold to gather', 'Space to scatter', '← → to switch'];
         hints.innerHTML = list.map(t => `<span>${t}</span>`).join('');
         hints.classList.add('show');
@@ -1001,6 +1035,37 @@
       geometry.attributes.aAngle.needsUpdate = true;
     }
 
+    // A popped bubble vanishes and starts again at zero size on the low side of
+    // the box (where gravity points), so it rises back into view as it grows.
+    function pop(i) {
+      const p = i * 3;
+      positions[p] = (Math.random() * 2 - 1) * HX;
+      positions[p + 1] = (Math.random() * 2 - 1) * HY;
+      positions[p + 2] = (Math.random() * 2 - 1) * HZ;
+      const ax = Math.abs(g.x), ay = Math.abs(g.y), az = Math.abs(g.z);
+      if (ax >= ay && ax >= az) positions[p] = Math.sign(g.x) * HX * 0.95;
+      else if (ay >= az) positions[p + 1] = Math.sign(g.y) * HY * 0.95;
+      else positions[p + 2] = Math.sign(g.z) * HZ * 0.95;
+      vel[p] = vel[p + 1] = vel[p + 2] = 0;
+      scales[i] = 0;
+    }
+
+    // Touching a bubble pops it; popped bubbles grow back over about a second.
+    function updateBubbles(dt) {
+      if (pointer.down) {
+        const base = mode.size * 0.5;
+        for (let i = 0; i < n; i++) {
+          if (scales[i] < 0.3) continue;
+          const p = i * 3;
+          const radius = base * scales[i] * (1 - mode.sizeVar + mode.sizeVar * (0.4 + seeds[i] * 1.2)) + 0.03;
+          const dx = positions[p] - pointer.x, dy = positions[p + 1] - pointer.y;
+          if (dx * dx + dy * dy < radius * radius) { pop(i); flash = Math.max(flash, 0.05); }
+        }
+      }
+      for (let i = 0; i < n; i++) if (scales[i] < 1) scales[i] = Math.min(1, scales[i] + dt);
+      geometry.attributes.aScale.needsUpdate = true;
+    }
+
     // Normalised speed per particle; each mode's shader decides what it looks like.
     function measureSpeeds() {
       const inv = 1 / mode.speedRef;
@@ -1022,6 +1087,7 @@
       step(dt / 2);
       measureSpeeds();
       if (mode.align) alignNeedles(dt);
+      if (mode.pop) updateBubbles(dt);
 
       flash *= Math.exp(-dt * 6);
       uniforms.uFlash.value = flash;
