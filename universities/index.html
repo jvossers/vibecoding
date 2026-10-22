@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#1D3A6B">
+<meta name="description" content="Explore UK universities on a map: subjects, typical A-level offers, Russell Group, tiers and cost of living. Build a UCAS shortlist.">
+<title>Campus Atlas — explore UK universities</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Crect width='30' height='30' rx='8' fill='%231D3A6B'/%3E%3Cpath d='M15 6c-3.6 0-6.5 2.8-6.5 6.4 0 4.6 6.5 11.6 6.5 11.6s6.5-7 6.5-11.6C21.5 8.8 18.6 6 15 6z' fill='%23DC9A4F'/%3E%3Ccircle cx='15' cy='12.5' r='2.4' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<style>
+/* ============================================================
+   CAMPUS ATLAS — explore UK universities, build a shortlist
+   Paper ground, navy ink, a warm sequential scale for cost.
+   ============================================================ */
+:root {
+  --bg: #F6F4EE;
+  --card: #FFFFFF;
+  --ink: #16202E;
+  --ink-2: #4B5565;
+  --ink-3: #5F6672;
+  --rule: #E2DED3;
+  --rule-2: #CFC9BA;
+  --soft: #F1EEE6;
+  --navy: #1D3A6B;
+  --navy-2: #122647;
+  --navy-soft: #E9EEF7;
+  --amber: #DC9A4F;
+  --sea: #E3EBEF;
+  --c1: #F3DFBF; --c2: #EBBE85; --c3: #DC9A4F; --c4: #B96A2A; --c5: #7C3F12;
+  --reach-bg: #FBE3D2; --reach: #8A3A0E;
+  --match-bg: #DCE7FB; --match: #1E3A8A;
+  --safe-bg: #DCF0E2; --safe: #14532D;
+  --needs-bg: #EFEAE0; --needs: #6B2E16;
+  --radius: 14px;
+  --display: "Bricolage Grotesque", "IBM Plex Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.45 "IBM Plex Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: var(--navy); }
+a:hover { color: var(--navy-2); }
+:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+[hidden] { display: none !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wrap { max-width: 1440px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+h1, h2, h3 { font-family: var(--display); letter-spacing: -0.01em; }
+.mono { font-family: var(--mono); font-weight: 600; }
+
+/* Header */
+.top { background: var(--card); border-bottom: 1px solid var(--rule); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 10px 24px; flex-wrap: wrap; padding-top: 12px; padding-bottom: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.brand b { font-family: var(--display); font-size: 21px; }
+.nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.nav a { padding: 8px 14px; border-radius: 999px; text-decoration: none; font-weight: 500; color: var(--ink); }
+.nav a.on { background: var(--navy); color: #fff; }
+.count { display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--amber); color: var(--ink); font-size: 12px; font-weight: 600; text-align: center; }
+
+/* About-you bar */
+.me { background: var(--navy); color: #fff; }
+.me .wrap { display: flex; align-items: center; gap: 10px 26px; flex-wrap: wrap; padding-top: 10px; padding-bottom: 10px; font-size: 14px; }
+.me .lab { color: #C9D5EA; margin-right: 8px; }
+.grades { display: inline-flex; gap: 4px; vertical-align: middle; }
+.grades select { appearance: none; -webkit-appearance: none; width: 40px; height: 32px; border-radius: 7px; border: 0; background: #fff; color: var(--navy); font-family: var(--mono); font-weight: 600; text-align: center; text-align-last: center; padding: 0; }
+.grades select.empty { background: #33507F; color: #C9D5EA; }
+.subj { position: relative; display: inline-block; }
+.subj > summary { list-style: none; display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px; border-radius: 999px; border: 1px solid #7A9FD8; cursor: pointer; }
+.subj > summary::-webkit-details-marker { display: none; }
+.subj[open] > summary { background: #fff; color: var(--navy); }
+.subj .pop { position: absolute; z-index: 1200; top: calc(100% + 6px); left: 0; width: min(560px, calc(100vw - 32px)); background: #fff; color: var(--ink); border-radius: 14px; box-shadow: 0 12px 40px -10px rgba(22,32,46,.45); padding: 14px 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 4px 12px; max-height: 70vh; overflow: auto; }
+.subj .pop h4 { grid-column: 1 / -1; margin: 8px 0 2px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); }
+.subj .pop label { display: flex; gap: 8px; align-items: center; padding: 3px 0; font-size: 14px; cursor: pointer; }
+.subj .pop input { width: 17px; height: 17px; }
+.me .hint { color: #C9D5EA; font-size: 13px; margin-left: auto; }
+@media (max-width: 900px) { .me .hint { margin-left: 0; flex-basis: 100%; } }
+@media (max-width: 640px) {
+  .me .wrap { position: relative; }
+  .subj { position: static; }
+  .subj .pop { left: 16px; right: 16px; width: auto; top: auto; margin-top: 6px; }
+}
+
+/* Explore controls */
+.controls { padding-top: 18px; padding-bottom: 6px; display: flex; flex-direction: column; gap: 10px; }
+.row1 { display: flex; gap: 10px; flex-wrap: wrap; align-items: stretch; }
+.field { display: flex; align-items: center; gap: 10px; background: #fff; border: 1.5px solid var(--navy); border-radius: 12px; padding: 0 14px; height: 50px; }
+.field select, .field input { border: 0; outline: none; background: transparent; font-size: 16px; min-width: 0; flex: 1; height: 100%; }
+.field.subject { flex: 1 1 300px; }
+.field.search { flex: 1 1 240px; border-color: var(--rule-2); }
+.seg { display: flex; gap: 4px; background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: 4px; }
+.seg button { border: 0; background: transparent; border-radius: 8px; padding: 6px 14px; font-weight: 500; }
+.seg button[aria-pressed="true"] { background: var(--navy-soft); color: var(--navy); font-weight: 600; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.ftoggle { display: none; }
+@media (max-width: 760px) {
+  .ftoggle { display: inline-flex; align-self: flex-start; }
+  .filters:not(.open) { display: none; }
+}
+.chip { height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--rule-2); background: #fff; display: inline-flex; align-items: center; gap: 6px; }
+.chip[aria-pressed="true"] { border-color: var(--navy); background: var(--navy-soft); color: var(--navy); font-weight: 600; }
+.chip:disabled { opacity: .45; cursor: not-allowed; }
+.chip select { border: 0; background: transparent; outline: none; font-weight: 600; padding: 0; }
+.chip.sel { padding-right: 8px; }
+.group { display: inline-flex; gap: 4px; align-items: center; }
+.group .glab { font-size: 13px; color: var(--ink-2); margin-right: 2px; }
+.mini { height: 38px; min-width: 38px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--rule-2); background: #fff; font-weight: 600; }
+.mini[aria-pressed="true"] { border-color: var(--navy); background: var(--navy); color: #fff; }
+.mini:disabled { opacity: .45; cursor: not-allowed; }
+.linkbtn { background: none; border: 0; padding: 0 6px; color: var(--navy); text-decoration: underline; height: 38px; }
+
+/* Explore layout */
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; align-items: start; padding-top: 8px; padding-bottom: 32px; }
+.layout.v-list { grid-template-columns: minmax(0, 1fr); }
+.layout.v-list .mapbox { display: none; }
+.layout.v-map { grid-template-columns: minmax(0, 1fr); }
+.layout.v-map .results { display: none; }
+.layout.v-list .results .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 12px; }
+.results { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.rhead { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.rhead h1 { margin: 0; font-size: 24px; }
+.rhead select { border: 1px solid var(--rule-2); border-radius: 8px; padding: 4px 8px; background: #fff; }
+.tally { display: flex; gap: 8px; flex-wrap: wrap; font-size: 13px; align-items: center; }
+.cards { display: flex; flex-direction: column; gap: 12px; }
+.empty-state { background: #fff; border: 1px dashed var(--rule-2); border-radius: var(--radius); padding: 28px; text-align: center; color: var(--ink-2); }
+.more { height: 46px; border-radius: 12px; border: 1px solid var(--rule-2); background: #fff; font-weight: 600; }
+
+.card { background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; transition: border-color .15s, box-shadow .15s; }
+.card.hl { border-color: var(--navy); box-shadow: 0 0 0 1px var(--navy); }
+.card .t { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.card h2 { margin: 0; font-size: 19px; }
+.card h2 a { color: var(--ink); text-decoration: none; }
+.card h2 a:hover { text-decoration: underline; }
+.sub { font-size: 14px; color: var(--ink-2); }
+.badges { display: flex; gap: 6px; flex-wrap: wrap; font-size: 12px; font-weight: 600; }
+.b { padding: 3px 8px; border-radius: 6px; }
+.b-rg { background: var(--navy); color: #fff; }
+.b-tier { border: 1px solid var(--navy); color: var(--navy); }
+.b-plain { background: var(--soft); color: var(--ink-2); }
+.metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; border-top: 1px solid #EEEBE3; padding-top: 10px; }
+.k { font-size: 12px; color: var(--ink-3); }
+.v { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+.v .mono { font-size: 17px; }
+.small { font-size: 13px; color: var(--ink-2); }
+.fit { padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.fit-reach { background: var(--reach-bg); color: var(--reach); }
+.fit-match { background: var(--match-bg); color: var(--match); }
+.fit-safe { background: var(--safe-bg); color: var(--safe); }
+.fit-needs { background: var(--needs-bg); color: var(--needs); }
+.costbar { display: inline-flex; gap: 3px; margin: 5px 0 3px; }
+.costbar i { width: 18px; height: 8px; border-radius: 2px; background: #ECE8DF; }
+.star { flex: none; width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--rule); background: #fff; display: grid; place-items: center; }
+.star svg { width: 22px; height: 22px; fill: none; stroke: var(--ink-2); stroke-width: 1.8; stroke-linejoin: round; }
+.star[aria-pressed="true"] svg { fill: var(--amber); stroke: var(--c4); }
+.star.sm { width: 40px; height: 40px; }
+.star.sm svg { width: 18px; height: 18px; }
+
+/* Map */
+.mapbox { position: sticky; top: 12px; height: calc(100vh - 24px); min-height: 520px; max-height: 920px; border-radius: 16px; overflow: hidden; border: 1px solid #D3DCE1; background: var(--sea); }
+.layout.v-map .mapbox { position: relative; top: 0; height: 78vh; }
+#map { position: absolute; inset: 0; }
+.leaflet-container { font: inherit; background: var(--sea); }
+.maptools { position: absolute; z-index: 800; left: 12px; top: 12px; right: 60px; display: flex; gap: 8px; flex-wrap: wrap; pointer-events: none; }
+.maptools > * { pointer-events: auto; }
+.colourby { display: flex; gap: 4px; align-items: center; background: #fff; border-radius: 10px; padding: 4px; box-shadow: 0 1px 3px rgba(22,32,46,.18); }
+.colourby span { font-size: 13px; color: var(--ink-2); padding: 0 4px 0 8px; }
+.colourby button { border: 0; border-radius: 7px; padding: 6px 11px; font-size: 14px; font-weight: 600; background: transparent; }
+.colourby button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+.legend { position: absolute; z-index: 800; left: 12px; bottom: 26px; background: #fff; border-radius: 12px; padding: 10px 14px; box-shadow: 0 1px 3px rgba(22,32,46,.18); display: flex; flex-direction: column; gap: 6px; max-width: 300px; font-size: 12px; color: var(--ink-2); }
+.legend b { font-size: 13px; color: var(--ink); }
+.legend .items { display: flex; gap: 8px; flex-wrap: wrap; }
+.legend .dot, .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(22,32,46,.25); vertical-align: -2px; margin-right: 4px; }
+.legend .ring { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid var(--navy); vertical-align: -2px; margin-right: 4px; }
+.leaflet-popup-content { margin: 12px 14px; font-size: 13px; line-height: 1.4; }
+.leaflet-popup-content b { font-family: var(--display); font-size: 15px; }
+.pop-badges { display: flex; gap: 4px; margin: 6px 0; flex-wrap: wrap; font-size: 11px; font-weight: 600; }
+.fallback { position: absolute; inset: 0; display: grid; place-items: center; }
+.fallback .fbox { position: relative; height: calc(100% - 90px); aspect-ratio: 366 / 552; max-width: 100%; margin-top: 30px; }
+.fallback svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.fallback button { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; padding: 0; border-radius: 50%; box-shadow: 0 1px 2px rgba(22,32,46,.35); }
+
+@media (max-width: 999px) {
+  .layout, .layout.v-both { grid-template-columns: minmax(0, 1fr); }
+  .layout.v-both .mapbox { display: none; }
+  .seg .both { display: none; }
+  .mapbox { position: relative; top: 0; }
+  .layout.v-map .mapbox { height: 72vh; }
+  .layout.v-list .results .cards { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) { .metrics { grid-template-columns: minmax(0, 1fr); } }
+
+/* Panels (uni, shortlist, about) */
+.page { padding-top: 18px; padding-bottom: 40px; display: flex; flex-direction: column; gap: 20px; }
+.panel { background: #fff; border: 1px solid var(--rule); border-radius: 18px; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+@media (max-width: 640px) { .panel { padding: 18px 16px; } }
+.panel h2 { margin: 0; font-size: 24px; }
+.hero { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+.hero h1 { margin: 6px 0 4px; font-size: clamp(30px, 5vw, 44px); line-height: 1.05; letter-spacing: -0.02em; }
+.acts { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--rule-2); background: #fff; color: var(--ink); font-weight: 600; text-decoration: none; }
+.btn.primary { background: var(--amber); border-color: var(--amber); }
+.btn.navy { background: var(--navy); border-color: var(--navy); color: #fff; }
+.btn svg { width: 20px; height: 20px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.tile { background: var(--bg); border-radius: 12px; padding: 12px 14px; }
+.tile .big { font-size: 20px; font-weight: 600; }
+.tile .big.mono { font-size: 19px; }
+.split { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+.split > .main { flex: 999 1 620px; min-width: 0; }
+.split > .side { flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+.tablebox { overflow-x: auto; position: relative; }
+table.areas { width: 100%; border-collapse: collapse; min-width: 640px; font-size: 14px; }
+table.areas th { text-align: left; color: var(--ink-3); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; font-weight: 600; padding: 8px 10px; }
+table.areas td { padding: 10px; border-top: 1px solid #EEEBE3; vertical-align: middle; }
+table.areas tr.grp td { background: var(--bg); font-weight: 600; font-size: 13px; color: var(--ink-2); padding: 6px 10px; }
+table.areas td:first-child, table.areas th:first-child { padding-left: 0; }
+table.areas tr.grp td:first-child { padding-left: 10px; }
+.note { font-size: 12px; color: var(--ink-3); }
+@media (max-width: 640px) {
+  table.areas { min-width: 0; }
+  table.areas thead { display: none; }
+  table.areas tr:not(.grp) { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; border-top: 1px solid #EEEBE3; padding: 8px 0; }
+  table.areas tr:not(.grp) td { border: 0; padding: 2px 0; }
+  table.areas tr:not(.grp) td:nth-child(2), table.areas tr:not(.grp) td:nth-child(5) { text-align: right; }
+  table.areas tr:not(.grp) td:nth-child(3) { font-size: 13px; color: var(--ink-2); }
+  table.areas tr.grp td { display: block; }
+}
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.box { border: 1px solid #EEEBE3; border-radius: 12px; padding: 12px; }
+.box .big { font-size: 19px; font-weight: 600; }
+.stack { display: flex; height: 14px; border-radius: 4px; overflow: hidden; gap: 2px; margin: 8px 0 6px; }
+.keyrow { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--ink-2); }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.callout { background: var(--bg); border-radius: 12px; padding: 12px 14px; font-size: 14px; }
+.bars { display: grid; grid-template-columns: minmax(90px, auto) 1fr 48px; gap: 6px 10px; align-items: center; font-size: 13px; }
+.bars .bar { height: 10px; border-radius: 3px; }
+.minimap { height: 260px; border-radius: 12px; overflow: hidden; background: var(--sea); position: relative; }
+textarea.notes { border: 1px solid var(--rule-2); border-radius: 12px; padding: 12px; resize: vertical; min-height: 80px; }
+
+.balance { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+@media (max-width: 640px) { .balance { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.slot { min-height: 58px; border-radius: 10px; display: flex; flex-direction: column; justify-content: center; padding: 6px 12px; font-weight: 600; }
+.slot small { font-size: 12px; }
+.slot.empty { border: 2px dashed var(--rule-2); color: var(--ink-2); align-items: center; text-decoration: none; }
+.slot.none { background: var(--soft); color: var(--ink-2); }
+table.cmp { border-collapse: collapse; font-size: 14px; min-width: 100%; }
+table.cmp th, table.cmp td { padding: 10px 12px; border-top: 1px solid #EEEBE3; text-align: left; vertical-align: top; min-width: 170px; }
+table.cmp thead th { border-top: 0; vertical-align: bottom; }
+table.cmp tbody th { color: var(--ink-2); font-weight: 500; min-width: 150px; position: sticky; left: 0; background: #fff; }
+table.cmp .best { background: #F6E8D2; border-radius: 6px; padding: 2px 8px; font-weight: 600; }
+.colhead { display: flex; flex-direction: column; gap: 6px; }
+.colhead a { font-family: var(--display); font-size: 17px; color: var(--ink); }
+.colhead select { border: 1px solid var(--rule-2); border-radius: 8px; padding: 4px 6px; background: #fff; max-width: 200px; font-size: 13px; }
+.colhead .ops { display: flex; gap: 4px; }
+.colhead .ops button { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--rule); background: #fff; }
+.banner { background: var(--navy-soft); border: 1px solid #C3D1EA; border-radius: 14px; padding: 12px 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: space-between; }
+.prose { max-width: 820px; }
+.prose h2 { margin-top: 8px; }
+.prose p, .prose li { color: var(--ink-2); }
+.prose table { border-collapse: collapse; font-size: 14px; }
+.prose td, .prose th { border-top: 1px solid #EEEBE3; padding: 6px 12px 6px 0; text-align: left; }
+
+footer.foot { color: var(--ink-3); font-size: 13px; padding-bottom: 28px; }
+
+@media print {
+  .top, .me, .noprint, footer.foot, .colhead select, .colhead .ops { display: none !important; }
+  body { background: #fff; }
+  .panel { border: 0; padding: 0; }
+  table.cmp tbody th { position: static; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#/">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="8" fill="#1D3A6B"/><path d="M15 6c-3.6 0-6.5 2.8-6.5 6.4 0 4.6 6.5 11.6 6.5 11.6s6.5-7 6.5-11.6C21.5 8.8 18.6 6 15 6z" fill="#DC9A4F"/><circle cx="15" cy="12.5" r="2.4" fill="#fff"/></svg>
+      <b>Campus Atlas</b>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#/" data-nav="explore">Explore</a>
+      <a href="#/shortlist" data-nav="shortlist">Shortlist <span class="count" id="slCount">0</span></a>
+      <a href="#/about" data-nav="about">About the data</a>
+    </nav>
+  </div>
+</header>
+
+<section class="me" aria-label="About you">
+  <div class="wrap">
+    <div><span class="lab">Predicted grades</span><span class="grades" id="grades"></span></div>
+    <div>
+      <span class="lab">A levels</span>
+      <details class="subj" id="subjPick">
+        <summary id="subjSummary">Add your subjects</summary>
+        <div class="pop" id="subjPop"></div>
+      </details>
+    </div>
+    <div class="hint">Used to label courses Reach, Match or Safe and to check required subjects. Saved on this device only.</div>
+  </div>
+</section>
+
+<main id="app"></main>
+
+<footer class="foot wrap">Typical offers, tiers and living costs are estimates to help you explore, not official figures. Always check the university's own course pages before you apply. <a href="#/about">How the data works</a>.</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+'use strict';
+
+/* ============================================================
+   DATA
+   ============================================================ */
+
+// A-level subjects (same ids as Trio, /alevels/)
+const SUBJECTS = [
+  { id: 'maths', name: 'Mathematics', cat: 'Maths' },
+  { id: 'fm', name: 'Further Maths', cat: 'Maths' },
+  { id: 'phys', name: 'Physics', cat: 'Sciences' },
+  { id: 'chem', name: 'Chemistry', cat: 'Sciences' },
+  { id: 'bio', name: 'Biology', cat: 'Sciences' },
+  { id: 'cs', name: 'Computer Science', cat: 'Sciences' },
+  { id: 'envsci', name: 'Environmental Science', cat: 'Sciences' },
+  { id: 'psych', name: 'Psychology', cat: 'Social sciences' },
+  { id: 'econ', name: 'Economics', cat: 'Social sciences' },
+  { id: 'pol', name: 'Politics', cat: 'Social sciences' },
+  { id: 'soc', name: 'Sociology', cat: 'Social sciences' },
+  { id: 'bus', name: 'Business', cat: 'Social sciences' },
+  { id: 'law', name: 'Law', cat: 'Social sciences' },
+  { id: 'hist', name: 'History', cat: 'Humanities' },
+  { id: 'geog', name: 'Geography', cat: 'Humanities' },
+  { id: 'englit', name: 'English Literature', cat: 'Humanities' },
+  { id: 'englang', name: 'English Language', cat: 'Humanities' },
+  { id: 'rs', name: 'Religious Studies', cat: 'Humanities' },
+  { id: 'phil', name: 'Philosophy', cat: 'Humanities' },
+  { id: 'classics', name: 'Classical Civilisation', cat: 'Humanities' },
+  { id: 'fr', name: 'French', cat: 'Languages' },
+  { id: 'es', name: 'Spanish', cat: 'Languages' },
+  { id: 'de', name: 'German', cat: 'Languages' },
+  { id: 'zh', name: 'Chinese', cat: 'Languages' },
+  { id: 'latin', name: 'Latin', cat: 'Languages' },
+  { id: 'art', name: 'Art & Design', cat: 'Creative & other' },
+  { id: 'music', name: 'Music', cat: 'Creative & other' },
+  { id: 'drama', name: 'Drama & Theatre', cat: 'Creative & other' },
+  { id: 'dt', name: 'Design & Technology', cat: 'Creative & other' },
+  { id: 'film', name: 'Film Studies', cat: 'Creative & other' },
+  { id: 'media', name: 'Media Studies', cat: 'Creative & other' },
+  { id: 'pe', name: 'Physical Education', cat: 'Creative & other' },
+];
+const SUBJ = Object.fromEntries(SUBJECTS.map(s => [s.id, s]));
+
+// Offer ladder. Each step is 8 UCAS tariff points (A*=56, A=48, B=40, C=32).
+const LADDER = ['CCC', 'BCC', 'BBC', 'BBB', 'ABB', 'AAB', 'AAA', 'A*AA', 'A*A*A', 'A*A*A*'];
+const GP = { 'A*': 56, A: 48, B: 40, C: 32, D: 24, E: 16 };
+const GRADES = ['A*', 'A', 'B', 'C', 'D', 'E'];
+
+// Subject areas. A university's typical offer for an area is its base level plus `adj`,
+// kept within `floor`..`cap`, unless the university lists an override.
+// req: groups of A-level subjects; each group must be met by a different subject.
+// pref: the same shape, but only recommended (does not change the fit label).
+const SCIS = ['chem', 'phys', 'maths', 'bio', 'psych', 'geog', 'envsci', 'cs'];
+const AREAS = [
+  { id: 'med', name: 'Medicine', g: 'Medicine & health', adj: 2, floor: 6, cap: 7, req: [['chem'], ['bio', 'phys', 'maths']], pref: [['bio']], note: 'UCAT admissions test and interview. Most want Biology too.' },
+  { id: 'dent', name: 'Dentistry', g: 'Medicine & health', adj: 2, floor: 6, cap: 7, req: [['chem'], ['bio']], note: 'UCAT admissions test and interview.' },
+  { id: 'vet', name: 'Veterinary Science', g: 'Medicine & health', adj: 2, floor: 5, cap: 7, req: [['chem'], ['bio']], note: 'Animal work experience expected.' },
+  { id: 'pharm', name: 'Pharmacy', g: 'Medicine & health', adj: 0, floor: 4, cap: 6, req: [['chem'], ['bio', 'maths', 'phys']] },
+  { id: 'nurs', name: 'Nursing & Midwifery', g: 'Medicine & health', adj: -1, cap: 5, note: 'Interview. A science helps.' },
+  { id: 'biomed', name: 'Biomedical Sciences', g: 'Sciences', adj: 0, req: [['bio', 'chem'], ['bio', 'chem', 'phys', 'maths']] },
+  { id: 'bio', name: 'Biology & Life Sciences', g: 'Sciences', adj: 0, req: [['bio'], SCIS.filter(s => s !== 'bio')] },
+  { id: 'chem', name: 'Chemistry', g: 'Sciences', adj: 0, req: [['chem'], ['maths', 'phys', 'bio']] },
+  { id: 'phys', name: 'Physics & Astronomy', g: 'Sciences', adj: 1, req: [['phys'], ['maths']], pref: [['fm']] },
+  { id: 'env', name: 'Earth & Environmental Sciences', g: 'Sciences', adj: -1, pref: [['geog', 'bio', 'chem', 'phys', 'envsci', 'maths']] },
+  { id: 'maths', name: 'Mathematics', g: 'Maths, computing & engineering', adj: 1, req: [['maths']], pref: [['fm']] },
+  { id: 'cs', name: 'Computer Science', g: 'Maths, computing & engineering', adj: 1, req: [['maths']], note: 'A few universities accept other subjects.' },
+  { id: 'engr', name: 'Engineering', g: 'Maths, computing & engineering', adj: 1, req: [['maths'], ['phys']], note: 'Some branches, e.g. Chemical, want Chemistry instead of Physics.' },
+  { id: 'arch', name: 'Architecture', g: 'Maths, computing & engineering', adj: 0, cap: 7, pref: [['art', 'maths', 'phys', 'dt']], note: 'Portfolio usually needed.' },
+  { id: 'psych', name: 'Psychology', g: 'Social sciences', adj: 1, pref: [['bio', 'chem', 'phys', 'maths', 'psych']] },
+  { id: 'econ', name: 'Economics', g: 'Social sciences', adj: 1, req: [['maths']] },
+  { id: 'pol', name: 'Politics & International Relations', g: 'Social sciences', adj: 0 },
+  { id: 'soc', name: 'Sociology & Criminology', g: 'Social sciences', adj: -1 },
+  { id: 'geog', name: 'Geography', g: 'Social sciences', adj: 0, pref: [['geog']] },
+  { id: 'bus', name: 'Business & Management', g: 'Business & law', adj: 0 },
+  { id: 'acc', name: 'Accounting & Finance', g: 'Business & law', adj: 0, note: 'Usually needs a good GCSE Maths grade.' },
+  { id: 'law', name: 'Law', g: 'Business & law', adj: 1, note: 'Some universities set the LNAT test.' },
+  { id: 'engl', name: 'English', g: 'Humanities', adj: 0, req: [['englit', 'englang']] },
+  { id: 'hist', name: 'History', g: 'Humanities', adj: 0, pref: [['hist']] },
+  { id: 'phil', name: 'Philosophy', g: 'Humanities', adj: 0 },
+  { id: 'clas', name: 'Classics & Ancient History', g: 'Humanities', adj: 0, pref: [['latin', 'classics', 'hist']] },
+  { id: 'lang', name: 'Modern Languages', g: 'Languages', adj: 0, pref: [['fr', 'es', 'de', 'zh']], note: 'Beginner routes exist for some languages.' },
+  { id: 'art', name: 'Art & Design', g: 'Creative arts', adj: -2, cap: 5, pref: [['art', 'dt']], note: 'Portfolio needed.' },
+  { id: 'music', name: 'Music', g: 'Creative arts', adj: -1, note: 'Music A level or Grade 8 usually expected.' },
+  { id: 'drama', name: 'Drama & Theatre', g: 'Creative arts', adj: -1, pref: [['drama', 'englit']] },
+  { id: 'media', name: 'Media, Film & Journalism', g: 'Creative arts', adj: -1 },
+  { id: 'edu', name: 'Education', g: 'Education & sport', adj: -1 },
+  { id: 'sport', name: 'Sport & Exercise Science', g: 'Education & sport', adj: -1, pref: [['pe', 'bio', 'psych', 'chem', 'phys']] },
+];
+const AREA = Object.fromEntries(AREAS.map(a => [a.id, a]));
+const AREA_GROUPS = [...new Set(AREAS.map(a => a.g))];
+
+const CAMPUS = { city: 'City university', campus: 'Campus university', coll: 'Collegiate', town: 'Small town' };
+const NATIONS = ['England', 'Scotland', 'Wales', 'Northern Ireland'];
+const TIER_TEXT = { 1: 'Tier 1 · about top 10', 2: 'Tier 2 · about 11–30', 3: 'Tier 3 · about 31–60', 4: 'Tier 4 · about 61+', 0: 'Specialist' };
+
+// One line per university:
+// id, name, short, city, nation, lat, lon, russellGroup, tier (0 = specialist), base offer level,
+// setting, cost band 1-5, halls £/wk [lo, hi], shared house £/wk [lo, hi], website, areas, overrides
+const U_ROWS = [
+  ['oxford', 'University of Oxford', 'Oxford', 'Oxford', 'E', 51.754, -1.254, 1, 1, 6, 'coll', 4, [150, 230], [200, 280], 'ox.ac.uk', 'med biomed bio chem phys maths cs engr env psych econ law pol hist engl lang phil clas geog music art', { law: 6, maths: 8 }],
+  ['cambridge', 'University of Cambridge', 'Cambridge', 'Cambridge', 'E', 52.205, 0.117, 1, 1, 7, 'coll', 4, [140, 230], [200, 280], 'cam.ac.uk', 'med vet bio chem phys maths cs engr env psych econ law pol hist engl lang phil clas geog soc edu music arch', { med: 8, psych: 7, law: 7 }],
+  ['imperial', 'Imperial College London', 'Imperial', 'London', 'E', 51.498, -0.177, 1, 1, 7, 'city', 5, [190, 380], [230, 350], 'imperial.ac.uk', 'med biomed bio chem phys maths cs engr env econ', { maths: 8, cs: 8, engr: 8, phys: 8, econ: 7 }],
+  ['lse', 'London School of Economics', 'LSE', 'London', 'E', 51.514, -0.117, 1, 1, 6, 'city', 5, [200, 420], [230, 350], 'lse.ac.uk', 'econ bus acc law pol hist phil geog soc psych maths', { geog: 5 }],
+  ['ucl', 'UCL', 'UCL', 'London', 'E', 51.525, -0.134, 1, 1, 6, 'city', 5, [200, 390], [230, 350], 'ucl.ac.uk', 'med pharm biomed bio chem phys maths cs engr env psych econ bus law pol hist engl lang phil clas geog soc edu art arch', { engl: 7, hist: 7, cs: 8, geog: 7, arch: 7 }],
+  ['kcl', "King's College London", "King's", 'London', 'E', 51.512, -0.116, 1, 2, 6, 'city', 5, [220, 400], [230, 350], 'kcl.ac.uk', 'med dent nurs pharm biomed bio chem phys maths cs engr psych econ bus acc law pol hist engl lang phil clas geog edu sport music media', { nurs: 4 }],
+  ['qmul', 'Queen Mary University of London', 'Queen Mary', 'London', 'E', 51.524, -0.040, 1, 3, 5, 'city', 5, [200, 330], [220, 320], 'qmul.ac.uk', 'med dent biomed bio chem phys maths cs engr psych econ bus acc law pol hist engl lang geog soc drama media', { law: 7 }],
+  ['rhul', 'Royal Holloway, University of London', 'Royal Holloway', 'Egham', 'E', 51.426, -0.563, 0, 3, 4, 'campus', 4, [160, 260], [170, 230], 'royalholloway.ac.uk', 'biomed bio phys maths cs env psych econ bus acc law pol hist engl lang phil clas geog soc drama music media', {}],
+  ['citysg', "City St George's, University of London", "City St George's", 'London', 'E', 51.528, -0.102, 0, 3, 4, 'city', 5, [220, 380], [220, 320], 'citystgeorges.ac.uk', 'med nurs biomed psych econ bus acc law pol maths cs engr soc media music', {}],
+  ['goldsmiths', 'Goldsmiths, University of London', 'Goldsmiths', 'London', 'E', 51.474, -0.035, 0, 4, 3, 'city', 5, [190, 300], [210, 300], 'gold.ac.uk', 'psych bus pol hist engl soc edu art music drama media cs', {}],
+  ['soas', 'SOAS University of London', 'SOAS', 'London', 'E', 51.522, -0.129, 0, 3, 4, 'city', 5, [220, 380], [230, 350], 'soas.ac.uk', 'econ law pol hist lang phil soc music', {}],
+  ['brunel', 'Brunel University of London', 'Brunel', 'Uxbridge', 'E', 51.533, -0.473, 0, 3, 3, 'campus', 4, [170, 250], [170, 230], 'brunel.ac.uk', 'nurs biomed psych econ bus acc law pol hist engl cs maths engr sport edu media drama soc', {}],
+  ['ual', 'University of the Arts London', 'UAL', 'London', 'E', 51.535, -0.125, 0, 0, 0, 'city', 5, [200, 390], [220, 330], 'arts.ac.uk', 'art media bus drama arch', {}],
+  ['rvc', 'Royal Veterinary College', 'RVC', 'London and Hertfordshire', 'E', 51.537, -0.134, 0, 0, 6, 'campus', 5, [180, 300], [180, 260], 'rvc.ac.uk', 'vet bio', {}],
+
+  ['birmingham', 'University of Birmingham', 'Birmingham', 'Birmingham', 'E', 52.450, -1.930, 1, 2, 5, 'campus', 3, [130, 230], [120, 170], 'birmingham.ac.uk', 'med dent nurs pharm biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil clas geog soc edu sport music drama media', {}],
+  ['bristol', 'University of Bristol', 'Bristol', 'Bristol', 'E', 51.458, -2.603, 1, 2, 6, 'city', 4, [170, 300], [170, 230], 'bristol.ac.uk', 'med dent vet biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil clas geog soc edu music drama media arch', {}],
+  ['durham', 'Durham University', 'Durham', 'Durham', 'E', 54.767, -1.571, 1, 1, 6, 'coll', 3, [190, 260], [140, 190], 'durham.ac.uk', 'biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil clas geog soc edu sport music', {}],
+  ['exeter', 'University of Exeter', 'Exeter', 'Exeter', 'E', 50.736, -3.534, 1, 2, 5, 'campus', 4, [160, 280], [160, 220], 'exeter.ac.uk', 'med biomed bio phys maths cs engr env psych econ bus acc law pol hist engl lang phil clas geog soc sport drama media', {}],
+  ['leeds', 'University of Leeds', 'Leeds', 'Leeds', 'E', 53.807, -1.555, 1, 2, 5, 'city', 3, [130, 220], [120, 170], 'leeds.ac.uk', 'med dent nurs biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil clas geog soc edu sport music drama media art', {}],
+  ['liverpool', 'University of Liverpool', 'Liverpool', 'Liverpool', 'E', 53.406, -2.966, 1, 3, 4, 'city', 2, [120, 200], [100, 140], 'liverpool.ac.uk', 'med dent vet nurs biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil clas geog soc music media arch', {}],
+  ['manchester', 'University of Manchester', 'Manchester', 'Manchester', 'E', 53.467, -2.234, 1, 2, 5, 'city', 3, [140, 230], [130, 190], 'manchester.ac.uk', 'med dent nurs pharm biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil clas geog soc edu music drama arch', {}],
+  ['newcastle', 'Newcastle University', 'Newcastle', 'Newcastle', 'E', 54.979, -1.615, 1, 2, 4, 'city', 2, [120, 200], [100, 140], 'ncl.ac.uk', 'med dent pharm biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil clas geog soc edu sport music art arch', {}],
+  ['nottingham', 'University of Nottingham', 'Nottingham', 'Nottingham', 'E', 52.938, -1.195, 1, 2, 5, 'campus', 2, [130, 230], [110, 150], 'nottingham.ac.uk', 'med vet pharm nurs biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil clas geog soc edu sport music drama media arch', {}],
+  ['sheffield', 'University of Sheffield', 'Sheffield', 'Sheffield', 'E', 53.381, -1.489, 1, 2, 4, 'city', 2, [120, 200], [100, 140], 'sheffield.ac.uk', 'med dent biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil geog soc edu music media arch', {}],
+  ['southampton', 'University of Southampton', 'Southampton', 'Southampton', 'E', 50.935, -1.396, 1, 2, 5, 'campus', 3, [140, 230], [120, 160], 'southampton.ac.uk', 'med nurs biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil geog soc edu sport music media art', {}],
+  ['warwick', 'University of Warwick', 'Warwick', 'Coventry', 'E', 52.381, -1.562, 1, 1, 6, 'campus', 3, [130, 230], [140, 190], 'warwick.ac.uk', 'biomed bio chem phys maths cs engr psych econ bus acc law pol hist engl lang phil clas soc edu drama media', { maths: 8 }],
+  ['york', 'University of York', 'York', 'York', 'E', 53.946, -1.052, 1, 2, 5, 'coll', 3, [130, 220], [130, 170], 'york.ac.uk', 'med nurs biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil geog soc edu music drama media', {}],
+  ['cardiff', 'Cardiff University', 'Cardiff', 'Cardiff', 'W', 51.487, -3.179, 1, 3, 4, 'city', 2, [130, 200], [110, 150], 'cardiff.ac.uk', 'med dent nurs pharm biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil clas geog soc edu music media arch', {}],
+  ['edinburgh', 'University of Edinburgh', 'Edinburgh', 'Edinburgh', 'S', 55.944, -3.189, 1, 2, 5, 'city', 4, [170, 320], [190, 260], 'ed.ac.uk', 'med vet nurs biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil clas geog soc edu sport music art arch', {}],
+  ['glasgow', 'University of Glasgow', 'Glasgow', 'Glasgow', 'S', 55.872, -4.288, 1, 2, 4, 'city', 3, [150, 250], [150, 210], 'gla.ac.uk', 'med dent vet nurs biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil clas geog soc edu music drama media', {}],
+  ['qub', "Queen's University Belfast", "Queen's Belfast", 'Belfast', 'N', 54.584, -5.934, 1, 2, 4, 'city', 1, [110, 180], [85, 120], 'qub.ac.uk', 'med dent pharm nurs biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil geog soc edu music drama media arch', {}],
+
+  ['standrews', 'University of St Andrews', 'St Andrews', 'St Andrews', 'S', 56.341, -2.793, 0, 1, 6, 'town', 4, [200, 330], [170, 250], 'st-andrews.ac.uk', 'med biomed bio chem phys maths cs env psych econ bus pol hist engl lang phil clas geog', {}],
+  ['bath', 'University of Bath', 'Bath', 'Bath', 'E', 51.378, -2.326, 0, 1, 6, 'campus', 4, [170, 260], [160, 220], 'bath.ac.uk', 'pharm biomed bio chem phys maths cs engr psych econ bus acc pol lang soc edu sport arch', {}],
+  ['loughborough', 'Loughborough University', 'Loughborough', 'Loughborough', 'E', 52.765, -1.229, 0, 2, 5, 'campus', 2, [130, 210], [100, 140], 'lboro.ac.uk', 'chem phys maths cs engr psych econ bus acc pol engl geog soc edu sport art media drama arch', { sport: 6 }],
+  ['lancaster', 'Lancaster University', 'Lancaster', 'Lancaster', 'E', 54.010, -2.785, 0, 2, 5, 'coll', 2, [120, 200], [100, 140], 'lancaster.ac.uk', 'med nurs biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil geog soc edu art drama media', {}],
+  ['surrey', 'University of Surrey', 'Surrey', 'Guildford', 'E', 51.243, -0.590, 0, 2, 4, 'campus', 4, [160, 250], [180, 240], 'surrey.ac.uk', 'vet nurs biomed bio chem phys maths cs engr psych econ bus acc law pol engl music drama media soc', {}],
+  ['sussex', 'University of Sussex', 'Sussex', 'Brighton', 'E', 50.867, -0.088, 0, 3, 4, 'campus', 4, [160, 230], [180, 240], 'sussex.ac.uk', 'med biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil geog soc edu drama music media', {}],
+  ['uea', 'University of East Anglia', 'UEA', 'Norwich', 'E', 52.622, 1.241, 0, 2, 4, 'campus', 2, [130, 210], [110, 150], 'uea.ac.uk', 'med pharm nurs biomed bio chem phys maths cs env psych econ bus acc law pol hist engl lang phil geog soc edu sport media drama', {}],
+  ['leicester', 'University of Leicester', 'Leicester', 'Leicester', 'E', 52.621, -1.124, 0, 3, 3, 'city', 2, [120, 200], [100, 140], 'le.ac.uk', 'med nurs pharm biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang geog soc edu media', {}],
+  ['kent', 'University of Kent', 'Kent', 'Canterbury', 'E', 51.298, 1.069, 0, 3, 3, 'campus', 3, [140, 210], [120, 160], 'kent.ac.uk', 'med pharm biomed bio chem phys maths cs engr psych econ bus acc law pol hist engl lang phil clas soc drama media arch sport', {}],
+  ['reading', 'University of Reading', 'Reading', 'Reading', 'E', 51.441, -0.942, 0, 3, 3, 'campus', 3, [150, 250], [150, 200], 'reading.ac.uk', 'pharm biomed bio chem maths cs env psych econ bus acc law pol hist engl lang phil clas geog edu art drama media arch', {}],
+  ['aberdeen', 'University of Aberdeen', 'Aberdeen', 'Aberdeen', 'S', 57.165, -2.101, 0, 2, 3, 'city', 2, [130, 190], [110, 150], 'abdn.ac.uk', 'med biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang phil geog soc edu music sport', {}],
+  ['dundee', 'University of Dundee', 'Dundee', 'Dundee', 'S', 56.458, -2.982, 0, 3, 3, 'city', 1, [120, 170], [100, 130], 'dundee.ac.uk', 'med dent nurs biomed bio phys maths cs engr env psych econ bus acc law pol hist engl geog edu art arch', {}],
+  ['strathclyde', 'University of Strathclyde', 'Strathclyde', 'Glasgow', 'S', 55.862, -4.242, 0, 2, 4, 'city', 3, [150, 230], [150, 210], 'strath.ac.uk', 'pharm biomed bio chem phys maths cs engr psych econ bus acc law pol hist engl lang soc edu sport media arch', {}],
+  ['heriotwatt', 'Heriot-Watt University', 'Heriot-Watt', 'Edinburgh', 'S', 55.910, -3.321, 0, 3, 3, 'campus', 4, [150, 250], [190, 260], 'hw.ac.uk', 'bio chem phys maths cs engr psych econ bus acc lang art', {}],
+  ['swansea', 'Swansea University', 'Swansea', 'Swansea', 'W', 51.610, -3.979, 0, 3, 3, 'campus', 1, [110, 180], [90, 120], 'swansea.ac.uk', 'pharm nurs biomed bio chem phys maths cs engr env psych econ bus acc law pol hist engl lang geog soc sport media', {}],
+  ['aberystwyth', 'Aberystwyth University', 'Aberystwyth', 'Aberystwyth', 'W', 52.416, -4.065, 0, 3, 2, 'town', 1, [110, 170], [85, 115], 'aber.ac.uk', 'vet nurs bio cs maths phys env psych bus acc law pol hist engl lang geog edu sport art drama media', {}],
+  ['bangor', 'Bangor University', 'Bangor', 'Bangor', 'W', 53.229, -4.129, 0, 3, 2, 'town', 1, [110, 170], [85, 115], 'bangor.ac.uk', 'nurs bio env psych bus acc law hist engl lang music sport edu media engr cs', {}],
+  ['hull', 'University of Hull', 'Hull', 'Hull', 'E', 53.771, -0.367, 0, 4, 2, 'campus', 1, [100, 170], [80, 110], 'hull.ac.uk', 'med nurs biomed bio chem cs engr env psych econ bus acc law pol hist engl geog edu sport drama music soc', {}],
+  ['plymouth', 'University of Plymouth', 'Plymouth', 'Plymouth', 'E', 50.375, -4.139, 0, 4, 2, 'city', 2, [120, 180], [100, 130], 'plymouth.ac.uk', 'med dent nurs biomed bio env psych bus acc econ law pol hist engl geog soc edu sport art arch drama media maths cs engr', {}],
+  ['portsmouth', 'University of Portsmouth', 'Portsmouth', 'Portsmouth', 'E', 50.795, -1.093, 0, 4, 2, 'city', 2, [130, 200], [110, 150], 'port.ac.uk', 'pharm nurs biomed bio psych econ bus acc law pol hist engl lang geog env soc edu sport maths cs engr art media drama music arch', {}],
+  ['brookes', 'Oxford Brookes University', 'Oxford Brookes', 'Oxford', 'E', 51.755, -1.224, 0, 4, 2, 'city', 4, [170, 260], [200, 280], 'brookes.ac.uk', 'nurs biomed bio psych econ bus acc law pol hist engl edu sport cs engr art arch drama music media', {}],
+  ['ntu', 'Nottingham Trent University', 'Nottingham Trent', 'Nottingham', 'E', 52.958, -1.153, 0, 4, 2, 'city', 2, [130, 210], [110, 150], 'ntu.ac.uk', 'nurs biomed bio psych econ bus acc law pol hist engl geog soc edu sport cs engr art arch media drama', {}],
+  ['mmu', 'Manchester Metropolitan University', 'Manchester Met', 'Manchester', 'E', 53.470, -2.240, 0, 4, 2, 'city', 3, [140, 220], [130, 190], 'mmu.ac.uk', 'nurs biomed bio chem psych econ bus acc law pol hist engl lang geog env soc edu sport maths cs engr art arch media drama music', {}],
+  ['northumbria', 'Northumbria University', 'Northumbria', 'Newcastle', 'E', 54.977, -1.607, 0, 4, 2, 'city', 2, [120, 190], [100, 140], 'northumbria.ac.uk', 'nurs biomed bio psych econ bus acc law pol hist engl geog soc edu sport cs engr art arch media', {}],
+  ['coventry', 'Coventry University', 'Coventry', 'Coventry', 'E', 52.407, -1.504, 0, 4, 1, 'city', 2, [130, 200], [110, 150], 'coventry.ac.uk', 'nurs biomed bio psych econ bus acc law pol engl soc edu sport cs engr art arch media', {}],
+  ['shu', 'Sheffield Hallam University', 'Sheffield Hallam', 'Sheffield', 'E', 53.379, -1.466, 0, 4, 1, 'city', 2, [120, 190], [100, 140], 'shu.ac.uk', 'nurs biomed bio psych econ bus acc law pol hist engl geog soc edu sport cs engr art arch media', {}],
+  ['keele', 'Keele University', 'Keele', 'Newcastle-under-Lyme', 'E', 53.003, -2.273, 0, 3, 3, 'campus', 1, [100, 170], [90, 120], 'keele.ac.uk', 'med pharm nurs biomed bio chem phys maths cs psych econ bus acc law pol hist engl geog env soc edu music media', {}],
+  ['aston', 'Aston University', 'Aston', 'Birmingham', 'E', 52.487, -1.888, 0, 3, 3, 'city', 3, [130, 200], [120, 170], 'aston.ac.uk', 'med pharm biomed psych econ bus acc law pol lang soc maths cs engr', {}],
+  ['essex', 'University of Essex', 'Essex', 'Colchester', 'E', 51.877, 0.947, 0, 3, 2, 'campus', 2, [120, 200], [110, 150], 'essex.ac.uk', 'nurs biomed bio psych econ bus acc law pol hist engl lang phil soc cs maths sport drama media', {}],
+  ['uwe', 'UWE Bristol', 'UWE Bristol', 'Bristol', 'E', 51.500, -2.548, 0, 4, 2, 'campus', 4, [160, 240], [170, 230], 'uwe.ac.uk', 'nurs biomed bio psych econ bus acc law pol hist engl geog env soc edu sport maths cs engr art arch drama media', {}],
+  ['ulster', 'Ulster University', 'Ulster', 'Belfast and Coleraine', 'N', 54.604, -5.929, 0, 3, 2, 'city', 1, [100, 170], [80, 110], 'ulster.ac.uk', 'nurs pharm biomed bio psych econ bus acc law pol hist engl lang geog env soc edu sport cs engr art arch media drama music', {}],
+  ['stirling', 'University of Stirling', 'Stirling', 'Stirling', 'S', 56.146, -3.920, 0, 3, 3, 'campus', 2, [130, 190], [110, 150], 'stir.ac.uk', 'nurs bio env psych econ bus acc law pol hist engl lang phil soc edu sport maths cs media', {}],
+];
+const NATION = { E: 'England', S: 'Scotland', W: 'Wales', N: 'Northern Ireland' };
+const UNIS = U_ROWS.map(r => ({
+  id: r[0], name: r[1], short: r[2], city: r[3], nation: NATION[r[4]], lat: r[5], lon: r[6],
+  rg: !!r[7], tier: r[8], base: r[9], campus: r[10], cost: r[11], halls: r[12], priv: r[13],
+  url: r[14], areas: r[15].split(' ').filter(a => AREA[a]), ov: r[16] || {},
+  london: r[3] === 'London'
+}));
+const UNI = Object.fromEntries(UNIS.map(u => [u.id, u]));
+
+// Weekly spending besides rent (food, travel, everything else), and England's
+// maximum maintenance loan for 2025/26, for the rent comparison.
+const OTHER_WEEK = { food: 50, travel: 10, other: 40 };
+const OTHER_WEEK_LONDON = { food: 55, travel: 25, other: 45 };
+const LOAN = { london: 13762, other: 10544 };
+const WEEKS = 40;
+
+/* ============================================================
+   ENGINE
+   ============================================================ */
+
+const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
+const pts = offer => (offer.match(/A\*|[A-E]/g) || []).reduce((s, g) => s + GP[g], 0);
+function level(u, a) {
+  if (u.ov[a] != null) return u.ov[a];
+  const A = AREA[a];
+  return clamp(u.base + A.adj, A.floor ?? 0, A.cap ?? 9);
+}
+const offerOf = (u, a) => LADDER[level(u, a)];
+function offerRange(u) {
+  const ls = u.areas.map(a => level(u, a));
+  return [LADDER[Math.min(...ls)], LADDER[Math.max(...ls)]];
+}
+
+// Each group needs a different subject (small backtracking match).
+function meets(groups, subs) {
+  if (!groups || !groups.length) return true;
+  const used = new Set();
+  const go = i => {
+    if (i === groups.length) return true;
+    for (const s of groups[i]) if (subs.includes(s) && !used.has(s)) {
+      used.add(s); if (go(i + 1)) return true; used.delete(s);
+    }
+    return false;
+  };
+  return go(0);
+}
+const groupText = g => {
+  if (g.length <= 3) return g.map(s => SUBJ[s].name).join(' or ');
+  if (g.every(s => SUBJ[s].cat === 'Languages')) return 'a modern language';
+  return g.every(s => SCIS.includes(s)) ? 'another science' : 'a related subject';
+};
+const rulesText = groups => (groups || []).map(groupText).join(' + ');
+function needsText(groups, subs) {
+  // Name the first group that cannot be met alongside the others.
+  for (let i = 0; i < groups.length; i++) {
+    if (!meets(groups.slice(0, i + 1), subs)) return 'Needs ' + groupText(groups[i]);
+  }
+  return 'Check subjects';
+}
+
+function predictedPts() {
+  const gs = st.grades.filter(Boolean).map(g => GP[g]).sort((a, b) => b - a).slice(0, 3);
+  return gs.length === 3 ? gs.reduce((s, x) => s + x, 0) : null;
+}
+// Fit for one university and subject area: reach / match / safe / needs
+function fitFor(u, a) {
+  const A = AREA[a];
+  if (st.subjects.length && A.req && !meets(A.req, st.subjects)) return { k: 'needs', label: needsText(A.req, st.subjects), rank: 3 };
+  const p = predictedPts();
+  if (p == null) return null;
+  const d = p - pts(offerOf(u, a));
+  if (d < 0) return { k: 'reach', label: 'Reach', rank: 2, d };
+  if (d < 8) return { k: 'match', label: 'Match', rank: 0, d };
+  return { k: 'safe', label: 'Safe', rank: 1, d };
+}
+
+const mid = r => (r[0] + r[1]) / 2;
+function budget(u) {
+  const o = u.london ? OTHER_WEEK_LONDON : OTHER_WEEK;
+  const rent = Math.round(mid(u.halls) / 5) * 5;
+  return { rent, ...o, total: rent + o.food + o.travel + o.other };
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+
+const KEY = 'campusatlas.v1';
+const DEFAULT_F = { area: '', q: '', rg: false, tiers: [], maxCost: 5, nation: '', campus: '', fit: [], sort: 'fit', colour: 'cost', view: 'both' };
+let st = { grades: ['', '', '', ''], subjects: [], shortlist: [], notes: {}, f: { ...DEFAULT_F } };
+try {
+  const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+  if (saved) st = { ...st, ...saved, f: { ...DEFAULT_F, ...(saved.f || {}) } };
+} catch (e) { /* storage unavailable */ }
+st.shortlist = (st.shortlist || []).filter(e => UNI[e.u] && (!e.a || AREA[e.a]));
+st.subjects = (st.subjects || []).filter(s => SUBJ[s]);
+if (st.f.area && !AREA[st.f.area]) st.f.area = '';
+function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { /* ignore */ } }
+
+const slKey = (u, a) => u + '|' + (a || '');
+const inShortlist = (u, a) => st.shortlist.some(e => e.u === u && (e.a || '') === (a || ''));
+function toggleShortlist(u, a) {
+  if (inShortlist(u, a)) st.shortlist = st.shortlist.filter(e => slKey(e.u, e.a) !== slKey(u, a));
+  else st.shortlist.push({ u, a: a || '' });
+  save(); updateCount();
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const COST = ['#F3DFBF', '#EBBE85', '#DC9A4F', '#B96A2A', '#7C3F12'];
+const ENTRY = ['#DCE6F5', '#AFC6EA', '#7A9FD8', '#4470BE', '#1D3A6B'];
+const TIERC = { 1: '#1D3A6B', 2: '#4470BE', 3: '#AFC6EA', 4: '#EEF1F6', 0: '#B7A6CF' };
+const entryBand = lv => lv <= 2 ? 0 : lv <= 4 ? 1 : lv <= 6 ? 2 : lv === 7 ? 3 : 4;
+const STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>';
+const money = n => '£' + n.toLocaleString('en-GB');
+const range = r => '£' + r[0] + '–£' + r[1];
+const costBar = c => '<span class="costbar" aria-hidden="true">' + [1, 2, 3, 4, 5].map(i => `<i style="${i <= c ? 'background:' + COST[c - 1] : ''}"></i>`).join('') + '</span>';
+const fitChip = f => f ? `<span class="fit fit-${f.k}">${esc(f.label)}</span>` : '';
+const tierBadge = u => `<span class="b b-tier">${u.tier ? 'Tier ' + u.tier : 'Specialist'}</span>`;
+const badges = u => `<div class="badges">${u.rg ? '<span class="b b-rg">Russell Group</span>' : ''}${tierBadge(u)}<span class="b b-plain">${esc(u.nation)}</span></div>`;
+const starBtn = (u, a, label, cls = '') => `<button type="button" class="star ${cls}" data-act="star" data-u="${u}" data-a="${a || ''}" aria-pressed="${inShortlist(u, a)}" aria-label="${esc(label)}">${STAR}</button>`;
+function updateCount() { $('#slCount').textContent = st.shortlist.length; }
+const isNarrow = () => matchMedia('(max-width: 999px)').matches;
+const hasMap = () => typeof window.L !== 'undefined';
+
+/* ============================================================
+   ABOUT-YOU BAR
+   ============================================================ */
+
+function renderMe() {
+  $('#grades').innerHTML = st.grades.map((g, i) => `<label class="sr" for="g${i}">Predicted grade ${i + 1}${i === 3 ? ' (optional fourth A level)' : ''}</label><select id="g${i}" data-grade="${i}" class="${g ? '' : 'empty'}"><option value="">–</option>${GRADES.map(x => `<option${x === g ? ' selected' : ''}>${x}</option>`).join('')}</select>`).join('');
+  const cats = [...new Set(SUBJECTS.map(s => s.cat))];
+  $('#subjPop').innerHTML = cats.map(c => `<h4>${esc(c)}</h4>` + SUBJECTS.filter(s => s.cat === c).map(s => `<label><input type="checkbox" data-subj="${s.id}"${st.subjects.includes(s.id) ? ' checked' : ''}>${esc(s.name)}</label>`).join('')).join('');
+  $('#subjSummary').textContent = st.subjects.length ? st.subjects.map(s => SUBJ[s].name).join(' · ') : 'Add your subjects';
+}
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.grade != null) { st.grades[+t.dataset.grade] = t.value; t.className = t.value ? '' : 'empty'; save(); refresh(); }
+  else if (t.dataset.subj) {
+    const id = t.dataset.subj;
+    st.subjects = t.checked ? [...new Set([...st.subjects, id])] : st.subjects.filter(s => s !== id);
+    $('#subjSummary').textContent = st.subjects.length ? st.subjects.map(s => SUBJ[s].name).join(' · ') : 'Add your subjects';
+    save(); refresh();
+  }
+});
+document.addEventListener('click', e => {
+  const d = $('#subjPick');
+  if (d.open && !d.contains(e.target)) d.open = false;
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('#subjPick').open = false; });
+
+/* ============================================================
+   EXPLORE
+   ============================================================ */
+
+let map = null, markerLayer = null, markers = {}, shown = 30;
+
+function renderExplore() {
+  const f = st.f;
+  const opts = AREA_GROUPS.map(g => `<optgroup label="${esc(g)}">${AREAS.filter(a => a.g === g).map(a => `<option value="${a.id}"${a.id === f.area ? ' selected' : ''}>${esc(a.name)}</option>`).join('')}</optgroup>`).join('');
+  $('#app').innerHTML = `
+  <section class="controls wrap" aria-label="Search and filters">
+    <div class="row1">
+      <label class="field subject"><span class="sr">Subject you want to study</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D3A6B" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2zm0 0A2 2 0 0 0 6 22h13"/></svg>
+        <select id="fArea"><option value="">Any subject</option>${opts}</select>
+      </label>
+      <label class="field search"><span class="sr">Search universities or cities</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4B5565" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="fQ" type="search" placeholder="University or city" value="${esc(f.q)}">
+      </label>
+      <div class="seg" role="group" aria-label="View">
+        <button type="button" data-view="list">List</button>
+        <button type="button" data-view="both" class="both">List + map</button>
+        <button type="button" data-view="map">Map</button>
+      </div>
+    </div>
+    <button type="button" class="chip ftoggle" id="fToggle" aria-expanded="false" aria-controls="filters">Filters<span id="fN"></span></button>
+    <div class="filters" id="filters">
+      <button type="button" class="chip" id="fRg" aria-pressed="${f.rg}">Russell Group only</button>
+      <span class="group" role="group" aria-label="Tier"><span class="glab">Tier</span>${[1, 2, 3, 4, 0].map(t => `<button type="button" class="mini" data-tier="${t}" aria-pressed="${f.tiers.includes(t)}" title="${esc(TIER_TEXT[t])}">${t || 'Spec.'}</button>`).join('')}</span>
+      <span class="group" role="group" aria-label="Fit for your grades" id="fitGroup"><span class="glab">Fit</span>${['match', 'safe', 'reach', 'needs'].map(k => `<button type="button" class="mini" data-fit="${k}" aria-pressed="${f.fit.includes(k)}">${{ match: 'Match', safe: 'Safe', reach: 'Reach', needs: 'Needs subjects' }[k]}</button>`).join('')}</span>
+      <label class="chip sel">Cost of living up to <select id="fCost">${[1, 2, 3, 4, 5].map(c => `<option value="${c}"${c === f.maxCost ? ' selected' : ''}>${c} of 5</option>`).join('')}</select></label>
+      <label class="chip sel">Nation <select id="fNation"><option value="">All</option>${NATIONS.map(n => `<option${n === f.nation ? ' selected' : ''}>${n}</option>`).join('')}</select></label>
+      <label class="chip sel">Setting <select id="fCampus"><option value="">Any</option>${Object.entries(CAMPUS).map(([k, v]) => `<option value="${k}"${k === f.campus ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
+      <button type="button" class="linkbtn" id="fClear">Clear filters</button>
+    </div>
+  </section>
+  <div class="layout wrap" id="layout">
+    <section class="results" aria-label="Results">
+      <div class="rhead">
+        <h1 id="rTitle"></h1>
+        <label class="small">Sort <select id="fSort">
+          <option value="fit">Best fit for me</option><option value="cost">Lowest cost of living</option>
+          <option value="tier">Tier</option><option value="offerHi">Highest entry grades</option>
+          <option value="offerLo">Lowest entry grades</option><option value="name">A–Z</option>
+        </select></label>
+      </div>
+      <div class="tally" id="tally"></div>
+      <div class="cards" id="cards"></div>
+      <button type="button" class="more" id="more" hidden></button>
+    </section>
+    <section class="mapbox" aria-label="Map">
+      <div id="map"></div>
+      <div class="maptools"><div class="colourby" role="group" aria-label="Colour pins by"><span>Colour by</span>${[['cost', 'Cost of living'], ['entry', 'Entry grades'], ['tier', 'Tier']].map(([k, l]) => `<button type="button" data-colour="${k}">${l}</button>`).join('')}</div></div>
+      <div class="legend" id="legend"></div>
+    </section>
+  </div>`;
+  $('#fSort').value = f.sort;
+  shown = 30;
+  initMap();
+  updateExplore();
+}
+
+function filtered() {
+  const f = st.f, q = f.q.trim().toLowerCase();
+  let list = UNIS.filter(u =>
+    (!f.area || u.areas.includes(f.area)) &&
+    (!q || (u.name + ' ' + u.short + ' ' + u.city).toLowerCase().includes(q)) &&
+    (!f.rg || u.rg) &&
+    (!f.tiers.length || f.tiers.includes(u.tier)) &&
+    u.cost <= f.maxCost &&
+    (!f.nation || u.nation === f.nation) &&
+    (!f.campus || u.campus === f.campus));
+  const fitOn = f.area && f.fit.length;
+  if (fitOn) list = list.filter(u => { const x = fitFor(u, f.area); return x && f.fit.includes(x.k); });
+  const tierOrd = u => u.tier || 2.5;
+  const lv = u => f.area ? level(u, f.area) : u.base;
+  const by = {
+    fit: (a, b) => {
+      if (f.area) {
+        const fa = fitFor(a, f.area), fb = fitFor(b, f.area);
+        if (fa && fb && fa.rank !== fb.rank) return fa.rank - fb.rank;
+      }
+      return tierOrd(a) - tierOrd(b) || lv(b) - lv(a) || a.name.localeCompare(b.name);
+    },
+    cost: (a, b) => a.cost - b.cost || mid(a.halls) - mid(b.halls),
+    tier: (a, b) => tierOrd(a) - tierOrd(b) || lv(b) - lv(a),
+    offerHi: (a, b) => lv(b) - lv(a) || tierOrd(a) - tierOrd(b),
+    offerLo: (a, b) => lv(a) - lv(b) || tierOrd(a) - tierOrd(b),
+    name: (a, b) => a.short.localeCompare(b.short),
+  };
+  return list.sort(by[f.sort] || by.fit);
+}
+
+function cardHtml(u) {
+  const a = st.f.area;
+  let first;
+  if (a) {
+    const fit = fitFor(u, a);
+    first = `<div><div class="k">${esc(AREA[a].name)} · typical offer</div><div class="v"><span class="mono">${offerOf(u, a)}</span>${fitChip(fit)}</div></div>`;
+  } else {
+    const [lo, hi] = offerRange(u);
+    first = `<div><div class="k">Typical offers · ${u.areas.length} subject areas</div><div class="v"><span class="mono">${lo === hi ? lo : lo + '–' + hi}</span></div></div>`;
+  }
+  return `<article class="card" id="c-${u.id}">
+    <div class="t"><div><h2><a href="#/uni/${u.id}">${esc(u.name)}</a></h2><div class="sub">${esc(u.city)} · ${CAMPUS[u.campus]}</div></div>
+    ${starBtn(u.id, a, (inShortlist(u.id, a) ? 'Remove ' : 'Add ') + u.short + (a ? ' ' + AREA[a].name : '') + ' to shortlist')}</div>
+    ${badges(u)}
+    <div class="metrics">${first}
+      <div><div class="k">Cost of living · ${u.cost} of 5</div>${costBar(u.cost)}<div class="small">Halls ${range(u.halls)} a week</div></div>
+    </div>
+  </article>`;
+}
+
+function updateExplore() {
+  const f = st.f, list = filtered();
+  const layout = $('#layout');
+  let view = f.view;
+  if (isNarrow() && view === 'both') view = 'list';
+  layout.className = 'layout wrap v-' + view;
+  document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === view));
+  document.querySelectorAll('[data-colour]').forEach(b => b.setAttribute('aria-pressed', b.dataset.colour === f.colour));
+  const fitUsable = !!f.area && (predictedPts() != null || st.subjects.length > 0);
+  document.querySelectorAll('[data-fit]').forEach(b => { b.disabled = !fitUsable; b.title = fitUsable ? '' : 'Pick a subject and add your predicted grades first'; });
+
+  const nf = (f.rg ? 1 : 0) + f.tiers.length + (f.area ? f.fit.length : 0) + (f.maxCost < 5 ? 1 : 0) + (f.nation ? 1 : 0) + (f.campus ? 1 : 0);
+  $('#fN').textContent = nf ? ` · ${nf} on` : '';
+  const n = list.length;
+  $('#rTitle').textContent = f.area ? `${n} ${n === 1 ? 'university offers' : 'universities offer'} ${AREA[f.area].name}` : `${n} ${n === 1 ? 'university' : 'universities'}`;
+  let tally = '';
+  if (f.area) {
+    const counts = { match: 0, safe: 0, reach: 0, needs: 0 };
+    let any = false;
+    list.forEach(u => { const x = fitFor(u, f.area); if (x) { counts[x.k]++; any = true; } });
+    if (any) tally = ['match', 'safe', 'reach', 'needs'].filter(k => counts[k]).map(k => `<span class="fit fit-${k}">${counts[k]} ${{ match: 'Match', safe: 'Safe', reach: 'Reach', needs: 'need other subjects' }[k]}</span>`).join('') + (predictedPts() != null ? `<span class="small">compared with your predicted ${predictedGradesText()}</span>` : '');
+    else tally = '<span class="small">Add your predicted grades above to see which are a Reach, Match or Safe for you.</span>';
+    const A = AREA[f.area];
+    if (A.req) tally += `<span class="small">· Usually requires ${esc(rulesText(A.req))}</span>`;
+  } else tally = '<span class="small">Pick a subject to see typical offers for that course.</span>';
+  $('#tally').innerHTML = tally;
+
+  $('#cards').innerHTML = n ? list.slice(0, shown).map(cardHtml).join('') : '<div class="empty-state">No universities match these filters. Try widening them, or <button type="button" class="linkbtn" data-act="clear">clear all filters</button>.</div>';
+  const more = $('#more');
+  more.hidden = n <= shown;
+  more.textContent = `Show ${n - shown} more`;
+  updateMarkers(list);
+  if (map) setTimeout(() => map.invalidateSize(), 0);
+}
+const predictedGradesText = () => st.grades.filter(Boolean).sort((a, b) => GP[b] - GP[a]).slice(0, 3).join('');
+
+/* ---- Map ---- */
+const UK_BOUNDS = [[50.0, -6.4], [57.8, 1.8]];
+function initMap() {
+  markers = {};
+  if (!hasMap()) { map = null; renderFallbackMap(); return; }
+  map = L.map('map', { zoomSnap: 0.25, minZoom: 5, maxBounds: [[47, -14], [62, 6]] });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd', maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  }).addTo(map);
+  map.fitBounds(UK_BOUNDS);
+  markerLayer = L.layerGroup().addTo(map);
+}
+function pinStyle(u) {
+  const f = st.f;
+  let fill;
+  if (f.colour === 'cost') fill = COST[u.cost - 1];
+  else if (f.colour === 'entry') fill = ENTRY[entryBand(f.area ? level(u, f.area) : u.base)];
+  else fill = TIERC[u.tier];
+  return { fill, ring: u.rg ? '#1D3A6B' : '#FFFFFF', weight: u.rg ? 3 : 2 };
+}
+function popupHtml(u) {
+  const a = st.f.area;
+  const offer = a ? `${esc(AREA[a].name)} <b class="mono" style="font-family:var(--mono);font-size:13px">${offerOf(u, a)}</b> ${fitChip(fitFor(u, a))}` : `Typical offers <span class="mono">${offerRange(u).join('–')}</span>`;
+  return `<b>${esc(u.name)}</b><div class="pop-badges">${u.rg ? '<span class="b b-rg">Russell Group</span>' : ''}${tierBadge(u)}</div>
+    <div>${offer}</div><div>Cost of living ${u.cost} of 5 · halls ${range(u.halls)}/wk</div>
+    <div style="margin-top:6px"><a href="#/uni/${u.id}">Open university page →</a></div>`;
+}
+function updateMarkers(list) {
+  renderLegend();
+  if (!map) { renderFallbackMap(list); return; }
+  markerLayer.clearLayers();
+  markers = {};
+  // Draw Russell Group last so its rings stay visible.
+  [...list].sort((a, b) => a.rg - b.rg).forEach(u => {
+    const s = pinStyle(u);
+    const m = L.circleMarker([u.lat, u.lon], { radius: 7.5, color: s.ring, weight: s.weight, fillColor: s.fill, fillOpacity: 1 })
+      .bindPopup(() => popupHtml(u), { maxWidth: 260 })
+      .bindTooltip(u.short, { direction: 'top', offset: [0, -6] });
+    m.on('click', () => highlightCard(u.id));
+    m.addTo(markerLayer);
+    markers[u.id] = m;
+  });
+}
+function highlightCard(id) {
+  document.querySelectorAll('.card.hl').forEach(c => c.classList.remove('hl'));
+  let c = $('#c-' + id);
+  if (!c) {
+    const i = filtered().findIndex(u => u.id === id);
+    if (i >= shown) { shown = i + 1; updateExplore(); c = $('#c-' + id); }
+  }
+  if (c) { c.classList.add('hl'); if (st.f.view !== 'map') c.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+}
+function renderLegend() {
+  const el = $('#legend'); if (!el) return;
+  const f = st.f;
+  let title, items;
+  if (f.colour === 'cost') { title = 'Cost of living (1 = cheapest)'; items = COST.map((c, i) => [c, String(i + 1)]); }
+  else if (f.colour === 'entry') { title = f.area ? `Typical offer for ${AREA[f.area].name}` : 'Typical entry grades'; items = ['BBC or lower', 'BBB–ABB', 'AAB–AAA', 'A*AA', 'A*A*A+'].map((l, i) => [ENTRY[i], l]); }
+  else { title = 'Tier (league-table band)'; items = [1, 2, 3, 4, 0].map(t => [TIERC[t], t ? 'Tier ' + t : 'Specialist']); }
+  el.innerHTML = `<b>${esc(title)}</b><div class="items">${items.map(([c, l]) => `<span><span class="dot" style="background:${c}"></span>${esc(l)}</span>`).join('')}</div><div><span class="ring"></span>Navy ring = Russell Group</div>`;
+}
+
+// Offline fallback: a drawn outline of the UK, used when Leaflet cannot load.
+const GB_PATH = 'M118 18 L171 17 L188 15 L185 30 L166 48 L160 63 L146 84 L157 78 L178 71 L223 72 L230 84 L221 105 L207 132 L192 147 L202 157 L181 171 L181 175 L206 174 L218 180 L223 188 L233 198 L243 233 L245 240 L251 252 L272 265 L279 277 L290 287 L297 319 L305 346 L300 363 L310 357 L338 358 L354 385 L340 417 L333 427 L317 442 L319 448 L341 451 L339 467 L326 479 L301 490 L288 485 L265 491 L254 487 L244 486 L227 491 L207 499 L190 491 L174 498 L166 521 L148 512 L111 536 L94 530 L102 521 L116 509 L135 473 L149 461 L172 461 L189 453 L199 444 L206 432 L188 441 L182 447 L155 438 L143 440 L129 434 L108 421 L130 408 L151 389 L152 371 L139 361 L126 367 L132 357 L144 346 L130 335 L141 329 L149 340 L159 334 L171 335 L185 336 L183 329 L188 329 L188 315 L186 305 L192 290 L180 288 L166 264 L169 255 L181 237 L167 237 L152 246 L123 256 L117 240 L131 206 L122 186 L127 177 L105 180 L91 216 L101 174 L102 149 L87 129 L90 114 L94 97 L89 87 L94 70 L113 60 L110 45 L118 18 Z';
+const NI_PATH = 'M40 231 L77 221 L92 237 L101 270 L87 291 L73 288 L49 279 L28 285 L10 270 L17 252 L31 234 L40 231 Z';
+const proj = (lat, lon) => [((lon + 8.4) * Math.cos(54.5 * Math.PI / 180) * 60) / 366 * 100, ((58.9 - lat) * 60) / 552 * 100];
+function renderFallbackMap(list) {
+  const el = $('#map'); if (!el) return;
+  list = list || filtered();
+  el.innerHTML = `<div class="fallback"><div class="fbox">
+    <svg viewBox="0 0 366 552" aria-hidden="true"><path d="${GB_PATH}" fill="#F7F5EF" stroke="#BDB5A3" stroke-linejoin="round"/><path d="${NI_PATH}" fill="#F7F5EF" stroke="#BDB5A3" stroke-linejoin="round"/></svg>
+    ${list.map(u => { const [x, y] = proj(u.lat, u.lon), s = pinStyle(u); return `<button type="button" data-act="pin" data-u="${u.id}" title="${esc(u.name)}" aria-label="${esc(u.name)}" style="left:${x}%;top:${y}%;background:${s.fill};border:${s.weight}px solid ${s.ring}"></button>`; }).join('')}
+  </div></div>`;
+}
+
+/* ---- Explore events ---- */
+document.addEventListener('input', e => {
+  if (e.target.id === 'fQ') { st.f.q = e.target.value; shown = 30; save(); updateExplore(); }
+});
+document.addEventListener('change', e => {
+  const id = e.target.id, v = e.target.value;
+  const set = { fArea: () => st.f.area = v, fCost: () => st.f.maxCost = +v, fNation: () => st.f.nation = v, fCampus: () => st.f.campus = v, fSort: () => st.f.sort = v }[id];
+  if (set) { set(); if (id === 'fArea' && !v) st.f.fit = []; shown = 30; save(); updateExplore(); }
+});
+document.addEventListener('click', e => {
+  const t = e.target.closest('button, a'); if (!t) return;
+  const d = t.dataset;
+  if (d.view) { st.f.view = d.view; save(); updateExplore(); }
+  else if (d.colour) { st.f.colour = d.colour; save(); updateExplore(); }
+  else if (d.tier != null) { const x = +d.tier; st.f.tiers = st.f.tiers.includes(x) ? st.f.tiers.filter(y => y !== x) : [...st.f.tiers, x]; save(); updateExplore(); }
+  else if (d.fit) { st.f.fit = st.f.fit.includes(d.fit) ? st.f.fit.filter(y => y !== d.fit) : [...st.f.fit, d.fit]; save(); updateExplore(); }
+  else if (t.id === 'fRg') { st.f.rg = !st.f.rg; t.setAttribute('aria-pressed', st.f.rg); save(); updateExplore(); }
+  else if (t.id === 'fClear' || d.act === 'clear') { st.f = { ...DEFAULT_F, area: st.f.area, sort: st.f.sort, colour: st.f.colour, view: st.f.view }; save(); renderExplore(); }
+  else if (t.id === 'fToggle') { const o = $('#filters').classList.toggle('open'); t.setAttribute('aria-expanded', o); }
+  else if (t.id === 'more') { shown += 30; updateExplore(); }
+  else if (d.act === 'star') {
+    toggleShortlist(d.u, d.a);
+    document.querySelectorAll(`[data-act="star"][data-u="${d.u}"][data-a="${d.a}"]`).forEach(b => b.setAttribute('aria-pressed', inShortlist(d.u, d.a)));
+    if (route().name === 'shortlist') renderRoute();
+  }
+  else if (d.act === 'pin') { location.hash = '#/uni/' + d.u; }
+});
+matchMedia('(max-width: 999px)').addEventListener('change', () => { if (route().name === 'explore') updateExplore(); });
+
+/* ============================================================
+   UNIVERSITY PAGE
+   ============================================================ */
+
+let miniMap = null;
+function renderUni(id) {
+  const u = UNI[id];
+  if (!u) { $('#app').innerHTML = '<div class="page wrap"><div class="panel"><h2>University not found</h2><a href="#/">Back to Explore</a></div></div>'; return; }
+  const a = st.f.area && u.areas.includes(st.f.area) ? st.f.area : '';
+  const fit = a ? fitFor(u, a) : null;
+  const [lo, hi] = offerRange(u);
+  const b = budget(u);
+  const yearCost = b.total * WEEKS;
+  const loan = u.london ? LOAN.london : LOAN.other;
+  const rentShare = Math.round(b.rent * WEEKS / loan * 100);
+  const sorted = [...UNIS].sort((x, y) => mid(x.halls) - mid(y.halls));
+  const cheapest = sorted[0], dearest = sorted[sorted.length - 1], median = sorted[Math.floor(sorted.length / 2)];
+  const cmpRows = [[cheapest, 'Cheapest here'], [median, 'Middle'], [u, u.short], [dearest, 'Most expensive']]
+    .filter((r, i, arr) => arr.findIndex(x => x[0].id === r[0].id) === i);
+  const maxRent = mid(dearest.halls);
+
+  const rows = AREA_GROUPS.map(g => {
+    const as = u.areas.filter(x => AREA[x].g === g);
+    if (!as.length) return '';
+    return `<tr class="grp"><td colspan="6">${esc(g)}</td></tr>` + as.map(x => {
+      const A = AREA[x], fx = fitFor(u, x), o = offerOf(u, x);
+      const extra = [A.pref ? 'Preferred: ' + rulesText(A.pref).replace(/^another/, 'a') + '.' : '', A.note || ''].filter(Boolean).join(' ');
+      return `<tr data-area-row="${x}" data-ok="${!fx || fx.k !== 'needs'}">
+        <td><div style="font-weight:600">${esc(A.name)}</div>${extra ? `<div class="note">${esc(extra)}</div>` : ''}</td>
+        <td><span class="mono" style="font-size:15px">${o}</span><div class="note">${pts(o)} UCAS points</div></td>
+        <td>${A.req ? esc(rulesText(A.req)) : '<span class="note">No set subjects</span>'}</td>
+        <td>${fitChip(fx) || '<span class="note">–</span>'}</td>
+        <td style="text-align:right">${starBtn(u.id, x, (inShortlist(u.id, x) ? 'Remove ' : 'Add ') + A.name + ' at ' + u.short + ' to shortlist', 'sm')}</td>
+      </tr>`;
+    }).join('');
+  }).join('');
+
+  $('#app').innerHTML = `<div class="page wrap">
+    <a href="#/" style="font-size:14px">← Back to Explore</a>
+    <section class="panel">
+      <div class="hero">
+        <div>${badges(u)}<h1>${esc(u.name)}</h1><div class="sub">${esc(u.city)} · ${CAMPUS[u.campus]} · ${u.areas.length} subject areas</div></div>
+        <div class="acts">
+          ${a ? `<button type="button" class="btn ${inShortlist(u.id, a) ? 'primary' : ''}" data-act="heroStar" data-u="${u.id}" data-a="${a}">${STAR.replace('<svg', '<svg fill="currentColor"')} ${inShortlist(u.id, a) ? 'On your shortlist' : 'Add ' + esc(AREA[a].name) + ' to shortlist'}</button>` : ''}
+          <a class="btn" href="https://www.${u.url}/" target="_blank" rel="noopener">University website ↗</a>
+        </div>
+      </div>
+      <div class="tiles">
+        <div class="tile"><div class="k">Typical offers</div><div class="big mono">${lo === hi ? lo : lo + ' – ' + hi}</div><div class="small">${a ? esc(AREA[a].name) + ': ' + offerOf(u, a) : 'Across all subject areas'}</div></div>
+        ${a ? `<div class="tile"><div class="k">Your fit for ${esc(AREA[a].name)}</div><div class="big">${fit ? fitChip(fit) : '–'}</div><div class="small">${predictedPts() != null ? 'Predicted ' + predictedGradesText() + ' vs offer ' + offerOf(u, a) : 'Add predicted grades above'}</div></div>` : ''}
+        <div class="tile"><div class="k">Cost of living</div><div class="big">${u.cost} of 5 ${costBar(u.cost)}</div><div class="small">${['Among the cheapest', 'Cheaper than most', 'About average', 'Pricier than most', 'Among the most expensive'][u.cost - 1]}</div></div>
+        <div class="tile"><div class="k">Tier</div><div class="big">${u.tier ? 'Tier ' + u.tier : 'Specialist'}</div><div class="small">${esc(TIER_TEXT[u.tier].replace(/^Tier \d · /, '').replace('about', 'About'))}${u.tier ? ' in league tables' : ' institution'}</div></div>
+        <div class="tile"><div class="k">Russell Group</div><div class="big">${u.rg ? 'Yes' : 'No'}</div><div class="small">${esc(u.nation)}</div></div>
+      </div>
+    </section>
+    <div class="split">
+      <section class="panel main" aria-label="Subjects">
+        <div class="rhead"><h2>Subjects and typical offers</h2>
+          ${st.subjects.length ? `<label class="small" style="display:inline-flex;gap:8px;align-items:center"><input type="checkbox" id="onlyOk"> Only ones my A levels qualify for</label>` : ''}</div>
+        <div class="tablebox"><table class="areas">
+          <thead><tr><th scope="col">Subject area</th><th scope="col">Typical offer</th><th scope="col">Required A levels</th><th scope="col">For you</th><th scope="col"><span class="sr">Shortlist</span></th></tr></thead>
+          <tbody>${rows}</tbody></table></div>
+        <div class="note">Offers are estimates for the main course in each area; joint and specialist courses can differ. Many universities also make lower contextual offers. Check the course page on <a href="https://www.${u.url}/" target="_blank" rel="noopener">${u.url}</a>.</div>
+      </section>
+      <aside class="side">
+        <section class="panel" aria-label="Living costs">
+          <h2>Living costs</h2>
+          <div class="pair">
+            <div class="box"><div class="k">University halls</div><div class="big">${range(u.halls)}<span class="small"> /wk</span></div><div class="note">Usually bills included, 40–44 week contract</div></div>
+            <div class="box"><div class="k">Room in a shared house</div><div class="big">${range(u.priv)}<span class="small"> /wk</span></div><div class="note">Most students move out after first year</div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:14px"><b>Estimated weekly budget</b><span class="mono">≈ ${money(b.total)}</span></div>
+            <div class="stack" aria-hidden="true"><span style="flex:${b.rent};background:#7C3F12"></span><span style="flex:${b.food};background:#B96A2A"></span><span style="flex:${b.other};background:#DC9A4F"></span><span style="flex:${b.travel};background:#EBBE85"></span></div>
+            <div class="keyrow"><span><span class="sw" style="background:#7C3F12"></span>Rent ${money(b.rent)}</span><span><span class="sw" style="background:#B96A2A"></span>Food ${money(b.food)}</span><span><span class="sw" style="background:#DC9A4F"></span>Other ${money(b.other)}</span><span><span class="sw" style="background:#EBBE85"></span>Travel ${money(b.travel)}</span></div>
+          </div>
+          <div class="callout">About <b>${money(Math.round(yearCost / 100) * 100)} for a ${WEEKS}-week year</b>. Halls rent alone is about <b>${rentShare}%</b> of the maximum maintenance loan for students from England living away from home${u.london ? ' in London' : ''} (${money(loan)} in 2025/26).</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">Typical halls rent per week, compared</div>
+            <div class="bars">${cmpRows.map(([x, l]) => `<span style="${x.id === u.id ? 'font-weight:600' : ''}">${esc(x.id === u.id ? u.short : x.short)}${x.id === u.id ? '' : ` <span class="note">${esc(l)}</span>`}</span><span class="bar" style="width:${Math.round(mid(x.halls) / maxRent * 100)}%;background:${COST[x.cost - 1]}"></span><span class="mono" style="font-size:13px">£${Math.round(mid(x.halls))}</span>`).join('')}</div>
+          </div>
+        </section>
+        <section class="panel" aria-label="Location">
+          <h2>Where it is</h2>
+          <div class="minimap" id="miniMap"></div>
+          <div class="small">${esc(u.city)}, ${esc(u.nation)}. ${{ city: 'Buildings are spread through the city.', campus: 'Most teaching and first-year halls are on one campus.', coll: 'Students belong to a college, which is the base for living and social life.', town: 'A small town where the university is a big part of life.' }[u.campus]}</div>
+        </section>
+      </aside>
+    </div>
+    <section class="panel" aria-label="Your notes">
+      <h2>Your notes</h2>
+      <label class="note" for="notes">Saved on this device and shown on your shortlist</label>
+      <textarea id="notes" class="notes" data-u="${u.id}" placeholder="Open day dates, questions to ask, first impressions…">${esc(st.notes[u.id] || '')}</textarea>
+    </section>
+  </div>`;
+  if (hasMap()) {
+    miniMap = L.map('miniMap', { scrollWheelZoom: false }).setView([u.lat, u.lon], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>' }).addTo(miniMap);
+    L.circleMarker([u.lat, u.lon], { radius: 9, color: '#fff', weight: 3, fillColor: '#1D3A6B', fillOpacity: 1 }).addTo(miniMap).bindTooltip(u.short, { permanent: true, direction: 'right', offset: [10, 0] });
+  } else {
+    const [x, y] = proj(u.lat, u.lon);
+    $('#miniMap').innerHTML = `<div class="fallback"><div class="fbox" style="height:230px;margin-top:0"><svg viewBox="0 0 366 552" aria-hidden="true"><path d="${GB_PATH}" fill="#F7F5EF" stroke="#BDB5A3"/><path d="${NI_PATH}" fill="#F7F5EF" stroke="#BDB5A3"/></svg><button type="button" aria-label="${esc(u.name)}" style="left:${x}%;top:${y}%;background:#1D3A6B;border:2px solid #fff"></button></div></div>`;
+  }
+}
+document.addEventListener('input', e => {
+  if (e.target.id === 'notes') { st.notes[e.target.dataset.u] = e.target.value; if (!e.target.value) delete st.notes[e.target.dataset.u]; save(); }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'onlyOk') document.querySelectorAll('tr[data-area-row]').forEach(r => { r.hidden = e.target.checked && r.dataset.ok === 'false'; });
+});
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act="heroStar"]'); if (!t) return;
+  toggleShortlist(t.dataset.u, t.dataset.a); renderRoute();
+});
+
+/* ============================================================
+   SHORTLIST
+   ============================================================ */
+
+function parseShared(s) {
+  return (s || '').split(',').map(x => { const [u, a] = x.split('.'); return { u, a: a || '' }; }).filter(e => UNI[e.u] && (!e.a || AREA[e.a]));
+}
+const shareUrl = () => location.href.split('#')[0] + '#/shortlist?s=' + st.shortlist.map(e => e.u + (e.a ? '.' + e.a : '')).join(',');
+
+function renderShortlist(sharedParam) {
+  const shared = sharedParam != null ? parseShared(sharedParam) : null;
+  const list = shared || st.shortlist;
+  const ro = !!shared;
+  const fits = list.map(e => e.a ? fitFor(UNI[e.u], e.a) : null);
+  const slots = [0, 1, 2, 3, 4].map(i => {
+    const e = list[i];
+    if (!e) return ro ? '<div class="slot empty" aria-hidden="true"></div>' : '<a class="slot empty" href="#/">+ Add a choice</a>';
+    const u = UNI[e.u], f = fits[i];
+    const cls = f ? 'fit-' + f.k : 'none';
+    return `<div class="slot ${cls}"><small>${f ? esc(f.label) : (e.a ? 'Add grades' : 'Pick a subject')}</small>${esc(u.short)}</div>`;
+  }).join('');
+  const k = fits.slice(0, 5).filter(Boolean).map(f => f.k);
+  let advice = '';
+  if (list.length > 5) advice = `You have ${list.length} on your list. UCAS lets you apply to 5 courses, so the first 5 are shown above. Use the arrows below to reorder.`;
+  else if (!list.length) advice = 'Star universities on Explore, or subjects on a university page, to add them here.';
+  else if (!k.length) advice = 'Add your predicted grades, and pick a subject for each choice, to check the balance of your list.';
+  else if (k.includes('needs')) advice = 'At least one choice needs an A level you are not taking. Check its subject requirements.';
+  else if (!k.includes('safe')) advice = 'Think about adding a Safe choice, with an offer below your predicted grades, that you would be happy to go to. It can be your insurance offer.';
+  else if (k.every(x => x === 'safe')) advice = 'Everything is a Safe choice. You could aim higher with one or two Match or Reach choices.';
+  else advice = 'A good spread. Make sure your Safe choice is somewhere you would be happy to go, because it can be your insurance offer.';
+
+  const cols = list.map((e, i) => {
+    const u = UNI[e.u], b = budget(u);
+    return { e, i, u, f: fits[i], b, year: b.total * WEEKS, offer: e.a ? offerOf(u, e.a) : null };
+  });
+  const minBy = fn => { const vs = cols.map(fn).filter(v => v != null); return vs.length > 1 ? Math.min(...vs) : null; };
+  const best = { cost: minBy(c => c.u.cost), halls: minBy(c => mid(c.u.halls)), priv: minBy(c => mid(c.u.priv)), year: minBy(c => c.year) };
+  const mark = (v, isBest) => isBest ? `<span class="best">${v}</span>` : v;
+  const areaSelect = c => ro ? (c.e.a ? esc(AREA[c.e.a].name) : '') : `<label class="sr" for="sa${c.i}">Subject for ${esc(c.u.short)}</label><select id="sa${c.i}" data-sl-area="${c.i}"><option value="">Pick a subject</option>${c.u.areas.map(a => `<option value="${a}"${a === c.e.a ? ' selected' : ''}>${esc(AREA[a].name)}</option>`).join('')}</select>`;
+  const rowDefs = [
+    ['Typical offer', c => c.offer ? `<span class="mono">${c.offer}</span> <span class="note">${pts(c.offer)} pts</span>` : '–'],
+    ['Fit for you', c => fitChip(c.f) || '–'],
+    ['Required A levels', c => c.e.a ? (AREA[c.e.a].req ? esc(rulesText(AREA[c.e.a].req)) : 'No set subjects') : '–'],
+    ['Russell Group', c => c.u.rg ? 'Yes' : 'No'],
+    ['Tier', c => c.u.tier ? 'Tier ' + c.u.tier : 'Specialist'],
+    ['Cost of living', c => mark(c.u.cost + ' of 5', c.u.cost === best.cost)],
+    ['Halls, per week', c => mark(range(c.u.halls), mid(c.u.halls) === best.halls)],
+    ['Shared house, per week', c => mark(range(c.u.priv), mid(c.u.priv) === best.priv)],
+    ['Year living cost', c => mark('≈ ' + money(Math.round(c.year / 100) * 100), c.year === best.year)],
+    ['Setting', c => CAMPUS[c.u.campus]],
+    ['Nation', c => esc(c.u.nation)],
+    ['Your notes', c => st.notes[c.u.id] ? esc(st.notes[c.u.id]) : '<span class="note">–</span>'],
+  ];
+  const table = cols.length ? `<div class="tablebox"><table class="cmp">
+    <thead><tr><th scope="col"><span class="sr">Measure</span></th>${cols.map(c => `<th scope="col"><div class="colhead"><a href="#/uni/${c.u.id}">${esc(c.u.short)}</a>${areaSelect(c)}${ro ? '' : `<div class="ops noprint"><button type="button" data-sl-move="${c.i}" data-dir="-1" aria-label="Move ${esc(c.u.short)} left"${c.i === 0 ? ' disabled' : ''}>←</button><button type="button" data-sl-move="${c.i}" data-dir="1" aria-label="Move ${esc(c.u.short)} right"${c.i === cols.length - 1 ? ' disabled' : ''}>→</button><button type="button" data-sl-del="${c.i}" aria-label="Remove ${esc(c.u.short)}">✕</button></div>`}</div></th>`).join('')}</tr></thead>
+    <tbody>${rowDefs.map(([l, fn]) => `<tr><th scope="row">${l}</th>${cols.map(c => `<td>${fn(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+    <div class="note">Shaded = lowest in the row. Year living cost = estimated rent, food, travel and other spending over ${WEEKS} weeks.</div>` : '';
+
+  $('#app').innerHTML = `<div class="page wrap">
+    ${ro ? `<div class="banner noprint"><span>You are looking at a shortlist someone shared with you.</span><span class="acts"><button type="button" class="btn navy" data-act="adopt">Replace my shortlist with this</button><a class="btn" href="#/shortlist">See my own</a></span></div>` : ''}
+    <section class="panel">
+      <div class="hero"><div><h1 style="margin:0">${ro ? 'Shared shortlist' : 'Your shortlist'}</h1><p class="sub" style="margin:4px 0 0">UCAS lets you apply to 5 courses. ${list.length ? `${list.length} on this list.` : ''}</p></div>
+        ${ro || !list.length ? '' : `<div class="acts noprint"><button type="button" class="btn" data-act="share">Copy share link</button><button type="button" class="btn" data-act="print">Print</button></div>`}</div>
+      <div><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:14px;margin-bottom:8px"><b>Balance of your choices</b>${predictedPts() != null ? `<span class="small">against predicted ${predictedGradesText()}</span>` : ''}</div>
+        <div class="balance">${slots}</div>
+        <p class="small" style="margin:10px 0 0" id="advice">${esc(advice)}</p></div>
+    </section>
+    ${cols.length ? `<section class="panel" aria-label="Compare"><h2>Side by side</h2>${table}</section>` : ''}
+  </div>`;
+  if (ro) $('[data-act="adopt"]').dataset.list = sharedParam;
+}
+document.addEventListener('change', e => {
+  const i = e.target.dataset.slArea;
+  if (i == null) return;
+  const entry = st.shortlist[+i], a = e.target.value;
+  if (st.shortlist.some((x, j) => j !== +i && x.u === entry.u && (x.a || '') === a)) { st.shortlist.splice(+i, 1); }
+  else entry.a = a;
+  save(); updateCount(); renderRoute();
+});
+document.addEventListener('click', e => {
+  const t = e.target.closest('button'); if (!t) return;
+  const d = t.dataset;
+  if (d.slMove != null) { const i = +d.slMove, j = i + +d.dir; [st.shortlist[i], st.shortlist[j]] = [st.shortlist[j], st.shortlist[i]]; save(); renderRoute(); }
+  else if (d.slDel != null) { st.shortlist.splice(+d.slDel, 1); save(); updateCount(); renderRoute(); }
+  else if (d.act === 'print') window.print();
+  else if (d.act === 'share') {
+    const url = shareUrl();
+    const done = () => { t.textContent = 'Link copied'; setTimeout(() => { t.textContent = 'Copy share link'; }, 2000); };
+    if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, () => prompt('Copy this link', url));
+    else prompt('Copy this link', url);
+  }
+  else if (d.act === 'adopt') { st.shortlist = parseShared(d.list); save(); updateCount(); location.hash = '#/shortlist'; }
+});
+
+/* ============================================================
+   ABOUT
+   ============================================================ */
+
+function renderAbout() {
+  const nRg = UNIS.filter(u => u.rg).length;
+  $('#app').innerHTML = `<div class="page wrap"><section class="panel prose">
+    <h1 style="margin:0">About the data</h1>
+    <p>Campus Atlas covers ${UNIS.length} UK universities, including all ${nRg} members of the Russell Group, across ${AREAS.length} subject areas. Everything is built into this one page, so nothing about you leaves your device. Treat every figure as an estimate for comparing universities, not as an official number.</p>
+    <h2>Typical offers</h2>
+    <p>No open dataset lists university offers, so they are estimates for the main degree in each subject area, based on recent university and UCAS listings. Each university has a typical offer for most of its courses. Subjects that are usually more competitive (for example Medicine, Economics, Computer Science, Law and Psychology) sit a step or two higher, with known exceptions set by hand. Joint and specialist courses, and contextual offers, can differ.</p>
+    <p>Fit compares the offer with your best three predicted grades in UCAS points (A* = 56, A = 48, B = 40, C = 32):</p>
+    <ul><li><b>Match</b>: your predicted grades meet the offer, or beat it by less than one grade.</li>
+      <li><b>Safe</b>: your predicted grades beat the offer by at least one grade.</li>
+      <li><b>Reach</b>: the offer is above your predicted grades.</li>
+      <li><b>Needs subjects</b>: the course usually requires an A level you have not listed.</li></ul>
+    <h2>Tiers</h2>
+    <p>There is no official tiering. Tiers here are bands based on where a university usually sits across the major UK league tables (Complete University Guide, Guardian, Times and Sunday Times):</p>
+    <table><tbody>${[1, 2, 3, 4, 0].map(t => `<tr><th>${t ? 'Tier ' + t : 'Specialist'}</th><td>${t ? esc(TIER_TEXT[t].split(' · ')[1].replace('about', 'About')) : 'Specialist institutions (for example art or veterinary colleges), not comparable in general league tables'}</td></tr>`).join('')}</tbody></table>
+    <p>League tables measure different things and move from year to year. A university's strength in your subject matters more than its overall tier.</p>
+    <h2>Cost of living</h2>
+    <p>The 1 to 5 score compares typical rents and living costs between university towns. Halls ranges are typical weekly prices for university accommodation, from shared bathrooms to en-suite rooms. Shared-house ranges are typical weekly rents for a room in a student house. The weekly budget adds rent (the middle of the halls range) to estimates for food (£${OTHER_WEEK.food}), travel (£${OTHER_WEEK.travel}) and everything else (£${OTHER_WEEK.other}), or £${OTHER_WEEK_LONDON.food}, £${OTHER_WEEK_LONDON.travel} and £${OTHER_WEEK_LONDON.other} in London. The loan comparison uses England's maximum maintenance loan for 2025/26 for students living away from home: ${money(LOAN.other)}, or ${money(LOAN.london)} in London. Students from Scotland, Wales and Northern Ireland have different support.</p>
+    <h2>Maps</h2>
+    <p>Map data © OpenStreetMap contributors, map tiles © CARTO. If the map cannot load, a simple outline map is shown instead.</p>
+    <h2>Your information</h2>
+    <p>Your grades, subjects, shortlist and notes are saved in this browser only. A share link contains just your shortlist.</p>
+  </section></div>`;
+}
+
+/* ============================================================
+   ROUTER
+   ============================================================ */
+
+function route() {
+  const h = location.hash.replace(/^#\/?/, '');
+  const [path, query] = h.split('?');
+  const parts = path.split('/').filter(Boolean);
+  const params = new URLSearchParams(query || '');
+  if (parts[0] === 'uni') return { name: 'uni', id: parts[1] };
+  if (parts[0] === 'shortlist') return { name: 'shortlist', s: params.get('s') };
+  if (parts[0] === 'about') return { name: 'about' };
+  return { name: 'explore' };
+}
+function teardownMaps() {
+  if (map) { map.remove(); map = null; }
+  if (miniMap) { miniMap.remove(); miniMap = null; }
+}
+function renderRoute() {
+  const r = route();
+  teardownMaps();
+  document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === r.name || (r.name === 'uni' && a.dataset.nav === 'explore')));
+  if (r.name === 'uni') renderUni(r.id);
+  else if (r.name === 'shortlist') renderShortlist(r.s);
+  else if (r.name === 'about') renderAbout();
+  else renderExplore();
+  const t = { uni: UNI[r.id] ? UNI[r.id].name : 'University', shortlist: 'Shortlist', about: 'About the data' }[r.name];
+  document.title = (t ? t + ' — ' : '') + 'Campus Atlas';
+}
+// Re-render after a change to grades or subjects.
+function refresh() {
+  if (route().name === 'explore') updateExplore();
+  else renderRoute();
+}
+let lastRoute = '';
+window.addEventListener('hashchange', () => {
+  const r = route();
+  renderRoute();
+  if (r.name !== lastRoute || r.name === 'uni') window.scrollTo(0, 0);
+  lastRoute = r.name;
+});
+
+renderMe();
+updateCount();
+renderRoute();
+lastRoute = route().name;
+</script>
+</body>
+</html>
