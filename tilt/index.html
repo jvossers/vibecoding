@@ -144,7 +144,13 @@
       background: var(--dot);
     }
     @media (max-width: 440px) {
-      #modes button { padding: 8px 8px; }
+      #modes {
+        flex-wrap: wrap;
+        justify-content: center;
+        width: calc(100vw - 24px);
+        border-radius: 20px;
+      }
+      #modes button { padding: 7px 8px; }
       #modes button::before { display: none; }
     }
     #modes button[aria-pressed="true"] {
@@ -208,7 +214,7 @@
 <body>
   <div id="start">
     <h1>Tilt</h1>
-    <p>Six boxes of stuff that move with your phone. Tilt to pour, twist to swirl, shake to scatter, touch to gather.</p>
+    <p>Boxes of stuff that move with your phone. Tilt to pour, twist to swirl, shake to scatter, touch to gather.</p>
     <button id="go">Tap to start</button>
   </div>
   <nav id="modes" aria-label="Mode"></nav>
@@ -232,6 +238,9 @@
     //   trail     0 = clear every frame, >0 = fade the previous frame by this much (long exposure)
     //   strand    if set, particles are threaded into strands of this many points, `segment` apart,
     //             held together by distance constraints; `stiffness` (0–1) resists bending
+    //   vortex    how much a held finger swirls particles around it (default 2)
+    //   align     particles carry an orientation (vAngle) that lines up with a magnet under the finger
+    //   scenery   optional function returning a fixed Three.js object shown inside the box
     const MODES = [
       {
         id: 'sand', name: 'Sand', dot: '#5ef0ff', bg: 0x05060d, theme: 'dark',
@@ -348,7 +357,75 @@
             gl_FragColor = vec4(c * (0.55 + 0.45 * vDepth) + uFlash, 1.0);
           }`,
       },
+      {
+        id: 'snow', name: 'Snow', dot: '#dfe9f5', bg: 0x0e2238, theme: 'dark',
+        count: 4000, cells: 24, G: 0.6, fill: 0.12, damp: 3.0, bounce: 0, swirl: 2.5, pull: 3,
+        cohesion: 0, jitter: 0.6, burst: 2.5, size: 0.022, sizeVar: 0.8, speedRef: 0.8, trail: 0,
+        box: [0xbfd8ff, 0.12], blend: 'normal',
+        scenery: snowGlobeScene,
+        frag: /* glsl */`
+          void main() {
+            vec2 p = gl_PointCoord - 0.5;
+            float r = length(p);
+            float a = atan(p.y, p.x) + vSeed * 6.283 + uTime * (0.3 + vSeed * 0.5);
+            // Bigger flakes get six arms; the rest are soft specks.
+            float arms = 0.5 + 0.5 * abs(cos(3.0 * a));
+            float edge = mix(0.3, 0.2 + 0.28 * arms, step(0.6, vSeed));
+            float alpha = 1.0 - smoothstep(edge - 0.12, edge, r);
+            vec3 c = mix(vec3(0.72, 0.82, 1.0), vec3(1.0), vDepth) + uFlash;
+            gl_FragColor = vec4(c, alpha * (0.45 + 0.55 * vDepth));
+          }`,
+      },
+      {
+        id: 'iron', name: 'Iron', dot: '#3a3b40', bg: 0xe8e3d6, theme: 'light',
+        count: 7000, cells: 30, G: 2.8, fill: 0.35, damp: 2.0, bounce: 0.1, swirl: 1.2, pull: 3,
+        vortex: 0, align: true,
+        cohesion: 0, jitter: 0, burst: 1.4, size: 0.036, sizeVar: 0.5, speedRef: 1.5, trail: 0,
+        box: [0x2a2a2a, 0.15], blend: 'opaque',
+        frag: /* glsl */`
+          void main() {
+            // Rotate into the needle's frame (point-sprite y runs down the screen).
+            vec2 p = gl_PointCoord - 0.5;
+            float cs = cos(vAngle), sn = sin(vAngle);
+            vec2 q = vec2(cs * p.x - sn * p.y, sn * p.x + cs * p.y);
+            float halfLen = 0.3 + 0.18 * vSeed;
+            float halfWidth = 0.03 + 0.02 * fract(vSeed * 7.0);
+            if (abs(q.x) > halfLen || abs(q.y) > halfWidth) discard;
+            // A glint that comes and goes as the needle turns.
+            float glint = pow(0.5 + 0.5 * sin(vAngle * 2.0 + 1.3), 3.0);
+            vec3 c = mix(vec3(0.09, 0.09, 0.1), vec3(0.55, 0.56, 0.6), glint * (1.0 - abs(q.y) / halfWidth));
+            gl_FragColor = vec4(c * (0.7 + 0.3 * vDepth) + uFlash, 1.0);
+          }`,
+      },
     ];
+
+    // A snowy mound with three pines, sitting on the floor of the box.
+    function snowGlobeScene() {
+      const group = new THREE.Group();
+      const moundHeight = 0.16, moundRadius = 0.5;
+      const mound = new THREE.Mesh(
+        new THREE.SphereGeometry(moundRadius, 32, 12, 0, Math.PI * 2, 0, Math.PI / 2),
+        new THREE.MeshBasicMaterial({ color: 0xdfe9f5 })
+      );
+      mound.scale.set(1, moundHeight / moundRadius, 0.55);
+      mound.position.y = -HY;
+      group.add(mound);
+
+      const shades = [0x0f3130, 0x123b3a, 0x174645].map(c => new THREE.MeshBasicMaterial({ color: c }));
+      const trunk = new THREE.MeshBasicMaterial({ color: 0x2b1d14 });
+      for (const [x, z, h] of [[-0.17, -0.04, 0.6], [0.13, 0.07, 0.44], [0.32, -0.08, 0.3]]) {
+        const base = -HY + moundHeight * Math.sqrt(Math.max(0, 1 - (x / moundRadius) ** 2)) - 0.02;
+        const stem = new THREE.Mesh(new THREE.CylinderGeometry(h * 0.04, h * 0.05, h * 0.2, 8), trunk);
+        stem.position.set(x, base + h * 0.1, z);
+        group.add(stem);
+        for (let k = 0; k < 3; k++) {
+          const tier = new THREE.Mesh(new THREE.ConeGeometry(h * 0.32 * (1 - k * 0.25), h * 0.42, 12), shades[k]);
+          tier.position.set(x, base + h * (0.32 + k * 0.22), z);
+          group.add(tier);
+        }
+      }
+      return group;
+    }
 
     // ---- Settings -------------------------------------------------------
     const isTouch = matchMedia('(pointer: coarse)').matches;
@@ -412,11 +489,13 @@
     const speeds = new Float32Array(MAX_N);
     const seeds = new Float32Array(MAX_N);
     const prev = new Float32Array(MAX_N * 3);   // start-of-step positions, for strand velocities
+    const angles = new Float32Array(MAX_N);     // needle orientation for `align` modes
 
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3).setUsage(THREE.DynamicDrawUsage));
     geometry.setAttribute('aSpeed', new THREE.BufferAttribute(speeds, 1).setUsage(THREE.DynamicDrawUsage));
     geometry.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1));
+    geometry.setAttribute('aAngle', new THREE.BufferAttribute(angles, 1).setUsage(THREE.DynamicDrawUsage));
 
     // Shared by every mode's material, so updating one value updates whichever is active.
     const uniforms = {
@@ -435,15 +514,18 @@
       uniform float uHZ;
       attribute float aSpeed;
       attribute float aSeed;
+      attribute float aAngle;
       varying float vSpeed;
       varying float vSeed;
       varying float vDepth;
+      varying float vAngle;
       void main() {
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * mv;
         gl_PointSize = uSize * mix(1.0, 0.4 + aSeed * 1.2, uSizeVar) * uProj / -mv.z;
         vSpeed = aSpeed;
         vSeed = aSeed;
+        vAngle = aAngle;
         vDepth = (position.z + uHZ) / (2.0 * uHZ);
       }
     `;
@@ -453,6 +535,7 @@
       varying float vSpeed;
       varying float vSeed;
       varying float vDepth;
+      varying float vAngle;
     `;
 
     const materials = new Map();
@@ -473,6 +556,9 @@
 
     const points = new THREE.Points(geometry);
     scene.add(points);
+
+    let scenery = null;
+    const sceneryCache = new Map();
 
     let boxLines = null;
     const boxMaterial = new THREE.LineBasicMaterial({ transparent: true });
@@ -562,7 +648,9 @@
         else if (i % L === 0) s = Math.random();
         if (L) seeds[i] = s;
       }
+      for (let i = 0; i < n; i++) angles[i] = Math.random() * Math.PI;
       geometry.attributes.aSeed.needsUpdate = true;
+      geometry.attributes.aAngle.needsUpdate = true;
     }
 
     let needsClear = true;
@@ -581,6 +669,13 @@
       geometry.setDrawRange(0, n);
 
       points.material = materialFor(mode);
+      if (scenery) scene.remove(scenery);
+      scenery = null;
+      if (mode.scenery) {
+        if (!sceneryCache.has(mode.id)) sceneryCache.set(mode.id, mode.scenery());
+        scenery = sceneryCache.get(mode.id);
+        scene.add(scenery);
+      }
       uniforms.uSize.value = mode.size;
       uniforms.uSizeVar.value = mode.sizeVar;
       boxMaterial.color.set(mode.box[0]);
@@ -673,6 +768,7 @@
     function burst(strength) {
       const kick = mode.burst * strength;
       for (let i = 0; i < n * 3; i++) vel[i] += (Math.random() * 2 - 1) * kick;
+      if (mode.align) for (let i = 0; i < n; i++) angles[i] += (Math.random() * 2 - 1) * strength;
       flash = Math.min(0.35, 0.15 * strength);
     }
 
@@ -790,7 +886,7 @@
       const gx = g.x * m.G, gy = g.y * m.G, gz = g.z * m.G;
       const damp = Math.exp(-m.damp * dt);
       const swirl = -spin * m.swirl;
-      const jitter = m.jitter, pull = m.pull, bounce = m.bounce;
+      const jitter = m.jitter, pull = m.pull, bounce = m.bounce, vortex = m.vortex ?? 2;
       const P = pressure;
       if (m.strand) prev.set(positions.subarray(0, n * 3));
 
@@ -825,8 +921,8 @@
         if (pointer.down) {
           const dx = pointer.x - x, dy = pointer.y - y;
           const r = Math.hypot(dx, dy) + 0.08;
-          ax += (dx * pull - dy * 2) / r;
-          ay += (dy * pull + dx * 2) / r;
+          ax += (dx * pull - dy * vortex) / r;
+          ay += (dy * pull + dx * vortex) / r;
           az -= z * 4;
         }
 
@@ -877,6 +973,34 @@
       }
     }
 
+    // Needles turn toward the field of a bar magnet (pointing up the screen) under
+    // the finger, faster where the field is stronger (~1/r³). With no magnet they
+    // keep their alignment, but filings that are being poured drift toward their
+    // direction of travel. Needles have no head or tail, so angles wrap at π.
+    function alignNeedles(dt) {
+      for (let i = 0; i < n; i++) {
+        const p = i * 3;
+        let target, rate;
+        if (pointer.down) {
+          const rx = positions[p] - pointer.x, ry = positions[p + 1] - pointer.y;
+          const r = Math.sqrt(rx * rx + ry * ry) + 0.03;
+          const ux = rx / r, uy = ry / r;
+          target = Math.atan2(3 * uy * uy - 1, 3 * uy * ux);
+          rate = 0.05 / (r * r * r);
+        } else {
+          const vx = vel[p], vy = vel[p + 1];
+          const speed = Math.hypot(vx, vy);
+          if (speed < 0.05) continue;
+          target = Math.atan2(vy, vx);
+          rate = speed * 0.5;
+        }
+        let diff = target - angles[i];
+        diff -= Math.PI * Math.round(diff / Math.PI);
+        angles[i] += diff * Math.min(1, rate * dt * 10);
+      }
+      geometry.attributes.aAngle.needsUpdate = true;
+    }
+
     // Normalised speed per particle; each mode's shader decides what it looks like.
     function measureSpeeds() {
       const inv = 1 / mode.speedRef;
@@ -897,6 +1021,7 @@
       step(dt / 2);
       step(dt / 2);
       measureSpeeds();
+      if (mode.align) alignNeedles(dt);
 
       flash *= Math.exp(-dt * 6);
       uniforms.uFlash.value = flash;
