@@ -245,6 +245,10 @@
     //   touchHint start-screen hint for what a touch does (default 'Touch to gather'); shakeHint likewise
     //   sheet     { cols, rows, width }: particles form one sheet drawn as a mesh, with stretch, shear and
     //             bend links; `frag` then shades the mesh (vUv, vView, gl_FrontFacing) instead of points
+    //   body      { cols, rows, layers, spacing }: particles form a 3D lattice held by springy links, drawn
+    //             as a smooth mesh over its outer faces (vNormal) — a soft body that snaps back to shape
+    //   grab      touch grabs the particles under the finger and drags them, instead of attracting all
+    //   iterations link-solver passes per half-step (default 6)
     //   yield     plastic links (sheet shear/bend) keep any deformation beyond this fraction (crease memory);
     //             `relax` per second eases them back toward flat, and a shake flattens them most of the way
     const MODES = [
@@ -428,7 +432,7 @@
       },
       {
         id: 'paper', name: 'Paper', dot: '#f4f1e8', bg: 0x23262b, theme: 'dark',
-        sheet: { cols: 32, rows: 45, width: 0.8 }, stiffness: 0.5, yield: 0.06, relax: 0.03,
+        sheet: { cols: 32, rows: 45, width: 0.8 }, stiffness: 0.5, yield: 0.06, relax: 0.03, iterations: 10,
         cells: 20, G: 2.5, fill: 0.06, damp: 1.5, bounce: 0, swirl: 1.2, pull: 8,
         vortex: 0.5, touchHint: 'Hold to crumple', shakeHint: 'Shake to flatten',
         cohesion: 0, jitter: 0, burst: 0.4, size: 0, sizeVar: 0, speedRef: 2.0, trail: 0,
@@ -458,6 +462,32 @@
             }
             c *= 0.4 + 0.7 * light;
             gl_FragColor = vec4(c * (0.75 + 0.25 * vDepth) + uFlash, 1.0);
+          }`,
+      },
+      {
+        id: 'jelly', name: 'Jelly', dot: '#7be05a', bg: 0x1c1424, theme: 'dark',
+        body: { cols: 13, rows: 11, layers: 8, spacing: 0.05 }, iterations: 2, grab: true,
+        cells: 16, G: 2.5, fill: 0.02, damp: 0.6, bounce: 0, swirl: 1.5, pull: 0,
+        vortex: 0, touchHint: 'Grab to stretch', shakeHint: 'Shake to wobble',
+        cohesion: 0, jitter: 0, burst: 1.2, size: 0, sizeVar: 0, speedRef: 2.0, trail: 0,
+        box: [0xc9b6e0, 0.1], blend: 'mesh',
+        frag: /* glsl */`
+          void main() {
+            vec3 n = normalize(vNormal);
+            vec3 v = normalize(-vView);
+            if (dot(n, v) < 0.0) n = -n;
+            vec3 l = normalize(vec3(-0.4, 0.7, 0.6));
+            float diffuse = max(dot(n, l), 0.0);
+            float facing = max(dot(n, v), 0.0);
+            float fresnel = pow(1.0 - facing, 2.0);
+            float spec = pow(max(dot(n, normalize(l + v)), 0.0), 90.0);
+            // Light passes through where the jelly faces you and darkens where you
+            // look through more of it at a glancing angle, which reads as translucent.
+            vec3 glow = vec3(0.62, 1.0, 0.38), deep = vec3(0.03, 0.26, 0.06);
+            vec3 c = mix(deep, glow, pow(facing, 1.6)) * (0.5 + 0.6 * diffuse);
+            c += spec * 0.9 + pow(max(dot(n, normalize(vec3(0.5, -0.2, 0.8))), 0.0), 12.0) * vec3(0.2, 0.45, 0.15);
+            c += fresnel * vec3(0.35, 0.7, 0.3) * 0.3;
+            gl_FragColor = vec4(c * (0.8 + 0.2 * vDepth) + uFlash, 0.9);
           }`,
       },
     ];
@@ -495,6 +525,7 @@
     const countFor = m => {
       const c = Math.round(m.count * (isTouch ? 0.65 : 1));
       if (m.sheet) return m.sheet.cols * m.sheet.rows;
+      if (m.body) return m.body.cols * m.body.rows * m.body.layers;
       return m.strand ? Math.max(1, Math.floor(c / m.strand)) * m.strand : c;
     };
     const MAX_N = Math.max(...MODES.map(countFor));
@@ -605,33 +636,36 @@
       varying float vAngle;
     `;
 
-    // Sheet modes draw a triangle mesh over the same position buffer as the points.
-    const sheetVertexShader = /* glsl */`
+    // Sheet and body modes draw a triangle mesh over the same position buffer as the points.
+    const meshVertexShader = /* glsl */`
       uniform float uHZ;
       varying vec2 vUv;
       varying vec3 vView;
+      varying vec3 vNormal;
       varying float vDepth;
       void main() {
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * mv;
         vUv = uv;
         vView = mv.xyz;
+        vNormal = normalMatrix * normal;
         vDepth = (position.z + uHZ) / (2.0 * uHZ);
       }
     `;
-    const sheetHeader = /* glsl */`
+    const meshHeader = /* glsl */`
       uniform float uTime;
       uniform float uFlash;
       varying vec2 vUv;
       varying vec3 vView;
+      varying vec3 vNormal;
       varying float vDepth;
     `;
-    const sheetGeometry = new THREE.BufferGeometry();
-    sheetGeometry.setAttribute('position', geometry.attributes.position);
-    const sheetMesh = new THREE.Mesh(sheetGeometry);
-    sheetMesh.frustumCulled = false;
-    sheetMesh.visible = false;
-    scene.add(sheetMesh);
+    const meshGeometry = new THREE.BufferGeometry();
+    meshGeometry.setAttribute('position', geometry.attributes.position);
+    const mesh = new THREE.Mesh(meshGeometry);
+    mesh.frustumCulled = false;
+    mesh.visible = false;
+    scene.add(mesh);
 
     function buildSheetGeometry(cols, rows) {
       const uvs = new Float32Array(MAX_N * 2);
@@ -643,18 +677,49 @@
         // Counter-clockwise seen from +z, so the ruled front faces the camera.
         if (r < rows - 1 && c < cols - 1) index.push(i, i + 1, i + cols, i + 1, i + cols + 1, i + cols);
       }
-      sheetGeometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
-      sheetGeometry.setIndex(index);
+      meshGeometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+      meshGeometry.setIndex(index);
+    }
+
+    // A soft body's skin: the six outer faces of its lattice, each quad wound so
+    // its triangles face outward (checked against the freshly spawned lattice).
+    function buildBodyGeometry() {
+      const { cols, rows, layers } = mode.body;
+      const at = (c, r, l) => (l * rows + r) * cols + c;
+      const index = [];
+      const quad = (a, b, c, d, out) => {
+        const pa = a * 3, pb = b * 3, pc = c * 3;
+        const ux = positions[pb] - positions[pa], uy = positions[pb + 1] - positions[pa + 1], uz = positions[pb + 2] - positions[pa + 2];
+        const vx = positions[pc] - positions[pa], vy = positions[pc + 1] - positions[pa + 1], vz = positions[pc + 2] - positions[pa + 2];
+        const facing = (uy * vz - uz * vy) * out[0] + (uz * vx - ux * vz) * out[1] + (ux * vy - uy * vx) * out[2];
+        if (facing > 0) index.push(a, b, c, a, c, d);
+        else index.push(a, c, b, a, d, c);
+      };
+      for (let r = 0; r < rows - 1; r++) for (let c = 0; c < cols - 1; c++) {
+        quad(at(c, r, layers - 1), at(c + 1, r, layers - 1), at(c + 1, r + 1, layers - 1), at(c, r + 1, layers - 1), [0, 0, 1]);
+        quad(at(c, r, 0), at(c + 1, r, 0), at(c + 1, r + 1, 0), at(c, r + 1, 0), [0, 0, -1]);
+      }
+      for (let l = 0; l < layers - 1; l++) for (let c = 0; c < cols - 1; c++) {
+        quad(at(c, rows - 1, l), at(c + 1, rows - 1, l), at(c + 1, rows - 1, l + 1), at(c, rows - 1, l + 1), [0, 1, 0]);
+        quad(at(c, 0, l), at(c + 1, 0, l), at(c + 1, 0, l + 1), at(c, 0, l + 1), [0, -1, 0]);
+      }
+      for (let l = 0; l < layers - 1; l++) for (let r = 0; r < rows - 1; r++) {
+        quad(at(cols - 1, r, l), at(cols - 1, r + 1, l), at(cols - 1, r + 1, l + 1), at(cols - 1, r, l + 1), [1, 0, 0]);
+        quad(at(0, r, l), at(0, r + 1, l), at(0, r + 1, l + 1), at(0, r, l + 1), [-1, 0, 0]);
+      }
+      meshGeometry.setIndex(index);
+      meshGeometry.computeVertexNormals();
     }
 
     const materials = new Map();
     function materialFor(m) {
-      if (!materials.has(m.id) && m.sheet) {
+      if (!materials.has(m.id) && (m.sheet || m.body)) {
         materials.set(m.id, new THREE.ShaderMaterial({
           uniforms,
-          vertexShader: sheetVertexShader,
-          fragmentShader: sheetHeader + m.frag,
-          side: THREE.DoubleSide,
+          vertexShader: meshVertexShader,
+          fragmentShader: meshHeader + m.frag,
+          side: m.sheet ? THREE.DoubleSide : THREE.FrontSide,
+          transparent: !!m.body,
         }));
       }
       if (!materials.has(m.id)) {
@@ -738,6 +803,8 @@
     // Links hold pairs of particles at a rest distance (strands, sheets). `flat` is
     // the rest length a link started with; plastic links let `rest` drift from it.
     let linkCount = 0;
+    let grabbed = [];   // [index, offset x, offset y] of particles held by the finger (grab modes)
+    let pinned = [];    // [index, x, y, z] of particles stuck to a wall while a grab lasts
     let linkA, linkB, linkRest, linkFlat, linkK, linkPlastic;
 
     function setLinks(list) {
@@ -776,6 +843,47 @@
         if (r < rows - 2) list.push([i, i + 2 * cols, 2 * s, bend, true]);
       }
       return list;
+    }
+
+    // Every lattice point links to its 13 "forward" neighbours (edges, face and body
+    // diagonals), which together resist stretching, shearing and squashing. Rest
+    // lengths come from the spawned shape, so the body springs back to it.
+    function bodyLinks() {
+      const { cols, rows, layers } = mode.body, list = [];
+      const at = (c, r, l) => (l * rows + r) * cols + c;
+      const offsets = [
+        [1, 0, 0], [0, 1, 0], [0, 0, 1],
+        [1, 1, 0], [1, -1, 0], [1, 0, 1], [1, 0, -1], [0, 1, 1], [0, 1, -1],
+        [1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
+      ];
+      for (let l = 0; l < layers; l++) for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        for (const [dc, dr, dl] of offsets) {
+          const c2 = c + dc, r2 = r + dr, l2 = l + dl;
+          if (c2 < 0 || c2 >= cols || r2 < 0 || r2 >= rows || l2 < 0 || l2 >= layers) continue;
+          const a = at(c, r, l) * 3, b = at(c2, r2, l2) * 3;
+          const rest = Math.hypot(positions[b] - positions[a], positions[b + 1] - positions[a + 1], positions[b + 2] - positions[a + 2]);
+          list.push([a / 3, b / 3, rest, dc * dc + dr * dr + dl * dl === 1 ? 0.25 : 0.1]);
+        }
+      }
+      return list;
+    }
+
+    // A fresh block, a little above the middle of the box, so it drops and wobbles.
+    // Its corners are rounded by blending the cube halfway toward a sphere.
+    function spawnBody() {
+      const { cols, rows, layers, spacing } = mode.body;
+      const hx = (cols - 1) / 2, hy = (rows - 1) / 2, hz = (layers - 1) / 2;
+      for (let l = 0; l < layers; l++) for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        const p = ((l * rows + r) * cols + c) * 3;
+        const u = (c - hx) / hx, v = (r - hy) / hy, w = (l - hz) / hz;
+        const su = u * Math.sqrt(1 - v * v / 2 - w * w / 2 + v * v * w * w / 3);
+        const sv = v * Math.sqrt(1 - w * w / 2 - u * u / 2 + w * w * u * u / 3);
+        const sw = w * Math.sqrt(1 - u * u / 2 - v * v / 2 + u * u * v * v / 3);
+        positions[p] = (u + su) / 2 * hx * spacing;
+        positions[p + 1] = (v + sv) / 2 * hy * spacing + 0.2;
+        positions[p + 2] = (w + sw) / 2 * hz * spacing;
+        vel[p] = vel[p + 1] = vel[p + 2] = 0;
+      }
     }
 
     function sheetSpacing() {
@@ -847,16 +955,19 @@
       mode = next;
       n = countFor(mode);
       // Particles carry over between modes; any extra ones start scattered.
-      // Strands and sheets always start fresh, since loose particles can't be linked.
+      // Strands, sheets and bodies always start fresh, since loose particles can't be linked.
+      grabbed = []; pinned = [];
       if (mode.strand) { spawnStrands(); setLinks(strandLinks()); }
       else if (mode.sheet) { spawnSheet(); setLinks(sheetLinks()); buildSheetGeometry(mode.sheet.cols, mode.sheet.rows); }
+      else if (mode.body) { spawnBody(); setLinks(bodyLinks()); buildBodyGeometry(); }
       else { if (n > prevN) spawn(prevN, n); linkCount = 0; }
       assignSeeds();
       geometry.setDrawRange(0, n);
 
-      points.visible = !mode.sheet;
-      sheetMesh.visible = !!mode.sheet;
-      if (mode.sheet) sheetMesh.material = materialFor(mode);
+      const meshed = !!(mode.sheet || mode.body);
+      points.visible = !meshed;
+      mesh.visible = meshed;
+      if (meshed) mesh.material = materialFor(mode);
       else points.material = materialFor(mode);
       if (scenery) scene.remove(scenery);
       scenery = null;
@@ -1028,7 +1139,7 @@
       }
       keepAwake();
       document.getElementById('start').classList.add('gone');
-      if (mode.sheet) setMode(mode.id, false);   // a fresh sheet, not one that fell during the start screen
+      if (mode.sheet || mode.body) setMode(mode.id, false);   // fresh, not something that fell during the start screen
       nav.classList.add('show');
 
       // Give sensors a moment to report before choosing which hints to show.
@@ -1116,7 +1227,7 @@
           az += (Math.random() * 2 - 1) * jitter;
         }
 
-        if (pointer.down) {
+        if (pointer.down && (pull || vortex)) {
           const dx = pointer.x - x, dy = pointer.y - y;
           const r = Math.hypot(dx, dy) + 0.08;
           ax += (dx * pull - dy * vortex) / r;
@@ -1137,13 +1248,58 @@
         vel[p] = vx; vel[p + 1] = vy; vel[p + 2] = vz;
       }
 
+      if (grabbed.length) dragGrabbed();
+
       if (linkCount) {
         // Position-based dynamics: pull linked points back to their rest spacing,
         // then derive velocity from how far each point actually moved.
-        solveLinks(m.sheet ? 10 : 6);
+        solveLinks(m.iterations ?? 6);
         if (m.yield) deformLinks(dt);
+        if (pinned.length) holdPinned();
         const inv = 1 / dt;
         for (let i = 0; i < n * 3; i++) vel[i] = (positions[i] - prev[i]) * inv;
+      }
+    }
+
+    // Grab: on touch, take the point nearest the finger (on screen) and everything
+    // within reach of it, keeping their offsets, then drag them with the finger.
+    // Whatever was resting on a wall at that moment stays stuck there until the
+    // finger lifts, like jelly on a plate, so pulling stretches it rather than
+    // carrying it off whole.
+    function updateGrab() {
+      if (!pointer.down) { grabbed = []; pinned = []; return; }
+      if (grabbed.length) return;
+      let best = -1, bestD = Infinity;
+      for (let i = 0; i < n; i++) {
+        const d = (positions[i * 3] - pointer.x) ** 2 + (positions[i * 3 + 1] - pointer.y) ** 2 - positions[i * 3 + 2] * 0.01;
+        if (d < bestD) { bestD = d; best = i; }
+      }
+      const bx = positions[best * 3], by = positions[best * 3 + 1], bz = positions[best * 3 + 2];
+      for (let i = 0; i < n; i++) {
+        const ox = positions[i * 3] - bx, oy = positions[i * 3 + 1] - by, oz = positions[i * 3 + 2] - bz;
+        if (ox * ox + oy * oy + oz * oz < 0.09 * 0.09) grabbed.push([i, ox, oy]);
+      }
+      const held = new Set(grabbed.map(gr => gr[0])), e = 1e-3;
+      for (let i = 0; i < n; i++) {
+        const p = i * 3;
+        if (held.has(i)) continue;
+        if (Math.abs(positions[p]) > HX - e || Math.abs(positions[p + 1]) > HY - e || Math.abs(positions[p + 2]) > HZ - e) {
+          pinned.push([i, positions[p], positions[p + 1], positions[p + 2]]);
+        }
+      }
+    }
+
+    function holdPinned() {
+      for (const [i, x, y, z] of pinned) {
+        positions[i * 3] = x; positions[i * 3 + 1] = y; positions[i * 3 + 2] = z;
+      }
+    }
+
+    function dragGrabbed() {
+      for (const [i, ox, oy] of grabbed) {
+        const p = i * 3;
+        positions[p] += (Math.min(Math.max(pointer.x + ox, -HX), HX) - positions[p]) * 0.3;
+        positions[p + 1] += (Math.min(Math.max(pointer.y + oy, -HY), HY) - positions[p + 1]) * 0.3;
       }
     }
 
@@ -1260,8 +1416,10 @@
 
       g.lerp(gTarget, 1 - Math.exp(-dt * 12));
       spin *= Math.exp(-dt * 4);   // decays if motion events stop
+      if (mode.grab) updateGrab();
       step(dt / 2);
       step(dt / 2);
+      if (mode.body) meshGeometry.computeVertexNormals();
       measureSpeeds();
       if (mode.align) alignNeedles(dt);
       if (mode.pop) updateBubbles(dt);
