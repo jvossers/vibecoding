@@ -242,7 +242,11 @@
     //   align     particles carry an orientation (vAngle) that lines up with a magnet under the finger
     //   scenery   optional function returning a fixed Three.js object shown inside the box
     //   pop       particles are bubbles: touch and shakes pop them, and they grow back on the low side
-    //   touchHint start-screen hint for what a touch does (default 'Touch to gather')
+    //   touchHint start-screen hint for what a touch does (default 'Touch to gather'); shakeHint likewise
+    //   sheet     { cols, rows, width }: particles form one sheet drawn as a mesh, with stretch, shear and
+    //             bend links; `frag` then shades the mesh (vUv, vView, gl_FrontFacing) instead of points
+    //   yield     plastic links (sheet shear/bend) keep any deformation beyond this fraction (crease memory);
+    //             `relax` per second eases them back toward flat, and a shake flattens them most of the way
     const MODES = [
       {
         id: 'sand', name: 'Sand', dot: '#5ef0ff', bg: 0x05060d, theme: 'dark',
@@ -422,6 +426,40 @@
             gl_FragColor = vec4(c * (0.6 + 0.4 * vDepth) + uFlash * rim, 1.0);
           }`,
       },
+      {
+        id: 'paper', name: 'Paper', dot: '#f4f1e8', bg: 0x23262b, theme: 'dark',
+        sheet: { cols: 32, rows: 45, width: 0.8 }, stiffness: 0.5, yield: 0.06, relax: 0.03,
+        cells: 20, G: 2.5, fill: 0.06, damp: 1.5, bounce: 0, swirl: 1.2, pull: 8,
+        vortex: 0.5, touchHint: 'Hold to crumple', shakeHint: 'Shake to flatten',
+        cohesion: 0, jitter: 0, burst: 0.4, size: 0, sizeVar: 0, speedRef: 2.0, trail: 0,
+        box: [0xd8dce4, 0.1], blend: 'opaque',
+        frag: /* glsl */`
+          void main() {
+            // Three punched holes down the left edge, cut right through the sheet.
+            vec2 hole = vec2((vUv.x - 0.045) * 0.71, vUv.y - clamp(floor(vUv.y * 3.0) / 3.0 + 1.0 / 6.0, 0.0, 1.0));
+            if (length(hole) < 0.014) discard;
+
+            // Flat normal per triangle, so every crease reads as a sharp facet.
+            vec3 n = normalize(cross(dFdx(vView), dFdy(vView)));
+            if (dot(n, vView) > 0.0) n = -n;
+            float light = max(dot(n, normalize(vec3(-0.4, 0.6, 0.8))), 0.0);
+
+            vec3 c;
+            if (gl_FrontFacing) {
+              // Lined notebook paper: blue rules below a header gap, red margin line.
+              c = vec3(0.97, 0.96, 0.92);
+              float ly = vUv.y * 30.0;
+              float rule = (1.0 - smoothstep(0.5, 1.5, abs(fract(ly) - 0.5) / fwidth(ly))) * step(vUv.y, 0.88);
+              c = mix(c, vec3(0.52, 0.66, 0.88), rule * 0.8);
+              float mx = abs(vUv.x - 0.13) / fwidth(vUv.x);
+              c = mix(c, vec3(0.9, 0.42, 0.42), (1.0 - smoothstep(0.5, 1.5, mx)) * 0.85);
+            } else {
+              c = vec3(0.9, 0.89, 0.85);
+            }
+            c *= 0.4 + 0.7 * light;
+            gl_FragColor = vec4(c * (0.75 + 0.25 * vDepth) + uFlash, 1.0);
+          }`,
+      },
     ];
 
     // A snowy mound with three pines, sitting on the floor of the box.
@@ -456,6 +494,7 @@
     const isTouch = matchMedia('(pointer: coarse)').matches;
     const countFor = m => {
       const c = Math.round(m.count * (isTouch ? 0.65 : 1));
+      if (m.sheet) return m.sheet.cols * m.sheet.rows;
       return m.strand ? Math.max(1, Math.floor(c / m.strand)) * m.strand : c;
     };
     const MAX_N = Math.max(...MODES.map(countFor));
@@ -513,7 +552,7 @@
     const vel = new Float32Array(MAX_N * 3);
     const speeds = new Float32Array(MAX_N);
     const seeds = new Float32Array(MAX_N);
-    const prev = new Float32Array(MAX_N * 3);   // start-of-step positions, for strand velocities
+    const prev = new Float32Array(MAX_N * 3);   // start-of-step positions, for linked modes' velocities
     const angles = new Float32Array(MAX_N);     // needle orientation for `align` modes
     const scales = new Float32Array(MAX_N);     // per-particle size multiplier; bubbles regrow from 0
 
@@ -566,8 +605,58 @@
       varying float vAngle;
     `;
 
+    // Sheet modes draw a triangle mesh over the same position buffer as the points.
+    const sheetVertexShader = /* glsl */`
+      uniform float uHZ;
+      varying vec2 vUv;
+      varying vec3 vView;
+      varying float vDepth;
+      void main() {
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_Position = projectionMatrix * mv;
+        vUv = uv;
+        vView = mv.xyz;
+        vDepth = (position.z + uHZ) / (2.0 * uHZ);
+      }
+    `;
+    const sheetHeader = /* glsl */`
+      uniform float uTime;
+      uniform float uFlash;
+      varying vec2 vUv;
+      varying vec3 vView;
+      varying float vDepth;
+    `;
+    const sheetGeometry = new THREE.BufferGeometry();
+    sheetGeometry.setAttribute('position', geometry.attributes.position);
+    const sheetMesh = new THREE.Mesh(sheetGeometry);
+    sheetMesh.frustumCulled = false;
+    sheetMesh.visible = false;
+    scene.add(sheetMesh);
+
+    function buildSheetGeometry(cols, rows) {
+      const uvs = new Float32Array(MAX_N * 2);
+      const index = [];
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        const i = r * cols + c;
+        uvs[i * 2] = c / (cols - 1);
+        uvs[i * 2 + 1] = r / (rows - 1);
+        // Counter-clockwise seen from +z, so the ruled front faces the camera.
+        if (r < rows - 1 && c < cols - 1) index.push(i, i + 1, i + cols, i + 1, i + cols + 1, i + cols);
+      }
+      sheetGeometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+      sheetGeometry.setIndex(index);
+    }
+
     const materials = new Map();
     function materialFor(m) {
+      if (!materials.has(m.id) && m.sheet) {
+        materials.set(m.id, new THREE.ShaderMaterial({
+          uniforms,
+          vertexShader: sheetVertexShader,
+          fragmentShader: sheetHeader + m.frag,
+          side: THREE.DoubleSide,
+        }));
+      }
       if (!materials.has(m.id)) {
         const opaque = m.blend === 'opaque';
         materials.set(m.id, new THREE.ShaderMaterial({
@@ -646,6 +735,72 @@
       }
     }
 
+    // Links hold pairs of particles at a rest distance (strands, sheets). `flat` is
+    // the rest length a link started with; plastic links let `rest` drift from it.
+    let linkCount = 0;
+    let linkA, linkB, linkRest, linkFlat, linkK, linkPlastic;
+
+    function setLinks(list) {
+      linkCount = list.length;
+      linkA = new Int32Array(list.map(l => l[0]));
+      linkB = new Int32Array(list.map(l => l[1]));
+      linkRest = new Float32Array(list.map(l => l[2]));
+      linkFlat = new Float32Array(linkRest);
+      linkK = new Float32Array(list.map(l => l[3]));
+      linkPlastic = new Uint8Array(list.map(l => (l[4] ? 1 : 0)));
+    }
+
+    function strandLinks() {
+      const L = mode.strand, seg = mode.segment, bend = mode.stiffness * 0.5, list = [];
+      for (let base = 0; base < n; base += L) {
+        for (let j = 0; j < L - 1; j++) list.push([base + j, base + j + 1, seg, 0.5]);
+        // Linking every other point resists sharp kinks without making the strand rigid.
+        for (let j = 0; j < L - 2; j++) list.push([base + j, base + j + 2, seg * 1.9, bend]);
+      }
+      return list;
+    }
+
+    // Stretch links (neighbours) keep paper from stretching; shear (diagonals) and
+    // bend (every other point) links are plastic, which is what lets it hold creases.
+    function sheetLinks() {
+      const { cols, rows } = mode.sheet, s = sheetSpacing(), bend = mode.stiffness * 0.5, list = [];
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        const i = r * cols + c;
+        if (c < cols - 1) list.push([i, i + 1, s, 0.5]);
+        if (r < rows - 1) list.push([i, i + cols, s, 0.5]);
+        if (c < cols - 1 && r < rows - 1) {
+          list.push([i, i + cols + 1, s * Math.SQRT2, 0.3, true]);
+          list.push([i + 1, i + cols, s * Math.SQRT2, 0.3, true]);
+        }
+        if (c < cols - 2) list.push([i, i + 2, 2 * s, bend, true]);
+        if (r < rows - 2) list.push([i, i + 2 * cols, 2 * s, bend, true]);
+      }
+      return list;
+    }
+
+    function sheetSpacing() {
+      const { cols, rows, width } = mode.sheet;
+      // Shrink the sheet if the box is too small for it (e.g. a short landscape screen).
+      const w = Math.min(width, 2 * HX * 0.9, (2 * HY * 0.9) * (cols - 1) / (rows - 1));
+      return w / (cols - 1);
+    }
+
+    // A fresh flat sheet hanging in the middle of the box, slightly turned and
+    // rippled so it doesn't fall perfectly symmetrically.
+    function spawnSheet() {
+      const { cols, rows } = mode.sheet, s = sheetSpacing();
+      const a = (Math.random() - 0.5) * 0.4, ca = Math.cos(a), sa = Math.sin(a);
+      const phase = Math.random() * 6.283;
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        const p = (r * cols + c) * 3;
+        const u = (c - (cols - 1) / 2) * s, v = (r - (rows - 1) / 2) * s;
+        positions[p] = u * ca - v * sa;
+        positions[p + 1] = u * sa + v * ca;
+        positions[p + 2] = 0.02 * Math.sin(u * 7 + phase) * Math.cos(v * 5);
+        vel[p] = vel[p + 1] = vel[p + 2] = 0;
+      }
+    }
+
     // Strands start as gently wandering threads so the constraints don't snap them.
     function spawnStrands() {
       const L = mode.strand, seg = mode.segment;
@@ -692,13 +847,17 @@
       mode = next;
       n = countFor(mode);
       // Particles carry over between modes; any extra ones start scattered.
-      // Strands always start fresh, since loose particles can't be threaded.
-      if (mode.strand) spawnStrands();
-      else if (n > prevN) spawn(prevN, n);
+      // Strands and sheets always start fresh, since loose particles can't be linked.
+      if (mode.strand) { spawnStrands(); setLinks(strandLinks()); }
+      else if (mode.sheet) { spawnSheet(); setLinks(sheetLinks()); buildSheetGeometry(mode.sheet.cols, mode.sheet.rows); }
+      else { if (n > prevN) spawn(prevN, n); linkCount = 0; }
       assignSeeds();
       geometry.setDrawRange(0, n);
 
-      points.material = materialFor(mode);
+      points.visible = !mode.sheet;
+      sheetMesh.visible = !!mode.sheet;
+      if (mode.sheet) sheetMesh.material = materialFor(mode);
+      else points.material = materialFor(mode);
       if (scenery) scene.remove(scenery);
       scenery = null;
       if (mode.scenery) {
@@ -799,6 +958,10 @@
       const kick = mode.burst * strength;
       for (let i = 0; i < n * 3; i++) vel[i] += (Math.random() * 2 - 1) * kick;
       if (mode.align) for (let i = 0; i < n; i++) angles[i] += (Math.random() * 2 - 1) * strength;
+      if (mode.yield) {
+        const f = Math.min(0.85, 0.4 * strength);
+        for (let l = 0; l < linkCount; l++) if (linkPlastic[l]) linkRest[l] += (linkFlat[l] - linkRest[l]) * f;
+      }
       if (mode.pop) {
         const share = Math.min(0.6, 0.2 * strength);
         for (let i = 0; i < n; i++) if (Math.random() < share) pop(i);
@@ -865,13 +1028,14 @@
       }
       keepAwake();
       document.getElementById('start').classList.add('gone');
+      if (mode.sheet) setMode(mode.id, false);   // a fresh sheet, not one that fell during the start screen
       nav.classList.add('show');
 
       // Give sensors a moment to report before choosing which hints to show.
       setTimeout(() => {
         const hints = document.getElementById('hints');
         const list = sensorsActive
-          ? ['Tilt to pour', 'Twist to swirl', 'Shake to scatter', mode.touchHint ?? 'Touch to gather']
+          ? ['Tilt to pour', 'Twist to swirl', mode.shakeHint ?? 'Shake to scatter', mode.touchHint ?? 'Touch to gather']
           : isTouch
             ? ['Motion access off', mode.touchHint ?? 'Touch to gather']
             : ['Move mouse to tilt', 'Hold to gather', 'Space to scatter', '← → to switch'];
@@ -922,7 +1086,7 @@
       const swirl = -spin * m.swirl;
       const jitter = m.jitter, pull = m.pull, bounce = m.bounce, vortex = m.vortex ?? 2;
       const P = pressure;
-      if (m.strand) prev.set(positions.subarray(0, n * 3));
+      if (linkCount) prev.set(positions.subarray(0, n * 3));
 
       for (let i = 0; i < n; i++) {
         const p = i * 3;
@@ -973,10 +1137,11 @@
         vel[p] = vx; vel[p + 1] = vy; vel[p + 2] = vz;
       }
 
-      if (m.strand) {
+      if (linkCount) {
         // Position-based dynamics: pull linked points back to their rest spacing,
         // then derive velocity from how far each point actually moved.
-        solveStrands(6);
+        solveLinks(m.sheet ? 10 : 6);
+        if (m.yield) deformLinks(dt);
         const inv = 1 / dt;
         for (let i = 0; i < n * 3; i++) vel[i] = (positions[i] - prev[i]) * inv;
       }
@@ -991,19 +1156,31 @@
       positions[pb] -= dx * corr; positions[pb + 1] -= dy * corr; positions[pb + 2] -= dz * corr;
     }
 
-    function solveStrands(iterations) {
-      const L = mode.strand, seg = mode.segment, bend = mode.stiffness * 0.5;
+    function solveLinks(iterations) {
       for (let it = 0; it < iterations; it++) {
-        for (let base = 0; base < n; base += L) {
-          for (let j = 0; j < L - 1; j++) link(base + j, base + j + 1, seg, 0.5);
-          // Linking every other point resists sharp kinks without making the strand rigid.
-          for (let j = 0; j < L - 2; j++) link(base + j, base + j + 2, seg * 1.9, bend);
-        }
+        for (let l = 0; l < linkCount; l++) link(linkA[l], linkB[l], linkRest[l], linkK[l]);
         for (let p = 0; p < n * 3; p += 3) {
           positions[p] = Math.min(Math.max(positions[p], -HX), HX);
           positions[p + 1] = Math.min(Math.max(positions[p + 1], -HY), HY);
           positions[p + 2] = Math.min(Math.max(positions[p + 2], -HZ), HZ);
         }
+      }
+    }
+
+    // Crease memory: a plastic link squeezed more than `yield` past its rest length
+    // takes the new shape as its rest length, so creases stay when the finger lets
+    // go. Only compression creases; rest lengths ease back toward flat over time,
+    // and a shake flattens them most of the way (see burst).
+    function deformLinks(dt) {
+      const y = mode.yield, relax = 1 - Math.exp(-mode.relax * dt);
+      for (let l = 0; l < linkCount; l++) {
+        if (!linkPlastic[l]) continue;
+        const pa = linkA[l] * 3, pb = linkB[l] * 3;
+        const d = Math.hypot(positions[pb] - positions[pa], positions[pb + 1] - positions[pa + 1], positions[pb + 2] - positions[pa + 2]);
+        const flat = linkFlat[l];
+        let rest = Math.min(linkRest[l], d / (1 - y));
+        rest += (flat - rest) * relax;
+        linkRest[l] = Math.min(Math.max(rest, flat * 0.1), flat);
       }
     }
 
