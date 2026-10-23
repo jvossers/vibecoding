@@ -430,7 +430,6 @@ function drawLanes(svg, m, L, H) {
     const xa = L.barFracX(a), xb = L.barFracX(b);
     o.push(`<rect x="${r1(xa)}" y="0" width="${r1(xb - xa)}" height="${H}" class="filltint"/>`);
   });
-  o.push(`<rect id="curCol" x="-100" y="0" width="10" height="${H}" class="curcol"/>`);
   m.steps.forEach((st) => {
     const small = !st.strong && st.cell < 9;
     if (small) return;
@@ -667,12 +666,26 @@ const engine = {
     }
   },
 
+  // The AudioContext time of the sound reaching the speakers right now.
+  // getOutputTimestamp and outputLatency are each missing or under-reported
+  // on some browsers, so take whichever estimate lags more, then apply the
+  // user's own sync nudge.
+  heardTime() {
+    const ctx = audio.ctx;
+    let t = ctx.currentTime - (ctx.outputLatency || ctx.baseLatency || 0);
+    if (ctx.getOutputTimestamp) {
+      const ts = ctx.getOutputTimestamp();
+      if (ts && ts.performanceTime > 0 && ts.contextTime > 0) {
+        t = Math.min(t, ts.contextTime + (performance.now() - ts.performanceTime) / 1000);
+      }
+    }
+    return t - (settings.syncMs || 0) / 1000;
+  },
+
   // Position for the display: { countIn, step, frac, loop } or null.
   position() {
     if (!this.playing) return null;
-    const ctx = audio.ctx;
-    const lat = ctx.outputLatency || ctx.baseLatency || 0;
-    const now = ctx.currentTime - lat;
+    const now = this.heardTime();
     if (now < this.startTime) {
       const bar = this.m.bars[0];
       const into = (now - (this.startTime - bar.q * this.secPerQ)) / this.secPerQ;
@@ -697,7 +710,7 @@ const engine = {
 
 // ---------- Settings ----------
 
-const settings = { sound: true, metro: true, countIn: true, view: 'both' };
+const settings = { sound: true, metro: true, countIn: true, view: 'both', syncMs: 0 };
 const STORE = 'backbeat:';
 
 function loadSettings() {
@@ -876,11 +889,6 @@ function showPosition(pos) {
   if (pos.idle) { setLit(-1); return; }
   if (pos.step !== lastStep) {
     setLit(pos.step);
-    const col = document.getElementById('curCol');
-    if (col) {
-      col.setAttribute('x', (st.x - st.cell / 2).toFixed(1));
-      col.setAttribute('width', st.cell.toFixed(1));
-    }
     const pt = document.getElementById('posText');
     if (pt) {
       const g = m.groups[st.group];
@@ -897,11 +905,7 @@ function setLit(step) {
   litEls.forEach((el) => el.classList.remove('on'));
   litEls = [];
   lastStep = step;
-  if (step < 0 || !current.byStep) {
-    const col = document.getElementById('curCol');
-    if (col) col.setAttribute('x', '-100');
-    return;
-  }
+  if (step < 0 || !current.byStep) return;
   current.byStep[step].forEach((el) => { el.classList.add('on'); litEls.push(el); });
   current.m.hitsAt[step].forEach((h) => {
     (current.labels[h.inst] || []).forEach((el) => { el.classList.add('on'); litEls.push(el); });
@@ -970,6 +974,13 @@ function syncToggles() {
   $('metroBtn').setAttribute('aria-pressed', String(settings.metro));
   $('countInBtn').setAttribute('aria-pressed', String(settings.countIn));
   $('viewSeg').querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === settings.view)));
+  $('syncVal').textContent = `${settings.syncMs > 0 ? '+' : ''}${settings.syncMs} ms`;
+}
+
+function changeSync(d) {
+  settings.syncMs = Math.max(-200, Math.min(400, settings.syncMs + d));
+  syncToggles();
+  saveSettings();
 }
 
 async function requestWake() {
@@ -1012,6 +1023,8 @@ function initPlayer() {
     saveSettings();
     requestAnimationFrame(renderStage);
   });
+  holdRepeat($('syncLessBtn'), () => changeSync(-10));
+  holdRepeat($('syncMoreBtn'), () => changeSync(10));
   $('resetBpmBtn').addEventListener('click', () => { if (current) changeBpm(current.p.bpm - current.bpm); });
   const go = (d) => {
     const i = ORDERED.indexOf(current.p) + d;

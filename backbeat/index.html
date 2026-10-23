@@ -110,6 +110,18 @@
         <button type="button" id="countInBtn" class="switch" aria-label="Count-in" aria-pressed="true"><i></i></button>
       </div>
       <div class="menu-row">
+        <span>Sync<small class="hint">If the line runs ahead of the sound, press +</small></span>
+        <div class="box" role="group" aria-label="Sync the display to the sound">
+          <button type="button" id="syncLessBtn" class="ib sm" aria-label="Show the line earlier">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
+          </button>
+          <span class="sync" id="syncVal" aria-live="polite"></span>
+          <button type="button" id="syncMoreBtn" class="ib sm" aria-label="Show the line later">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+          </button>
+        </div>
+      </div>
+      <div class="menu-row">
         <button type="button" id="resetBpmBtn" class="link">Reset to suggested tempo</button>
         <button type="button" id="fullscreenBtn" class="link">Full screen</button>
       </div>

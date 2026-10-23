@@ -259,6 +259,8 @@ button:disabled { opacity: 0.35; cursor: default; }
 .switch[aria-pressed="true"] { background: var(--accent); }
 .switch[aria-pressed="true"] i { transform: translateX(18px); }
 .link { border: 0; background: none; color: var(--accent); padding: 8px 0; font-size: 13px; font-weight: 600; }
+.hint { display: block; font-size: 11px; color: var(--faint); margin-top: 2px; }
+.sync { min-width: 54px; text-align: center; font-size: 13px; font-variant-numeric: tabular-nums; }
 .tip { margin: 0; padding-top: 10px; border-top: 1px solid var(--line); font-size: 13px; color: var(--text-2); line-height: 1.45; }
 
 .stage {
@@ -345,7 +347,7 @@ button:disabled { opacity: 0.35; cursor: default; }
 .paper .ho { fill: currentColor; }
 .paper .hx { stroke: currentColor; fill: none; stroke-linecap: round; }
 .paper .nh { color: var(--ink); }
-.paper .nh.on { color: var(--hot-ink); }
+.paper .nh.on { animation: ink-flash 0.32s ease-out; }
 .paper .flag, .paper .rest { stroke: var(--ink); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .paper .tsig {
   font-family: Georgia, 'Times New Roman', serif;
@@ -360,7 +362,7 @@ button:disabled { opacity: 0.35; cursor: default; }
 .paper .secline { fill: #B9B3A8; }
 .paper .secline.fill { fill: var(--hot-ink); }
 .paper .stk { font-size: 11px; font-weight: 700; fill: var(--ink-2); text-anchor: middle; }
-.paper .stk.on { fill: var(--hot-ink); }
+.paper .stk.on { animation: stk-flash 0.32s ease-out; }
 
 /* Lanes */
 .lanes .band { fill: transparent; }
@@ -369,18 +371,29 @@ button:disabled { opacity: 0.35; cursor: default; }
 .lanes .beatline { fill: #262A33; }
 .lanes .rowline { fill: #23262F; }
 .lanes .filltint { fill: rgba(255, 107, 44, 0.06); }
-.lanes .curcol { fill: rgba(255, 107, 44, 0.16); }
 .lanes .cnt { font-size: 9px; fill: var(--faint); text-anchor: middle; }
 .lanes .cnt.strong { font-size: 11px; font-weight: 700; fill: var(--text); }
-.lanes .cnt.on { fill: var(--accent); }
+.lanes .cnt.on { animation: cnt-flash 0.32s ease-out; }
 .lanes .pos { font-size: 11px; font-weight: 600; fill: var(--muted); }
 .lanes .lname { font-size: 12px; fill: var(--text-2); dominant-baseline: central; }
-.lanes .lname.on { fill: #fff; font-weight: 700; }
-.lanes .ldot.on { stroke: #fff; stroke-width: 2; }
-.lanes .hit { fill: var(--c); transform-box: fill-box; transform-origin: center; transition: transform 0.06s; }
+.lanes .lname.on { animation: name-flash 0.32s ease-out; }
+.lanes .ldot.on { animation: dot-flash 0.32s ease-out; }
+.lanes .hit { fill: var(--c); transform-box: fill-box; transform-origin: center; }
 .lanes .hit.ghost { opacity: 0.5; }
 .lanes .hit.open { fill: none; stroke: var(--c); stroke-width: 2; }
-.lanes .hit.on { stroke: #fff; stroke-width: 2; transform: scale(1.22); opacity: 1; }
+.lanes .hit.on { animation: hit-flash 0.32s ease-out; }
+
+/* Lit elements flash at the moment of the hit and fade, so the light never
+   lingers behind the playhead. */
+@keyframes hit-flash {
+  from { stroke: #fff; stroke-width: 2.5px; transform: scale(1.3); opacity: 1; }
+  to { stroke: rgba(255, 255, 255, 0); stroke-width: 2.5px; transform: scale(1); }
+}
+@keyframes ink-flash { from { color: var(--hot-ink); } to { color: var(--ink); } }
+@keyframes stk-flash { from { fill: var(--hot-ink); } to { fill: var(--ink-2); } }
+@keyframes cnt-flash { from { fill: var(--accent); } }
+@keyframes name-flash { from { fill: #fff; } to { fill: var(--text-2); } }
+@keyframes dot-flash { from { stroke: #fff; stroke-width: 3px; } to { stroke: rgba(255, 255, 255, 0); stroke-width: 3px; } }
 
 @media (min-width: 1000px) {
   .pbar { height: calc(60px + env(safe-area-inset-top, 0px)); gap: 10px; padding-left: 16px; padding-right: 16px; }

@@ -24,7 +24,7 @@ After editing patterns, check every track has the right length per bar: `buildMo
 - `buildModel(p)` turns a pattern into bars, beam groups, steps (with timing in quarter notes, including swing) and hits.
 - `makeLayout(m, width)` gives the shared x mapping. Both panels use the same gutter `G`, so one playhead lines up with the notation and the lanes.
 - `analyse(m)` works out notes, rests, beaming and tuplets per beam group and voice (hands stems up, feet stems down). `drawNotation` scales the staff to the panel height.
-- `engine` is a look-ahead scheduler on the AudioContext clock. The display reads the same clock, so highlights match the sound. The drum sound and metronome toggles are checked when each event is scheduled.
-- Settings (`sound`, `metro`, `countIn`, `view`) and the last tempo per pattern persist in localStorage.
+- `engine` is a look-ahead scheduler on the AudioContext clock. The display reads the same clock, so highlights match the sound. Highlights flash and fade rather than staying lit for the whole step, so they never trail the playhead. `heardTime()` estimates what is coming out of the speakers now, and the user can nudge it with `syncMs`. The drum sound and metronome toggles are checked when each event is scheduled.
+- Settings (`sound`, `metro`, `countIn`, `view`, `syncMs`) and the last tempo per pattern persist in localStorage.
 
 Routing is by hash: `#/p/<pattern id>` opens the player.
