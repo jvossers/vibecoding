@@ -9,6 +9,7 @@
     "alevels":       { "title": "Trio",                   "group": "Teaching",     "description": "Score an A-level combination for university and careers, and see the best subject to add next." },
     "alternatives":  { "title": "Parity",                 "group": "Tools",        "description": "Sales-assistant prototype that finds rule-based alternatives to lab consumables." },
     "arrays":        { "title": "Array Lab",              "group": "Teaching",     "description": "Write a Python list of colours and watch it become a row, a grid or a cube." },
+    "backbeat":      { "title": "Backbeat",               "group": "Tools",        "description": "Loop drum grooves and fills with sheet music and pad lanes, from beginner to expert." },
     "beats":         { "title": "BEATS",                  "group": "Toys & games", "description": "A retro, CRT-styled tracker for making beats on your phone." },
     "bird":          { "title": "Flappy Cockatiels",      "group": "Toys & games", "description": "Flappy Bird, but with a pair of cockatiels." },
     "chemistry":     { "title": "Reactivity of Metals",   "group": "Teaching",     "description": "AQA GCSE Chemistry revision pages and a quiz on the reactivity series." },

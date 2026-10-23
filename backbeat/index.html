@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Backbeat – drum practice</title>
+<meta name="description" content="Practise drum grooves and fills on loop, with sheet music and pad lanes, from beginner to expert.">
+<meta name="theme-color" content="#101217">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Backbeat">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23101217'/%3E%3Cellipse cx='12' cy='10' rx='7' ry='2.6' fill='none' stroke='%23FF6B2C' stroke-width='1.8'/%3E%3Cpath d='M5 10v6c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v-6' fill='none' stroke='%23FF6B2C' stroke-width='1.8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main id="library" class="library">
+  <header class="lhead">
+    <div class="brand">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="8" rx="8" ry="3"></ellipse><path d="M4 8v8c0 1.7 3.6 3 8 3s8-1.3 8-3V8"></path><path d="M15 2l-3 6M9 2l3 6"></path></svg>
+      <h1>Backbeat</h1>
+    </div>
+    <p>Pick a groove or fill and press play. It loops while you practise, with the sheet music on top and one lane per pad underneath.</p>
+  </header>
+
+  <div class="filters">
+    <div class="seg" id="typeSeg" role="group" aria-label="Type">
+      <button type="button" data-type="all" aria-pressed="true">All</button>
+      <button type="button" data-type="groove" aria-pressed="false">Grooves</button>
+      <button type="button" data-type="fill" aria-pressed="false">Fills</button>
+      <button type="button" data-type="combo" aria-pressed="false">Groove + fill</button>
+    </div>
+    <label class="select">
+      <span class="vh">Style</span>
+      <select id="styleSel"></select>
+    </label>
+    <span class="count" id="count"></span>
+  </div>
+  <div class="levels" id="levelChips" role="group" aria-label="Level"></div>
+
+  <div id="list"></div>
+
+  <footer class="lfoot">Tip: on a phone, turn it sideways while you play. On iPhone, add Backbeat to your home screen for a full-screen view.</footer>
+</main>
+
+<div id="player" class="player" hidden>
+  <header class="pbar">
+    <button type="button" id="backBtn" class="ib" aria-label="Back to library">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+    </button>
+    <div class="ptitle">
+      <div id="pName" class="pname"></div>
+      <div id="pMeta" class="pmeta"></div>
+    </div>
+
+    <div class="box level" role="group" aria-label="Level">
+      <button type="button" id="prevBtn" class="ib sm" aria-label="Easier pattern">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+      </button>
+      <span class="lv"><small>Lv</small><b id="pLevel"></b></span>
+      <button type="button" id="nextBtn" class="ib sm" aria-label="Harder pattern">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"></path></svg>
+      </button>
+    </div>
+
+    <button type="button" id="soundBtn" class="tg" aria-pressed="true" aria-label="Drum sound">
+      <svg class="i-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 5.5a9 9 0 0 1 0 13"></path></svg>
+      <svg class="i-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4V5z"></path><path d="M22 9l-6 6M16 9l6 6"></path></svg>
+      <span class="tl">Drums</span>
+    </button>
+    <button type="button" id="metroBtn" class="tg" aria-pressed="true" aria-label="Metronome">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l4 18H5L9 3z"></path><path d="M12 15l5-8"></path><path d="M7.5 15h9"></path><path class="i-slash" d="M3 3l18 18"></path></svg>
+      <span class="tl">Click</span>
+    </button>
+
+    <div class="box tempo" role="group" aria-label="Tempo">
+      <button type="button" id="slowBtn" class="ib sm" aria-label="Slower">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
+      </button>
+      <span class="bpm" aria-live="polite"><b id="bpmVal"></b><small>BPM</small></span>
+      <button type="button" id="fastBtn" class="ib sm" aria-label="Faster">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+      </button>
+    </div>
+
+    <button type="button" id="playBtn" class="play" aria-label="Play">
+      <svg class="i-play" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"></path></svg>
+      <svg class="i-stop" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"></rect></svg>
+    </button>
+
+    <button type="button" id="moreBtn" class="ib" aria-label="More options" aria-expanded="false" aria-controls="moreMenu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg>
+    </button>
+
+    <div id="moreMenu" class="menu" hidden>
+      <div class="menu-row">
+        <span>View</span>
+        <div class="seg" id="viewSeg" role="group" aria-label="View">
+          <button type="button" data-view="both">Both</button>
+          <button type="button" data-view="notes">Notation</button>
+          <button type="button" data-view="lanes">Lanes</button>
+        </div>
+      </div>
+      <div class="menu-row">
+        <span>Count-in bar before playing</span>
+        <button type="button" id="countInBtn" class="switch" aria-label="Count-in" aria-pressed="true"><i></i></button>
+      </div>
+      <div class="menu-row">
+        <button type="button" id="resetBpmBtn" class="link">Reset to suggested tempo</button>
+        <button type="button" id="fullscreenBtn" class="link">Full screen</button>
+      </div>
+      <p class="tip" id="tipText"></p>
+    </div>
+  </header>
+
+  <div class="stage" id="stage" data-view="both">
+    <section class="panel paper" id="notePanel" aria-label="Sheet music"><svg id="noteSvg" role="img" aria-label="Drum notation for this pattern"></svg></section>
+    <section class="panel lanes" id="lanePanel" aria-label="Pad lanes"><svg id="laneSvg" role="img" aria-label="One lane per drum, showing when to hit it"></svg></section>
+    <div class="playhead" id="playhead" aria-hidden="true"></div>
+    <div class="countin" id="countIn" aria-live="assertive" hidden></div>
+    <span class="looptext" id="loopText" aria-hidden="true"></span>
+    <div class="rotate" id="rotateHint" hidden>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="16" rx="2"></rect><path d="M3 15a9 9 0 0 0 9 7l-2-2m2 2l-2 2"></path></svg>
+      <span>Turn your phone sideways for a bigger view.</span>
+      <button type="button" id="rotateClose" class="ib sm" aria-label="Dismiss">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="patterns.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
