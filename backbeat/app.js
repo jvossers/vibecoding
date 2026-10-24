@@ -142,6 +142,10 @@ function makeLayout(m, width) {
     const bar = m.bars[st.bar];
     st.cell = bar.cell;
     st.x = G + bar.x0 + (st.bi + 0.5) * bar.cell;
+    // Left edge of the step's lane blocks: the playhead touches it exactly
+    // when the note sounds.
+    st.bw = Math.min(bar.cell * 0.74, 26);
+    st.lead = st.x - st.bw / 2;
   });
   const barFracX = (f) => {
     const b = Math.min(Math.floor(f), m.bars.length - 1);
@@ -444,11 +448,11 @@ function drawLanes(svg, m, L, H) {
     o.push(`<text x="21" y="${r1(y + rowH / 2)}" class="lname" data-inst="${inst}">${L.G < 80 ? info.short : info.name}</text>`);
     m.hits.filter((h) => h.inst === inst).forEach((h) => {
       const st = m.steps[h.s];
-      let bw = Math.min(st.cell * 0.74, 26);
+      let bw = st.bw;
       let bh = rowH * (h.v === 'g' ? 0.34 : h.v === 'X' ? 0.8 : 0.6);
       if (h.v === 'c') bw *= 0.5;
       const cls = h.v === 'g' ? 'hit ghost' : h.v === 'o' ? 'hit open' : h.v === 'X' ? 'hit acc' : 'hit';
-      o.push(`<rect x="${r1(st.x - bw / 2)}" y="${r1(y + (rowH - bh) / 2)}" width="${r1(bw)}" height="${r1(bh)}" rx="${r1(Math.min(4, bw / 3))}" class="${cls}" style="--c:${info.color}" data-s="${h.s}" data-inst="${inst}"/>`);
+      o.push(`<rect x="${r1(st.lead)}" y="${r1(y + (rowH - bh) / 2)}" width="${r1(bw)}" height="${r1(bh)}" rx="${r1(Math.min(4, bw / 3))}" class="${cls}" style="--c:${info.color}" data-s="${h.s}" data-inst="${inst}"/>`);
     });
   });
   svg.setAttribute('viewBox', `0 0 ${L.width} ${H}`);
@@ -881,8 +885,10 @@ function showPosition(pos) {
   const m = current.m, L = current.L;
   if (!L) return;
   const st = m.steps[pos.step];
-  const nextX = pos.step + 1 < m.steps.length ? m.steps[pos.step + 1].x : L.G + L.W;
-  const x = pos.idle ? st.x - st.cell / 2 : st.x + (nextX - st.x) * pos.frac;
+  // Between notes the line glides from one block's left edge to the next, so
+  // it reaches each block at the moment that block's sound plays.
+  const nextLead = pos.step + 1 < m.steps.length ? m.steps[pos.step + 1].lead : L.G + L.W + (m.steps[0].lead - L.G);
+  const x = pos.idle ? st.lead : Math.min(L.G + L.W, st.lead + (nextLead - st.lead) * pos.frac);
   const ph = $('playhead');
   ph.style.opacity = pos.idle ? '0.5' : '1';
   ph.style.transform = `translateX(${x.toFixed(1)}px)`;
