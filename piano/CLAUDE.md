@@ -15,6 +15,7 @@ No build step, no dependencies, no frameworks. Open `index.html` directly in a b
 | `index.html` | Markup only — DOM structure for staff canvas, piano keys, start panel, summary overlay |
 | `style.css` | All CSS — dark theme, flexbox layout, transitions, toggle/segmented-button components |
 | `app.js` | All JS — audio synth, canvas rendering, game state, timer, settings persistence, event listeners |
+| `SPEC.md` | Detailed description of the UX and implementation (hand-off document) |
 
 ## Key conventions
 
