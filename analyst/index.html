@@ -1,0 +1,1353 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Elicit — AI business analyst (prototype)</title>
+<meta name="description" content="Prototype of an AI business analyst that interviews stakeholders and turns their answers into Gherkin feature files.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232f7a4f'/%3E%3Cpath d='M8 10h16M8 16h11M8 22h7' stroke='%23fff' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='23' cy='22' r='3' fill='%23b8e6c9'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f3ee; --panel: #ffffff; --panel-2: #faf9f5; --ink: #1c2320; --muted: #66706b; --faint: #98a19c;
+  --line: #e3e1d9; --line-2: #eeece6;
+  --accent: #2f7a4f; --accent-ink: #ffffff; --accent-soft: #e5f2ea; --accent-text: #24643f;
+  --warn: #b45309; --warn-soft: #fdf1df; --bad: #b4232c; --bad-soft: #fbe7e8; --info: #3559c7; --info-soft: #e8edfb;
+  --code-bg: #fcfbf8; --flash: #fff3b8;
+  --g-kw: #1f6b43; --g-step: #7a3db8; --g-str: #a3501b; --g-ph: #0f6f8a; --g-tag: #9a6a00; --g-com: #8a928e; --g-name: #1c2320;
+  --shadow: 0 1px 2px rgba(20,30,25,.06), 0 4px 16px rgba(20,30,25,.06);
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101311; --panel: #181c1a; --panel-2: #1c211e; --ink: #e7ebe8; --muted: #9ba49f; --faint: #6d7671;
+    --line: #2a302d; --line-2: #232825;
+    --accent: #5cbf86; --accent-ink: #0d1a12; --accent-soft: #1b2e23; --accent-text: #7fd3a2;
+    --warn: #f0a24a; --warn-soft: #2e2416; --bad: #f07178; --bad-soft: #301b1d; --info: #8aa6ff; --info-soft: #1c2338;
+    --code-bg: #141816; --flash: #3a3517;
+    --g-kw: #6fd39b; --g-step: #c49bff; --g-str: #f0a874; --g-ph: #6cc8e0; --g-tag: #e2b84e; --g-com: #6f7974; --g-name: #e7ebe8;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101311; --panel: #181c1a; --panel-2: #1c211e; --ink: #e7ebe8; --muted: #9ba49f; --faint: #6d7671;
+  --line: #2a302d; --line-2: #232825;
+  --accent: #5cbf86; --accent-ink: #0d1a12; --accent-soft: #1b2e23; --accent-text: #7fd3a2;
+  --warn: #f0a24a; --warn-soft: #2e2416; --bad: #f07178; --bad-soft: #301b1d; --info: #8aa6ff; --info-soft: #1c2338;
+  --code-bg: #141816; --flash: #3a3517;
+  --g-kw: #6fd39b; --g-step: #c49bff; --g-str: #f0a874; --g-ph: #6cc8e0; --g-tag: #e2b84e; --g-com: #6f7974; --g-name: #e7ebe8;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 Figtree, system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; }
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+code, .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ---------- top bar ---------- */
+.app { height: 100dvh; display: flex; flex-direction: column; }
+.top { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); flex: none; min-width: 0; }
+.brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 17px; letter-spacing: -.01em; white-space: nowrap; }
+.brand svg { width: 28px; height: 28px; flex: none; }
+.crumb { color: var(--muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.crumb b { color: var(--ink); font-weight: 600; }
+.badge-proto { font-size: 11.5px; font-weight: 600; color: var(--warn); background: var(--warn-soft); padding: 3px 8px; border-radius: 99px; white-space: nowrap; }
+.spacer { flex: 1; }
+.btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--panel); border-radius: 10px; padding: 7px 12px; font-weight: 600; font-size: 13.5px; white-space: nowrap; }
+.btn:hover:not(:disabled) { background: var(--panel-2); border-color: var(--faint); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.btn.primary:hover:not(:disabled) { filter: brightness(1.06); background: var(--accent); }
+.btn:disabled { opacity: .5; }
+.btn.ghost { border-color: transparent; background: transparent; }
+.btn.sm { padding: 4px 9px; font-size: 12.5px; border-radius: 8px; }
+.btn svg { width: 16px; height: 16px; }
+.team-toggle { display: none; }
+
+/* ---------- layout ---------- */
+.layout { flex: 1; min-height: 0; display: grid; grid-template-columns: 272px minmax(0, 1fr) minmax(0, 1.08fr); }
+.team { border-right: 1px solid var(--line); background: var(--panel-2); overflow-y: auto; padding: 18px 16px 24px; }
+.chat { display: flex; flex-direction: column; min-height: 0; min-width: 0; background: var(--bg); }
+.reqs { border-left: 1px solid var(--line); background: var(--panel); display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+.mtabs { display: none; }
+.scrim { display: none; }
+
+/* ---------- team panel ---------- */
+.side-h { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); margin: 22px 0 10px; }
+.side-h:first-child { margin-top: 0; }
+.proj { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px; }
+.proj-name { font-weight: 700; }
+.proj-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.phase { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 12.5px; font-weight: 600; color: var(--accent-text); background: var(--accent-soft); padding: 3px 9px; border-radius: 99px; }
+.phase::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.phase.live::before { animation: pulse 1.4s infinite; }
+@keyframes pulse { 50% { opacity: .25; } }
+.topics { list-style: none; margin: 0; padding: 0; }
+.topics li { display: flex; align-items: center; gap: 9px; padding: 4px 0; font-size: 13.5px; color: var(--muted); }
+.topics li .tick { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line); flex: none; display: grid; place-items: center; }
+.topics li.done { color: var(--ink); }
+.topics li.done .tick { background: var(--accent); border-color: var(--accent); }
+.topics li.done .tick::after { content: ""; width: 7px; height: 4px; border: 2px solid var(--accent-ink); border-top: 0; border-right: 0; transform: translateY(-1px) rotate(-45deg); }
+.topics li.now { color: var(--ink); font-weight: 600; }
+.topics li.now .tick { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.topics li.skipped .tick { border-style: dashed; border-color: var(--warn); }
+.person { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+.person + .person { border-top: 1px dashed var(--line); }
+.av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; color: #fff; flex: none; letter-spacing: .02em; }
+.av.sm { width: 22px; height: 22px; font-size: 9.5px; }
+.av.xs { width: 18px; height: 18px; font-size: 8px; }
+.av-ai { background: var(--accent); color: var(--accent-ink); }
+.av-ai svg { width: 60%; height: 60%; }
+.p-main { min-width: 0; flex: 1; }
+.p-name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.p-role { color: var(--muted); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pill { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 99px; white-space: nowrap; background: var(--line-2); color: var(--muted); }
+.pill.ok { background: var(--accent-soft); color: var(--accent-text); }
+.pill.live { background: var(--info-soft); color: var(--info); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.bar { height: 4px; background: var(--line-2); border-radius: 4px; overflow: hidden; margin-top: 5px; }
+.bar i { display: block; height: 100%; background: var(--info); border-radius: 4px; transition: width .6s ease; }
+.side-note { color: var(--muted); font-size: 12.5px; margin: 10px 0 0; }
+.side-btn { width: 100%; justify-content: center; margin-top: 10px; }
+
+/* ---------- chat ---------- */
+.log { flex: 1; overflow-y: auto; padding: 22px 20px 12px; scroll-behavior: smooth; }
+.log-inner { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.msg { display: flex; gap: 10px; align-items: flex-start; animation: rise .25s ease both; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+.msg.me { flex-direction: row-reverse; }
+.msg-body { min-width: 0; max-width: min(560px, 100%); display: flex; flex-direction: column; gap: 6px; }
+.msg.me .msg-body { align-items: flex-end; }
+.who { font-size: 12px; color: var(--muted); font-weight: 600; }
+.who span { font-weight: 400; color: var(--faint); }
+.bubble { background: var(--panel); border: 1px solid var(--line); border-radius: 4px var(--radius) var(--radius) var(--radius); padding: 10px 14px; box-shadow: var(--shadow); overflow-wrap: anywhere; }
+.bubble p { margin: 0; }
+.bubble p + p { margin-top: 8px; }
+.bubble code { font-size: 12.5px; background: var(--line-2); padding: 1px 5px; border-radius: 5px; }
+.msg.me .bubble { background: var(--accent); color: var(--accent-ink); border-color: transparent; border-radius: var(--radius) 4px var(--radius) var(--radius); white-space: pre-wrap; }
+.why { font-size: 12.5px; color: var(--muted); display: flex; gap: 6px; padding-left: 2px; }
+.why svg { width: 14px; height: 14px; flex: none; margin-top: 2px; color: var(--faint); }
+.typing { display: inline-flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; }
+.dots { display: inline-flex; gap: 4px; }
+.dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); animation: blink 1.2s infinite; }
+.dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 0%, 60%, 100% { opacity: .25; transform: none; } 30% { opacity: 1; transform: translateY(-2px); } }
+.sys { text-align: center; font-size: 12.5px; color: var(--muted); padding: 2px 20px; }
+.sys span { background: var(--line-2); border-radius: 99px; padding: 4px 11px; display: inline-block; }
+.updates { display: flex; flex-direction: column; gap: 4px; }
+.upd { display: flex; align-items: center; gap: 8px; text-align: left; border: 1px solid var(--line); background: var(--panel-2); border-radius: 9px; padding: 5px 10px; font-size: 12.5px; max-width: 100%; }
+.upd:hover { border-color: var(--accent); }
+.upd .file { font-family: "JetBrains Mono", monospace; font-size: 11.5px; color: var(--accent-text); white-space: nowrap; }
+.upd .what { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.upd .sym { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--accent-text); }
+.upd .sym.q { color: var(--warn); }
+
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.card h4 { margin: 0; font-size: 14.5px; display: flex; align-items: center; gap: 8px; }
+.card-row { display: flex; gap: 10px; align-items: center; }
+.cand { display: flex; align-items: flex-start; gap: 10px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 11px; cursor: pointer; }
+.cand:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.cand input { margin: 8px 0 0; accent-color: var(--accent); width: 16px; height: 16px; flex: none; }
+.cand .p-role { white-space: normal; }
+.cand-why { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+.add-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.add-row input { flex: 1 1 130px; min-width: 0; border: 1px solid var(--line); border-radius: 9px; padding: 6px 10px; background: var(--panel); font-size: 13.5px; }
+.card-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.card .muted { color: var(--muted); font-size: 13px; }
+.card.locked { opacity: .78; }
+.activity { display: flex; gap: 10px; align-items: flex-start; animation: rise .25s ease both; }
+.activity .card { padding: 10px 12px; gap: 8px; flex: 1; min-width: 0; box-shadow: none; background: var(--panel-2); }
+.activity .act-t { font-size: 13.5px; }
+.activity .act-t b { font-weight: 600; }
+details.transcript summary { font-size: 12.5px; color: var(--muted); cursor: pointer; }
+details.transcript dl { margin: 8px 0 0; font-size: 13px; display: grid; gap: 6px; }
+details.transcript dt { color: var(--muted); }
+details.transcript dd { margin: 0 0 4px; padding-left: 10px; border-left: 2px solid var(--line); }
+.quote { border-left: 3px solid var(--line); padding: 4px 0 4px 10px; font-size: 13.5px; }
+.quote .qwho { font-size: 12px; color: var(--muted); font-weight: 600; display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+.card.conflict { border-color: color-mix(in srgb, var(--bad) 45%, var(--line)); }
+.card.conflict h4 { color: var(--bad); }
+.signers { display: flex; flex-direction: column; gap: 6px; }
+.signer { display: flex; align-items: center; gap: 9px; font-size: 13.5px; }
+.signer .pill { margin-left: auto; }
+
+.composer { flex: none; padding: 8px 20px 16px; }
+.composer-inner { max-width: 720px; margin: 0 auto; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; align-items: center; }
+.chips-label { font-size: 12px; color: var(--faint); margin-right: 2px; }
+.chip { border: 1px solid var(--line); background: var(--panel); border-radius: 99px; padding: 5px 12px; font-size: 13px; text-align: left; animation: rise .25s ease both; }
+.chip:hover { border-color: var(--accent); color: var(--accent-text); }
+.inputbox { display: flex; gap: 8px; align-items: flex-end; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 6px 6px 6px 14px; box-shadow: var(--shadow); }
+.inputbox:focus-within { border-color: var(--accent); }
+.inputbox textarea { flex: 1; border: 0; outline: 0; resize: none; background: transparent; padding: 7px 0; max-height: 160px; line-height: 1.45; font-size: 15px; }
+.send { width: 38px; height: 38px; border-radius: 11px; border: 0; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; flex: none; }
+.send:disabled { opacity: .35; }
+.send svg { width: 18px; height: 18px; }
+.hint { font-size: 11.5px; color: var(--faint); margin-top: 6px; text-align: center; }
+
+/* ---------- requirements ---------- */
+.reqs-head { padding: 12px 16px 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.reqs-head h2 { margin: 0; font-size: 15px; }
+.stats { color: var(--muted); font-size: 12.5px; }
+.ftabs { display: flex; gap: 2px; padding: 10px 12px 0; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; flex: none; }
+.ftab { border: 0; background: transparent; padding: 7px 10px 9px; font: 500 12.5px "JetBrains Mono", monospace; color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+.ftab:hover { color: var(--ink); }
+.ftab.on { color: var(--ink); border-bottom-color: var(--accent); }
+.ftab .n { font-family: Figtree, sans-serif; font-size: 11px; background: var(--line-2); border-radius: 99px; padding: 0 6px; }
+.ftab .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--warn); }
+.fview { flex: 1; overflow-y: auto; padding: 14px 16px 28px; }
+.fmeta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.fmeta .avs { display: flex; }
+.fmeta .avs .av { margin-left: -5px; box-shadow: 0 0 0 2px var(--panel); }
+.fmeta .avs .av:first-child { margin-left: 0; }
+.code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 12px; padding: 10px 0; font: 13px/1.62 "JetBrains Mono", ui-monospace, monospace; counter-reset: ln; }
+.blk + .blk { margin-top: 1.62em; }
+.ln { position: relative; padding-left: calc(5.2ch + var(--i) * 2ch + 2ch); padding-right: 12px; text-indent: -2ch; white-space: pre-wrap; overflow-wrap: anywhere; min-height: 1.62em; }
+.ln::before { counter-increment: ln; content: counter(ln); position: absolute; left: 0; width: 3.4ch; text-align: right; text-indent: 0; color: var(--faint); opacity: .55; font-size: 11.5px; user-select: none; }
+.k { color: var(--g-kw); font-weight: 600; }
+.n { color: var(--g-name); font-weight: 600; }
+.s { color: var(--g-step); font-weight: 500; }
+.q { color: var(--g-str); }
+.p { color: var(--g-ph); }
+.t { color: var(--g-tag); }
+.c { color: var(--g-com); font-style: italic; }
+.d { color: var(--muted); }
+.tb { color: var(--faint); }
+.scn { position: relative; border-left: 3px solid transparent; margin-left: 0; padding: 3px 0; transition: background .3s; }
+.scn:hover { background: color-mix(in srgb, var(--line-2) 55%, transparent); }
+.scn.suggested { border-left: 3px dashed var(--info); background: color-mix(in srgb, var(--info-soft) 60%, transparent); }
+.scn.disputed { border-left-color: var(--bad); background: color-mix(in srgb, var(--bad-soft) 55%, transparent); }
+.scn.agreed { border-left-color: var(--accent); }
+.scn.flash { animation: flash 2.2s ease; }
+@keyframes flash { 0%, 40% { background: var(--flash); } }
+.scn-bar { display: flex; align-items: center; gap: 6px; padding: 4px 12px 4px calc(5.2ch + 2ch); flex-wrap: wrap; font-family: Figtree, sans-serif; font-size: 12px; }
+.scn-bar .avs { display: flex; }
+.scn-bar .avs .av { margin-left: -4px; box-shadow: 0 0 0 2px var(--code-bg); }
+.scn-bar .avs .av:first-child { margin-left: 0; }
+.scn-bar .btn { margin-left: auto; opacity: 0; transition: opacity .15s; }
+.scn:hover .scn-bar .btn, .scn:focus-within .scn-bar .btn, .scn-bar .btn.keep { opacity: 1; }
+.scn-bar .btn + .btn { margin-left: 0; }
+@media (hover: none) { .scn-bar .btn { opacity: 1; } }
+.empty { text-align: center; color: var(--muted); padding: 48px 20px; max-width: 360px; margin: 0 auto; }
+.empty .code { text-align: left; margin: 18px 0; opacity: .7; }
+.reqs-foot { display: flex; gap: 8px; padding: 10px 16px; border-top: 1px solid var(--line); flex: none; flex-wrap: wrap; }
+
+/* ---------- setup ---------- */
+.setup { position: fixed; inset: 0; background: color-mix(in srgb, var(--bg) 70%, transparent); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 16px; z-index: 50; overflow-y: auto; }
+.setup[hidden] { display: none; }
+.setup-card { width: min(520px, 100%); background: var(--panel); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.18); padding: 26px; }
+.setup-card h1 { margin: 12px 0 6px; font-size: 24px; letter-spacing: -.02em; line-height: 1.2; }
+.setup-card p.lead { color: var(--muted); margin: 0 0 18px; }
+.steps3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 20px; }
+.steps3 div { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px; font-size: 12.5px; color: var(--muted); }
+.steps3 b { display: block; color: var(--ink); font-size: 13px; margin-bottom: 2px; }
+.field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.field label { font-size: 13px; font-weight: 600; }
+.field input { border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; background: var(--panel); font-size: 15px; }
+.field input:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+.field .ro { border: 1px dashed var(--line); border-radius: 10px; padding: 9px 12px; background: var(--panel-2); font-size: 14px; }
+.field small { color: var(--muted); font-size: 12px; }
+.setup-card .btn.primary { width: 100%; justify-content: center; padding: 11px; font-size: 15px; margin-top: 6px; }
+
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 10px; font-size: 13.5px; z-index: 60; animation: rise .2s ease both; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1180px) {
+  .layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .team { position: fixed; top: 0; bottom: 0; left: 0; width: min(300px, 86vw); z-index: 40; transform: translateX(-100%); transition: transform .25s ease; box-shadow: var(--shadow); }
+  .app.team-open .team { transform: none; }
+  .app.team-open .scrim { display: block; position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 39; }
+  .team-toggle { display: inline-flex; }
+}
+@media (max-width: 860px) {
+  .top { padding: 8px 12px; gap: 8px; }
+  .crumb, .top .hide-m { display: none; }
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .layout > .chat, .layout > .reqs { grid-row: 1; grid-column: 1; }
+  .layout[data-tab="chat"] > .reqs, .layout[data-tab="reqs"] > .chat { visibility: hidden; pointer-events: none; }
+  .reqs { border-left: 0; }
+  .mtabs { display: flex; flex: none; border-top: 1px solid var(--line); background: var(--panel); padding-bottom: env(safe-area-inset-bottom); }
+  .mtabs button { flex: 1; border: 0; background: none; padding: 10px 4px 11px; font-weight: 600; font-size: 13.5px; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 6px; border-top: 2px solid transparent; margin-top: -1px; }
+  .mtabs button.on { color: var(--accent-text); border-top-color: var(--accent); }
+  .mtabs .cnt { background: var(--warn); color: #fff; font-size: 10.5px; border-radius: 99px; padding: 0 6px; min-width: 18px; }
+  .log { padding: 16px 12px 8px; }
+  .composer { padding: 6px 12px 10px; }
+  .fview { padding: 12px 10px 24px; }
+  .code { font-size: 12px; }
+  .ln { padding-left: calc(4.2ch + var(--i) * 1.5ch + 2ch); }
+  .ln::before { width: 2.8ch; }
+  .scn-bar { padding-left: calc(4.2ch + 2ch); }
+  .steps3 { grid-template-columns: 1fr; }
+  .setup-card { padding: 20px; }
+  .hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } .log { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <button class="btn ghost sm team-toggle" id="teamToggle" aria-label="Show team and progress">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M8 10h16M8 16h11M8 22h7" stroke="var(--accent-ink)" stroke-width="2.6" stroke-linecap="round"/><circle cx="23" cy="22" r="3" fill="var(--accent-ink)" opacity=".6"/></svg>
+      Elicit
+    </div>
+    <div class="crumb">/ <b>Self-service refunds</b></div>
+    <span class="badge-proto" title="No AI is connected. Questions are scripted and answers are interpreted with simple rules.">Prototype · simulated AI</span>
+    <div class="spacer"></div>
+    <button class="btn sm hide-m" id="exportTop" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+      Export .feature files
+    </button>
+    <button class="btn sm ghost" id="restart" title="Start again">Restart</button>
+  </header>
+
+  <div class="layout" id="layout" data-tab="chat">
+    <aside class="team" id="team" aria-label="Project, interview progress and stakeholders"></aside>
+    <main class="chat" aria-label="Interview">
+      <div class="log" id="log" aria-live="polite"><div class="log-inner" id="logInner"></div></div>
+      <div class="composer">
+        <div class="composer-inner">
+          <div class="chips" id="chips"></div>
+          <form class="inputbox" id="form">
+            <label class="sr" for="input">Your answer</label>
+            <textarea id="input" rows="1" placeholder="Type your answer…" autocomplete="off"></textarea>
+            <button class="send" id="send" type="submit" aria-label="Send" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </form>
+          <div class="hint">Enter to send · Shift+Enter for a new line · say “not sure” to skip a question</div>
+        </div>
+      </div>
+    </main>
+    <section class="reqs" aria-label="Requirements">
+      <div class="reqs-head"><h2>Requirements</h2><span class="stats" id="stats"></span></div>
+      <div class="ftabs" id="ftabs" role="tablist"></div>
+      <div class="fview" id="fview"></div>
+      <div class="reqs-foot" id="reqsFoot" hidden>
+        <button class="btn sm" id="copyFile">Copy file</button>
+        <button class="btn sm" id="dlFile">Download file</button>
+        <div class="spacer"></div>
+        <button class="btn sm primary" id="exportAll">Export all (.zip)</button>
+      </div>
+    </section>
+  </div>
+  <nav class="mtabs" id="mtabs">
+    <button data-tab="chat" class="on">Interview</button>
+    <button data-tab="reqs">Requirements <span class="cnt" id="unread" hidden>0</span></button>
+  </nav>
+  <div class="scrim" id="scrim"></div>
+</div>
+
+<div class="setup" id="setup">
+  <form class="setup-card" id="setupForm">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M8 10h16M8 16h11M8 22h7" stroke="var(--accent-ink)" stroke-width="2.6" stroke-linecap="round"/><circle cx="23" cy="22" r="3" fill="var(--accent-ink)" opacity=".6"/></svg>
+      Elicit
+    </div>
+    <h1>Your AI business analyst</h1>
+    <p class="lead">Elicit interviews you and your stakeholders, settles disagreements, and writes the agreed requirements as Gherkin feature files.</p>
+    <div class="steps3">
+      <div><b>1 · Interview</b>Answer questions in plain language.</div>
+      <div><b>2 · Collaborate</b>Invite stakeholders to add their view.</div>
+      <div><b>3 · Agree</b>Resolve conflicts, sign off, export.</div>
+    </div>
+    <div class="field">
+      <label for="sName">Your name</label>
+      <input id="sName" value="Alex Morgan" required maxlength="40" autocomplete="name">
+    </div>
+    <div class="field">
+      <label for="sRole">Your role</label>
+      <input id="sRole" value="Head of Customer Experience" required maxlength="60">
+    </div>
+    <div class="field">
+      <label>Initiative</label>
+      <div class="ro"><b>Self-service refunds</b> — let online shoppers request refunds without contacting support</div>
+      <small>This prototype has no AI behind it. The interview is scripted for this example, and your answers are read with simple rules, so numbers and keywords you type do change the output.</small>
+    </div>
+    <button class="btn primary" type="submit">Start interview</button>
+  </form>
+</div>
+
+<script>
+"use strict";
+const SPEED = /[?&]fast\b/.test(location.search) ? 0.04 : 1;
+const $ = s => document.querySelector(s);
+const sleep = ms => new Promise(r => setTimeout(r, ms * SPEED));
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === "class") el.className = v;
+    else if (k === "html") el.innerHTML = v;
+    else if (k === "style") el.style.cssText = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat(Infinity)) if (kid != null && kid !== false) el.append(kid.nodeType ? kid : String(kid));
+  return el;
+}
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/`(.+?)`/g, "<code>$1</code>");
+const clip = (s, n = 110) => { s = s.replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s; };
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const plural = (n, w, p = w + "s") => `${n} ${n === 1 ? w : p}`;
+const listText = a => a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
+const initials = n => n.split(/\s+/).filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase();
+const first = n => n.split(/\s+/)[0];
+const ICON = {
+  ai: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 7h14M5 12h9M5 17h5"/></svg>',
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>',
+};
+
+/* ===================== answer parsing (stands in for the LLM) ===================== */
+const isUnsure = t => /^\s*(idk|i\s*don'?t\s*know|not\s*sure|no\s*idea|unsure|skip|pass|dunno|n\/?a|\?+)\b/i.test(t) || /^\s*\?+\s*$/.test(t);
+const num = t => { const m = t.replace(/,/g, "").match(/(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : null; };
+function money(t) {
+  const s = t.replace(/,/g, "");
+  let m = s.match(/([£$€])\s?(\d+(?:\.\d+)?)/);
+  if (m) return { cur: m[1], v: parseFloat(m[2]) };
+  m = s.match(/(\d+(?:\.\d+)?)\s?(pounds?|gbp|quid|dollars?|usd|euros?|eur)/i);
+  if (m) return { cur: /dollar|usd/i.test(m[2]) ? "$" : /eur/i.test(m[2]) ? "€" : "£", v: parseFloat(m[1]) };
+  const v = num(s); return v != null ? { cur: null, v } : null;
+}
+// Whole amounts read better in prose ("£50"); example tables pass exact=true so a column lines up ("£50.00").
+const fmt = (v, exact) => (S.slots.cur || "£") + (exact || v % 1 ? v.toFixed(2) : String(v));
+function parseList(t) {
+  return t.split(/,|;|\/|\n|&|\band\b|\bplus\b/i)
+    .map(s => s.replace(/^\s*(the|our|a|an|some|also)\s+/i, "").replace(/[.!]+$/, "").trim())
+    .filter(s => s && s.length < 40).map(cap);
+}
+function singular(s) {
+  let w = s.toLowerCase().trim();
+  if (/ies$/.test(w)) return w.replace(/ies$/, "y");
+  if (/s$/.test(w) && !/ss$/.test(w)) return w.slice(0, -1);
+  return w;
+}
+
+/* ===================== state ===================== */
+const COLORS = { me: "#3b6fd8", priya: "#c2410c", marcus: "#7c3aed", dana: "#0e7490", extra: ["#be185d", "#4d7c0f", "#a16207", "#475569"] };
+const CANDIDATES = [
+  { id: "priya", name: "Priya Shah", role: "Finance Controller", why: "Owns payment rules and approval limits." },
+  { id: "marcus", name: "Marcus Bell", role: "Support Team Lead", why: "Knows the edge cases customers raise, and runs the approval queue." },
+  { id: "dana", name: "Dana Okoye", role: "Warehouse Manager", why: "Receives and inspects returned items." },
+];
+const FEATURES = {
+  request: { file: "refund_request.feature", name: "Request a refund", tags: ["@refunds"] },
+  approval: { file: "refund_approval.feature", name: "Approve refunds", tags: ["@refunds", "@back-office"],
+    story: ["In order to stop fraudulent or mistaken refunds", "As a support agent", "I want to review high-value refunds before they are paid"] },
+  payment: { file: "refund_payment.feature", name: "Pay refunds", tags: ["@refunds", "@payments"],
+    story: ["In order to get my money back", "As a customer", "I want my refund paid quickly and in a way I can use"] },
+};
+let S;
+function freshState(me) {
+  return {
+    me, phase: "interview", step: 0, awaiting: false, skipped: new Set(),
+    team: [{ id: "me", name: me.name, role: me.role, color: COLORS.me, status: "done", you: true }],
+    slots: { actor: "customer", cur: null }, features: [], active: null, flash: new Set(),
+    conflicts: [], suggestions: [], simDone: false, signoffOffered: false, unread: 0, nextExtra: 0,
+  };
+}
+const person = id => id === "ai" ? { id: "ai", name: "Elicit", role: "AI business analyst" } : S.team.find(p => p.id === id);
+
+/* ===================== feature model ===================== */
+function feature(fid) {
+  let f = S.features.find(x => x.id === fid);
+  if (!f) {
+    const d = FEATURES[fid];
+    f = { id: fid, file: d.file, name: d.name, tags: d.tags.slice(), story: (d.story || []).map(x => x.replace("As a customer", `As ${/^[aeiou]/.test(S.slots.actor) ? "an" : "a"} ${S.slots.actor}`)), context: null,
+          questions: [], comments: [], background: null, scenarios: [], by: new Set(), agreed: false };
+    S.features.push(f);
+  }
+  return f;
+}
+function findScenario(sid) {
+  for (const f of S.features) { const sc = f.scenarios.find(s => s.id === sid); if (sc) return { f, sc }; }
+  return null;
+}
+// Ops are what the "LLM" would return: structured edits to the feature files.
+function applyOps(ops, by) {
+  const ups = [];
+  for (const o of ops || []) {
+    const f = feature(o.fid);
+    const who = o.by || by;
+    f.by.add(who);
+    if (o.op === "story") { f.story = o.lines; ups.push({ fid: f.id, sym: "~", what: "User story" }); }
+    else if (o.op === "context") { f.context = o.text; }
+    else if (o.op === "background") { f.background = o.steps; ups.push({ fid: f.id, sym: "+", what: "Background" }); }
+    else if (o.op === "question") { f.questions.push({ text: o.text, by: who }); ups.push({ fid: f.id, sym: "?", what: "Open question: " + o.text }); }
+    else if (o.op === "comment") { f.comments.push(o.text); ups.push({ fid: f.id, sym: "#", what: o.text }); }
+    else if (o.op === "remove") {
+      const i = f.scenarios.findIndex(s => s.id === o.sid);
+      if (i >= 0) { ups.push({ fid: f.id, sym: "−", what: f.scenarios[i].name }); f.scenarios.splice(i, 1); }
+    }
+    else if (o.op === "note") {
+      const sc = f.scenarios.find(s => s.id === o.sid);
+      if (sc) { sc.notes.push({ by: who, text: o.text }); if (!sc.tags.includes("@needs-review") && o.review) sc.tags.push("@needs-review"); S.flash.add(sc.id); ups.push({ fid: f.id, sid: sc.id, sym: "#", what: "Note on " + sc.name }); }
+    }
+    else if (o.op === "status") {
+      const sc = f.scenarios.find(s => s.id === o.sid);
+      if (sc) { sc.status = o.status; S.flash.add(sc.id); }
+    }
+    else if (o.op === "upsert") {
+      const base = { tags: [], notes: [], examples: null, status: "draft", by: [] };
+      const ex = f.scenarios.find(s => s.id === o.sc.id);
+      if (ex) {
+        const by2 = new Set(ex.by); by2.add(who);
+        Object.assign(ex, o.sc, { by: [...by2], notes: ex.notes });
+        ups.push({ fid: f.id, sid: ex.id, sym: "~", what: ex.name });
+      } else {
+        const sc = Object.assign(base, o.sc, { by: [who] });
+        if (o.after) { const i = f.scenarios.findIndex(s => s.id === o.after); f.scenarios.splice(i + 1, 0, sc); } else f.scenarios.push(sc);
+        ups.push({ fid: f.id, sid: sc.id, sym: "+", what: (sc.status === "suggested" ? "Suggested: " : "") + sc.name });
+      }
+      S.flash.add(o.sc.id);
+    }
+    S.active = f.id;
+  }
+  if (ops && ops.length) {
+    if (window.innerWidth <= 860 && $("#layout").dataset.tab !== "reqs") S.unread += ups.length;
+    renderReqs(); renderTeam(); renderUnread();
+  }
+  return ups;
+}
+
+/* ===================== Gherkin rendering ===================== */
+const L = (i, ...t) => ({ i, t });
+function stepToks(kw, text) {
+  const toks = [["s", kw + " "]];
+  for (const part of text.split(/("[^"]*"|<[^>]+>)/)) {
+    if (!part) continue;
+    toks.push([part.startsWith('"') ? "q" : part.startsWith("<") ? "p" : "", part]);
+  }
+  return toks;
+}
+function tableLines(head, rows, indent) {
+  const all = [head, ...rows];
+  const w = head.map((_, c) => Math.max(...all.map(r => String(r[c]).length)));
+  return all.map(r => {
+    const t = [["tb", "| "]];
+    r.forEach((cell, c) => { t.push([all.indexOf(r) === 0 ? "p" : "", String(cell).padEnd(w[c])]); t.push(["tb", c < r.length - 1 ? " | " : " |"]); });
+    return L(indent, ...t);
+  });
+}
+const STATUS_TAG = { draft: "@draft", suggested: "@suggested", disputed: "@disputed", agreed: "@agreed" };
+function featureBlocks(f) {
+  const blocks = [];
+  const head = [];
+  if (f.tags.length) head.push(L(0, ["t", f.tags.join(" ")]));
+  head.push(L(0, ["k", "Feature: "], ["n", f.name]));
+  f.story.forEach(x => head.push(L(1, ["d", x])));
+  if (f.context) { if (f.story.length) head.push(L(1, ["d", ""])); head.push(L(1, ["d", f.context])); }
+  blocks.push({ lines: head });
+  const notes = [...f.questions.map(q => "Open question: " + q.text), ...f.comments];
+  if (notes.length) blocks.push({ lines: notes.map(n => L(1, ["c", "# " + n])) });
+  if (f.background) blocks.push({ lines: [L(1, ["k", "Background:"]), ...f.background.map(([k, t]) => L(2, ...stepToks(k, t)))] });
+  for (const sc of f.scenarios) {
+    const lines = [];
+    sc.notes.forEach(n => lines.push(L(1, ["c", `# Note from ${person(n.by)?.name || "?"}: ${n.text}`])));
+    lines.push(L(1, ["t", [...sc.tags, STATUS_TAG[sc.status]].join(" ")]));
+    lines.push(L(1, ["k", sc.examples ? "Scenario Outline: " : "Scenario: "], ["n", sc.name]));
+    sc.steps.forEach(([k, t]) => lines.push(L(2, ...stepToks(k, t))));
+    if (sc.examples) { lines.push(L(1, ["d", ""])); lines.push(L(2, ["k", "Examples:"])); lines.push(...tableLines(sc.examples.head, sc.examples.rows, 3)); }
+    blocks.push({ sc, lines });
+  }
+  return blocks;
+}
+function featureText(f) {
+  return featureBlocks(f).map(b => b.lines.map(l => ("  ".repeat(l.i) + l.t.map(x => x[1]).join("")).trimEnd()).join("\n")).join("\n\n") + "\n";
+}
+const lineEl = l => h("div", { class: "ln", style: `--i:${l.i}`, html: l.t.map(([c, x]) => c ? `<span class="${c}">${esc(x)}</span>` : esc(x)).join("") || " " });
+
+/* ===================== requirements panel ===================== */
+function counts() {
+  const sc = S.features.flatMap(f => f.scenarios);
+  return { f: S.features.length, s: sc.filter(s => s.status !== "suggested").length, q: S.features.reduce((a, f) => a + f.questions.length, 0) };
+}
+function avatar(id, size = "sm") {
+  const p = person(id); if (!p) return null;
+  if (id === "ai") return h("span", { class: `av ${size} av-ai`, html: ICON.ai, title: "Elicit" });
+  return h("span", { class: `av ${size}`, style: `background:${p.color}`, title: `${p.name} · ${p.role}` }, initials(p.name));
+}
+function renderReqs() {
+  const c = counts();
+  $("#stats").textContent = c.f ? `${plural(c.f, "feature")} · ${plural(c.s, "scenario")}${c.q ? ` · ${plural(c.q, "open question")}` : ""}` : "";
+  $("#exportTop").disabled = !c.f;
+  $("#reqsFoot").hidden = !c.f;
+  const tabs = $("#ftabs"); tabs.replaceChildren();
+  for (const f of S.features) {
+    const attention = f.scenarios.some(s => s.status === "suggested" || s.status === "disputed");
+    tabs.append(h("button", { class: "ftab" + (f.id === S.active ? " on" : ""), role: "tab", "aria-selected": f.id === S.active ? "true" : "false",
+      onclick: () => { S.active = f.id; renderReqs(); } },
+      f.file, h("span", { class: "n" }, f.scenarios.length), attention && h("span", { class: "dot", title: "Needs your attention" })));
+  }
+  const view = $("#fview");
+  if (!c.f) {
+    view.replaceChildren(h("div", { class: "empty" },
+      h("strong", {}, "Feature files appear here as you answer"),
+      h("div", { class: "code" }, [L(1, ["k", "Scenario: "], ["n", "…"]), L(2, ...stepToks("Given", "some context")), L(2, ...stepToks("When", "something happens")), L(2, ...stepToks("Then", "an outcome I can check"))].map(lineEl)),
+      h("div", {}, "Each answer becomes Given / When / Then scenarios, written in Gherkin so they double as acceptance tests.")));
+    return;
+  }
+  const f = S.features.find(x => x.id === S.active) || S.features[0];
+  S.active = f.id;
+  const scs = f.scenarios;
+  const agreedN = scs.filter(s => s.status === "agreed").length;
+  const meta = h("div", { class: "fmeta" },
+    h("span", { class: "avs" }, [...f.by].map(id => avatar(id, "xs"))),
+    h("span", { class: "stats" }, `${plural(f.by.size, "contributor")}`),
+    f.agreed ? h("span", { class: "pill ok" }, `Agreed by ${S.team.length}/${S.team.length}`)
+             : h("span", { class: "pill" + (scs.some(s => s.status === "disputed") ? " bad" : "") }, scs.some(s => s.status === "disputed") ? "Disputed" : agreedN ? `${agreedN}/${scs.length} agreed` : "Draft"));
+  const code = h("div", { class: "code" });
+  for (const b of featureBlocks(f)) {
+    if (!b.sc) { code.append(h("div", { class: "blk" }, b.lines.map(lineEl))); continue; }
+    const sc = b.sc;
+    const bar = h("div", { class: "scn-bar" },
+      h("span", { class: "avs" }, sc.by.map(id => avatar(id, "xs"))),
+      sc.status === "suggested" ? h("span", { class: "pill live" }, `Suggested by ${first(person(sc.by[0]).name)}`) :
+      sc.status === "disputed" ? h("span", { class: "pill bad" }, "Disputed") :
+      sc.status === "agreed" ? h("span", { class: "pill ok" }, "Agreed") : h("span", { class: "pill" }, "Draft"),
+      sc.status === "suggested"
+        ? [h("button", { class: "btn sm keep", onclick: () => resolveSuggestion(sc.id, true) }, "Accept"), h("button", { class: "btn sm keep", onclick: () => resolveSuggestion(sc.id, false) }, "Reject")]
+        : h("button", { class: "btn sm", onclick: () => commentOn(sc) }, "Comment"));
+    const el = h("div", { class: `blk scn ${sc.status}` + (S.flash.has(sc.id) ? " flash" : ""), "data-sid": sc.id }, bar, b.lines.map(lineEl));
+    code.append(el);
+  }
+  S.flash.clear();
+  view.replaceChildren(meta, code);
+}
+function showScenario(fid, sid) {
+  S.active = fid;
+  if (sid) S.flash.add(sid);
+  renderReqs();
+  setTab("reqs");
+  if (sid) { const el = $(`[data-sid="${sid}"]`); if (el) el.scrollIntoView({ block: "center", behavior: "smooth" }); }
+}
+
+/* ===================== team panel ===================== */
+const PHASES = { interview: ["Interviewing you", true], invite: ["Choosing stakeholders", false], gather: ["Gathering input", true], review: ["Ready for sign-off", false], signoff: ["Collecting sign-off", true], agreed: ["Agreed", false] };
+const STATUS = { done: ["Interviewed", "ok"], invited: ["Invited", ""], interviewing: ["Interviewing", "live"], signed: ["Signed off", "ok"] };
+function renderTeam() {
+  const t = $("#team");
+  const [label, live] = PHASES[S.phase];
+  const topics = h("ul", { class: "topics" }, SCRIPT.map((n, i) => {
+    const st = i < S.step ? (S.skipped.has(n.id) ? "skipped" : "done") : i === S.step && S.phase === "interview" ? "now" : "";
+    return h("li", { class: st, title: st === "skipped" ? "Skipped: logged as an open question" : null }, h("span", { class: "tick" }), n.topic);
+  }));
+  const people = S.team.map(p => {
+    const [sl, sc] = p.you ? (S.phase === "agreed" ? STATUS.signed : ["You", "ok"]) : STATUS[p.status];
+    return h("div", { class: "person" },
+      avatar(p.id, ""),
+      h("div", { class: "p-main" }, h("div", { class: "p-name" }, p.name), h("div", { class: "p-role" }, p.role),
+        p.status === "interviewing" && h("div", { class: "bar" }, h("i", { style: `width:${p.progress || 5}%` }))),
+      h("span", { class: "pill " + sc }, sl));
+  });
+  t.replaceChildren(...[
+    h("div", { class: "side-h" }, "Initiative"),
+    h("div", { class: "proj" }, h("div", { class: "proj-name" }, "Self-service refunds"),
+      h("div", { class: "proj-sub" }, "Online shop · started today by " + S.me.name),
+      h("div", { class: "phase" + (live ? " live" : "") }, label)),
+    h("div", { class: "side-h" }, "Your interview"), topics,
+    h("div", { class: "side-h" }, "Stakeholders"), ...people,
+    S.phase === "interview"
+      ? h("p", { class: "side-note" }, "Once your interview is done, Elicit will suggest who else to invite based on what you said.")
+      : (S.phase === "gather" || S.phase === "invite") ? null
+      : h("button", { class: "btn sm side-btn", onclick: () => { closeTeam(); queue(() => offerInvite(true)); } }, "+ Invite someone else")].filter(Boolean));
+  $("#teamToggle").title = `Team (${S.team.length})`;
+}
+
+/* ===================== chat ===================== */
+let chain = Promise.resolve();
+const queue = fn => (chain = chain.then(fn).catch(e => console.error(e)));
+const logInner = () => $("#logInner");
+function scrollDown(force) {
+  const log = $("#log");
+  if (force || log.scrollHeight - log.scrollTop - log.clientHeight < 220) log.scrollTop = log.scrollHeight;
+}
+function push(el) { logInner().append(el); scrollDown(true); return el; }
+function aiShell(content) {
+  return push(h("div", { class: "msg ai" }, avatar("ai", ""), h("div", { class: "msg-body" }, h("div", { class: "who" }, "Elicit ", h("span", {}, "AI analyst")), content)));
+}
+function typing(status) {
+  const label = h("span", {}, status || "");
+  const el = aiShell(h("div", { class: "bubble typing" }, h("span", { class: "dots" }, h("i"), h("i"), h("i")), label));
+  return { el, set: s => { label.textContent = s; }, remove: () => el.remove() };
+}
+async function aiSay(text, o = {}) {
+  if (o.think !== 0) { const t = typing(o.status); await sleep(o.think ?? 500 + Math.min(1100, text.length * 5)); t.remove(); }
+  const bubble = h("div", { class: "bubble" });
+  const msg = aiShell(bubble);
+  const body = msg.querySelector(".msg-body");
+  for (const para of text.split("\n\n")) {
+    const p = h("p"); bubble.append(p);
+    const words = para.split(" ");
+    for (let i = 1; i <= words.length; i += 2) { p.innerHTML = md(words.slice(0, i).join(" ")); scrollDown(); await sleep(22); }
+    p.innerHTML = md(para);
+  }
+  if (o.updates && o.updates.length) body.append(updatesEl(o.updates));
+  if (o.why) body.append(h("div", { class: "why" }, h("span", { html: ICON.info }), h("span", {}, "Why I’m asking: " + o.why)));
+  if (o.card) body.append(o.card);
+  scrollDown(true);
+  return msg;
+}
+function updatesEl(ups) {
+  return h("div", { class: "updates" }, ups.map(u => h("button", { class: "upd", onclick: () => showScenario(u.fid, u.sid) },
+    h("span", { class: "sym" + (u.sym === "?" ? " q" : "") }, u.sym), h("span", { class: "file" }, FEATURES[u.fid].file), h("span", { class: "what" }, u.what))));
+}
+function userSay(text) {
+  push(h("div", { class: "msg me" }, avatar("me", ""), h("div", { class: "msg-body" }, h("div", { class: "who" }, S.me.name), h("div", { class: "bubble" }, text))));
+}
+function sys(text) { push(h("div", { class: "sys" }, h("span", {}, text))); }
+function activity(id, html, extra) {
+  return push(h("div", { class: "activity" }, avatar(id, ""), h("div", { class: "card" }, h("div", { class: "act-t", html }), extra)));
+}
+function transcript(pairs, label = "See what they said") {
+  return h("details", { class: "transcript" }, h("summary", {}, label),
+    h("dl", {}, pairs.map(([q, a]) => [h("dt", {}, "Elicit: " + q), h("dd", {}, a)])));
+}
+function setChips(chips) {
+  const el = $("#chips"); el.replaceChildren();
+  if (!chips || !chips.length) return;
+  el.append(h("span", { class: "chips-label" }, "Try:"), ...chips.map(c => h("button", { class: "chip", type: "button", onclick: () => submit(c) }, c)));
+}
+function setAwaiting(v) { S.awaiting = v; updateSend(); }
+function updateSend() { $("#send").disabled = !$("#input").value.trim() || (S.phase === "interview" && !S.awaiting); }
+
+/* ===================== the scripted interview ===================== */
+function storyRequest() {
+  const a = S.slots.actor;
+  return [S.slots.supportPain ? "In order to get my money back without waiting on a support agent" : "In order to get my money back quickly", `As ${/^[aeiou]/.test(a) ? "an" : "a"} ${a}`, "I want to request a refund online"];
+}
+const SCRIPT = [
+  {
+    id: "problem", topic: "The problem", fid: "request",
+    ask: () => `Let’s start with the why. **What problem are we solving, and who feels it most?**`,
+    why: "every requirement should trace back to a problem. It becomes the user story at the top of the first feature file.",
+    chips: ["Customers have to email support for a refund and wait up to 5 days", "Support spends hours a day processing refunds by hand"],
+    openQ: "What problem does this solve, and for whom?",
+    handle(t) {
+      const d = t.match(/(\d+)\s*(working\s+|business\s+)?days?/i);
+      if (d) S.slots.baseline = +d[1];
+      S.slots.supportPain = /support|agent|email|call|phone|manual|by hand/i.test(t);
+      return {
+        ops: [{ op: "story", fid: "request", lines: storyRequest() }, { op: "context", fid: "request", text: "Problem: " + clip(t) }],
+        reply: `Thanks, that gives me the why. I’ve opened **refund_request.feature** with a user story, and kept your words as the problem statement so we can always trace back to it.` +
+          (d ? `\n\nI’ve also noted today’s wait of **${d[1]} days** as a baseline. We’ll come back to it when we talk about what success looks like.` : ""),
+      };
+    },
+  },
+  {
+    id: "roles", topic: "Who’s involved", fid: "request",
+    ask: () => `Who’s involved? **List the people or teams who will use this, or be affected by it.**`,
+    why: "each role becomes an actor in the scenarios, and tells me who else I should talk to.",
+    chips: ["Customers, support agents and the finance team", "Customers and support agents"],
+    openQ: "Which roles use or are affected by self-service refunds?",
+    handle(t) {
+      let roles = parseList(t);
+      if (!roles.length) roles = ["Customers"];
+      S.slots.roles = roles;
+      const cust = roles.find(r => /customer|shopper|buyer|user|member|client/i.test(r));
+      S.slots.actor = singular(cust || roles[0]);
+      const others = roles.filter(r => r !== (cust || roles[0]));
+      return {
+        ops: [{ op: "story", fid: "request", lines: storyRequest() }, { op: "background", fid: "request", steps: [["Given", `I am signed in as ${/^[aeiou]/.test(S.slots.actor) ? "an" : "a"} ${S.slots.actor}`]] }],
+        reply: `Got it: **${listText(roles.map(r => r.toLowerCase()))}**. I’ll write scenarios from the ${S.slots.actor}’s point of view first` +
+          (others.length ? `, and bring in the ${listText(others.map(r => r.toLowerCase()))} where they take part.` : ".") +
+          (others.length ? `\n\nI’ll want to hear from them directly too, rather than guess their rules. I’ll suggest who to invite at the end.` : ""),
+      };
+    },
+  },
+  {
+    id: "happy", topic: "The happy path", fid: "request",
+    ask: () => `Walk me through the happy path. **A ${S.slots.actor} wants their money back. What happens, step by step?**`,
+    why: "the happy path is the backbone scenario. Everything else is a variation on it.",
+    chips: ["They pick the order and the items, give a reason and submit. Then they get a confirmation email.", "They click ‘refund’ on the order and it’s done"],
+    openQ: "What are the steps to request a refund?",
+    handle(t) {
+      const steps = [["Given", `I have an order "ORD-1042" that was delivered 3 days ago`]];
+      const items = /item|product|pick|choose|select/i.test(t);
+      steps.push(["When", items ? `I select "Wireless headphones" from that order` : `I choose to refund the order "ORD-1042"`]);
+      if (/reason|why/i.test(t)) steps.push(["And", `I give the reason "Not as described"`]);
+      steps.push(["And", "I submit the refund request"]);
+      steps.push(["Then", `I should see my refund reference "RR-5531"`]);
+      const told = /email|confirm|notif|sms|text|message/i.test(t);
+      if (told) steps.push(["And", "I should receive a confirmation email"]);
+      if (/track|status|progress/i.test(t)) steps.push(["And", `I should see its status as "Requested"`]);
+      const ops = [{ op: "upsert", fid: "request", sc: { id: "happy", name: `${cap(S.slots.actor)} requests a refund for a delivered order`, steps } }];
+      if (!told) ops.push({ op: "question", fid: "request", text: `How is the ${S.slots.actor} told that their request was received?` });
+      return {
+        ops,
+        reply: `Here it is as a scenario. I’ve swapped general wording for **concrete examples**, an order number and an item, because scenarios with real data double as test cases.` +
+          (items ? "" : `\n\nI’ve assumed the whole order is refunded. Tell me if people can refund single items.`) +
+          (told ? "" : `\n\nYou didn’t say how the ${S.slots.actor} hears back, so I’ve logged that as an open question rather than invent an answer.`),
+      };
+    },
+  },
+  {
+    id: "returns", topic: "Returning the item", fid: "request",
+    ask: () => `**Does the ${S.slots.actor} have to send the item back before they get their money?**`,
+    why: "it decides when the money moves, and whether the warehouse is part of this process.",
+    chips: ["Yes, we refund once the warehouse receives it", "No, we refund straight away", "Only for items over £50"],
+    openQ: "Does the item have to be returned before the refund is paid?",
+    handle(t) {
+      const m = money(t);
+      const mode = /only|depend|over|above|more than|unless|except/i.test(t) && m ? "depends"
+        : /^\s*no\b|straight away|immediately|right away|instantly|without|don'?t|do not|keep/i.test(t) ? "none" : "return";
+      S.slots.returnMode = mode;
+      if (m && m.cur) S.slots.cur = m.cur;
+      const ops = [];
+      let reply;
+      if (mode === "return") {
+        ops.push({ op: "upsert", fid: "request", sc: { id: "ret-wait", name: "No refund is paid until the item is back", steps: [
+          ["Given", `my refund request "RR-5531" has been accepted`], ["And", "the warehouse has not received the item yet"],
+          ["When", "I check the status of my refund"], ["Then", `I should see "Waiting for your return"`], ["And", "no money should have been refunded yet"]] } });
+        ops.push({ op: "upsert", fid: "request", sc: { id: "ret-arrive", name: "Refund is paid when the returned item arrives", steps: [
+          ["Given", `my refund request "RR-5531" is waiting for the item to be returned`], ["When", "the warehouse marks the item as received"],
+          ["Then", "my refund should be paid"], ["And", "I should be told the money is on its way"]] } });
+        reply = `Two scenarios: one for the wait and one for when the item arrives. Splitting them keeps each scenario about **one behaviour**, which makes failures easier to diagnose.\n\nThis also means the warehouse is involved, so I’ll suggest inviting them.`;
+      } else if (mode === "none") {
+        ops.push({ op: "upsert", fid: "request", sc: { id: "keep-item", name: `${cap(S.slots.actor)} is refunded without returning the item`, steps: [
+          ["Given", `my refund request "RR-5531" has been accepted`], ["When", "the refund is processed"],
+          ["Then", "my refund should be paid"], ["And", "I should not be asked to return the item"]] } });
+        reply = `Simple and fast for the ${S.slots.actor}. I’ve captured that the item is **not** returned. Finance may have a view on the risk, so that’s a good thing to check with them.`;
+      } else {
+        const v = m.v;
+        ops.push({ op: "upsert", fid: "request", sc: { id: "ret-value", name: `Only items over ${fmt(v)} must be returned`, steps: [
+          ["Given", "my refund request is for an item that cost <price>"], ["When", "the request is accepted"], ["Then", "I <should or should not> be asked to return the item"]],
+          examples: { head: ["price", "should or should not"], rows: [[fmt(v - 0.01, true), "should not"], [fmt(v, true), "should not"], [fmt(v + 0.01, true), "should"]] } } });
+        reply = `I’ve written that as a **Scenario Outline** with examples either side of ${fmt(v)}. I’ve assumed an item costing exactly ${fmt(v)} is *not* returned, because you said “over”. That edge is easy to get wrong, so it’s worth checking.`;
+      }
+      return { ops, reply };
+    },
+  },
+  {
+    id: "window", topic: "Time limit", fid: "request",
+    ask: () => `**How long after delivery can someone still ask for a refund?**`,
+    why: "time limits create boundaries, and boundaries are where bugs hide.",
+    chips: ["30 days", "14 days", "60 days for members, 30 for everyone else"],
+    openQ: "How long after delivery can a refund be requested?",
+    handle(t) {
+      const n = Math.round(num(t) ?? 30);
+      S.slots.windowDays = n;
+      const ops = [{ op: "upsert", fid: "request", sc: { id: "window", name: `Refunds can only be requested within ${n} days of delivery`, steps: [
+        ["Given", "I have an order that was delivered <days> days ago"], ["When", "I request a refund for it"], ["Then", "my request should be <outcome>"]],
+        examples: { head: ["days", "outcome"], rows: [[n - 1, "accepted"], [n, "accepted"], [n + 1, "rejected"]] } } }];
+      const tiers = /member|vip|loyal|premium|prime|tier/i.test(t);
+      if (tiers) ops.push({ op: "question", fid: "request", text: "How do we know someone is a member, and what is their refund window?" });
+      return {
+        ops,
+        reply: `I’ve added **boundary examples** at day ${n - 1}, ${n} and ${n + 1}. I assumed day ${n} itself is still allowed. Is that right? Teams often disagree on this, and it’s cheap to settle now.` +
+          (tiers ? `\n\nYou mentioned different rules for members. I’ve logged that as an open question, because it needs a way to tell members apart.` : ""),
+      };
+    },
+  },
+  {
+    id: "approval", topic: "Approval", fid: "approval",
+    ask: () => `**Do any refunds need someone to approve them, or are they all automatic?**`,
+    why: "approval rules protect the business but slow the customer down, so this is usually where stakeholders disagree.",
+    chips: ["Anything over £100 needs a support agent to approve it", "They’re all automatic", "Every refund is checked by an agent"],
+    openQ: "Which refunds need approval, and who approves them?",
+    handle(t) {
+      const m = money(t);
+      let a;
+      if (/all\s+(are\s+)?auto|automatic|no approval|nobody|no one|none/i.test(t) && !(m && /over|above|more/i.test(t))) a = { mode: "auto" };
+      else if (/every|all|each|always/i.test(t) && !m) a = { mode: "manual" };
+      else if (m) { if (m.cur) S.slots.cur = m.cur; a = { mode: "threshold", t: m.v, inclusive: /or more|or over|and above|at least|or above|\+/i.test(t) }; }
+      else a = { mode: "threshold", t: 100, inclusive: false, assumed: true };
+      a.quote = t;
+      S.slots.approval = a;
+      const ops = approvalOps(a);
+      const reply = a.mode === "threshold"
+        ? `That’s a new feature file: **refund_approval.feature**, from the support agent’s side. The examples sit at ${fmt(a.t - 0.01)}, ${fmt(a.t)} and ${fmt(a.t + 0.01)}, so the exact limit is unambiguous.` +
+          (a.assumed ? `\n\nI couldn’t find an amount in your answer, so I’ve used ${fmt(100)} as a placeholder and marked it for review.` : "") +
+          `\n\nI’ve also added what happens when an agent approves or rejects, because a queue nobody can act on isn’t a requirement yet.`
+        : a.mode === "auto"
+        ? `Fastest for the ${S.slots.actor}. I’ve written that down, but I’ll make sure finance sees it, because fraud is usually their first worry.`
+        : `So every refund goes through an agent. I’ve added the queue plus the approve and reject paths. Support will want a say on the workload.`;
+      return { ops, reply };
+    },
+  },
+  {
+    id: "exceptions", topic: "Exceptions", fid: "request",
+    ask: () => `**Are there items that can’t be refunded, or special cases I should know about?**`,
+    why: "edge cases cause most of the arguments in delivery. It’s far cheaper to name them now.",
+    chips: ["Final-sale items and gift cards can’t be refunded", "Damaged items always get a full refund", "None I can think of"],
+    openQ: "Which items or situations are exceptions to the normal refund rules?",
+    handle(t) {
+      const ops = [];
+      const found = [];
+      const no = (id, name, item, msg) => { found.push(name.toLowerCase()); ops.push({ op: "upsert", fid: "request", sc: { id, name, steps: [
+        ["Given", `my order contains ${item}`], ["When", "I try to request a refund for it"], ["Then", `I should be told "${msg}"`], ["And", "no refund request should be created"]] } }); };
+      if (/final[\s-]?sale|clearance|sale item/i.test(t)) no("ex-final", "Final-sale items cannot be refunded", `the final-sale item "Clearance jacket"`, "Final-sale items can’t be refunded");
+      if (/gift\s?card|voucher/i.test(t)) no("ex-gift", "Gift cards cannot be refunded", `a ${fmt(25)} gift card`, "Gift cards can’t be refunded");
+      if (/digital|download|software|e-?book/i.test(t)) no("ex-digital", "Downloaded digital items cannot be refunded", `the e-book "Field Guide" which I have downloaded`, "Downloaded items can’t be refunded");
+      if (/personali[sz]|custom|engrav|made to order/i.test(t)) no("ex-custom", "Personalised items cannot be refunded", `the engraved item "Name necklace"`, "Personalised items can’t be refunded");
+      if (/hygiene|underwear|earring|cosmetic|opened/i.test(t)) no("ex-hygiene", "Opened hygiene items cannot be refunded", `the opened item "Wireless earbuds"`, "Opened hygiene items can’t be refunded");
+      if (/damag|faulty|broken|defect/i.test(t)) {
+        const w = (S.slots.windowDays || 30) + 10;
+        found.push("damaged items");
+        ops.push({ op: "upsert", fid: "request", sc: { id: "ex-damaged", name: "Damaged items are refunded in full, even outside the time limit", steps: [
+          ["Given", `I have an order that was delivered ${w} days ago`], ["And", "the item arrived damaged"],
+          ["When", `I request a refund with the reason "Arrived damaged"`], ["Then", "my request should be accepted"], ["And", "I should be asked for a photo of the damage"]] } });
+      }
+      if (found.length) return { ops, reply: `I’ve added ${plural(found.length, "exception scenario")}: ${listText(found)}. Each one says what the ${S.slots.actor} is told, not just that it’s blocked. A clear message saves a support call.` +
+        (found.includes("damaged items") ? `\n\nFor damaged items I’ve assumed we’d want a photo. Flag it if that’s not right.` : "") };
+      if (/^\s*(no|none|nothing|nope|not really)\b/i.test(t) || /can'?t think|none i can/i.test(t)) {
+        ops.push({ op: "question", fid: "request", text: "Are there items that can't be refunded (final sale, gift cards, personalised)?" });
+        return { ops, reply: `Noted. I’ll still ask the others, because edge cases usually come from the people who handle them day to day. I’ve left an open question so it isn’t forgotten.` };
+      }
+      ops.push({ op: "question", fid: "request", text: `Exception to model: "${clip(t, 90)}"` });
+      return { ops, reply: `I couldn’t turn that into a rule with confidence, so I’ve recorded it as an open question in your words. The group can help turn it into a scenario.` };
+    },
+  },
+  {
+    id: "payout", topic: "Paying the money back", fid: "payment",
+    ask: () => `**How does the money get back to the ${S.slots.actor}?**`,
+    why: "payment rules usually belong to finance, so I want your view before I ask them.",
+    chips: ["Back to the original payment method", "They choose: original payment method or store credit", "Store credit only"],
+    openQ: "How is the refund paid back to the customer?",
+    handle(t) {
+      const credit = /credit|voucher|gift card|balance|wallet/i.test(t);
+      const orig = /original|card|same|payment method|bank|paypal/i.test(t) || !credit;
+      const mode = credit && orig ? "choice" : credit ? "credit" : "original";
+      S.slots.payout = mode;
+      const amt = fmt(45);
+      const ops = [];
+      if (mode === "original") ops.push({ op: "upsert", fid: "payment", sc: { id: "pay-orig", name: "Refund goes back to the original payment method", steps: [
+        ["Given", `my refund of ${amt} for order "ORD-1042" has been approved`], ["And", `I paid with the card ending "4242"`],
+        ["When", "the refund is paid"], ["Then", `${amt} should go back to the card ending "4242"`]] } });
+      else if (mode === "credit") ops.push({ op: "upsert", fid: "payment", sc: { id: "pay-credit", name: "Refunds are paid as store credit", steps: [
+        ["Given", `my refund of ${amt} has been approved`], ["When", "the refund is paid"], ["Then", `my store credit balance should go up by ${amt}`], ["And", "I should be told how to use it"]] } });
+      else ops.push({ op: "upsert", fid: "payment", sc: { id: "pay-choice", name: `${cap(S.slots.actor)} chooses how to be refunded`, steps: [
+        ["Given", `my refund of ${amt} has been approved`], ["When", "I choose to be refunded as <method>"], ["Then", "I should receive <result>"]],
+        examples: { head: ["method", "result"], rows: [["original payment", `${amt} on the card ending "4242"`], ["store credit", `${amt} store credit`]] } } });
+      return { ops, reply: `I’ve started **refund_payment.feature**.` +
+        (mode === "choice" ? ` The choice is a Scenario Outline with one example per option, so adding a third option later is one more row.` : mode === "credit" ? ` Store credit only can be a legal question in some countries, so finance should confirm it.` : ` I’ve used a card in the example. Finance will know what happens when that card no longer works.`) };
+    },
+  },
+  {
+    id: "success", topic: "What success looks like", fid: "payment",
+    ask: () => `Last one for now. **How will you know this worked? Any targets or time limits?**`,
+    why: "some targets become testable scenarios. Others are business measures, and should be kept but not dressed up as behaviour.",
+    chips: ["Refunds paid within 3 working days, and half as many refund emails to support", "Customers get their money within a week"],
+    openQ: "What does success look like, and how will it be measured?",
+    handle(t) {
+      const d = t.match(/(\d+)\s*(working|business)?\s*days?/i);
+      const wk = /week/i.test(t) && !d;
+      const n = d ? +d[1] : wk ? 5 : 5;
+      const working = d ? !!d[2] : true;
+      const unit = working ? "working days" : "days";
+      const ops = [{ op: "upsert", fid: "payment", sc: { id: "sla", tags: ["@service-level"], name: `Approved refunds are paid within ${n} ${unit}`, steps: [
+        ["Given", `my refund was approved on Monday 2 March`], ["When", `${n} ${unit} have passed`], ["Then", `my refund status should be "Paid"`]] } }];
+      const rest = t.replace(d ? d[0] : "", "").replace(/refunds?\s+(paid|processed)\s+within/i, "");
+      const metric = /half|%|percent|fewer|less|reduce|drop|nps|satisf|calls|emails|tickets/i.test(rest);
+      if (metric) ops.push({ op: "comment", fid: "request", text: `Success measure (business metric, not a scenario): "${clip(t, 90)}"` });
+      return { ops, reply: `The time limit is testable, so it’s now a **@service-level** scenario.` + (wk ? ` I read “a week” as ${n} working days.` : "") +
+        (metric ? `\n\nThe reduction in support contact is a business measure, not behaviour, so I’ve kept it as a comment on the request feature instead of forcing it into Given/When/Then.` : "") +
+        (S.slots.baseline ? `\n\nCompared with today’s ${S.slots.baseline}-day wait, that’s a clear target to report against.` : "") };
+    },
+  },
+];
+
+function approvalOps(a, by) {
+  const ids = ["appr-limit", "appr-yes", "appr-no", "appr-auto", "appr-all"];
+  const keep = [];
+  const ops = [{ op: "story", fid: "approval", lines: FEATURES.approval.story, by }];
+  const agentSteps = (amt) => [
+    { id: "appr-yes", name: "Agent approves a queued refund", steps: [["Given", `a refund of ${amt} is waiting for approval`], ["When", "I approve it as a support agent"], ["Then", "the refund should be paid"], ["And", "the customer should be told it was approved"]] },
+    { id: "appr-no", name: "Agent rejects a queued refund", steps: [["Given", `a refund of ${amt} is waiting for approval`], ["When", `I reject it with the reason "Item shows signs of use"`], ["Then", "no refund should be paid"], ["And", "the customer should be told why"]] },
+  ];
+  if (a.mode === "threshold") {
+    const t = a.t;
+    keep.push({ id: "appr-limit", tags: a.assumed ? ["@needs-review"] : [], name: a.inclusive ? `Refunds of ${fmt(t)} or more need an agent’s approval` : `Refunds over ${fmt(t)} need an agent’s approval`,
+      steps: [["Given", "a customer requests a refund of <amount>"], ["When", "the request is submitted"], ["Then", "it should be <result>"]],
+      examples: { head: ["amount", "result"], rows: [[fmt(t - 0.01, true), "approved automatically"], [fmt(t, true), a.inclusive ? "sent for approval" : "approved automatically"], [fmt(t + 0.01, true), "sent for approval"]] } });
+    keep.push(...agentSteps(fmt(t + 50)));
+  } else if (a.mode === "auto") {
+    keep.push({ id: "appr-auto", name: "Every refund is approved automatically", steps: [["Given", `a customer requests a refund of ${fmt(450)}`], ["When", "the request is submitted"], ["Then", "it should be approved automatically"], ["And", "no agent should need to review it"]] });
+  } else {
+    keep.push({ id: "appr-all", name: "Every refund waits for an agent", steps: [["Given", `a customer requests a refund of ${fmt(12)}`], ["When", "the request is submitted"], ["Then", "it should be sent for approval"], ["And", `the customer should see "Your refund is being reviewed"`]] });
+    keep.push(...agentSteps(fmt(45)));
+  }
+  const f = S.features.find(x => x.id === "approval");
+  for (const id of ids) if (!keep.find(k => k.id === id) && f && f.scenarios.find(s => s.id === id)) ops.push({ op: "remove", fid: "approval", sid: id, by });
+  for (const sc of keep) ops.push({ op: "upsert", fid: "approval", sc: { status: "draft", ...sc }, by });
+  return ops;
+}
+
+async function ask() {
+  const node = SCRIPT[S.step];
+  renderTeam();
+  await aiSay(node.ask(), { why: node.why });
+  setChips(node.chips);
+  setAwaiting(true);
+  if (window.innerWidth > 860) $("#input").focus();
+}
+async function handleAnswer(text) {
+  const node = SCRIPT[S.step];
+  setAwaiting(false);
+  const t = typing("Reading your answer");
+  await sleep(650);
+  let res;
+  if (isUnsure(text)) {
+    S.skipped.add(node.id);
+    res = { ops: [{ op: "question", fid: node.fid, text: node.openQ }], reply: `No problem. I’ve logged “${node.openQ}” as an **open question**. One of the other stakeholders may know, and we can come back to it.` };
+  } else res = node.handle(text);
+  if (res.ops && res.ops.length) { t.set("Updating " + [...new Set(res.ops.map(o => FEATURES[o.fid].file))].join(", ")); await sleep(800); }
+  t.remove();
+  const ups = applyOps(res.ops, "me");
+  await aiSay(res.reply, { updates: ups, think: 0 });
+  S.step++;
+  if (S.step < SCRIPT.length) await ask();
+  else await wrapUp();
+}
+
+/* ===================== stakeholders ===================== */
+async function wrapUp() {
+  S.phase = "invite"; renderTeam();
+  const c = counts();
+  await aiSay(`That’s a solid first draft: **${plural(c.f, "feature")}** and **${plural(c.s, "scenario")}**${c.q ? `, plus ${plural(c.q, "open question")}` : ""}.\n\nBut so far it’s one person’s view. Requirements agreed by one person tend to come apart in delivery. I’d like to interview the people who own the rules you mentioned. Here’s who I suggest:`, { think: 900 });
+  await offerInvite(false);
+}
+async function offerInvite(extraOnly) {
+  const already = new Set(S.team.map(p => p.id));
+  const list = h("div", { style: "display:flex;flex-direction:column;gap:8px" });
+  const addCand = (c, checked) => {
+    list.append(h("label", { class: "cand" }, h("input", { type: "checkbox", checked, "data-id": c.id, "data-name": c.name, "data-role": c.role }),
+      h("span", { class: "av sm", style: `background:${c.color}` }, initials(c.name)),
+      h("span", { class: "p-main" }, h("div", { class: "p-name" }, c.name), h("div", { class: "p-role" }, c.role), h("div", { class: "cand-why" }, c.why))));
+  };
+  if (!extraOnly) for (const c of CANDIDATES) {
+    if (already.has(c.id)) continue;
+    const skipDana = c.id === "dana" && S.slots.returnMode === "none";
+    addCand({ ...c, color: COLORS[c.id], why: skipDana ? "Optional: items aren’t returned, so the warehouse may not be involved." : c.why }, !skipDana);
+  }
+  const nm = h("input", { placeholder: "Name", "aria-label": "Name" });
+  const rl = h("input", { placeholder: "Role, e.g. Legal counsel", "aria-label": "Role" });
+  const addBtn = h("button", { class: "btn sm", type: "button", onclick: () => {
+    if (!nm.value.trim()) { nm.focus(); return; }
+    const id = "x" + (S.nextExtra++);
+    addCand({ id, name: clip(nm.value, 40), role: clip(rl.value || "Stakeholder", 50), color: COLORS.extra[(S.nextExtra - 1) % COLORS.extra.length], why: "Added by you." }, true);
+    nm.value = ""; rl.value = ""; refresh();
+  } }, "Add");
+  const send = h("button", { class: "btn primary", type: "button" });
+  const refresh = () => { const n = list.querySelectorAll("input:checked").length; send.textContent = n ? `Send ${plural(n, "invite")}` : "Send invites"; send.disabled = !n; };
+  list.addEventListener("change", refresh);
+  const card = h("div", { class: "card" },
+    h("h4", {}, extraOnly ? "Invite someone else" : "Invite stakeholders"),
+    list,
+    h("div", { class: "add-row" }, nm, rl, addBtn),
+    h("div", { class: "card-actions" }, send, h("span", { class: "muted" }, "Each person gets their own interview, tailored to their role.")));
+  send.onclick = () => {
+    const picked = [...list.querySelectorAll("input:checked")].map(i => ({ id: i.dataset.id, name: i.dataset.name, role: i.dataset.role }));
+    card.classList.add("locked");
+    card.querySelectorAll("button,input").forEach(x => x.disabled = true);
+    send.textContent = `Sent ${plural(picked.length, "invite")}`;
+    queue(() => runSim(picked));
+  };
+  refresh();
+  if (extraOnly) await aiSay("Who else should I talk to?", { card, think: 300 });
+  else { push(h("div", { class: "msg ai" }, h("span", { class: "av", style: "visibility:hidden" }), h("div", { class: "msg-body", style: "max-width:min(560px,100%);width:100%" }, card))); }
+  if (window.innerWidth <= 860) setTab("chat");
+}
+
+function sp(id) { return S.team.find(p => p.id === id); }
+function setStatus(id, status, progress) { const p = sp(id); if (!p) return; p.status = status; if (progress != null) p.progress = progress; renderTeam(); }
+async function runSim(picked) {
+  S.phase = "gather"; S.simDone = false; S.signoffOffered = false; renderTeam();
+  for (const p of picked) {
+    const c = CANDIDATES.find(x => x.id === p.id);
+    S.team.push({ id: p.id, name: p.name, role: p.role, color: COLORS[p.id] || COLORS.extra[(+p.id.slice(1)) % COLORS.extra.length], status: "invited", progress: 0, canned: !!c });
+  }
+  renderTeam();
+  sys(`Invites sent. In this prototype their interviews are simulated and squeezed into a few seconds.`);
+  await sleep(1300);
+  for (const p of picked) { setStatus(p.id, "interviewing", 8); activity(p.id, `<b>${esc(p.name)}</b> started their interview`); await sleep(700); }
+  const has = id => picked.some(p => p.id === id);
+  const a = S.slots.approval || { mode: "threshold", t: 100, quote: "(not answered)" };
+
+  if (has("priya")) {
+    setStatus("priya", "interviewing", 55);
+    await thinking(`Interviewing Priya`, 1700);
+    if (S.slots.payout === "credit") {
+      const ups = applyOps([{ op: "upsert", fid: "payment", sc: { id: "priya-expiry", name: "Store credit from a refund expires after 2 years", steps: [
+        ["Given", `I was refunded ${fmt(45)} as store credit on 2 March 2026`], ["When", "I try to spend it on 3 March 2028"],
+        ["Then", "I should be told the credit has expired"], ["And", "I should have been reminded 30 days before it expired"]] } }], "priya");
+      activity("priya", `<b>Priya</b> answered 4 questions and added a rule you hadn’t covered: when store credit expires.`,
+        [updatesEl(ups), transcript([["Does store credit from a refund last forever?", "No. Unused credit sits on our balance sheet, so it has to expire. Two years is our policy."], ["Should customers be warned?", "Yes, a month before. Otherwise it turns into complaints."]])]);
+    } else {
+      const ups = applyOps([{ op: "upsert", fid: "payment", sc: { id: "priya-expired", name: "Refund to an expired card is paid by bank transfer", steps: [
+        ["Given", `my refund of ${fmt(45)} has been approved`], ["And", `the card ending "4242" has expired`], ["When", "the refund is paid"],
+        ["Then", "I should be asked for my bank details"], ["And", `${fmt(45)} should be paid to my bank account within 5 working days`]] } }], "priya");
+      activity("priya", `<b>Priya</b> answered 4 questions and added a scenario you hadn’t covered: refunds to expired cards.`,
+        [updatesEl(ups), transcript([["What happens to a refund when the original card no longer works?", "The payment provider bounces it. Today support chases the customer for bank details. It happens a few times a week."], ["Who should collect the bank details?", "The customer, through the same refund page. We shouldn’t be handling them over email."]])]);
+    }
+  }
+  if (has("dana") && S.slots.returnMode !== "none") {
+    setStatus("dana", "interviewing", 60);
+    await thinking("Interviewing Dana", 1500);
+    const ups = applyOps([{ op: "upsert", fid: "request", after: S.features.find(f => f.id === "request")?.scenarios.find(s => s.id === "ret-arrive") ? "ret-arrive" : null, sc: { id: "dana-inspect", name: "Returned item that fails inspection goes to an agent", steps: [
+      ["Given", `my returned "Wireless headphones" have arrived at the warehouse`], ["When", `the inspector records them as "Used, not faulty"`],
+      ["Then", "my refund should be held for an agent to review"], ["And", "I should be told my return is being reviewed"]] } }], "dana");
+    activity("dana", `<b>Dana</b> finished her interview and added what happens when a return fails inspection.`, [updatesEl(ups),
+      transcript([["What happens when a return arrives?", "We inspect everything within one working day."], ["And if it has clearly been used?", "Then it shouldn’t be refunded automatically. Someone in support needs to decide."]])]);
+    setStatus("dana", "done", 100);
+  } else if (has("dana")) {
+    setStatus("dana", "interviewing", 60); await thinking("Interviewing Dana", 1000);
+    activity("dana", `<b>Dana</b> confirmed the warehouse isn’t involved when items aren’t returned. No changes.`);
+    setStatus("dana", "done", 100);
+  }
+  if (has("marcus")) {
+    setStatus("marcus", "interviewing", 65);
+    await thinking("Interviewing Marcus", 1500);
+    const ups = applyOps([{ op: "upsert", fid: "request", after: "happy", sc: { id: "marcus-partial", status: "suggested", name: "Refund for part of an order", steps: [
+      ["Given", `my order "ORD-2210" contains 3 items`], ["When", `I request a refund for "Phone case" only`], ["Then", "only the price of the phone case should be refunded"], ["And", "the delivery charge should not be refunded"]] } }], "marcus");
+    S.suggestions.push("marcus-partial");
+    const el = activity("marcus", `<b>Marcus</b> suggested a new scenario. Partial refunds are “about half of all refund tickets”. <b>Accept it?</b>`,
+      [updatesEl(ups), transcript([["What do customers ask support about refunds most?", "Partial refunds. People order three things and send one back."], ["Does the current draft cover that?", "No, it assumes the whole order is refunded."]]),
+       h("div", { class: "card-actions", "data-sugg": "marcus-partial" }, h("button", { class: "btn sm primary", onclick: () => resolveSuggestion("marcus-partial", true) }, "Accept"), h("button", { class: "btn sm", onclick: () => resolveSuggestion("marcus-partial", false) }, "Reject"))]);
+    if (a.mode !== "manual") setStatus("marcus", "done", 100);
+  }
+  for (const p of picked.filter(p => !CANDIDATES.find(c => c.id === p.id))) {
+    setStatus(p.id, "interviewing", 60);
+    await thinking(`Interviewing ${first(p.name)}`, 1200);
+    activity(p.id, `<b>${esc(first(p.name))}</b> answered 5 questions and agreed with the draft as it stands. No changes.`,
+      transcript([["Is anything in the draft wrong from your side?", "Not that I can see."], ["Anything missing?", "Nothing I’d block on."]]));
+    setStatus(p.id, "done", 100);
+  }
+  // A disagreement, so the user sees how conflicts are surfaced and resolved.
+  const challenger = a.mode === "manual" ? (has("marcus") ? "marcus" : null) : (has("priya") ? "priya" : null);
+  if (challenger) {
+    await thinking("Comparing answers", 1300);
+    await raiseConflict(challenger, a);
+  }
+  if (has("priya")) setStatus("priya", "done", 100);
+  if (has("marcus")) setStatus("marcus", "done", 100);
+  S.simDone = true;
+  checkReady();
+}
+async function thinking(label, ms) { const t = typing(label); await sleep(ms); t.remove(); }
+
+async function raiseConflict(id, a) {
+  const p = sp(id);
+  let theirs, reason, options;
+  if (a.mode === "threshold") {
+    const pv = a.t > 50 ? 50 : Math.max(5, Math.round(a.t / 2));
+    if (pv >= a.t) return;
+    const mid = Math.round((a.t + pv) / 2);
+    theirs = `Anything over ${fmt(pv)} should be checked.`;
+    reason = `Most of last quarter’s fraudulent refunds were between ${fmt(pv)} and ${fmt(a.t)}.`;
+    options = [[`Use ${fmt(pv)} (${first(p.name)})`, { ...a, t: pv, assumed: false }, id], [`Keep ${fmt(a.t)} (yours)`, null, "me"], [`Meet in the middle: ${fmt(mid)}`, { ...a, t: mid, assumed: false }, "ai"]];
+  } else if (a.mode === "auto") {
+    theirs = `Refunds over ${fmt(100)} need someone to check them.`;
+    reason = "Without any check we can’t meet our fraud controls, and the auditors will ask.";
+    options = [[`Add a ${fmt(100)} approval limit (${first(p.name)})`, { mode: "threshold", t: 100, inclusive: false }, id], ["Keep everything automatic (yours)", null, "me"]];
+  } else {
+    theirs = `Refunds under ${fmt(25)} should go through automatically.`;
+    reason = "Checking every refund would swamp the team. Small ones are almost never fraud.";
+    options = [[`Auto-approve under ${fmt(25)} (${first(p.name)})`, { mode: "threshold", t: 25, inclusive: true }, id], ["Check every refund (yours)", null, "me"]];
+  }
+  const target = a.mode === "threshold" ? "appr-limit" : a.mode === "auto" ? "appr-auto" : "appr-all";
+  applyOps([{ op: "status", fid: "approval", sid: target, status: "disputed" }], id);
+  const conflict = { id: "c1", target, done: false };
+  S.conflicts.push(conflict);
+  const actions = h("div", { class: "card-actions" });
+  const card = h("div", { class: "card conflict" },
+    h("h4", {}, "⚠ Conflicting answers: approval rules"),
+    h("div", { class: "quote" }, h("div", { class: "qwho" }, avatar("me", "xs"), `${S.me.name} · ${S.me.role}`), `“${clip(a.quote || "", 140)}”`),
+    h("div", { class: "quote" }, h("div", { class: "qwho" }, avatar(id, "xs"), `${p.name} · ${p.role}`), `“${theirs} ${reason}”`),
+    h("div", { class: "muted" }, "I’ve marked the scenario as disputed. How do you want to settle it? Either way I’ll tell both of you the outcome and keep a record of why."),
+    actions);
+  for (const [label, next, credit] of options) {
+    actions.append(h("button", { class: "btn sm" + (credit === id ? " primary" : ""), onclick: () => {
+      actions.querySelectorAll("button").forEach(b => b.disabled = true);
+      card.classList.add("locked");
+      queue(() => resolveConflict(conflict, label, next, credit, a, id, reason));
+    } }, label));
+  }
+  await aiSay(`I found a **disagreement** between you and ${first(p.name)}. I won’t pick a side for you, but here are both views:`, { card, think: 0 });
+  if (window.innerWidth <= 860) setTab("chat");
+}
+async function resolveConflict(conflict, label, next, credit, a, otherId, reason) {
+  userSay(label);
+  conflict.done = true;
+  let ups;
+  const other = sp(otherId);
+  if (next) {
+    S.slots.approval = { ...next, quote: a.quote };
+    ups = applyOps(approvalOps(S.slots.approval, credit === "ai" ? "me" : credit), credit === "ai" ? "me" : credit);
+    if (credit === "ai") applyOps([{ op: "upsert", fid: "approval", sc: { id: "appr-limit" }, by: otherId }], otherId);
+    await aiSay(`Done. I’ve rewritten the approval scenarios${credit === otherId ? ` and credited ${first(other.name)}` : ""}, and the examples now sit either side of the new limit. I’ll let ${first(other.name)} know.`, { updates: ups, status: "Rewriting refund_approval.feature" });
+  } else {
+    const target = S.features.find(f => f.id === "approval").scenarios.find(s => s.id === conflict.target) ? conflict.target : null;
+    const ops = [];
+    if (target) { ops.push({ op: "status", fid: "approval", sid: target, status: "draft" }); ops.push({ op: "note", fid: "approval", sid: target, text: `${first(other.name)} disagreed: ${reason} Decision: keep as is.`, by: "me" }); }
+    ups = applyOps(ops, "me");
+    await aiSay(`Kept as you had it. I’ve added ${first(other.name)}’s concern as a note on the scenario so the reasoning isn’t lost, and they’ll see it at sign-off.`, { updates: ups, status: "Recording the decision" });
+  }
+  checkReady();
+}
+async function resolveSuggestion(sid, accept) {
+  const i = S.suggestions.indexOf(sid);
+  if (i < 0) return;
+  S.suggestions.splice(i, 1);
+  document.querySelectorAll(`[data-sugg="${sid}"]`).forEach(el => el.replaceChildren(h("span", { class: "pill " + (accept ? "ok" : "") }, accept ? "Accepted" : "Rejected")));
+  const hit = findScenario(sid);
+  if (accept) { hit.sc.status = "draft"; if (!hit.sc.by.includes("me")) hit.sc.by.push("me"); S.flash.add(sid); S.active = hit.f.id; renderReqs(); }
+  else applyOps([{ op: "remove", fid: hit.f.id, sid }], "me");
+  queue(async () => {
+    userSay(accept ? `Accept “${hit.sc.name}”` : `Reject “${hit.sc.name}”`);
+    await aiSay(accept ? `Added to the draft. ${first(person(hit.sc.by[0]).name)} will be pleased.` : `Removed. I’ll tell ${first(person(hit.sc.by[0]).name)} it’s out of scope for now, so it can be raised again later if needed.`, { think: 500 });
+    checkReady();
+  });
+}
+function checkReady() {
+  if (!S.simDone || S.signoffOffered || S.phase === "agreed") return;
+  if (S.conflicts.some(c => !c.done) || S.suggestions.length) return;
+  S.signoffOffered = true;
+  queue(offerSignoff);
+}
+async function offerSignoff() {
+  S.phase = "review"; renderTeam();
+  const c = counts();
+  const signers = h("div", { class: "signers" }, S.team.map(p => h("div", { class: "signer", "data-signer": p.id }, avatar(p.id, "sm"), h("span", {}, p.name, h("span", { class: "muted" }, " · " + p.role)), h("span", { class: "pill" }, "Not yet"))));
+  const btn = h("button", { class: "btn primary" }, "Request sign-off from everyone");
+  const card = h("div", { class: "card" }, h("h4", {}, "Ready for sign-off"),
+    h("div", { class: "muted" }, `${plural(c.f, "feature")}, ${plural(c.s, "scenario")}${c.q ? `, ${plural(c.q, "open question")} carried forward as known gaps` : ""}.`), signers, h("div", { class: "card-actions" }, btn));
+  btn.onclick = () => { btn.disabled = true; queue(() => runSignoff(signers, btn)); };
+  await aiSay(`Everyone’s input is in, and nothing is in dispute. ${c.q ? `There ${c.q === 1 ? "is" : "are"} still **${plural(c.q, "open question")}**. I’d record ${c.q === 1 ? "it as a known gap" : "them as known gaps"} rather than hold everything up. ` : ""}Shall I ask everyone to sign off the feature files?`, { card, think: 900 });
+}
+async function runSignoff(signers, btn) {
+  S.phase = "signoff"; renderTeam();
+  btn.textContent = "Waiting for sign-off…";
+  for (const p of S.team) {
+    await sleep(p.you ? 300 : 900);
+    const row = signers.querySelector(`[data-signer="${p.id}"] .pill`);
+    row.className = "pill ok"; row.textContent = "✓ Signed off";
+    if (!p.you) p.status = "signed";
+    renderTeam();
+  }
+  for (const f of S.features) { f.agreed = true; f.scenarios.forEach(s => { s.status = "agreed"; S.flash.add(s.id); }); }
+  S.phase = "agreed"; renderTeam(); renderReqs();
+  btn.textContent = "Signed off";
+  const exp = h("div", { class: "card-actions" }, h("button", { class: "btn primary", onclick: exportZip }, "Export .feature files (.zip)"), h("button", { class: "btn", onclick: () => showScenario(S.features[0].id) }, "Review feature files"));
+  await aiSay(`All ${plural(S.features.length, "feature")} are **agreed by ${S.team.length} people**, and every scenario is tagged \`@agreed\`. These files can go straight to the delivery team and be wired up as automated acceptance tests.\n\nIf anything changes later, tell me and I’ll find who needs to re-agree.`, { card: exp, think: 600 });
+}
+
+/* ===================== free conversation after the script ===================== */
+let commentTarget = null;
+function commentOn(sc) {
+  commentTarget = sc.id;
+  const inp = $("#input");
+  inp.value = ""; inp.placeholder = `Comment on “${clip(sc.name, 40)}”…`;
+  setTab("chat"); inp.focus(); updateSend();
+}
+async function freeReply(text) {
+  const t = typing("Thinking");
+  await sleep(700);
+  t.remove();
+  if (commentTarget) {
+    const hit = findScenario(commentTarget); commentTarget = null; $("#input").placeholder = "Type your answer…";
+    if (hit) {
+      const reopened = hit.sc.status === "agreed";
+      const ups = applyOps([{ op: "note", fid: hit.f.id, sid: hit.sc.id, text: clip(text, 120), review: true }, ...(reopened ? [{ op: "status", fid: hit.f.id, sid: hit.sc.id, status: "draft" }] : [])], "me");
+      if (reopened) { hit.f.agreed = false; renderReqs(); }
+      const others = hit.sc.by.filter(id => id !== "me").map(id => first(person(id).name));
+      await aiSay(`I’ve attached that to “${hit.sc.name}” and tagged it \`@needs-review\`.` + (reopened ? " It was agreed, so I’ve moved it back to draft." : "") +
+        (others.length ? ` I’ll check the change with ${listText(others)}, since they contributed to it.` : "") + `\n\nIn the real product I’d now propose rewritten steps for you to accept.`, { updates: ups, think: 0 });
+      return;
+    }
+  }
+  const fid = /approv|limit|threshold|queue|fraud|agent/i.test(text) ? "approval" : /pay|card|credit|bank|money back|transfer/i.test(text) ? "payment" : "request";
+  const ups = applyOps([{ op: "question", fid, text: clip(text, 100) }], "me");
+  await aiSay(`I don’t have a scripted follow-up for that in this prototype, so I’ve logged it against **${FEATURES[fid].file}** as an open question for the group. A real model would ask a clarifying question here and draft the scenario.`, { updates: ups, think: 0 });
+}
+
+/* ===================== input ===================== */
+function submit(text) {
+  text = text.trim();
+  if (!text) return;
+  if (S.phase === "interview" && !S.awaiting && !commentTarget) return;
+  $("#input").value = ""; autosize(); setChips(null);
+  userSay(text);
+  if (commentTarget || S.phase !== "interview") queue(() => freeReply(text));
+  else queue(() => handleAnswer(text));
+  updateSend();
+}
+function autosize() { const i = $("#input"); i.style.height = "auto"; i.style.height = Math.min(i.scrollHeight, 160) + "px"; }
+$("#form").addEventListener("submit", e => { e.preventDefault(); submit($("#input").value); });
+$("#input").addEventListener("input", () => { autosize(); updateSend(); });
+$("#input").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (!$("#send").disabled) submit($("#input").value); } });
+
+/* ===================== tabs, drawer, export ===================== */
+function setTab(tab) {
+  if (window.innerWidth > 860) return;
+  $("#layout").dataset.tab = tab;
+  document.querySelectorAll("#mtabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+  if (tab === "reqs") { S.unread = 0; renderUnread(); }
+}
+function renderUnread() { const u = $("#unread"); u.hidden = !S.unread; u.textContent = S.unread; }
+document.querySelectorAll("#mtabs button").forEach(b => b.addEventListener("click", () => setTab(b.dataset.tab)));
+const closeTeam = () => $("#app").classList.remove("team-open");
+$("#teamToggle").onclick = () => $("#app").classList.toggle("team-open");
+$("#scrim").onclick = closeTeam;
+
+function toast(t) { const el = h("div", { class: "toast", role: "status" }, t); document.body.append(el); setTimeout(() => el.remove(), 2200); }
+function download(name, blob) { const a = h("a", { href: URL.createObjectURL(blob), download: name }); document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+function crc32(b) { let crc = -1; for (let i = 0; i < b.length; i++) { let c = (crc ^ b[i]) & 0xff; for (let k = 0; k < 8; k++) c = c & 1 ? (c >>> 1) ^ 0xedb88320 : c >>> 1; crc = (crc >>> 8) ^ c; } return (crc ^ -1) >>> 0; }
+function zip(files) {
+  const enc = new TextEncoder(), parts = [], central = []; let off = 0;
+  for (const f of files) {
+    const name = enc.encode(f.name), data = enc.encode(f.text), crc = crc32(data);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(12, 0x21, true);
+    lh.setUint32(14, crc, true); lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, name.length, true);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(14, 0x21, true);
+    ch.setUint32(16, crc, true); ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, name.length, true); ch.setUint32(42, off, true);
+    parts.push(lh, name, data); central.push(ch, name); off += 30 + name.length + data.length;
+  }
+  const size = central.reduce((a, p) => a + p.byteLength, 0);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, size, true); end.setUint32(16, off, true);
+  return new Blob([...parts, ...central, end], { type: "application/zip" });
+}
+function exportZip() {
+  if (!S.features.length) return;
+  download("self-service-refunds-features.zip", zip(S.features.map(f => ({ name: "features/" + f.file, text: featureText(f) }))));
+  toast(`Exported ${plural(S.features.length, "feature file")}`);
+}
+const activeF = () => S.features.find(f => f.id === S.active);
+$("#exportTop").onclick = exportZip;
+$("#exportAll").onclick = exportZip;
+$("#dlFile").onclick = () => { const f = activeF(); if (f) download(f.file, new Blob([featureText(f)], { type: "text/plain" })); };
+$("#copyFile").onclick = async () => { const f = activeF(); if (!f) return; try { await navigator.clipboard.writeText(featureText(f)); toast("Copied " + f.file); } catch { toast("Couldn’t copy. Use Download instead."); } };
+$("#restart").onclick = () => { if (confirm("Start the interview again? Everything here will be cleared.")) location.reload(); };
+
+/* ===================== start ===================== */
+$("#setupForm").addEventListener("submit", e => {
+  e.preventDefault();
+  S = freshState({ name: clip($("#sName").value, 40) || "You", role: clip($("#sRole").value, 60) || "Stakeholder" });
+  $("#setup").hidden = true;
+  renderTeam(); renderReqs();
+  queue(async () => {
+    sys("Prototype: Elicit’s questions are scripted, and your answers are read with simple rules standing in for an LLM.");
+    await aiSay(`Hi ${first(S.me.name)}, I’m **Elicit**, your business analyst for **Self-service refunds**. I’ll ask one question at a time and turn your answers into Gherkin feature files as we go. You’ll see them build up${window.innerWidth <= 860 ? " in the Requirements tab" : " on the right"}.\n\nThere are no wrong answers. If you’re not sure about something, just say so and I’ll park it as an open question.`, { think: 700 });
+    await ask();
+  });
+});
+S = freshState({ name: "You", role: "" });
+renderTeam(); renderReqs();
+</script>
+</body>
+</html>
