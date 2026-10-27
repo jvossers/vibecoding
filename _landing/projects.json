@@ -14,6 +14,7 @@
     "beats":         { "title": "BEATS",                  "group": "Toys & games", "description": "A retro, CRT-styled tracker for making beats on your phone." },
     "bird":          { "title": "Flappy Cockatiels",      "group": "Toys & games", "description": "Flappy Bird, but with a pair of cockatiels." },
     "chemistry":     { "title": "Reactivity of Metals",   "group": "Teaching",     "description": "AQA GCSE Chemistry revision pages and a quiz on the reactivity series." },
+    "contraption":   { "title": "Contraption",            "group": "Toys & games", "description": "Build Rube Goldberg machines from ramps, balls, belts and a cat, then watch them run." },
     "cpu":           { "title": "CPU & RAM Simulator",    "group": "Teaching",     "description": "Step through how a CPU fetches and runs instructions from memory." },
     "cs":            { "title": "GCSE CS Simulations",    "group": "Teaching",     "description": "Interactive simulations for the OCR GCSE Computer Science course." },
     "dailycheck":    { "title": "Vinker",                 "group": "Tools",        "description": "A daily checklist for tasks you repeat several times a day." },
