@@ -353,6 +353,18 @@
     if (!m) return;
     const pad = 16;
     const availW = canvasEl.clientWidth - pad * 2;
+    if (isFull()) {
+      canvasEl.style.height = '';
+      const H = canvasEl.clientHeight;
+      // Fill the width so text stays readable; pan vertically if it's taller.
+      const k = Math.max(0.3, Math.min(availW / m.width, 1.3));
+      view.k = k;
+      view.x = (canvasEl.clientWidth - m.width * k) / 2;
+      view.y = Math.max(pad, (H - 30 - m.height * k) / 2 + 4);
+      $('#canvasHint').textContent = 'Drag to pan, pinch to zoom. Left → right is "comes after", not time.';
+      applyView();
+      return;
+    }
     const maxH = Math.max(320, Math.min(window.innerHeight * 0.72, 760));
     const minK = window.innerWidth < 700 ? 0.62 : 0.5;
     let k = Math.min(availW / m.width, 1.1);
@@ -396,26 +408,35 @@
     if (dx || dy) { view.x += dx; view.y += dy; applyView(); }
   }
 
+  // Pointer position in the diagram's own pixel space. In forced landscape
+  // the canvas is rotated 90° clockwise, so screen axes map onto its axes.
+  function toLocal(e) {
+    const r = graphEl.getBoundingClientRect();
+    if (isRotated()) return { x: e.clientY - r.top, y: r.right - e.clientX };
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
   const pointers = new Map();
   let drag = null, pinch = null, suppressClick = false;
 
   graphEl.addEventListener('pointerdown', e => {
     if (e.button !== 0 && e.pointerType === 'mouse') return;
-    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const p = toLocal(e);
+    pointers.set(e.pointerId, p);
     if (pointers.size === 1) {
       suppressClick = false;
-      drag = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y, moved: false };
+      drag = { x: p.x, y: p.y, vx: view.x, vy: view.y, moved: false };
     } else if (pointers.size === 2) {
       const [a, b] = [...pointers.values()];
-      const r = graphEl.getBoundingClientRect();
-      pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), k: view.k, cx: (a.x + b.x) / 2 - r.left, cy: (a.y + b.y) / 2 - r.top, vx: view.x, vy: view.y };
+      pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), k: view.k, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2, vx: view.x, vy: view.y };
       suppressClick = true;
       for (const id of pointers.keys()) try { graphEl.setPointerCapture(id); } catch {}
     }
   });
   graphEl.addEventListener('pointermove', e => {
     if (!pointers.has(e.pointerId)) return;
-    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const p = toLocal(e);
+    pointers.set(e.pointerId, p);
     if (pinch && pointers.size >= 2) {
       const [a, b] = [...pointers.values()];
       const k = Math.min(2.5, Math.max(0.2, pinch.k * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d));
@@ -424,7 +445,7 @@
       view.k = k;
       applyView();
     } else if (drag) {
-      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      const dx = p.x - drag.x, dy = p.y - drag.y;
       if (!drag.moved && Math.hypot(dx, dy) > 5) {
         drag.moved = true;
         suppressClick = true;
@@ -451,10 +472,10 @@
     if (!suppressClick && !e.target.closest('.node, .lane-label')) select(null);
   });
   graphEl.addEventListener('wheel', e => {
-    const r = graphEl.getBoundingClientRect();
     if (e.ctrlKey || e.metaKey) {
       e.preventDefault();
-      zoomAt(Math.exp(-e.deltaY * 0.01), e.clientX - r.left, e.clientY - r.top);
+      const p = toLocal(e);
+      zoomAt(Math.exp(-e.deltaY * 0.01), p.x, p.y);
     } else if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey) {
       e.preventDefault();
       view.x -= e.shiftKey ? e.deltaY : e.deltaX;
@@ -465,6 +486,57 @@
   $('#zoomIn').addEventListener('click', () => zoomCentre(1.25));
   $('#zoomOut').addEventListener('click', () => zoomCentre(0.8));
   $('#fitBtn').addEventListener('click', fit);
+
+  /* Full screen, locked to landscape. Chrome on Android can lock the real
+   * orientation once the page is full screen. Where that isn't possible
+   * (iPhone Safari, or orientation lock refused), the canvas is rotated
+   * 90° with CSS whenever the screen is portrait. */
+  const portraitMQ = window.matchMedia('(orientation: portrait)');
+  const isFull = () => canvasEl.classList.contains('is-full');
+  const isRotated = () => canvasEl.classList.contains('force-landscape') && portraitMQ.matches;
+
+  async function enterFull() {
+    canvasEl.classList.add('is-full');
+    document.body.classList.add('diagram-full');
+    setFullButton(true);
+    let locked = false;
+    try {
+      const root = document.documentElement;
+      if (root.requestFullscreen && !document.fullscreenElement) await root.requestFullscreen({ navigationUI: 'hide' });
+      else if (root.webkitRequestFullscreen && !document.webkitFullscreenElement) root.webkitRequestFullscreen();
+    } catch {}
+    try {
+      if (screen.orientation && screen.orientation.lock) { await screen.orientation.lock('landscape'); locked = true; }
+    } catch {}
+    canvasEl.classList.toggle('force-landscape', !locked);
+    requestAnimationFrame(fit);
+    setTimeout(fit, 350); // orientation changes settle late on some phones
+  }
+
+  function exitFull() {
+    if (!isFull()) return;
+    canvasEl.classList.remove('is-full', 'force-landscape');
+    document.body.classList.remove('diagram-full');
+    setFullButton(false);
+    try { screen.orientation && screen.orientation.unlock && screen.orientation.unlock(); } catch {}
+    if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+    else if (document.webkitFullscreenElement && document.webkitExitFullscreen) document.webkitExitFullscreen();
+    requestAnimationFrame(fit);
+  }
+
+  function setFullButton(on) {
+    const b = $('#fullBtn');
+    b.setAttribute('aria-label', on ? 'Exit full screen' : 'Full screen');
+    b.title = on ? 'Exit full screen' : 'Full screen';
+    b.setAttribute('aria-pressed', String(on));
+  }
+
+  $('#fullBtn').addEventListener('click', () => (isFull() ? exitFull() : enterFull()));
+  const onFsChange = () => { if (!document.fullscreenElement && !document.webkitFullscreenElement) exitFull(); };
+  document.addEventListener('fullscreenchange', onFsChange);
+  document.addEventListener('webkitfullscreenchange', onFsChange);
+  portraitMQ.addEventListener('change', () => { if (isFull()) setTimeout(fit, 100); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && isFull() && !state.selected) exitFull(); });
   $('#resetBtn').addEventListener('click', () => { state.focusLane = null; select(null); fit(); });
   let resizeTimer;
   window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (!$('#result').hidden) fit(); }, 150); });
@@ -484,7 +556,7 @@
     if (id) {
       ensureVisible(id);
       // On phones the details open as a bottom sheet; keep the diagram in view above it.
-      if (window.innerWidth <= 960) {
+      if (window.innerWidth <= 960 && !isFull()) {
         const top = canvasEl.getBoundingClientRect().top;
         if (top < 0 || top > window.innerHeight * 0.2) window.scrollBy({ top: top - 8, behavior: 'smooth' });
       }
@@ -510,6 +582,7 @@
     const m = state.model;
     const id = state.selected;
     detailEl.classList.toggle('open', !!id);
+    renderFullInfo();
     if (!id) {
       const merges = state.recipe.steps.filter(s => s.dependsOn.length > 1).length;
       const starts = state.recipe.steps.filter(s => !s.dependsOn.length).length;
@@ -558,6 +631,27 @@
       ${next.length ? `<ul class="d-links">${next.map(d => stepButton(d)).join('')}</ul>` : '<p class="d-empty">Nothing. This is the finish.</p>'}
     `;
     detailEl.querySelector('.d-close').addEventListener('click', () => select(null));
+  }
+
+  // Compact step card shown inside the canvas while it is full screen,
+  // where the normal detail panel is out of sight.
+  function renderFullInfo() {
+    const box = $('#fullInfo');
+    const id = state.selected;
+    box.hidden = !id;
+    if (!id) return;
+    const m = state.model;
+    const n = m.nodes.get(id);
+    const s = n.step;
+    const needs = s.dependsOn.map(d => m.byId.get(d).label);
+    box.style.setProperty('--c', n.lane.color);
+    box.innerHTML = `
+      <button type="button" class="fi-close" aria-label="Close">×</button>
+      <span class="d-lane"><i></i>${esc(n.lane.title)}</span>
+      <strong>${esc(s.label)}</strong>
+      ${s.quote ? `<q>${esc(s.quote)}</q>` : '<em>Inferred: not written in the recipe.</em>'}
+      <small>${needs.length ? 'After: ' + needs.map(esc).join(', ') : 'Can start straight away'}${s.time ? ' · ⏱ ' + esc(s.time) : ''}</small>`;
+    box.querySelector('.fi-close').addEventListener('click', () => select(null));
   }
 
   detailEl.addEventListener('click', e => {
@@ -632,7 +726,7 @@
 
   function show(screen) {
     for (const id of ['home', 'processing', 'result']) $('#' + id).hidden = id !== screen;
-    if (screen !== 'result') detailEl.classList.remove('open');
+    if (screen !== 'result') { detailEl.classList.remove('open'); exitFull(); }
     window.scrollTo(0, 0);
   }
 
@@ -858,6 +952,24 @@
   }
 
   $('#procCancel').addEventListener('click', () => { runId++; show('home'); });
+
+  /* Light by default, whatever the system setting; dark is opt-in. */
+  const themeBtn = $('#themeBtn');
+  function setTheme(t) {
+    document.documentElement.dataset.theme = t;
+    themeBtn.setAttribute('aria-pressed', String(t === 'dark'));
+    themeBtn.title = t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+    themeBtn.setAttribute('aria-label', themeBtn.title);
+    $('meta[name="theme-color"]').content = t === 'dark' ? '#17140f' : '#f6f1e8';
+  }
+  let savedTheme = 'light';
+  try { savedTheme = localStorage.getItem('mise-theme') === 'dark' ? 'dark' : 'light'; } catch {}
+  setTheme(savedTheme);
+  themeBtn.addEventListener('click', () => {
+    const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    setTheme(t);
+    try { localStorage.setItem('mise-theme', t); } catch {}
+  });
 
   /* ------------------------------------------------------------------ *
    * Start
