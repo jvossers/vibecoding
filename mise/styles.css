@@ -247,13 +247,14 @@ main { max-width: 1280px; margin: 0 auto; padding: 0 16px 48px; }
 .lane-label .lane-count { font-weight: 400; fill: var(--ink-3); font-size: 11.5px; }
 .lane-label { cursor: pointer; }
 
-.edge { fill: none; stroke: var(--edge); stroke-width: 1.8; transition: opacity .2s, stroke .2s; }
-.edge.is-hi { stroke: var(--accent); stroke-width: 2.6; }
-.edge.is-next { stroke: var(--ink-2); stroke-width: 2.2; stroke-dasharray: 5 4; }
-.edge.is-dim { opacity: .18; }
-.arrow-normal { fill: var(--edge); }
-.arrow-hi { fill: var(--accent); }
-.arrow-next { fill: var(--ink-2); }
+.edge { transition: opacity .2s; }
+.edge path { fill: none; stroke-linejoin: round; }
+.edge-halo { stroke: var(--paper); stroke-width: 6; stroke-opacity: .9; }
+.edge-line { stroke: var(--ec); stroke-width: 1.9; }
+.edge.is-hi .edge-line { stroke-width: 3; }
+.edge.is-hi .edge-halo { stroke-width: 8; }
+.edge.is-next .edge-line { stroke-width: 2.4; stroke-dasharray: 5 4; }
+.edge.is-dim { opacity: .14; }
 
 .node { cursor: pointer; transition: opacity .2s; outline: none; }
 .node .bg { fill: var(--paper); stroke: var(--c); stroke-width: 1.6; }
@@ -261,7 +262,8 @@ main { max-width: 1280px; margin: 0 auto; padding: 0 16px 48px; }
 .node.inferred .bg { stroke-dasharray: 5 4; }
 .node .label { font: 500 14px var(--font); fill: var(--ink); }
 .node .meta { font: 400 11px var(--font); fill: var(--ink-3); }
-.node .merge-dot { fill: var(--c); stroke: var(--paper); stroke-width: 2.5; }
+.node .merge-bar { fill: var(--c); stroke: var(--paper); stroke-width: 1.5; }
+.node.final .merge-bar { fill: var(--accent); }
 .node.final .bg { fill: var(--final); stroke: var(--final); }
 .node.final .label { fill: var(--final-ink); font-weight: 700; }
 .node.final .meta { fill: var(--final-ink); opacity: .7; }
@@ -277,7 +279,7 @@ main { max-width: 1280px; margin: 0 auto; padding: 0 16px 48px; }
 .legend span { display: inline-flex; align-items: center; gap: 7px; }
 .legend i { display: inline-block; width: 22px; height: 13px; border-radius: 4px; border: 1.6px solid var(--ink-3); background: var(--paper); }
 .legend .inferred { border-style: dashed; }
-.legend .lg-merge { width: 11px; height: 11px; border-radius: 50%; background: var(--ink-3); border: 2px solid var(--paper); box-shadow: 0 0 0 1px var(--ink-3); }
+.legend .lg-merge { width: 4px; height: 16px; border: 0; border-radius: 2px; background: var(--ink-3); box-shadow: -10px -4px 0 -1px transparent; }
 .legend .lg-final { background: var(--final); border-color: var(--final); }
 
 /* tabs */

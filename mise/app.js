@@ -16,6 +16,8 @@
     PAD_L: 20, PAD_R: 28, PAD_T: 0, PAD_B: 0,
     LABEL_H: 28,  // strip at the top of each lane reserved for its name
     LANE_PAD: 20, SLOT_GAP: 16,
+    TRACK: 7,     // spacing between parallel edge runs in a lane channel
+    PORT: 10,     // spacing between edge attachment points on a node side
   };
 
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -108,10 +110,46 @@
       l.steps = r.steps.filter(s => s.laneId === l.id).map(s => s.id);
     });
 
+    // Edge topology first. A long edge (skipping columns) runs horizontally
+    // along a channel at the top or bottom of its target lane; edges whose
+    // runs overlap get separate tracks, and lanes get padding to fit them.
+    const edges = [];
+    for (const s of r.steps) for (const d of s.dependsOn) edges.push({ from: d, to: s.id });
+    const channels = new Map();
+    for (const e of edges) {
+      const la = laneById.get(byId.get(e.from).laneId), lb = laneById.get(byId.get(e.to).laneId);
+      const ca = col.get(e.from), cb = col.get(e.to);
+      if (cb > ca + 1) {
+        e.side = la.index <= lb.index ? 'top' : 'bottom';
+        e.channel = lb.id + '|' + e.side;
+        if (!channels.has(e.channel)) channels.set(e.channel, []);
+        channels.get(e.channel).push(e);
+      }
+    }
+    const channelCount = new Map();
+    for (const [key, list] of channels) {
+      // Edges from sources farther from the channel take the tracks farther
+      // from the target nodes, so they nest instead of crossing.
+      const near = e => {
+        const a = byId.get(e.from), la = laneById.get(a.laneId), lb = laneById.get(byId.get(e.to).laneId);
+        const g = groups.get(a.laneId + '|' + col.get(e.from));
+        const slot = g.indexOf(e.from);
+        return Math.abs(la.index - lb.index) * 100 + (e.side === 'top' ? g.length - slot : slot);
+      };
+      list.sort((p, q) => near(q) - near(p));
+      const { tracks, count } = assignTracks(list, e => col.get(e.from), e => col.get(e.to) - 1, 0, true);
+      list.forEach((e, i) => { e.chTrack = tracks[i]; });
+      channelCount.set(key, count);
+    }
+
     let y = G.PAD_T;
     for (const l of lanes) {
+      const topTracks = channelCount.get(l.id + '|top') || 0;
+      const botTracks = channelCount.get(l.id + '|bottom') || 0;
+      l.padTop = G.LABEL_H + Math.max(G.LANE_PAD, topTracks * G.TRACK + 10);
+      l.padBottom = Math.max(G.LANE_PAD, botTracks * G.TRACK + 10);
       l.top = y;
-      l.height = G.LABEL_H + G.LANE_PAD * 2 + l.slots * G.NODE_H + (l.slots - 1) * G.SLOT_GAP;
+      l.height = l.padTop + l.padBottom + l.slots * G.NODE_H + (l.slots - 1) * G.SLOT_GAP;
       y += l.height;
       l.bottom = y;
     }
@@ -127,41 +165,96 @@
       const pitch = G.NODE_H + G.SLOT_GAP;
       const offset = (l.slots - g.length) * pitch / 2; // centre short stacks
       nodes.set(s.id, {
-        step: s, lane: l, col: c, slot,
+        step: s, lane: l, col: c, slot, ins: [], outs: [],
         x: G.PAD_L + c * (G.NODE_W + G.GUT),
-        y: l.top + G.LABEL_H + G.LANE_PAD + offset + slot * pitch,
+        y: l.top + l.padTop + offset + slot * pitch,
       });
     }
+    for (const e of edges) {
+      const b = nodes.get(e.to);
+      if (e.channel) e.cy = e.side === 'top' ? b.lane.top + G.LABEL_H + 7 + e.chTrack * G.TRACK : b.lane.bottom - 7 - e.chTrack * G.TRACK;
+      nodes.get(e.from).outs.push(e);
+      b.ins.push(e);
+    }
 
-    const edges = [];
-    for (const s of r.steps) for (const d of s.dependsOn) {
-      edges.push({ from: d, to: s.id, points: route(nodes.get(d), nodes.get(s.id)) });
+    // Ports: every edge gets its own point on the node's side, ordered by
+    // where it comes from or goes to, so lines don't converge on one spot.
+    const mid = n => n.y + G.NODE_H / 2;
+    const spread = (list, n, key, set) => {
+      list.sort((p, q) => key(p) - key(q));
+      list.forEach((e, i) => set(e, mid(n) + (i - (list.length - 1) / 2) * G.PORT));
+    };
+    for (const [, n] of nodes) {
+      spread(n.ins, n, e => e.channel ? e.cy : mid(nodes.get(e.from)), (e, v) => { e.ty = v; });
+      spread(n.outs, n, e => e.channel ? e.cy : mid(nodes.get(e.to)), (e, v) => { e.sy = v; });
+    }
+
+    // Vertical runs happen in the gutters between columns; overlapping runs
+    // in the same gutter get separate tracks there too.
+    const gutters = new Map();
+    const addRun = (gutter, e, key, yin, yout) => {
+      if (!gutters.has(gutter)) gutters.set(gutter, []);
+      gutters.get(gutter).push({ e, key, yin, yout, lo: Math.min(yin, yout), hi: Math.max(yin, yout) });
+    };
+    for (const e of edges) {
+      const ca = col.get(e.from), cb = col.get(e.to);
+      if (e.channel) { addRun(ca, e, 'x1', e.sy, e.cy); addRun(cb - 1, e, 'x2', e.cy, e.ty); }
+      else addRun(ca, e, 'x1', e.sy, e.ty);
+    }
+    // Every run enters its gutter from the left at yin and leaves to the right
+    // at yout. With A left of B, A's exit line crosses B's vertical if yout(A)
+    // lies within B's span, and B's entry line crosses A's vertical if yin(B)
+    // lies within A's span. Runs are ordered left to right to avoid those.
+    const inside = (y, r) => y > r.lo + 0.5 && y < r.hi - 0.5;
+    const cost = (A, B) => inside(A.yout, B) + inside(B.yin, A);
+    for (const [gutter, runs] of gutters) {
+      const order = [];
+      for (const run of runs.filter(r => r.hi - r.lo > 0.5)) {
+        // Insert where it adds the fewest crossings with the runs placed so far.
+        let best = 0, bestCost = Infinity;
+        for (let pos = 0; pos <= order.length; pos++) {
+          let c = 0;
+          order.forEach((o, i) => { c += i < pos ? cost(o, run) : cost(run, o); });
+          if (c < bestCost) { bestCost = c; best = pos; }
+        }
+        order.splice(best, 0, run);
+      }
+      const centre = G.PAD_L + gutter * (G.NODE_W + G.GUT) + G.NODE_W + G.GUT / 2;
+      const sp = Math.min(9, 26 / Math.max(1, order.length - 1));
+      order.forEach((run, i) => { run.e[run.key] = centre + (i - (order.length - 1) / 2) * sp; });
+      runs.forEach(run => { if (run.e[run.key] === undefined) run.e[run.key] = centre; });
+    }
+
+    for (const e of edges) {
+      const a = nodes.get(e.from), b = nodes.get(e.to);
+      const sx = a.x + G.NODE_W, tx = b.x;
+      e.points = e.channel
+        ? [[sx, e.sy], [e.x1, e.sy], [e.x1, e.cy], [e.x2, e.cy], [e.x2, e.ty], [tx, e.ty]]
+        : Math.abs(e.sy - e.ty) < 1 ? [[sx, e.sy], [tx, e.ty]]
+        : [[sx, e.sy], [e.x1, e.sy], [e.x1, e.ty], [tx, e.ty]];
     }
 
     const sinks = r.steps.filter(s => dependents.get(s.id).length === 0).map(s => s.id);
     return { byId, dependents, nodes, edges, lanes, laneById, width, height, cols, sinks };
   }
 
-  // Orthogonal routing that never crosses a node: edges only travel
-  // vertically in the gutters between columns and horizontally along the
-  // empty padding at the top or bottom of a lane.
-  function route(a, b) {
-    const sx = a.x + G.NODE_W, sy = a.y + G.NODE_H / 2;
-    const tx = b.x, ty = b.y + G.NODE_H / 2;
-    const jitT = ((b.lane.index * 2 + b.slot) % 3 - 1) * 9;
-    if (b.col === a.col + 1) {
-      if (Math.abs(sy - ty) < 1) return [[sx, sy], [tx, ty]];
-      const gx = sx + G.GUT / 2 + jitT;
-      return [[sx, sy], [gx, sy], [gx, ty], [tx, ty]];
+  // Greedy interval colouring: items whose [lo, hi] ranges overlap (within
+  // gap) get different track numbers. Returns tracks in input order.
+  // Interval colouring: items whose [lo, hi] ranges overlap get different
+  // track numbers, each taking the lowest free one. Items are placed in the
+  // given order (keepOrder) or by start. Returns tracks in input order.
+  function assignTracks(items, lo, hi, gap = 0, keepOrder = false) {
+    const order = items.map((_, i) => i);
+    if (!keepOrder) order.sort((p, q) => lo(items[p]) - lo(items[q]) || hi(items[p]) - hi(items[q]));
+    const taken = [];
+    const tracks = new Array(items.length);
+    for (const i of order) {
+      let t = 0;
+      while ((taken[t] || []).some(j => lo(items[i]) <= hi(items[j]) + gap && lo(items[j]) <= hi(items[i]) + gap)) t++;
+      (taken[t] = taken[t] || []).push(i);
+      tracks[i] = t;
     }
-    const jitS = ((a.lane.index + a.slot) % 3 - 1) * 9;
-    const g1 = sx + G.GUT / 2 + jitS;
-    const g2 = tx - G.GUT / 2 + jitT;
-    const lane = b.lane;
-    const by = a.lane.index <= lane.index
-      ? lane.top + G.LABEL_H + 6 + (a.lane.index % 3) * 4
-      : lane.bottom - 8 - (a.lane.index % 3) * 4;
-    return [[sx, sy], [g1, sy], [g1, by], [g2, by], [g2, ty], [tx, ty]];
+    return { tracks, count: taken.length };
   }
 
   function roundedPath(raw, r = 10) {
@@ -206,7 +299,7 @@
 
   const graphEl = $('#graph');
   const canvasEl = $('#canvas');
-  let viewport, labelsLayer, edgeEls = [], nodeEls = new Map();
+  let viewport, labelsLayer, edgesG, edgeEls = [], nodeEls = new Map();
   const view = { x: 0, y: 0, k: 1 };
 
   function renderGraph() {
@@ -216,12 +309,13 @@
     nodeEls = new Map();
 
     const defs = svg('defs', {}, graphEl);
-    for (const kind of ['normal', 'hi', 'next']) {
+    // One arrowhead per lane, since each edge takes its source lane's colour.
+    for (const l of m.lanes) {
       const mk = svg('marker', {
-        id: `arrow-${kind}`, viewBox: '0 0 10 10', refX: 9, refY: 5,
-        markerWidth: 10, markerHeight: 10, orient: 'auto-start-reverse', markerUnits: 'userSpaceOnUse',
+        id: `arrow-${l.index}`, viewBox: '0 0 10 10', refX: 9, refY: 5,
+        markerWidth: 9, markerHeight: 9, orient: 'auto-start-reverse', markerUnits: 'userSpaceOnUse',
       }, defs);
-      svg('path', { d: 'M0,1 L10,5 L0,9 z', class: `arrow-${kind}` }, mk);
+      svg('path', { d: 'M0,1 L10,5 L0,9 z', style: `fill:${l.color}` }, mk);
     }
 
     viewport = svg('g', { class: 'viewport' }, graphEl);
@@ -235,10 +329,16 @@
       if (i > 0) svg('line', { x1: bx, x2: bx + bw, y1: l.top, y2: l.top, class: 'lane-sep' }, bands);
     });
 
-    const edgesG = svg('g', {}, viewport);
+    // Each edge is a halo plus a line, drawn one after another, so where two
+    // edges cross the later one visibly passes over the earlier.
+    edgesG = svg('g', {}, viewport);
     for (const e of m.edges) {
-      const p = svg('path', { d: roundedPath(e.points), class: 'edge', 'marker-end': 'url(#arrow-normal)' }, edgesG);
-      edgeEls.push({ el: p, from: e.from, to: e.to });
+      const lane = m.nodes.get(e.from).lane;
+      const g = svg('g', { class: 'edge', style: `--ec:${lane.color}` }, edgesG);
+      const d = roundedPath(e.points);
+      svg('path', { d, class: 'edge-halo' }, g);
+      svg('path', { d, class: 'edge-line', 'marker-end': `url(#arrow-${lane.index})` }, g);
+      edgeEls.push({ el: g, from: e.from, to: e.to });
     }
 
     const nodesG = svg('g', {}, viewport);
@@ -274,7 +374,12 @@
         const mt = svg('text', { class: 'meta', x: 14, y: baseY + (lines.length - 1) * 17 + 18 }, g);
         mt.textContent = meta.join(' · ');
       }
-      if (deps > 1) svg('circle', { class: 'merge-dot', cx: 0, cy: G.NODE_H / 2, r: 6 }, g);
+      // Merge: a bar on the left edge spanning the incoming arrows' ports.
+      if (deps > 1) {
+        const ys = n.ins.map(e => e.ty - n.y);
+        const y0 = Math.min(...ys) - 7, y1 = Math.max(...ys) + 7;
+        svg('rect', { class: 'merge-bar', x: -2, y: y0, width: 4, height: y1 - y0, rx: 2 }, g);
+      }
 
       g.addEventListener('click', () => { if (!suppressClick) select(id); });
       g.addEventListener('keydown', ev => {
@@ -333,8 +438,9 @@
         dim = a !== state.focusLane && b !== state.focusLane;
       }
       e.el.setAttribute('class', `edge${cls !== 'normal' ? ' is-' + cls : ''}${dim ? ' is-dim' : ''}`);
-      e.el.setAttribute('marker-end', `url(#arrow-${cls})`);
     }
+    // Raise the highlighted chain above everything else.
+    for (const e of edgeEls) if (/is-(hi|next)/.test(e.el.getAttribute('class'))) edgesG.appendChild(e.el);
     document.querySelectorAll('.lane-chip').forEach(c => {
       const on = c.dataset.lane === state.focusLane;
       c.setAttribute('aria-pressed', String(on));
