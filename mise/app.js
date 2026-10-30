@@ -228,9 +228,11 @@
 
     const bands = svg('g', {}, viewport);
     m.lanes.forEach((l, i) => {
-      svg('rect', { x: 0, y: l.top, width: m.width, height: l.height, class: 'lane-band', fill: l.color }, bands);
-      svg('rect', { x: 0, y: l.top, width: m.width, height: G.LABEL_H, class: 'lane-head', fill: l.color }, bands);
-      if (i > 0) svg('line', { x1: 0, x2: m.width, y1: l.top, y2: l.top, class: 'lane-sep' }, bands);
+      // Bands run far past both ends so panning never reveals a blank edge.
+      const bx = -BAND_OVERHANG, bw = m.width + BAND_OVERHANG * 2;
+      svg('rect', { x: bx, y: l.top, width: bw, height: l.height, class: 'lane-band', fill: l.color }, bands);
+      svg('rect', { x: bx, y: l.top, width: bw, height: G.LABEL_H, class: 'lane-head', fill: l.color }, bands);
+      if (i > 0) svg('line', { x1: bx, x2: bx + bw, y1: l.top, y2: l.top, class: 'lane-sep' }, bands);
     });
 
     const edgesG = svg('g', {}, viewport);
@@ -344,8 +346,24 @@
    * Pan and zoom
    * ------------------------------------------------------------------ */
 
+  const BAND_OVERHANG = 20000;
+
+  // Smallest zoom at which the lanes still fill the canvas from top to bottom.
+  const minZoom = () => Math.max(0.2, canvasEl.clientHeight / state.model.height);
+
+  // Keep the diagram covering the canvas: vertically it may never leave a
+  // gap, horizontally it either fills the width or stays centred.
+  function clampView() {
+    const m = state.model;
+    const W = canvasEl.clientWidth, H = canvasEl.clientHeight;
+    const sw = m.width * view.k, sh = m.height * view.k;
+    view.x = sw > W ? Math.min(0, Math.max(W - sw, view.x)) : (W - sw) / 2;
+    view.y = sh > H ? Math.min(0, Math.max(H - sh, view.y)) : (H - sh) / 2;
+  }
+
   function applyView() {
     if (!viewport) return;
+    clampView();
     viewport.setAttribute('transform', `translate(${view.x},${view.y}) scale(${view.k})`);
     labelsLayer.setAttribute('transform', `translate(${Math.max(0, view.x)},${view.y}) scale(${view.k})`);
   }
@@ -355,31 +373,27 @@
   function fit() {
     const m = state.model;
     if (!m) return;
-    const pad = 16;
-    const availW = canvasEl.clientWidth - pad * 2;
+    const availW = canvasEl.clientWidth;
     if (isFull()) {
       canvasEl.style.height = '';
-      const H = canvasEl.clientHeight;
       // Fill the width so text stays readable; pan vertically if it's taller.
-      const k = Math.max(0.3, Math.min(availW / m.width, 1.3));
-      view.k = k;
-      view.x = (canvasEl.clientWidth - m.width * k) / 2;
-      view.y = Math.max(pad, (H - 30 - m.height * k) / 2 + 4);
-      $('#canvasHint').textContent = 'Drag to pan, pinch to zoom. Left → right is "comes after", not time.';
+      view.k = Math.max(minZoom(), Math.min(availW / m.width, 1.3));
+      view.x = 0;
+      view.y = 0;
       applyView();
       return;
     }
+    // The canvas is sized to the diagram's height, so the lanes fill it exactly.
     const maxH = Math.max(320, Math.min(window.innerHeight * 0.72, 760));
     const minK = window.innerWidth < 700 ? 0.62 : 0.5;
     let k = Math.min(availW / m.width, 1.1);
     let narrow = false;
     if (k < minK) { k = minK; narrow = true; }
-    k = Math.min(k, (maxH - pad * 2 - 30) / m.height);
-    const h = Math.max(300, Math.min(maxH, m.height * k + pad * 2 + 30));
-    canvasEl.style.height = h + 'px';
+    k = Math.min(k, maxH / m.height);
+    canvasEl.style.height = Math.floor(m.height * k) + 'px';
     view.k = k;
-    view.x = narrow ? pad - 4 : (canvasEl.clientWidth - m.width * k) / 2;
-    view.y = (h - 30 - m.height * k) / 2 + 4;
+    view.x = 0;
+    view.y = 0;
     $('#canvasHint').textContent = narrow
       ? 'Drag to pan, pinch to zoom. Left → right is "comes after", not time.'
       : 'Left → right shows what must come first. It is not a timeline.';
@@ -387,7 +401,7 @@
   }
 
   function zoomAt(factor, cx, cy) {
-    const k = Math.min(2.5, Math.max(0.2, view.k * factor));
+    const k = Math.min(2.5, Math.max(minZoom(), view.k * factor));
     view.x = cx - (cx - view.x) * (k / view.k);
     view.y = cy - (cy - view.y) * (k / view.k);
     view.k = k;
@@ -408,7 +422,7 @@
     if (x0 < leftLimit) dx = leftLimit + 10 - x0;
     else if (x1 > W - 10) dx = W - 10 - x1;
     if (y0 < 50) dy = 50 - y0;
-    else if (y1 > H - 34) dy = H - 34 - y1;
+    else if (y1 > H - 10) dy = H - 10 - y1;
     if (dx || dy) { view.x += dx; view.y += dy; applyView(); }
   }
 
@@ -443,7 +457,7 @@
     pointers.set(e.pointerId, p);
     if (pinch && pointers.size >= 2) {
       const [a, b] = [...pointers.values()];
-      const k = Math.min(2.5, Math.max(0.2, pinch.k * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d));
+      const k = Math.min(2.5, Math.max(minZoom(), pinch.k * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d));
       view.x = pinch.cx - (pinch.cx - pinch.vx) * (k / pinch.k);
       view.y = pinch.cy - (pinch.cy - pinch.vy) * (k / pinch.k);
       view.k = k;

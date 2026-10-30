@@ -9,3 +9,4 @@
 - Add `?fast` to the URL to speed up delays (handy for Playwright). `#<sample id>` opens a sample.
 - **Theme:** light by default regardless of the system setting (the user asked for this). Dark is opt-in via the top-bar toggle, stored in `localStorage` as `mise-theme`.
 - **Full screen:** the canvas's full-screen button always shows the diagram in landscape. It tries the Fullscreen API plus `screen.orientation.lock('landscape')`; if the lock fails (iPhone Safari, desktop), it adds `force-landscape`, which rotates the canvas 90° with CSS while the screen is portrait. Pointer input goes through `toLocal()` to undo that rotation, so use it for any new pointer handling.
+- **No blank edges:** lane bands extend `BAND_OVERHANG` past both ends, the canvas height is set to the diagram's height, `minZoom()` stops zooming out past the point where the lanes fill the canvas vertically, and `clampView()` (run by `applyView`) stops panning past the diagram's edges.
