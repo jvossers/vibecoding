@@ -13,8 +13,9 @@
   // Graph geometry, in diagram units.
   const G = {
     NODE_W: 164, NODE_H: 64, GUT: 52,
-    PAD_L: 140, PAD_R: 28, PAD_T: 0, PAD_B: 0,
-    LANE_PAD: 24, SLOT_GAP: 16,
+    PAD_L: 20, PAD_R: 28, PAD_T: 0, PAD_B: 0,
+    LABEL_H: 28,  // strip at the top of each lane reserved for its name
+    LANE_PAD: 20, SLOT_GAP: 16,
   };
 
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -110,7 +111,7 @@
     let y = G.PAD_T;
     for (const l of lanes) {
       l.top = y;
-      l.height = G.LANE_PAD * 2 + l.slots * G.NODE_H + (l.slots - 1) * G.SLOT_GAP;
+      l.height = G.LABEL_H + G.LANE_PAD * 2 + l.slots * G.NODE_H + (l.slots - 1) * G.SLOT_GAP;
       y += l.height;
       l.bottom = y;
     }
@@ -128,7 +129,7 @@
       nodes.set(s.id, {
         step: s, lane: l, col: c, slot,
         x: G.PAD_L + c * (G.NODE_W + G.GUT),
-        y: l.top + G.LANE_PAD + offset + slot * pitch,
+        y: l.top + G.LABEL_H + G.LANE_PAD + offset + slot * pitch,
       });
     }
 
@@ -158,7 +159,7 @@
     const g2 = tx - G.GUT / 2 + jitT;
     const lane = b.lane;
     const by = a.lane.index <= lane.index
-      ? lane.top + 8 + (a.lane.index % 3) * 4
+      ? lane.top + G.LABEL_H + 6 + (a.lane.index % 3) * 4
       : lane.bottom - 8 - (a.lane.index % 3) * 4;
     return [[sx, sy], [g1, sy], [g1, by], [g2, by], [g2, ty], [tx, ty]];
   }
@@ -228,6 +229,7 @@
     const bands = svg('g', {}, viewport);
     m.lanes.forEach((l, i) => {
       svg('rect', { x: 0, y: l.top, width: m.width, height: l.height, class: 'lane-band', fill: l.color }, bands);
+      svg('rect', { x: 0, y: l.top, width: m.width, height: G.LABEL_H, class: 'lane-head', fill: l.color }, bands);
       if (i > 0) svg('line', { x1: 0, x2: m.width, y1: l.top, y2: l.top, class: 'lane-sep' }, bands);
     });
 
@@ -282,18 +284,20 @@
     }
 
     // Lane labels live outside the viewport so they stay pinned to the
-    // left edge while the diagram pans horizontally.
+    // left edge while the diagram pans horizontally. Each sits in its lane's
+    // reserved top strip, which nodes and edges never enter.
     labelsLayer = svg('g', { class: 'labels' }, graphEl);
     for (const l of m.lanes) {
       const g = svg('g', { class: 'lane-label', style: `--c:${l.color}` }, labelsLayer);
-      const cy = l.top + l.height / 2;
-      const text = l.title;
-      const w = Math.max(80, text.length * 6.9 + 38);
-      svg('rect', { x: 8, y: cy - 22, width: w, height: 44, rx: 10 }, g);
-      svg('circle', { cx: 23, cy: cy - 6, r: 5, fill: l.color }, g);
-      const t1 = svg('text', { x: 34, y: cy - 2 }, g); t1.textContent = text;
-      const t2 = svg('text', { x: 34, y: cy + 14, class: 'lane-count' }, g);
-      t2.textContent = `${l.steps.length} step${l.steps.length === 1 ? '' : 's'}`;
+      const cy = l.top + G.LABEL_H / 2;
+      const pill = svg('rect', { x: 6, y: cy - 10, height: 20, rx: 10 }, g);
+      svg('circle', { cx: 17, cy, r: 4, fill: l.color }, g);
+      const t = svg('text', { x: 26, y: cy + 4 }, g);
+      svg('tspan', {}, t).textContent = l.title;
+      svg('tspan', { class: 'lane-count', dx: 6 }, t).textContent = `${l.steps.length} step${l.steps.length === 1 ? '' : 's'}`;
+      let tw = 0;
+      try { tw = t.getComputedTextLength(); } catch {}
+      pill.setAttribute('width', (tw || (l.title.length + 8) * 6.6) + 30);
       g.addEventListener('click', () => { if (!suppressClick) toggleLane(l.id); });
     }
 
@@ -343,7 +347,7 @@
   function applyView() {
     if (!viewport) return;
     viewport.setAttribute('transform', `translate(${view.x},${view.y}) scale(${view.k})`);
-    labelsLayer.setAttribute('transform', `translate(0,${view.y}) scale(${view.k})`);
+    labelsLayer.setAttribute('transform', `translate(${Math.max(0, view.x)},${view.y}) scale(${view.k})`);
   }
 
   // Sizes the canvas to the diagram, then fits it. On narrow screens the
@@ -399,7 +403,7 @@
     const W = canvasEl.clientWidth, H = canvasEl.clientHeight;
     const x0 = n.x * view.k + view.x, y0 = n.y * view.k + view.y;
     const x1 = x0 + G.NODE_W * view.k, y1 = y0 + G.NODE_H * view.k;
-    const leftLimit = (G.PAD_L - 10) * view.k; // keep clear of the pinned lane labels
+    const leftLimit = 10;
     let dx = 0, dy = 0;
     if (x0 < leftLimit) dx = leftLimit + 10 - x0;
     else if (x1 > W - 10) dx = W - 10 - x1;
