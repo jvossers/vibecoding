@@ -347,6 +347,7 @@
    * ------------------------------------------------------------------ */
 
   const BAND_OVERHANG = 20000;
+  const LABEL_INSET = 12; // screen px
 
   // Smallest zoom at which the lanes still fill the canvas from top to bottom.
   const minZoom = () => Math.max(0.2, canvasEl.clientHeight / state.model.height);
@@ -365,7 +366,8 @@
     if (!viewport) return;
     clampView();
     viewport.setAttribute('transform', `translate(${view.x},${view.y}) scale(${view.k})`);
-    labelsLayer.setAttribute('transform', `translate(${Math.max(0, view.x)},${view.y}) scale(${view.k})`);
+    // Inset from the left so the canvas's rounded corner never clips the first label.
+    labelsLayer.setAttribute('transform', `translate(${Math.max(0, view.x) + LABEL_INSET},${view.y}) scale(${view.k})`);
   }
 
   // Sizes the canvas to the diagram, then fits it. On narrow screens the
