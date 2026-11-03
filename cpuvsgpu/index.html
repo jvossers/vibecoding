@@ -98,10 +98,12 @@ h1 .gpu{text-shadow:0 0 40px rgba(52,227,161,.25)}
 .gpucores::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 35%,rgba(170,255,220,.9) 50%,transparent 65%) 0 0/300% 100% no-repeat;animation:sweep 2.6s linear infinite;mix-blend-mode:color-dodge}
 @keyframes sweep{from{background-position:120% 0}to{background-position:-20% 0}}
 .titlerow{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:32px;align-items:center}
-.specs{margin:0;font:400 11px/1.4 var(--mono);border-top:1px solid #3a3b31}
-.specs div{display:grid;grid-template-columns:1fr auto auto;gap:14px;padding:9px 0;border-bottom:1px solid #2d2e27}
+.specs{margin:0;font:400 11px/1.4 var(--mono);border-top:1px solid #3a3b31;display:grid;grid-template-columns:minmax(0,1fr) auto auto;column-gap:16px}
+/* every row shares the table's three columns, so values line up from row to row */
+.specs div{grid-column:1/-1;display:grid;grid-template-columns:subgrid;align-items:baseline;padding:9px 0;border-bottom:1px solid #2d2e27}
 .specs dt{color:var(--dim);text-transform:uppercase;letter-spacing:.1em;font-size:9.5px}
-.specs dd{margin:0;text-align:right;min-width:62px}
+.specs dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+@supports not (grid-template-columns:subgrid){.specs div{grid-template-columns:minmax(0,1fr) 78px 92px;column-gap:16px}}
 .specs .h dd{font-weight:700}
 
 .hero-body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);margin-top:64px}
