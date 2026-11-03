@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CPU vs GPU</title>
+<meta name="description" content="An interactive explainer on how CPUs and GPUs differ, and why crypto mining and large language models run on GPUs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c11;
+  --panel:#11151d;
+  --panel-2:#171c26;
+  --line:#252c3a;
+  --fg:#e8e6e1;
+  --dim:#97a1b2;
+  --dimmer:#646e80;
+  --cpu:#ffa94d;
+  --gpu:#3ee6a8;
+  --ctrl:#6ea8ff;
+  --cache:#b78cff;
+  --gold:#ffd84a;
+  --bad:#ff6f6f;
+  --disp:"Space Grotesk",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --w:1060px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--fg);
+  font:17px/1.65 var(--body);
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(900px 600px at 85% -5%, rgba(62,230,168,.07), transparent 60%),
+    radial-gradient(800px 600px at 0% 8%, rgba(255,169,77,.07), transparent 60%);
+  background-repeat:no-repeat;
+}
+a{color:var(--gpu)}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 16px}
+.prose{max-width:720px}
+h1,h2,h3{font-family:var(--disp);line-height:1.15;margin:0 0 .5em;letter-spacing:-.01em}
+h1{font-size:clamp(38px,7vw,74px);font-weight:700;letter-spacing:-.03em}
+h2{font-size:clamp(28px,4.2vw,42px);font-weight:700}
+h3{font-size:21px;font-weight:600}
+p{margin:0 0 1em}
+.cpu{color:var(--cpu)} .gpu{color:var(--gpu)} .ctrl{color:var(--ctrl)} .cachec{color:var(--cache)} .goldc{color:var(--gold)}
+code,.mono{font-family:var(--mono);font-size:.88em}
+.kicker{font:500 13px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:18px;display:block}
+
+/* hero */
+header.hero{padding:72px 0 40px}
+.hero .lede{font-size:clamp(18px,2.2vw,22px);color:var(--dim);max-width:640px}
+.hero .lede strong{color:var(--fg);font-weight:500}
+.analogy{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:34px;max-width:860px}
+.analogy div{border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:var(--panel)}
+.analogy b{font-family:var(--disp);font-size:20px;display:block;margin-bottom:4px}
+.analogy span{color:var(--dim);font-size:15px}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}
+.toc a{font:500 13px/1 var(--mono);color:var(--dim);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:9px 13px}
+.toc a:hover{color:var(--fg);border-color:var(--dimmer)}
+
+section{padding:56px 0;border-top:1px solid var(--line)}
+.num{font:700 13px/1 var(--mono);color:var(--dimmer);letter-spacing:.1em;display:block;margin-bottom:12px}
+
+/* sim card */
+.sim{margin:28px 0 8px;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
+.sim-head{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+.sim-title{font:600 15px/1.2 var(--disp);display:flex;align-items:center;gap:8px}
+.sim-title::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gpu);box-shadow:0 0 10px var(--gpu)}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,.seg button{font:500 14px/1 var(--body);color:var(--fg);background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:9px 13px;cursor:pointer;transition:background .15s,border-color .15s}
+button:hover{border-color:var(--dimmer)}
+button.primary{background:var(--fg);color:var(--bg);border-color:var(--fg);font-weight:600}
+button.primary:hover{background:#fff}
+button:disabled{opacity:.45;cursor:default}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;border-radius:0;background:transparent;color:var(--dim)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--panel-2);color:var(--fg)}
+.stage{position:relative;height:clamp(320px,52vw,460px);background:#07090d;touch-action:pan-y}
+.stage canvas{display:block;width:100%;height:100%}
+.hint{position:absolute;right:12px;bottom:10px;font:400 11px/1 var(--mono);color:var(--dimmer);pointer-events:none}
+.sim-foot{padding:14px 16px;border-top:1px solid var(--line);font-size:15px;color:var(--dim)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+.caption{font-size:14px;color:var(--dimmer);margin-top:8px}
+
+/* area bars */
+.areas{display:grid;gap:10px;padding:16px;border-top:1px solid var(--line)}
+.arow{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;font:600 13px/1 var(--mono)}
+.abar{display:flex;height:26px;border-radius:6px;overflow:hidden}
+.abar span{display:flex;align-items:center;justify-content:center;font:500 11px/1 var(--mono);color:#0a0c11;white-space:nowrap;overflow:hidden}
+
+/* paint race */
+.race{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line)}
+.lane{background:#07090d;padding:14px}
+.lane h4{margin:0 0 4px;font:600 15px/1.2 var(--disp);display:flex;justify-content:space-between;gap:8px}
+.lane .sub{font:400 12px/1.4 var(--mono);color:var(--dimmer);margin-bottom:10px}
+.lane canvas.img{width:100%;aspect-ratio:64/40;image-rendering:pixelated;border-radius:6px;background:#0e121a;display:block}
+.lane canvas.workers{width:100%;height:30px;display:block;margin-top:10px}
+.lane .time{font:700 22px/1 var(--mono);margin-top:10px}
+.lane .time small{font-size:12px;color:var(--dim);font-weight:400}
+.slider-row{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 16px;border-top:1px solid var(--line);font-size:14px;color:var(--dim)}
+.slider-row output{font:700 15px/1 var(--mono);color:var(--fg);min-width:52px;text-align:right}
+input[type=range]{width:100%;accent-color:var(--gpu)}
+.verdict{padding:12px 16px;border-top:1px solid var(--line);font-size:15px}
+
+/* mining */
+.hashbox{display:grid;gap:12px;padding:16px;border-bottom:1px solid var(--line)}
+.hashbox label{font:500 12px/1 var(--mono);color:var(--dimmer);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px}
+.hashbox input[type=text],.hashbox input[type=number]{width:100%;font:500 14px/1.2 var(--mono);color:var(--fg);background:#07090d;border:1px solid var(--line);border-radius:8px;padding:10px 11px}
+.hrow{display:grid;grid-template-columns:1fr 160px auto;gap:10px;align-items:end}
+.hashout{font:500 13px/1.5 var(--mono);word-break:break-all;background:#07090d;border:1px solid var(--line);border-radius:8px;padding:10px 11px}
+.hashout .z{color:var(--gold);font-weight:700}
+.hashout .ok{color:var(--gpu)} .hashout .no{color:var(--bad)}
+.minestats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.minestats > div{background:var(--panel);padding:12px 16px;min-width:0}
+.minestats h4{margin:0 0 6px;font:600 14px/1 var(--disp)}
+.minestats .big{font:700 20px/1.2 var(--mono)}
+.minestats .small{font:400 12px/1.5 var(--mono);color:var(--dim);word-break:break-all}
+
+/* log bars */
+.logbars{display:grid;gap:12px;margin:22px 0 6px}
+.lb{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center;font-size:14px}
+.lb .track{height:24px;background:var(--panel);border-radius:6px;position:relative;overflow:hidden;border:1px solid var(--line)}
+.lb .fill{position:absolute;inset:0 auto 0 0;border-radius:5px}
+.lb .val{position:absolute;left:8px;top:0;bottom:0;display:flex;align-items:center;font:600 12px/1 var(--mono);color:var(--fg);text-shadow:0 1px 3px #000}
+.lb .name{color:var(--dim)}
+
+/* llm calc */
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.calc .in{padding:16px;border-right:1px solid var(--line);display:grid;gap:16px;align-content:start}
+.calc .out{padding:16px;display:grid;gap:12px;align-content:start}
+.field > label{display:flex;justify-content:space-between;font-size:14px;color:var(--dim);margin-bottom:6px}
+.field > label b{font:700 14px/1 var(--mono);color:var(--fg)}
+.hwlist{display:grid;gap:6px}
+.hw{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;padding:9px 11px;border:1px solid var(--line);border-radius:9px;cursor:pointer;font-size:14px;background:var(--panel-2)}
+.hw input{accent-color:var(--gpu)}
+.hw small{display:block;font:400 11px/1.4 var(--mono);color:var(--dimmer)}
+.stat{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#07090d}
+.stat .k{font:500 11px/1 var(--mono);color:var(--dimmer);text-transform:uppercase;letter-spacing:.1em}
+.stat .v{font:700 26px/1.2 var(--mono);margin-top:6px}
+.stat .n{font-size:13px;color:var(--dim);margin-top:4px}
+.speedo{height:12px;border-radius:6px;background:var(--panel-2);overflow:hidden;margin-top:8px;position:relative}
+.speedo span{position:absolute;inset:0 auto 0 0;background:var(--gpu);border-radius:6px;transition:width .3s}
+.speedo i{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--fg);opacity:.6}
+
+.callout{border-left:3px solid var(--gpu);padding:4px 0 4px 18px;margin:24px 0;color:var(--dim)}
+.callout strong{color:var(--fg)}
+table.sum{width:100%;border-collapse:collapse;margin-top:20px;font-size:15px}
+table.sum th,table.sum td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+table.sum th{font:600 13px/1.2 var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+table.sum td:first-child{color:var(--dim);white-space:nowrap}
+footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px solid var(--line)}
+.err3d{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--dim);font-size:14px}
+
+@media (max-width:760px){
+  body{font-size:16px}
+  .analogy{grid-template-columns:1fr}
+  .race{grid-template-columns:1fr}
+  .calc{grid-template-columns:1fr}
+  .calc .in{border-right:0;border-bottom:1px solid var(--line)}
+  .hrow{grid-template-columns:1fr 1fr}
+  .hrow > :first-child{grid-column:1/-1}
+  .lb{grid-template-columns:1fr;gap:4px}
+  .slider-row{grid-template-columns:1fr auto}
+  .slider-row span:first-child{grid-column:1/-1}
+  .minestats{grid-template-columns:1fr}
+  table.sum td:first-child{white-space:normal}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+
+<header class="hero wrap">
+  <span class="kicker">An interactive explainer</span>
+  <h1><span class="cpu">CPU</span> vs <span class="gpu">GPU</span></h1>
+  <p class="lede">Both are chips made of billions of transistors, and both do arithmetic. <strong>They are built for opposite jobs.</strong> This page shows the difference, then explains why Bitcoin miners and AI chatbots ended up buying graphics cards.</p>
+  <div class="analogy">
+    <div><b class="cpu">A CPU is a few professors</b><span>Each one is brilliant and fast and can handle any problem you throw at them, including tricky ones with lots of "if this, then that".</span></div>
+    <div><b class="gpu">A GPU is a stadium of students</b><span>Each one is slower and can only follow simple instructions, but there are thousands of them and they all work at once.</span></div>
+  </div>
+  <nav class="toc">
+    <a href="#chips">1 · Inside the chips</a>
+    <a href="#race">2 · The paint race</a>
+    <a href="#mining">3 · Crypto mining</a>
+    <a href="#llm">4 · Large language models</a>
+    <a href="#summary">5 · Summary</a>
+  </nav>
+</header>
+
+<!-- 1 CHIPS -->
+<section id="chips">
+  <div class="wrap">
+    <span class="num">01</span>
+    <div class="prose">
+      <h2>Inside the chips</h2>
+      <p>Every chip has a fixed amount of space, called its <em>die area</em>, to spend on transistors. What makes CPUs and GPUs different is how they spend it.</p>
+      <p>A <b class="cpu">CPU</b> has a small number of big, powerful <em>cores</em>, usually 4 to 24 in a laptop or desktop. Much of each core is <span class="ctrl">control logic</span>. This logic predicts which way your code will branch, reorders instructions so nothing waits, and starts on work it guesses you'll need next. Around the cores sit large <span class="cachec">caches</span>, small pools of very fast memory that hide how slow main memory is. Only a small part of the chip does the actual <span class="cpu">arithmetic</span>.</p>
+      <p>A <b class="gpu">GPU</b> turns that around. It packs in <em>thousands</em> of small, simple arithmetic units, grouped into blocks. A block shares one small control unit, so every unit in it runs the <em>same</em> instruction at the same moment, each on different data.</p>
+    </div>
+
+    <div class="sim" id="chipSim">
+      <div class="sim-head">
+        <div class="sim-title">Two dies, built to different plans</div>
+        <div class="ctrls">
+          <div class="seg" id="chipSeg">
+            <button data-v="cpu" class="on">CPU</button>
+            <button data-v="gpu">GPU</button>
+            <button data-v="both">Both</button>
+          </div>
+          <button id="chipRun" class="primary">Run a workload</button>
+        </div>
+      </div>
+      <div class="stage" id="chipStage"><div class="hint">drag to rotate</div><div class="err3d">The 3D view couldn't load. Your browser may have WebGL turned off.</div></div>
+      <div class="sim-foot">
+        <div class="legend">
+          <span><i style="background:var(--cpu)"></i>Arithmetic units (ALUs): do the actual maths</span>
+          <span><i style="background:var(--ctrl)"></i>Control logic: decides what to do next</span>
+          <span><i style="background:var(--cache)"></i>Cache: fast on-chip memory</span>
+        </div>
+      </div>
+      <div class="areas">
+        <div class="arow"><span class="cpu">CPU</span><div class="abar"><span style="width:14%;background:var(--cpu)">ALU</span><span style="width:36%;background:var(--ctrl)">control</span><span style="width:50%;background:var(--cache)">cache</span></div></div>
+        <div class="arow"><span class="gpu">GPU</span><div class="abar"><span style="width:68%;background:var(--cpu)">ALU</span><span style="width:12%;background:var(--ctrl)">control</span><span style="width:20%;background:var(--cache)">cache</span></div></div>
+      </div>
+    </div>
+    <p class="caption">The layouts and proportions are illustrative. Real dies vary a lot, but the trade-off is real: a CPU spends its area on making <em>one</em> stream of instructions fast, and a GPU spends it on running <em>many</em> streams at once.</p>
+
+    <div class="prose">
+      <div class="callout"><strong>Latency vs throughput.</strong> A CPU is designed for low <em>latency</em>: finish this one task as soon as possible. A GPU is designed for high <em>throughput</em>: finish as many tasks per second as possible, even if each one takes longer.</div>
+      <p>GPUs were invented for graphics, where this is a perfect fit. A 4K screen has about 8 million pixels, and the colour of each one is worked out with the same short recipe of maths. No pixel needs to wait for its neighbour, so you can hand one pixel to each worker and run them all at once.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2 RACE -->
+<section id="race">
+  <div class="wrap">
+    <span class="num">02</span>
+    <div class="prose">
+      <h2>The paint race</h2>
+      <p>Let's race them. Each chip has to work out the colour of 2,560 pixels. The <b class="cpu">CPU</b> has 8 fast cores. The <b class="gpu">GPU</b> has 512 cores, but each one takes four times as long per pixel.</p>
+      <p>The slider controls how much of the job can run <em>in parallel</em>. At 100%, every pixel is independent. Lower it and part of the work becomes a chain, where each step needs the answer to the step before. A chain can only run on one core at a time, however many you have.</p>
+    </div>
+
+    <div class="sim">
+      <div class="sim-head">
+        <div class="sim-title">2,560 pixels, two chips</div>
+        <div class="ctrls">
+          <button id="raceGo" class="primary">Start race</button>
+          <button id="raceReset">Reset</button>
+        </div>
+      </div>
+      <div class="race">
+        <div class="lane">
+          <h4><span class="cpu">CPU</span><span class="mono" id="cpuState" style="color:var(--dim);font-weight:400;font-size:12px">ready</span></h4>
+          <div class="sub">8 cores · 1 time unit per pixel</div>
+          <canvas class="img" id="cpuImg" width="64" height="40"></canvas>
+          <canvas class="workers" id="cpuWorkers"></canvas>
+          <div class="time cpu" id="cpuTime">0 <small>time units</small></div>
+        </div>
+        <div class="lane">
+          <h4><span class="gpu">GPU</span><span class="mono" id="gpuState" style="color:var(--dim);font-weight:400;font-size:12px">ready</span></h4>
+          <div class="sub">512 cores · 4 time units per pixel</div>
+          <canvas class="img" id="gpuImg" width="64" height="40"></canvas>
+          <canvas class="workers" id="gpuWorkers"></canvas>
+          <div class="time gpu" id="gpuTime">0 <small>time units</small></div>
+        </div>
+      </div>
+      <div class="slider-row">
+        <span>Share of the work that can run in parallel</span>
+        <input type="range" id="par" min="0" max="100" value="100" step="1">
+        <output id="parOut">100%</output>
+      </div>
+      <div class="verdict" id="raceVerdict"></div>
+    </div>
+    <p class="caption">The dots under each picture are the cores, and a lit dot is busy. While the work is a chain, only one dot lights up, and the GPU's slower single core holds everything up.</p>
+
+    <div class="prose">
+      <p>This is <strong>Amdahl's law</strong>: the part of a job that can't be split up limits how much faster extra workers can make it. Try 90%: just one tenth of the work in a chain wipes out most of the GPU's lead.</p>
+      <p>That's why your computer has both. The operating system, web browser and game logic are full of branching, step-by-step code, so they run on the CPU. Drawing frames, editing video and, as we'll see, mining and AI are huge piles of identical, independent sums, so they run on the GPU.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 MINING -->
+<section id="mining">
+  <div class="wrap">
+    <span class="num">03</span>
+    <div class="prose">
+      <h2>Why crypto mining wanted GPUs</h2>
+      <p>Bitcoin and similar cryptocurrencies use <strong>proof of work</strong>. To add a new block of transactions to the shared ledger, a miner has to find a number, called a <em>nonce</em>, that makes the block's <strong>hash</strong> come out below a target. In practice that means the hash has to start with a certain number of zeros.</p>
+      <p>A hash function such as SHA-256 scrambles its input into a fixed-length fingerprint. Change one character and the output changes completely and unpredictably. So there's no clever shortcut: <em>you just keep guessing</em>. Try it.</p>
+    </div>
+
+    <div class="sim">
+      <div class="sim-head">
+        <div class="sim-title">Guess a nonce by hand</div>
+        <div class="ctrls"><span class="mono" style="font-size:12px;color:var(--dim)">real SHA-256, computed in your browser</span></div>
+      </div>
+      <div class="hashbox">
+        <div class="hrow">
+          <div><label for="blockData">Block data</label><input type="text" id="blockData" value="Block 1: Alice pays Bob 5 coins" maxlength="60"></div>
+          <div><label for="nonce">Nonce</label><input type="number" id="nonce" value="0" min="0"></div>
+          <button id="nonceInc">Try next nonce</button>
+        </div>
+        <div>
+          <label>SHA-256 of block data + nonce</label>
+          <div class="hashout" id="manualHash"></div>
+        </div>
+      </div>
+      <div class="sim-foot" id="manualNote">You need the hash to start with <b class="goldc">4 zeros</b>. Each try has about a 1 in 65,536 chance. Good luck clicking.</div>
+    </div>
+
+    <div class="prose" style="margin-top:28px">
+      <p>Every guess is independent of every other guess. Nonce 7 doesn't need the answer from nonce 6. That is exactly the kind of work GPUs are built for: give each core its own nonce, have them all hash at once, and repeat.</p>
+    </div>
+
+    <div class="sim">
+      <div class="sim-head">
+        <div class="sim-title">Mining race: 8 CPU lanes vs 1,024 GPU lanes</div>
+        <div class="ctrls">
+          <div class="seg" id="diffSeg">
+            <button data-v="2">2 zeros</button>
+            <button data-v="3">3 zeros</button>
+            <button data-v="4" class="on">4 zeros</button>
+            <button data-v="5">5 zeros</button>
+          </div>
+          <button id="mineGo" class="primary">Start mining</button>
+          <button id="mineReset">Reset</button>
+        </div>
+      </div>
+      <div class="stage" id="mineStage"><div class="hint">drag to rotate</div><div class="err3d">The 3D view couldn't load. Your browser may have WebGL turned off.</div></div>
+      <div class="minestats">
+        <div><h4 class="cpu">CPU · 8 lanes</h4><div class="big" id="cpuTries">0 hashes</div><div class="small" id="cpuLast">waiting</div></div>
+        <div><h4 class="gpu">GPU · 1,024 lanes</h4><div class="big" id="gpuTries">0 hashes</div><div class="small" id="gpuLast">waiting</div></div>
+      </div>
+      <div class="sim-foot">Each cube is one lane, a core working through its own nonces. A cube flashes when it hashes, glows brighter the more leading zeros it finds, and turns <b class="goldc">gold</b> when it wins. Both chips hash the same block above. To be fair, each lane does one hash per frame, so the only difference is the number of lanes.</div>
+    </div>
+
+    <div class="prose" style="margin-top:28px">
+      <h3>From GPUs to custom chips</h3>
+      <p>Real miners don't race 4 zeros. The Bitcoin network's target needs around 19 leading hex zeros, and the whole network tries hundreds of billions of billions of hashes every second. Roughly how fast different hardware runs Bitcoin's SHA-256:</p>
+    </div>
+    <div class="logbars" id="hashBars"></div>
+    <p class="caption">Log scale: each step is 10× more. The figures are rough orders of magnitude for current hardware.</p>
+    <div class="prose">
+      <p>GPUs beat CPUs by about 100×, which is why mining moved to graphics cards around 2010. For SHA-256 the next step was the <strong>ASIC</strong>, a chip that can <em>only</em> mine Bitcoin, with almost no control logic at all: the GPU idea taken to its extreme. Bitcoin has been ASIC-only for years.</p>
+      <p>Other coins, most famously Ethereum, chose hash functions that need lots of fast memory so that ASICs wouldn't have a big edge. That kept graphics cards in demand, and it's why the 2017 and 2021 crypto booms emptied gaming GPU shelves. Ethereum dropped mining entirely in September 2022, when "The Merge" switched it to <em>proof of stake</em>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 LLM -->
+<section id="llm">
+  <div class="wrap">
+    <span class="num">04</span>
+    <div class="prose">
+      <h2>Why large language models need GPUs</h2>
+      <p>A large language model (LLM) such as ChatGPT or Claude is, underneath, a huge stack of numbers called <strong>weights</strong>, often tens or hundreds of billions of them. Turning your words into the next word of the reply means multiplying lists of numbers by those weights, layer after layer. Almost all of that work is one operation: <strong>matrix multiplication</strong>.</p>
+      <p>To multiply matrix <b>A</b> by matrix <b>B</b>, each cell of the result <b>C</b> is a <em>dot product</em>: you multiply a row of A by a column of B, number by number, and add the results up. The cells don't depend on each other at all. Below, every small cube is one multiply-add. A cube lights up while it's being computed, and its result drops into C at the front.</p>
+    </div>
+
+    <div class="sim">
+      <div class="sim-head">
+        <div class="sim-title">An 8×8 matrix multiplication = 512 multiply-adds</div>
+        <div class="ctrls">
+          <div class="seg" id="mmSeg">
+            <button data-v="cpu" class="on">CPU · 4 cores</button>
+            <button data-v="gpu">GPU · 64 cores</button>
+          </div>
+          <button id="mmGo" class="primary">Multiply</button>
+        </div>
+      </div>
+      <div class="stage" id="mmStage"><div class="hint">drag to rotate</div><div class="err3d">The 3D view couldn't load. Your browser may have WebGL turned off.</div></div>
+      <div class="sim-foot">
+        <div class="legend" style="margin-bottom:8px">
+          <span><i style="background:#ff7fae"></i>A: the input (e.g. a word's vector)</span>
+          <span><i style="background:var(--ctrl)"></i>B: the model's weights</span>
+          <span><i style="background:var(--gpu)"></i>C: the result</span>
+        </div>
+        <span id="mmStatus">Choose a chip and press Multiply.</span>
+      </div>
+    </div>
+    <p class="caption">The CPU's 4 cores each take one cell of C and run through its 8 multiply-adds. The GPU gives every one of the 64 cells its own core. Each GPU step takes twice as long, and it still finishes 8× sooner. Real GPUs also have <em>tensor cores</em>, units that multiply whole small blocks of a matrix in one go.</p>
+
+    <div class="prose" style="margin-top:28px">
+      <p>Now scale it up. A model with 70 billion weights needs about <strong>140 billion</strong> multiply-adds for <em>every word</em> it writes. Each word has to come before the next one, because the model reads its own output. Inside a single word, though, those billions of sums all run in parallel.</p>
+      <p>There's a second, less obvious reason GPUs win. To produce each word, the chip has to read <em>every weight</em> from memory once. For a single chat, that's usually the real bottleneck, more than the arithmetic. GPUs have very fast memory stacked right beside the chip. A data-centre GPU can read about 3,000 GB per second, about 40× faster than a desktop CPU reads its RAM.</p>
+    </div>
+
+    <div class="sim">
+      <div class="sim-head">
+        <div class="sim-title">How fast could this hardware run this model?</div>
+      </div>
+      <div class="calc">
+        <div class="in">
+          <div class="field">
+            <label for="params">Model size <b id="paramsOut">8B weights</b></label>
+            <input type="range" id="params" min="0" max="7" step="1" value="2">
+          </div>
+          <div class="field">
+            <label>Precision of each weight</label>
+            <div class="seg" id="precSeg">
+              <button data-v="2" class="on">16-bit (2 bytes)</button>
+              <button data-v="0.5">4-bit (½ byte)</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Hardware</label>
+            <div class="hwlist" id="hwList"></div>
+          </div>
+        </div>
+        <div class="out">
+          <div class="stat"><div class="k">Memory the weights need</div><div class="v" id="memNeed">–</div><div class="n" id="memFit">–</div></div>
+          <div class="stat"><div class="k">Sums per word</div><div class="v" id="flopTok">–</div><div class="n">about 2 operations per weight (one multiply and one add)</div></div>
+          <div class="stat"><div class="k">Best-case writing speed</div><div class="v" id="tps">–</div><div class="n" id="tpsWhy">–</div><div class="speedo"><span id="tpsBar"></span><i id="readMark" title="human reading speed"></i></div><div class="n" style="font-size:12px">The white line marks a fast human reading speed, about 10 words a second.</div></div>
+        </div>
+      </div>
+      <div class="sim-foot">These are upper limits for one user, from published memory speeds and compute figures. Real software reaches less, and servers handle many users at once by batching them together, which makes good use of all that GPU compute.</div>
+    </div>
+
+    <div class="prose" style="margin-top:28px">
+      <h3>Training is far bigger still</h3>
+      <p>Running a model is the easy part. <em>Training</em> one means passing trillions of words through it, forwards and backwards, and adjusting every weight each time. Training GPT-3 in 2020 took about 3×10<sup>23</sup> operations: three hundred thousand billion billion. Here's roughly how long that would take:</p>
+    </div>
+    <div class="logbars" id="trainBars"></div>
+    <p class="caption">Log scale. These assume about 40% of each chip's peak speed is used in practice: a desktop CPU at about 1 trillion operations a second and a data-centre GPU at about 400 trillion. Frontier models today need 100× or more again, which is why AI labs build data centres with hundreds of thousands of GPUs.</p>
+  </div>
+</section>
+
+<!-- 5 SUMMARY -->
+<section id="summary">
+  <div class="wrap">
+    <span class="num">05</span>
+    <h2>Summary</h2>
+    <table class="sum">
+      <thead><tr><th></th><th class="cpu">CPU</th><th class="gpu">GPU</th></tr></thead>
+      <tbody>
+        <tr><td>Cores</td><td>A few (4–24 in a desktop, up to ~200 in a server)</td><td>Thousands of simple ones</td></tr>
+        <tr><td>Optimised for</td><td>Latency: one task done fast</td><td>Throughput: many tasks per second</td></tr>
+        <tr><td>Area spent on</td><td>Control logic and big caches</td><td>Arithmetic units</td></tr>
+        <tr><td>Great at</td><td>Branching, step-by-step code: operating systems, browsers, game logic, databases</td><td>The same sum on lots of data: graphics, video, simulations, hashing, AI</td></tr>
+        <tr><td>Memory</td><td>Lots of it (tens to hundreds of GB), moderately fast</td><td>Less of it (8–192 GB), extremely fast</td></tr>
+        <tr><td>Crypto mining</td><td>Far too slow</td><td>Used to dominate; now mostly replaced by ASICs, and Ethereum no longer mines</td></tr>
+        <tr><td>LLMs</td><td>Can run small models slowly; can't realistically train them</td><td>Where nearly all AI training and serving happens</td></tr>
+      </tbody>
+    </table>
+    <div class="prose" style="margin-top:28px">
+      <p><strong>One sentence to remember:</strong> if a job can be split into millions of identical, independent pieces, a GPU will usually win, and both mining and AI are exactly that kind of job.</p>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">CPU vs GPU · an interactive explainer. All figures are approximate and meant to show orders of magnitude.</div></footer>
+
+<script>
+/* ---------- SHA-256 (synchronous, small and self-contained) ---------- */
+const SHA = (() => {
+  const primes = []; for (let n = 2; primes.length < 64; n++) { if (primes.every(p => n % p)) primes.push(n); }
+  const frac = x => ((x - Math.floor(x)) * 4294967296) >>> 0;
+  const K = new Uint32Array(primes.map(p => frac(Math.cbrt(p))));
+  const H0 = new Uint32Array(primes.slice(0, 8).map(p => frac(Math.sqrt(p))));
+  const W = new Uint32Array(64), enc = new TextEncoder();
+  const r = (x, n) => (x >>> n) | (x << (32 - n));
+  return function (str) {
+    const b = enc.encode(str), l = b.length, nb = (l + 9 + 63) >> 6, m = new Uint32Array(nb * 16);
+    for (let i = 0; i < l; i++) m[i >> 2] |= b[i] << (24 - (i & 3) * 8);
+    m[l >> 2] |= 0x80 << (24 - (l & 3) * 8);
+    m[nb * 16 - 1] = l * 8;
+    let h = H0.slice();
+    for (let o = 0; o < m.length; o += 16) {
+      for (let t = 0; t < 16; t++) W[t] = m[o + t];
+      for (let t = 16; t < 64; t++) {
+        const a = W[t - 15], c = W[t - 2];
+        W[t] = (W[t - 16] + (r(a, 7) ^ r(a, 18) ^ (a >>> 3)) + W[t - 7] + (r(c, 17) ^ r(c, 19) ^ (c >>> 10))) | 0;
+      }
+      let [A, B, C, D, E, F, G, Hh] = h;
+      for (let t = 0; t < 64; t++) {
+        const t1 = (Hh + (r(E, 6) ^ r(E, 11) ^ r(E, 25)) + ((E & F) ^ (~E & G)) + K[t] + W[t]) | 0;
+        const t2 = ((r(A, 2) ^ r(A, 13) ^ r(A, 22)) + ((A & B) ^ (A & C) ^ (B & C))) | 0;
+        Hh = G; G = F; F = E; E = (D + t1) | 0; D = C; C = B; B = A; A = (t1 + t2) | 0;
+      }
+      h[0] += A; h[1] += B; h[2] += C; h[3] += D; h[4] += E; h[5] += F; h[6] += G; h[7] += Hh;
+    }
+    let s = ''; for (let i = 0; i < 8; i++) s += (h[i] >>> 0).toString(16).padStart(8, '0');
+    return s;
+  };
+})();
+const zeros = h => { let i = 0; while (i < h.length && h[i] === '0') i++; return i; };
+const fmt = n => n.toLocaleString('en-GB');
+function hashHTML(h, need) {
+  const z = zeros(h);
+  return `<span class="z">${h.slice(0, z)}</span>${h.slice(z)}`;
+}
+window.SHA = SHA;
+
+/* ---------- Segmented controls ---------- */
+function seg(id, cb) {
+  const el = document.getElementById(id);
+  el.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    el.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    cb(b.dataset.v);
+  });
+  return () => el.querySelector('.on').dataset.v;
+}
+window.seg = seg; window.zeros = zeros; window.fmt = fmt; window.hashHTML = hashHTML;
+
+/* ---------- 2. Paint race ---------- */
+(() => {
+  const W = 64, H = 40, N = W * H;
+  const lanes = {
+    cpu: { cores: 8, cost: 1, img: cpuImg, wk: cpuWorkers, time: cpuTime, state: cpuState, color: '#ffa94d' },
+    gpu: { cores: 512, cost: 4, img: gpuImg, wk: gpuWorkers, time: gpuTime, state: gpuState, color: '#3ee6a8' },
+  };
+  // the picture: a Mandelbrot set, coloured
+  const pix = new Uint8ClampedArray(N * 4);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const cr = -2.2 + x / W * 3.0, ci = -1.05 + y / H * 2.1;
+    let zr = 0, zi = 0, k = 0; const max = 60;
+    while (k < max && zr * zr + zi * zi < 4) { const t = zr * zr - zi * zi + cr; zi = 2 * zr * zi + ci; zr = t; k++; }
+    const i = (y * W + x) * 4, f = k / max;
+    if (k === max) { pix[i] = 12; pix[i + 1] = 14; pix[i + 2] = 30; }
+    else { pix[i] = 40 + 215 * Math.pow(f, .5); pix[i + 1] = 60 + 160 * Math.pow(f, .9); pix[i + 2] = 140 + 115 * (1 - f); }
+    pix[i + 3] = 255;
+  }
+  let p = 1, t = 0, running = false, last = 0, rate = 1;
+  const plan = l => {
+    const S = Math.round((1 - p) * N), P = N - S;
+    return { S, P, total: S * l.cost + Math.ceil(P / l.cores) * l.cost };
+  };
+  const doneAt = (l, pl, tt) => {
+    if (tt < pl.S * l.cost) return { done: Math.floor(tt / l.cost), busy: pl.S ? 1 : 0, serial: true };
+    const tp = tt - pl.S * l.cost, waves = Math.floor(tp / l.cost);
+    const done = Math.min(N, pl.S + waves * l.cores);
+    return { done, busy: Math.min(l.cores, N - done), serial: false };
+  };
+  function sizeWorkers(l) {
+    const c = l.wk, dpr = Math.min(2, devicePixelRatio || 1);
+    c.width = c.clientWidth * dpr; c.height = c.clientHeight * dpr;
+  }
+  function draw() {
+    for (const k in lanes) {
+      const l = lanes[k], pl = plan(l), st = doneAt(l, pl, Math.min(t, pl.total));
+      const ctx = l.img.getContext('2d'), im = ctx.createImageData(W, H);
+      for (let i = 0; i < N; i++) {
+        const j = i * 4;
+        if (i < st.done) { im.data[j] = pix[j]; im.data[j + 1] = pix[j + 1]; im.data[j + 2] = pix[j + 2]; im.data[j + 3] = 255; }
+        else if (running && i < st.done + st.busy && t < pl.total) { im.data[j] = 255; im.data[j + 1] = 255; im.data[j + 2] = 255; im.data[j + 3] = 255; }
+        else { im.data[j] = 20; im.data[j + 1] = 24; im.data[j + 2] = 34; im.data[j + 3] = 255; }
+      }
+      ctx.putImageData(im, 0, 0);
+      // workers
+      const c = l.wk, g = c.getContext('2d'); if (!c.width) sizeWorkers(l);
+      g.clearRect(0, 0, c.width, c.height);
+      const n = l.cores, cols = n <= 8 ? 8 : (c.clientWidth < 500 ? 64 : 128), rows = Math.ceil(n / cols);
+      const cw = c.width / cols, ch = c.height / rows, r = Math.max(1, Math.min(cw, ch) * .36);
+      const busy = (running || t > 0) && t < pl.total ? st.busy : 0;
+      for (let i = 0; i < n; i++) {
+        const x = (i % cols + .5) * cw, y = (Math.floor(i / cols) + .5) * ch;
+        g.fillStyle = i < busy ? l.color : '#2a3242';
+        g.beginPath(); g.arc(x, y, r, 0, 7); g.fill();
+      }
+      const shown = Math.min(t, pl.total);
+      l.time.innerHTML = `${fmt(Math.round(shown))} <small>/ ${fmt(pl.total)} time units</small>`;
+      l.state.textContent = t >= pl.total && t > 0 ? 'done' : running ? (st.serial ? 'chain: 1 core busy' : `${fmt(st.busy)} cores busy`) : 'ready';
+    }
+    const a = plan(lanes.cpu).total, b = plan(lanes.gpu).total;
+    raceVerdict.innerHTML = a > b
+      ? `At ${Math.round(p * 100)}% parallel the <b class="gpu">GPU</b> is about <b>${(a / b).toFixed(1)}× faster</b>.`
+      : a < b ? `At ${Math.round(p * 100)}% parallel the <b class="cpu">CPU</b> is about <b>${(b / a).toFixed(1)}× faster</b>.`
+      : `At ${Math.round(p * 100)}% parallel it's a tie.`;
+  }
+  function frame(now) {
+    if (!running) return;
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    t += dt * rate;
+    const max = Math.max(plan(lanes.cpu).total, plan(lanes.gpu).total);
+    if (t >= max) { t = max; running = false; raceGo.disabled = false; raceGo.textContent = 'Race again'; }
+    draw();
+    if (running) requestAnimationFrame(frame);
+  }
+  raceGo.onclick = () => {
+    const max = Math.max(plan(lanes.cpu).total, plan(lanes.gpu).total);
+    rate = max / 6; // slowest chip finishes in about 6 seconds
+    t = 0; running = true; raceGo.disabled = true; last = performance.now();
+    requestAnimationFrame(frame);
+  };
+  raceReset.onclick = () => { running = false; t = 0; raceGo.disabled = false; raceGo.textContent = 'Start race'; draw(); };
+  par.oninput = () => { p = par.value / 100; parOut.textContent = par.value + '%'; running = false; t = 0; raceGo.disabled = false; raceGo.textContent = 'Start race'; draw(); };
+  addEventListener('resize', () => { for (const k in lanes) sizeWorkers(lanes[k]); draw(); });
+  for (const k in lanes) sizeWorkers(lanes[k]);
+  draw();
+})();
+
+/* ---------- 3a. Manual nonce ---------- */
+(() => {
+  const upd = () => {
+    const n = Math.max(0, parseInt(nonce.value || '0', 10));
+    const h = SHA(blockData.value + n), z = zeros(h);
+    manualHash.innerHTML = hashHTML(h) + (z >= 4 ? ' <span class="ok">✓ valid block!</span>' : ` <span class="no">✕ ${z} zero${z === 1 ? '' : 's'}</span>`);
+  };
+  nonce.oninput = upd; blockData.oninput = upd;
+  nonceInc.onclick = () => { nonce.value = (parseInt(nonce.value || '0', 10) + 1); upd(); };
+  upd();
+})();
+
+/* ---------- Log bars ---------- */
+function logBars(el, rows, lo, hi) {
+  el.innerHTML = rows.map(r => {
+    const w = Math.max(3, (Math.log10(r.v) - lo) / (hi - lo) * 100);
+    return `<div class="lb"><div class="name">${r.name}</div><div class="track"><div class="fill" style="width:${w}%;background:${r.c}"></div><div class="val">${r.label}</div></div></div>`;
+  }).join('');
+}
+logBars(hashBars, [
+  { name: 'Desktop CPU', v: 5e7, label: '~50 million / s', c: 'var(--cpu)' },
+  { name: 'Gaming GPU', v: 3e9, label: '~3 billion / s', c: 'var(--gpu)' },
+  { name: 'Bitcoin ASIC', v: 2e14, label: '~200 trillion / s', c: 'var(--gold)' },
+], 6, 15);
+logBars(trainBars, [
+  { name: '1 desktop CPU', v: 3.14e23 / 1e12, label: '~10,000 years', c: 'var(--cpu)' },
+  { name: '1 data-centre GPU', v: 3.14e23 / 4e14, label: '~25 years', c: 'var(--gpu)' },
+  { name: '1,000 GPUs', v: 3.14e23 / 4e17, label: '~9 days', c: 'var(--gpu)' },
+  { name: '10,000 GPUs', v: 3.14e23 / 4e18, label: '~22 hours', c: 'var(--gold)' },
+], 4, 12);
+
+/* ---------- 4b. LLM calculator ---------- */
+(() => {
+  const sizes = [1, 3, 8, 14, 32, 70, 180, 405];
+  const hw = [
+    { id: 'lap', name: 'Laptop CPU', note: '~100 GB/s memory · 0.5 TFLOPS · 16 GB RAM', bw: 100, fl: 0.5e12, mem: 16, kind: 'cpu' },
+    { id: 'desk', name: 'Desktop CPU', note: '~80 GB/s memory · 1 TFLOPS · 64 GB RAM', bw: 80, fl: 1e12, mem: 64, kind: 'cpu' },
+    { id: 'game', name: 'High-end gaming GPU', note: '~1,000 GB/s memory · 160 TFLOPS · 24 GB', bw: 1000, fl: 160e12, mem: 24, kind: 'gpu' },
+    { id: 'dc', name: 'Data-centre GPU', note: '~3,350 GB/s memory · 990 TFLOPS · 80 GB', bw: 3350, fl: 990e12, mem: 80, kind: 'gpu' },
+    { id: 'dc8', name: '8 data-centre GPUs', note: '~26,800 GB/s combined · 640 GB', bw: 26800, fl: 7920e12, mem: 640, kind: 'gpu' },
+  ];
+  let cur = 'desk', bytes = 2;
+  hwList.innerHTML = hw.map(h => `<label class="hw"><input type="radio" name="hw" value="${h.id}" ${h.id === cur ? 'checked' : ''}><span><span class="${h.kind}">${h.name}</span><small>${h.note}</small></span></label>`).join('');
+  hwList.onchange = e => { cur = e.target.value; upd(); };
+  seg('precSeg', v => { bytes = +v; upd(); });
+  params.oninput = upd;
+  const big = n => n >= 1e12 ? (n / 1e12).toFixed(n >= 1e13 ? 0 : 1) + ' trillion' : (n / 1e9).toFixed(0) + ' billion';
+  function upd() {
+    const P = sizes[params.value] * 1e9, h = hw.find(x => x.id === cur);
+    paramsOut.textContent = sizes[params.value] + 'B weights';
+    const gb = P * bytes / 1e9;
+    memNeed.textContent = (gb < 10 ? gb.toFixed(1) : Math.round(gb)) + ' GB';
+    const fits = gb <= h.mem * 0.9;
+    memFit.innerHTML = fits ? `Fits in this hardware's ${h.mem} GB.` : `<span style="color:var(--bad)">Doesn't fit in ${h.mem} GB.</span> The model would have to be split across more chips or streamed from much slower storage.`;
+    flopTok.textContent = big(2 * P);
+    const memBound = h.bw * 1e9 / (P * bytes), compBound = h.fl * 0.5 / (2 * P);
+    const tps = Math.min(memBound, compBound);
+    const bar = document.getElementById('tpsBar');
+    if (!fits) { tps_.textContent = '✕'; tpsWhy.textContent = 'Not without more memory.'; bar.style.width = '0%'; }
+    else {
+      tps_.textContent = (tps < 10 ? tps.toFixed(1) : fmt(Math.round(tps))) + ' words/s';
+      tpsWhy.textContent = memBound < compBound
+        ? `Limited by memory speed: it has to read all ${gb < 10 ? gb.toFixed(1) : Math.round(gb)} GB for every word.`
+        : 'Limited by arithmetic speed.';
+      bar.style.width = Math.min(100, Math.log10(1 + tps) / Math.log10(1001) * 100) + '%';
+    }
+    bar.style.background = h.kind === 'cpu' ? 'var(--cpu)' : 'var(--gpu)';
+    readMark.style.left = Math.log10(11) / Math.log10(1001) * 100 + '%';
+  }
+  const tps_ = document.getElementById('tps');
+  upd();
+})();
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const C = { cpu: 0xffa94d, gpu: 0x3ee6a8, ctrl: 0x6ea8ff, cache: 0xb78cff, gold: 0xffd84a, sub: 0x1a2030, pink: 0xff7fae };
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* A small scene helper: one renderer per stage, rendered only while visible. */
+function makeScene(stageId, camPos, target = [0, 0, 0]) {
+  const stage = document.getElementById(stageId);
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ antialias: true }); }
+  catch (e) { stage.querySelector('.err3d').style.display = 'flex'; return null; }
+  renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
+  renderer.setClearColor(0x07090d, 1);
+  stage.prepend(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
+  camera.position.set(...camPos);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.set(...target);
+  controls.enableZoom = false; controls.enablePan = false; controls.enableDamping = true;
+  controls.autoRotate = !reduced; controls.autoRotateSpeed = 0.6;
+  renderer.domElement.addEventListener('pointerdown', () => controls.autoRotate = false);
+  // OrbitControls blocks page scrolling on touch; let vertical swipes scroll the page instead
+  renderer.domElement.style.touchAction = 'pan-y';
+  scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x1a1410, 1.4));
+  const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(6, 12, 8); scene.add(sun);
+  const fill = new THREE.DirectionalLight(0x88aaff, .5); fill.position.set(-8, 4, -6); scene.add(fill);
+  const resize = () => {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false); camera.aspect = w / h;
+    // pull the camera back on narrow screens so everything fits
+    camera.zoom = Math.min(1, w / h / 1.4); camera.updateProjectionMatrix();
+  };
+  resize(); addEventListener('resize', resize);
+  const s = { scene, camera, renderer, controls, visible: false, tick: null };
+  new IntersectionObserver(es => {
+    s.visible = es[0].isIntersecting;
+    if (s.visible) loop();
+  }, { rootMargin: '100px' }).observe(stage);
+  let raf = 0, last = performance.now();
+  function loop() {
+    cancelAnimationFrame(raf);
+    const step = now => {
+      if (!s.visible) return;
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      s.tick && s.tick(dt, now / 1000);
+      controls.update(); renderer.render(scene, camera);
+      raf = requestAnimationFrame(step);
+    };
+    last = performance.now(); raf = requestAnimationFrame(step);
+  }
+  return s;
+}
+const box = (w, h, d) => new THREE.BoxGeometry(w, h, d);
+const mat = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: .55, metalness: .1, ...o });
+function block(group, w, h, d, x, z, color, y0 = 0) {
+  const m = new THREE.Mesh(box(w, h, d), mat(color)); m.position.set(x, y0 + h / 2, z); group.add(m); return m;
+}
+const ID_Q = new THREE.Quaternion(), tmpM = new THREE.Matrix4(), tmpC = new THREE.Color(), tmpV = new THREE.Vector3(), tmpS = new THREE.Vector3(), tmpQ = new THREE.Quaternion();
+
+/* ---------- 1. Chip dies ---------- */
+(() => {
+  const s = makeScene('chipStage', [0, 9.5, 10.5]); if (!s) return;
+  const SUB = 0.25;
+  function substrate(g) {
+    const b = new THREE.Mesh(box(10.4, SUB, 10.4), mat(C.sub, { roughness: .9 })); b.position.y = -SUB / 2; g.add(b);
+    const edge = new THREE.LineSegments(new THREE.EdgesGeometry(box(10.4, SUB, 10.4)), new THREE.LineBasicMaterial({ color: 0x2c3548 }));
+    edge.position.y = -SUB / 2; g.add(edge);
+  }
+  // CPU: 8 big cores (2 rows × 4), shared L3 strip in the middle
+  const cpu = new THREE.Group(); substrate(cpu);
+  const cpuAlus = [];
+  block(cpu, 9.6, .22, 1.6, 0, 0, C.cache); // L3
+  for (let r = 0; r < 2; r++) for (let c = 0; c < 4; c++) {
+    const x = -3.6 + c * 2.4, z = r ? 2.95 : -2.95, flip = r ? 1 : -1;
+    block(cpu, 2.2, .14, 3.5, x, z, 0x232a3a);                           // core floor
+    block(cpu, 2.0, .38, 1.5, x, z - flip * .85, C.ctrl, .14);           // control / branch prediction / scheduling
+    block(cpu, 2.0, .26, 1.0, x, z + flip * 1.15, C.cache, .14);         // L1 / L2
+    for (let a = 0; a < 3; a++) cpuAlus.push(block(cpu, .5, .5, .6, x - .65 + a * .65, z + flip * .2, C.cpu, .14));
+  }
+  // GPU: 8 × 6 streaming multiprocessors, each 4 × 8 tiny ALUs, L2 strip in the middle
+  const gpu = new THREE.Group(); substrate(gpu);
+  block(gpu, 9.6, .2, .9, 0, 0, C.cache); // L2
+  const SMx = 8, SMz = 6, ax = 4, az = 8;
+  const nAlu = SMx * SMz * ax * az;
+  const alu = new THREE.InstancedMesh(box(.18, .3, .18), mat(0xffffff), nAlu);
+  const aluInfo = [];
+  let n = 0;
+  for (let i = 0; i < SMx; i++) for (let j = 0; j < SMz; j++) {
+    const x = -4.2 + i * 1.2, zc = (j < 3 ? -4.05 + j * 1.25 : .95 + (j - 3) * 1.25) + .55;
+    block(gpu, 1.1, .1, 1.15, x, zc, 0x232a3a);
+    block(gpu, 1.0, .16, .14, x, zc - .48, C.ctrl, .1);  // one small shared control unit
+    block(gpu, 1.0, .12, .14, x, zc + .48, C.cache, .1); // small shared cache
+    for (let a = 0; a < ax; a++) for (let b = 0; b < az; b++) {
+      const px = x - .36 + a * .24, pz = zc - .33 + b * .095;
+      tmpM.makeScale(1, 1, .45); tmpM.setPosition(px, .1 + .15, pz);
+      alu.setMatrixAt(n, tmpM); alu.setColorAt(n, tmpC.setHex(C.cpu));
+      aluInfo.push({ sm: i * SMz + j, px, pz }); n++;
+    }
+  }
+  gpu.add(alu);
+  s.scene.add(cpu, gpu);
+  let mode = 'cpu', running = false, runT = 0;
+  const target = { cpu: 0, gpu: 1, both: .5 };
+  seg('chipSeg', v => { mode = v; s.controls.autoRotate = !reduced; });
+  chipRun.onclick = () => { running = !running; runT = 0; chipRun.textContent = running ? 'Stop' : 'Run a workload'; };
+  const base = new THREE.Color(C.cpu), hot = new THREE.Color(0xfff3d6), dimc = new THREE.Color(0x5a3c1c);
+  let b = 0;
+  s.tick = (dt, t) => {
+    b += (target[mode] - b) * Math.min(1, dt * 6);
+    // b = 0 → CPU centred, b = 1 → GPU centred, .5 → side by side
+    const both = 1 - Math.abs(b - .5) * 2;
+    const sc = 1 - both * .45;
+    cpu.scale.setScalar(Math.max(0.001, sc * (1 - Math.max(0, b - .5) * 2)));
+    gpu.scale.setScalar(Math.max(0.001, sc * (1 - Math.max(0, .5 - b) * 2)));
+    cpu.position.x = -both * 3.2; gpu.position.x = both * 3.2;
+    cpu.visible = cpu.scale.x > .01; gpu.visible = gpu.scale.x > .01;
+    if (running) runT += dt;
+    // CPU: each core's ALUs flicker fast, out of step with each other (each core runs its own program)
+    cpuAlus.forEach((m, i) => {
+      const k = running ? .5 + .5 * Math.sin(runT * 11 + i * 2.3 + Math.sin(runT * 3 + i)) : 0;
+      m.material.color.copy(base).lerp(hot, k * .8);
+      m.scale.y = 1 + k * .5; m.position.y = .14 + .25 * m.scale.y;
+    });
+    // GPU: every ALU in a block does the same thing at the same moment; a wave rolls across the blocks
+    if (gpu.visible) {
+      for (let i = 0; i < nAlu; i++) {
+        const sm = aluInfo[i].sm, k = running ? Math.max(0, Math.sin(runT * 5 - sm * .35)) : 0;
+        tmpC.copy(running ? dimc : base).lerp(hot, k);
+        alu.setColorAt(i, tmpC);
+        tmpM.makeScale(1, 1 + k * 1.2, .45); tmpM.setPosition(aluInfo[i].px, .1 + .15 * (1 + k * 1.2), aluInfo[i].pz);
+        alu.setMatrixAt(i, tmpM);
+      }
+      alu.instanceColor.needsUpdate = true; alu.instanceMatrix.needsUpdate = true;
+    }
+  };
+})();
+
+/* ---------- 3b. Mining race ---------- */
+(() => {
+  const s = makeScene('mineStage', [0, 9, 14], [0, 0, 0]); if (!s) return;
+  const CPU_N = 8, G = 32, GPU_N = G * G;
+  const cpuMesh = new THREE.InstancedMesh(box(1, 1, 1), mat(0xffffff), CPU_N);
+  const gpuMesh = new THREE.InstancedMesh(box(.2, .2, .2), mat(0xffffff), GPU_N);
+  const cpuPos = [], gpuPos = [];
+  for (let i = 0; i < CPU_N; i++) cpuPos.push(new THREE.Vector3(-6.4 + (i % 2) * 1.35, .5, -2.7 + Math.floor(i / 2) * 1.35 + .7));
+  for (let i = 0; i < GPU_N; i++) gpuPos.push(new THREE.Vector3(-1.6 + (i % G) * .27, .1, -4.2 + Math.floor(i / G) * .27));
+  s.scene.add(cpuMesh, gpuMesh);
+  const floor = (w, d, x, col) => { const m = new THREE.Mesh(box(w, .12, d), mat(col, { roughness: .95 })); m.position.set(x, -.06, 0); s.scene.add(m); };
+  floor(3.4, 6.4, -5.73, 0x2a1f12); floor(9.2, 9.2, 2.6, 0x0f2a22);
+  s.controls.target.set(-1, 0, 0);
+  const off = new THREE.Color(0x2a3242);
+  const lanes = {
+    cpu: { mesh: cpuMesh, pos: cpuPos, n: CPU_N, size: 1, tries: 0, lvl: new Float32Array(CPU_N), win: -1, col: new THREE.Color(C.cpu), tEl: cpuTries, lEl: cpuLast, best: 0 },
+    gpu: { mesh: gpuMesh, pos: gpuPos, n: GPU_N, size: .2, tries: 0, lvl: new Float32Array(GPU_N), win: -1, col: new THREE.Color(C.gpu), tEl: gpuTries, lEl: gpuLast, best: 0 },
+  };
+  let diff = 4, running = false, frames = 0, startT = 0;
+  seg('diffSeg', v => { diff = +v; reset(); });
+  const gold = new THREE.Color(C.gold);
+  function paint(l) {
+    for (let i = 0; i < l.n; i++) {
+      const win = i === l.win;
+      const lv = win ? 1 : l.lvl[i];
+      tmpC.copy(off).lerp(win ? gold : l.col, win ? 1 : lv);
+      l.mesh.setColorAt(i, tmpC);
+      const sc = win ? 1.8 : 1 + lv * .5;
+      tmpV.copy(l.pos[i]); tmpV.y = l.size * sc / 2 + (win ? .3 : 0);
+      tmpM.compose(tmpV, ID_Q, tmpS.set(sc, sc, sc)); l.mesh.setMatrixAt(i, tmpM);
+    }
+    l.mesh.instanceColor.needsUpdate = true; l.mesh.instanceMatrix.needsUpdate = true;
+  }
+  function reset() {
+    running = false; frames = 0; mineGo.disabled = false; mineGo.textContent = 'Start mining';
+    for (const k in lanes) { const l = lanes[k]; l.tries = 0; l.win = -1; l.lvl.fill(0); l.best = -1; l.tEl.textContent = '0 hashes'; l.lEl.innerHTML = 'waiting'; l.done = false; paint(l); }
+  }
+  mineGo.onclick = () => { if (lanes.cpu.done && lanes.gpu.done) reset(); running = true; mineGo.disabled = true; mineGo.textContent = 'Mining…'; startT = performance.now(); };
+  mineReset.onclick = reset;
+  const data = () => blockData.value;
+  s.tick = (dt) => {
+    for (const k in lanes) {
+      const l = lanes[k];
+      for (let i = 0; i < l.n; i++) l.lvl[i] *= .86;
+      if (running && !l.done) {
+        const d = data();
+        // lane i tries nonce (round × lanes + i); together the lanes sweep 0, 1, 2, 3, …
+        for (let i = 0; i < l.n; i++) {
+          const nonceV = l.tries + i, h = SHA(d + nonceV), z = zeros(h);
+          l.lvl[i] = Math.max(l.lvl[i], .35 + Math.min(z, diff) / diff * .65);
+          if (z > l.best || (z >= diff && l.win < 0)) { l.best = Math.max(l.best, z); l.bestH = h; l.bestN = nonceV; }
+          if (z >= diff && l.win < 0) { l.win = i; l.done = true; l.winN = nonceV; l.winH = h; }
+        }
+        l.tries += l.n;
+        const secs = ((performance.now() - startT) / 1000).toFixed(1);
+        l.tEl.textContent = `${fmt(l.tries)} hashes · ${secs}s`;
+        l.lEl.innerHTML = l.done
+          ? `<b class="goldc">Found it!</b> nonce ${fmt(l.winN)} → ${hashHTML(l.winH)}`
+          : `best so far: nonce ${fmt(l.bestN)} → ${hashHTML(l.bestH)}`;
+      }
+      paint(l);
+    }
+    if (running && lanes.cpu.done && lanes.gpu.done) { running = false; mineGo.disabled = false; mineGo.textContent = 'Mine again'; }
+  };
+  reset();
+})();
+
+/* ---------- 4a. Matrix multiplication ---------- */
+(() => {
+  const s = makeScene('mmStage', [-13, 10, 18], [0, 0, 0]); if (!s) return;
+  const M = 8, S = 1.0, half = (M - 1) / 2, PL = 5.6;
+  const vox = new THREE.InstancedMesh(box(.42, .42, .42), mat(0xffffff, { transparent: true, opacity: .95 }), M * M * M);
+  const mk = n => new THREE.InstancedMesh(box(.86, .86, .12), mat(0xffffff), n);
+  const A = mk(M * M), B = mk(M * M), Cm = mk(M * M);
+  // voxel (i, j, k) → x = j, y = −i, z = k. A(i, k) sits on the left wall, B(k, j) on the ceiling, C(i, j) on the front wall.
+  const vp = (i, j, k) => tmpV.set((j - half) * S, -(i - half) * S, (k - half) * S);
+  const put = (mesh, idx, pos, rot) => { tmpQ.setFromEuler(rot); tmpM.compose(pos, tmpQ, tmpS.set(1, 1, 1)); mesh.setMatrixAt(idx, tmpM); };
+  const r0 = new THREE.Euler(0, 0, 0), rA = new THREE.Euler(0, Math.PI / 2, 0), rB = new THREE.Euler(Math.PI / 2, 0, 0);
+  for (let i = 0; i < M; i++) for (let j = 0; j < M; j++) for (let k = 0; k < M; k++) put(vox, (i * M + j) * M + k, vp(i, j, k), r0);
+  for (let i = 0; i < M; i++) for (let k = 0; k < M; k++) put(A, i * M + k, new THREE.Vector3(-PL, -(i - half) * S, (k - half) * S), rA);
+  for (let k = 0; k < M; k++) for (let j = 0; j < M; j++) put(B, k * M + j, new THREE.Vector3((j - half) * S, PL, (k - half) * S), rB);
+  for (let i = 0; i < M; i++) for (let j = 0; j < M; j++) put(Cm, i * M + j, new THREE.Vector3((j - half) * S, -(i - half) * S, PL), r0);
+  s.scene.add(vox, A, B, Cm);
+  const colA = new THREE.Color(C.pink), colB = new THREE.Color(C.ctrl), colC = new THREE.Color(C.gpu), white = new THREE.Color(0xffffff);
+  const voxOff = new THREE.Color(0x1d2433), voxDone = new THREE.Color(0x3b4a5e), dark = new THREE.Color(0x151a24);
+  const done = new Uint8Array(M * M * M), active = new Float32Array(M * M * M);
+  const aHot = new Float32Array(M * M), bHot = new Float32Array(M * M), cProg = new Float32Array(M * M);
+  let mode = 'cpu', running = false, step = 0, acc = 0, macs = 0, ticks = 0;
+  seg('mmSeg', v => { mode = v; reset(); });
+  const TICK = 1 / 16;
+  // Work schedule: list of steps, each step a list of [i, j, k] multiply-adds that happen at the same moment.
+  function schedule() {
+    const steps = [];
+    if (mode === 'cpu') {
+      const cells = []; for (let i = 0; i < M; i++) for (let j = 0; j < M; j++) cells.push([i, j]);
+      for (let c = 0; c < cells.length; c += 4) for (let k = 0; k < M; k++) {
+        const st = []; for (let q = 0; q < 4; q++) st.push([...cells[c + q], k]); steps.push(st);
+      }
+    } else {
+      for (let k = 0; k < M; k++) {
+        const st = []; for (let i = 0; i < M; i++) for (let j = 0; j < M; j++) st.push([i, j, k]);
+        steps.push(st, []); // the second empty step: each GPU step takes twice as long
+      }
+    }
+    return steps;
+  }
+  let plan = schedule();
+  function reset() {
+    running = false; step = 0; acc = 0; macs = 0; ticks = 0; plan = schedule();
+    done.fill(0); active.fill(0); aHot.fill(0); bHot.fill(0); cProg.fill(0);
+    mmGo.disabled = false; mmGo.textContent = 'Multiply';
+    mmStatus.textContent = mode === 'cpu'
+      ? 'CPU: 4 cores, each working through one cell of C at a time, one multiply-add per step.'
+      : 'GPU: 64 cores, one per cell of C, all doing their k-th multiply-add at the same moment. Each step takes 2 ticks.';
+  }
+  mmGo.onclick = () => { if (step >= plan.length) reset(); running = true; mmGo.disabled = true; mmGo.textContent = 'Multiplying…'; };
+  s.tick = dt => {
+    if (running) {
+      acc += dt;
+      while (acc >= TICK && step < plan.length) {
+        acc -= TICK; ticks++;
+        for (const [i, j, k] of plan[step]) {
+          const v = (i * M + j) * M + k; done[v] = 1; active[v] = 1;
+          aHot[i * M + k] = 1; bHot[k * M + j] = 1; cProg[i * M + j] += 1 / M; macs++;
+        }
+        step++;
+      }
+      mmStatus.textContent = `${mode === 'cpu' ? 'CPU' : 'GPU'}: ${fmt(macs)} / 512 multiply-adds · ${ticks} ticks${step >= plan.length ? ' · done' : ''}`;
+      if (step >= plan.length) {
+        running = false; mmGo.disabled = false; mmGo.textContent = 'Multiply again';
+        mmStatus.textContent += mode === 'cpu' ? '. Now try the GPU.' : '. That was 8× fewer ticks than the CPU (128).';
+      }
+    }
+    const fade = Math.pow(.02, dt);
+    for (let v = 0; v < M * M * M; v++) {
+      active[v] *= fade;
+      tmpC.copy(done[v] ? voxDone : voxOff).lerp(white, active[v]);
+      vox.setColorAt(v, tmpC);
+    }
+    for (let q = 0; q < M * M; q++) {
+      aHot[q] *= fade; bHot[q] *= fade;
+      A.setColorAt(q, tmpC.copy(colA).multiplyScalar(.45).lerp(white, aHot[q] * .8));
+      B.setColorAt(q, tmpC.copy(colB).multiplyScalar(.45).lerp(white, bHot[q] * .8));
+      Cm.setColorAt(q, tmpC.copy(dark).lerp(colC, Math.min(1, cProg[q])));
+    }
+    [vox, A, B, Cm].forEach(m => m.instanceColor.needsUpdate = true);
+  };
+  reset();
+})();
+</script>
+</body>
+</html>

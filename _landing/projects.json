@@ -16,6 +16,7 @@
     "chemistry":     { "title": "Reactivity of Metals",   "group": "Teaching",     "description": "AQA GCSE Chemistry revision pages and a quiz on the reactivity series." },
     "contraption":   { "title": "Contraption",            "group": "Toys & games", "description": "Build Rube Goldberg machines from ramps, balls, belts and a cat, then watch them run." },
     "cpu":           { "title": "CPU & RAM Simulator",    "group": "Teaching",     "description": "Step through how a CPU fetches and runs instructions from memory." },
+    "cpuvsgpu":      { "title": "CPU vs GPU",             "group": "Explainers",   "description": "Interactive 3D explainer on CPUs vs GPUs, and why crypto mining and AI need GPUs." },
     "cs":            { "title": "GCSE CS Simulations",    "group": "Teaching",     "description": "Interactive simulations for the OCR GCSE Computer Science course." },
     "dailycheck":    { "title": "Vinker",                 "group": "Tools",        "description": "A daily checklist for tasks you repeat several times a day." },
     "emv":           { "title": "Cryptogram",             "group": "Explainers",   "description": "Insert a chip card and watch every cryptographic step of an EMV payment." },
