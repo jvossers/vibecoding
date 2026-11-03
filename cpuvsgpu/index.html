@@ -154,7 +154,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 .seg button{border:0;border-radius:0;background:transparent;color:var(--dim);box-shadow:none}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button.on{background:var(--panel-2);color:var(--fg);box-shadow:inset 0 -2px 0 var(--gold)}
-.stage{position:relative;height:clamp(320px,52vw,480px);background:var(--bg);touch-action:pan-y}
+.stage{position:relative;height:clamp(320px,52vw,480px);background:var(--bg);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:contain}
 .stage::after{ /* viewfinder corners */
   content:"";position:absolute;inset:12px;pointer-events:none;
   background:
@@ -847,8 +847,9 @@ function makeScene(stageId, camPos, target = [0, 0, 0]) {
   controls.enableZoom = false; controls.enablePan = false; controls.enableDamping = true;
   controls.autoRotate = !reduced; controls.autoRotateSpeed = 0.6;
   renderer.domElement.addEventListener('pointerdown', () => controls.autoRotate = false);
-  // OrbitControls blocks page scrolling on touch; let vertical swipes scroll the page instead
-  renderer.domElement.style.touchAction = 'pan-y';
+  // A touch or drag inside the 3D area belongs to the 3D view: never let it scroll the page
+  renderer.domElement.style.touchAction = 'none';
+  renderer.domElement.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
   scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x1a1410, 1.4));
   const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(6, 12, 8); scene.add(sun);
   const fill = new THREE.DirectionalLight(0x88aaff, .5); fill.position.set(-8, 4, -6); scene.add(fill);
