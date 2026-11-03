@@ -7,172 +7,289 @@
 <meta name="description" content="An interactive explainer on how CPUs and GPUs differ, and why crypto mining and large language models run on GPUs.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400&family=Martian+Mono:wdth,wght@75..112.5,400..700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
 <style>
+/* ============ Datasheet theme: warm paper pages, dark inspection panels ============ */
 :root{
-  --bg:#0a0c11;
-  --panel:#11151d;
-  --panel-2:#171c26;
-  --line:#252c3a;
-  --fg:#e8e6e1;
-  --dim:#97a1b2;
-  --dimmer:#646e80;
-  --cpu:#ffa94d;
-  --gpu:#3ee6a8;
-  --ctrl:#6ea8ff;
-  --cache:#b78cff;
-  --gold:#ffd84a;
-  --bad:#ff6f6f;
-  --disp:"Space Grotesk",system-ui,sans-serif;
-  --body:"IBM Plex Sans",system-ui,sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
-  --w:1060px;
+  --paper:#ece7db; --paper-2:#e2dccd; --paper-3:#d8d1bf;
+  --ink:#17150f; --ink-2:#47433a; --ink-3:#7a7466; --rule:#c7bfac; --grid:rgba(23,21,15,.05);
+  --cpu:#bf5317; --gpu:#0d7650; --ctrl:#2a58c9; --cache:#6c43c4; --gold:#9a6f00; --bad:#b3311d;
+  --pin:#b49d70;
+  --disp:"Archivo","Arial Narrow",sans-serif;
+  --body:"Source Serif 4",Georgia,serif;
+  --mono:"Martian Mono",ui-monospace,Menlo,Consolas,monospace;
+  --w:1180px;
+}
+/* everything inside a simulation is a dark "inspection panel" with bright signal colours */
+.sim,.package{
+  --bg:#0b0c09; --panel:#14150f; --panel-2:#1d1e18; --line:#2d2e27;
+  --fg:#ece7db; --dim:#a39e90; --dimmer:#6f6b60;
+  --cpu:#ff9a4a; --gpu:#34e3a1; --ctrl:#78a8ff; --cache:#b893ff; --gold:#ffd447; --bad:#ff6f5c;
+  color:var(--fg);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
-  margin:0;background:var(--bg);color:var(--fg);
-  font:17px/1.65 var(--body);
+  margin:0;color:var(--ink);background-color:var(--paper);
+  font:18px/1.62 var(--body);font-optical-sizing:auto;
   -webkit-font-smoothing:antialiased;
-  background-image:
-    radial-gradient(900px 600px at 85% -5%, rgba(62,230,168,.07), transparent 60%),
-    radial-gradient(800px 600px at 0% 8%, rgba(255,169,77,.07), transparent 60%);
-  background-repeat:no-repeat;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
 }
-a{color:var(--gpu)}
+body::before{ /* paper grain */
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.32;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4  0 0 0 0 .36  0 0 0 0 .3  0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+::selection{background:var(--ink);color:var(--paper)}
+a{color:inherit}
 .wrap{max-width:var(--w);margin:0 auto;padding:0 16px}
-.prose{max-width:720px}
-h1,h2,h3{font-family:var(--disp);line-height:1.15;margin:0 0 .5em;letter-spacing:-.01em}
-h1{font-size:clamp(38px,7vw,74px);font-weight:700;letter-spacing:-.03em}
-h2{font-size:clamp(28px,4.2vw,42px);font-weight:700}
-h3{font-size:21px;font-weight:600}
+.prose{max-width:690px}
+h1,h2,h3{font-family:var(--disp);line-height:1.02;margin:0 0 .55em;text-wrap:balance}
+h2{font-size:clamp(32px,4.6vw,56px);font-weight:800;font-stretch:118%;letter-spacing:-.025em}
+h3{font-size:22px;font-weight:700;font-stretch:110%;letter-spacing:-.01em;margin-top:.4em}
 p{margin:0 0 1em}
+em{font-style:italic}
+strong,b{font-weight:600}
 .cpu{color:var(--cpu)} .gpu{color:var(--gpu)} .ctrl{color:var(--ctrl)} .cachec{color:var(--cache)} .goldc{color:var(--gold)}
-code,.mono{font-family:var(--mono);font-size:.88em}
-.kicker{font:500 13px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:18px;display:block}
+code,.mono{font-family:var(--mono);font-size:.82em}
 
-/* hero */
-header.hero{padding:72px 0 40px}
-.hero .lede{font-size:clamp(18px,2.2vw,22px);color:var(--dim);max-width:640px}
-.hero .lede strong{color:var(--fg);font-weight:500}
-.analogy{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:34px;max-width:860px}
-.analogy div{border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:var(--panel)}
-.analogy b{font-family:var(--disp);font-size:20px;display:block;margin-bottom:4px}
-.analogy span{color:var(--dim);font-size:15px}
-.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}
-.toc a{font:500 13px/1 var(--mono);color:var(--dim);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:9px 13px}
-.toc a:hover{color:var(--fg);border-color:var(--dimmer)}
+/* ---------- hero ---------- */
+header.hero{padding:28px 16px 64px}
+.docmeta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);border-top:2px solid var(--ink);border-bottom:1px solid var(--ink);padding:10px 0}
+.package{
+  position:relative;margin:52px 22px 0;padding:clamp(22px,4vw,44px);
+  background:radial-gradient(120% 140% at 15% 0%,#22231c 0%,#11120e 60%);
+  border-radius:10px;box-shadow:0 40px 70px -40px rgba(23,21,15,.75),inset 0 0 0 1px #34352c,inset 0 1px 0 #4a4b40;
+}
+.package::before,.package::after{content:"";position:absolute;pointer-events:none}
+.package::before{ /* top & bottom pins */
+  left:34px;right:34px;top:-16px;bottom:-16px;
+  background:
+    repeating-linear-gradient(90deg,var(--pin) 0 9px,transparent 9px 22px) top/100% 16px no-repeat,
+    repeating-linear-gradient(90deg,var(--pin) 0 9px,transparent 9px 22px) bottom/100% 16px no-repeat;
+}
+.package::after{ /* left & right pins */
+  top:34px;bottom:34px;left:-16px;right:-16px;
+  background:
+    repeating-linear-gradient(180deg,var(--pin) 0 9px,transparent 9px 22px) left/16px 100% no-repeat,
+    repeating-linear-gradient(180deg,var(--pin) 0 9px,transparent 9px 22px) right/16px 100% no-repeat;
+}
+.die{
+  position:relative;border:1px solid #3a3b31;border-radius:4px;padding:clamp(20px,4vw,44px);
+  background-image:linear-gradient(rgba(236,231,219,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(236,231,219,.035) 1px,transparent 1px);
+  background-size:16px 16px;overflow:hidden;
+}
+.die::before{content:"";position:absolute;left:12px;top:12px;width:10px;height:10px;border-radius:50%;background:#2d2e26;box-shadow:inset 0 1px 2px #000}
+.die .label{display:flex;justify-content:space-between;gap:12px;font:500 10px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);padding-left:22px}
+h1{margin:clamp(14px,2.4vw,26px) 0 clamp(18px,3vw,30px);font-family:var(--disp);font-weight:900;font-stretch:125%;letter-spacing:-.045em;line-height:.82;font-size:clamp(64px,13vw,172px);display:flex;flex-direction:column;align-items:flex-start}
+h1 .vs{font:italic 400 .2em/1 var(--body);letter-spacing:0;color:var(--dim);margin:.12em 0 .16em .08em;display:flex;align-items:center;gap:.6em}
+h1 .vs::after{content:"";width:3.5em;border-top:1px solid currentColor}
+h1 .cpu{text-shadow:0 0 40px rgba(255,154,74,.25)}
+h1 .gpu{text-shadow:0 0 40px rgba(52,227,161,.25)}
+.cores{display:grid;grid-template-columns:auto 1fr;gap:clamp(14px,3vw,36px);align-items:end}
+.cores .cap{font:500 10px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:10px}
+.cpucores{display:grid;grid-template-columns:repeat(4,clamp(22px,3.6vw,40px));gap:5px}
+.cpucores i{aspect-ratio:1;border-radius:3px;background:linear-gradient(160deg,#ffb06a,#c9631e);box-shadow:inset 0 -2px 0 rgba(0,0,0,.25);animation:core 2.4s ease-in-out infinite}
+.cpucores i:nth-child(odd){animation-delay:-.7s}.cpucores i:nth-child(3n){animation-delay:-1.5s}
+@keyframes core{50%{filter:brightness(1.35)}}
+.gpucores{height:calc(2 * clamp(22px,3.6vw,40px) + 5px);border-radius:3px;position:relative;overflow:hidden;
+  background:radial-gradient(circle at 2px 2px,#2bbf86 1.3px,transparent 1.6px) 0 0/5px 5px}
+.gpucores::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 35%,rgba(170,255,220,.9) 50%,transparent 65%) 0 0/300% 100% no-repeat;animation:sweep 2.6s linear infinite;mix-blend-mode:color-dodge}
+@keyframes sweep{from{background-position:120% 0}to{background-position:-20% 0}}
+.titlerow{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:32px;align-items:center}
+.specs{margin:0;font:400 11px/1.4 var(--mono);border-top:1px solid #3a3b31}
+.specs div{display:grid;grid-template-columns:1fr auto auto;gap:14px;padding:9px 0;border-bottom:1px solid #2d2e27}
+.specs dt{color:var(--dim);text-transform:uppercase;letter-spacing:.1em;font-size:9.5px}
+.specs dd{margin:0;text-align:right;min-width:62px}
+.specs .h dd{font-weight:700}
 
-section{padding:56px 0;border-top:1px solid var(--line)}
-.num{font:700 13px/1 var(--mono);color:var(--dimmer);letter-spacing:.1em;display:block;margin-bottom:12px}
+.hero-body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);margin-top:64px}
+.lede{font-size:clamp(20px,2.2vw,24px);line-height:1.5;color:var(--ink-2);margin:0 0 28px}
+.lede strong{color:var(--ink)}
+.analogy{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--ink)}
+.analogy div{padding:16px 18px 0 0}
+.analogy div+div{padding-left:18px;border-left:1px solid var(--rule)}
+.analogy .n{font:900 44px/1 var(--disp);font-stretch:125%;letter-spacing:-.04em;display:block;margin-bottom:8px}
+.analogy b{font:700 17px/1.2 var(--disp);font-stretch:108%;display:block;margin-bottom:6px}
+.analogy span{color:var(--ink-2);font-size:16px;line-height:1.5}
+.toc{align-self:start;border-top:2px solid var(--ink)}
+.toc h4{margin:0;padding:10px 0;font:600 10px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;border-bottom:1px solid var(--ink)}
+.toc a{display:flex;align-items:baseline;gap:10px;padding:13px 0;border-bottom:1px solid var(--rule);text-decoration:none;font:600 17px/1.2 var(--disp);font-stretch:108%;transition:padding .2s,color .2s}
+.toc a i{flex:1;border-bottom:1.5px dotted var(--ink-3);transform:translateY(-4px)}
+.toc a b{font:500 11px/1 var(--mono);color:var(--ink-3)}
+.toc a:hover{padding-left:8px;color:var(--cpu)}
 
-/* sim card */
-.sim{margin:28px 0 8px;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
-.sim-head{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
-.sim-title{font:600 15px/1.2 var(--disp);display:flex;align-items:center;gap:8px}
-.sim-title::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gpu);box-shadow:0 0 10px var(--gpu)}
+/* load sequence */
+.hero > *{animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
+.hero > :nth-child(2){animation-delay:.08s}.hero > :nth-child(3){animation-delay:.22s}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}}
+
+/* ---------- sections: big outlined numbers in a sticky margin ---------- */
+section{padding:72px 0 64px;border-top:2px solid var(--ink);position:relative}
+section::before{content:"";position:absolute;left:0;right:0;top:4px;border-top:1px solid var(--ink)}
+section > .wrap{display:grid;grid-template-columns:150px minmax(0,1fr);column-gap:56px}
+section > .wrap > *{grid-column:2;min-width:0}
+section > .wrap > .num{grid-column:1;grid-row:1 / span 40;align-self:start;position:sticky;top:28px}
+.num{display:block;font:900 84px/.85 var(--disp);font-stretch:125%;letter-spacing:-.05em;color:transparent;-webkit-text-stroke:1.5px var(--ink)}
+.num::after{content:attr(data-label);display:block;margin-top:14px;padding-top:10px;border-top:1px solid var(--ink);font:500 10px/1.5 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);-webkit-text-stroke:0}
+.js section > .wrap > *:not(.num){opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.js section.in > .wrap > *{opacity:1;transform:none}
+
+/* ---------- simulation panels ---------- */
+.sim{margin:36px 0 10px;border-radius:6px;background:var(--panel);overflow:hidden;
+  box-shadow:0 0 0 1px #000,0 30px 60px -36px rgba(23,21,15,.8),0 2px 0 rgba(255,255,255,.4)}
+.sim-head{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line);background:linear-gradient(#1b1c16,var(--panel))}
+.sim-title{font:700 15px/1.25 var(--disp);font-stretch:108%;display:flex;align-items:center;gap:10px}
+.sim-title::before{content:attr(data-fig);flex:none;font:600 9px/1 var(--mono);letter-spacing:.12em;color:var(--bg);background:var(--gold);padding:5px 6px 4px;border-radius:2px}
 .ctrls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-button,.seg button{font:500 14px/1 var(--body);color:var(--fg);background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:9px 13px;cursor:pointer;transition:background .15s,border-color .15s}
+button{font:600 13px/1 var(--disp);font-stretch:105%;letter-spacing:.01em;color:var(--fg);background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:10px 13px;cursor:pointer;transition:background .15s,border-color .15s,transform .1s}
 button:hover{border-color:var(--dimmer)}
-button.primary{background:var(--fg);color:var(--bg);border-color:var(--fg);font-weight:600}
-button.primary:hover{background:#fff}
-button:disabled{opacity:.45;cursor:default}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.seg button{border:0;border-radius:0;background:transparent;color:var(--dim)}
+button:active{transform:translateY(1px)}
+button.primary{background:var(--gold);color:#17150f;border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,212,71,.12)}
+button.primary:hover{background:#ffe07a}
+button:disabled{opacity:.5;cursor:default;box-shadow:none}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--bg)}
+.seg button{border:0;border-radius:0;background:transparent;color:var(--dim);box-shadow:none}
 .seg button+button{border-left:1px solid var(--line)}
-.seg button.on{background:var(--panel-2);color:var(--fg)}
-.stage{position:relative;height:clamp(320px,52vw,460px);background:#07090d;touch-action:pan-y}
+.seg button.on{background:var(--panel-2);color:var(--fg);box-shadow:inset 0 -2px 0 var(--gold)}
+.stage{position:relative;height:clamp(320px,52vw,480px);background:var(--bg);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:contain}
+.stage::after{ /* viewfinder corners */
+  content:"";position:absolute;inset:12px;pointer-events:none;
+  background:
+    linear-gradient(var(--dimmer),var(--dimmer)) left top/14px 1px no-repeat,linear-gradient(var(--dimmer),var(--dimmer)) left top/1px 14px no-repeat,
+    linear-gradient(var(--dimmer),var(--dimmer)) right top/14px 1px no-repeat,linear-gradient(var(--dimmer),var(--dimmer)) right top/1px 14px no-repeat,
+    linear-gradient(var(--dimmer),var(--dimmer)) left bottom/14px 1px no-repeat,linear-gradient(var(--dimmer),var(--dimmer)) left bottom/1px 14px no-repeat,
+    linear-gradient(var(--dimmer),var(--dimmer)) right bottom/14px 1px no-repeat,linear-gradient(var(--dimmer),var(--dimmer)) right bottom/1px 14px no-repeat;
+}
 .stage canvas{display:block;width:100%;height:100%}
-.hint{position:absolute;right:12px;bottom:10px;font:400 11px/1 var(--mono);color:var(--dimmer);pointer-events:none}
-.sim-foot{padding:14px 16px;border-top:1px solid var(--line);font-size:15px;color:var(--dim)}
+.hint{position:absolute;right:30px;bottom:24px;font:400 9px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dimmer);pointer-events:none}
+.sim-foot{padding:14px 16px;border-top:1px solid var(--line);font-size:15px;line-height:1.55;color:var(--dim)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px}
-.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:7px;vertical-align:-1px}
-.caption{font-size:14px;color:var(--dimmer);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px}
+.caption{font:400 11.5px/1.7 var(--mono);color:var(--ink-3);margin:12px 0 34px;max-width:760px}
+.caption::before{content:"↳ ";color:var(--ink)}
 
 /* area bars */
 .areas{display:grid;gap:10px;padding:16px;border-top:1px solid var(--line)}
-.arow{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;font:600 13px/1 var(--mono)}
-.abar{display:flex;height:26px;border-radius:6px;overflow:hidden}
-.abar span{display:flex;align-items:center;justify-content:center;font:500 11px/1 var(--mono);color:#0a0c11;white-space:nowrap;overflow:hidden}
+.arow{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;font:600 12px/1 var(--mono)}
+.abar{display:flex;height:24px;border-radius:3px;overflow:hidden;gap:2px}
+.abar span{display:flex;align-items:center;justify-content:center;font:600 10px/1 var(--mono);color:#11120e;white-space:nowrap;overflow:hidden;transition:width .6s}
 
 /* paint race */
 .race{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line)}
-.lane{background:#07090d;padding:14px}
-.lane h4{margin:0 0 4px;font:600 15px/1.2 var(--disp);display:flex;justify-content:space-between;gap:8px}
-.lane .sub{font:400 12px/1.4 var(--mono);color:var(--dimmer);margin-bottom:10px}
-.lane canvas.img{width:100%;aspect-ratio:64/40;image-rendering:pixelated;border-radius:6px;background:#0e121a;display:block}
-.lane canvas.workers{width:100%;height:30px;display:block;margin-top:10px}
-.lane .time{font:700 22px/1 var(--mono);margin-top:10px}
-.lane .time small{font-size:12px;color:var(--dim);font-weight:400}
-.slider-row{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 16px;border-top:1px solid var(--line);font-size:14px;color:var(--dim)}
-.slider-row output{font:700 15px/1 var(--mono);color:var(--fg);min-width:52px;text-align:right}
-input[type=range]{width:100%;accent-color:var(--gpu)}
-.verdict{padding:12px 16px;border-top:1px solid var(--line);font-size:15px}
+.lane{background:var(--bg);padding:16px}
+.lane h4{margin:0 0 4px;font:800 18px/1.2 var(--disp);font-stretch:115%;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.lane .sub{font:400 11px/1.4 var(--mono);color:var(--dimmer);margin-bottom:12px}
+.lane canvas.img{width:100%;aspect-ratio:64/40;image-rendering:pixelated;border-radius:3px;background:#16170f;display:block;box-shadow:0 0 0 1px var(--line)}
+.lane canvas.workers{width:100%;height:30px;display:block;margin-top:12px}
+.lane .time{font:700 22px/1 var(--mono);margin-top:12px}
+.lane .time small{font-size:11px;color:var(--dim);font-weight:400}
+.slider-row{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 16px;border-top:1px solid var(--line);font-size:15px;color:var(--dim)}
+.slider-row output{font:700 15px/1 var(--mono);color:var(--gold);min-width:56px;text-align:right}
+input[type=range]{width:100%;accent-color:var(--gold)}
+.verdict{padding:14px 16px;border-top:1px solid var(--line);font:600 17px/1.4 var(--disp);font-stretch:106%}
 
 /* mining */
-.hashbox{display:grid;gap:12px;padding:16px;border-bottom:1px solid var(--line)}
-.hashbox label{font:500 12px/1 var(--mono);color:var(--dimmer);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px}
-.hashbox input[type=text],.hashbox input[type=number]{width:100%;font:500 14px/1.2 var(--mono);color:var(--fg);background:#07090d;border:1px solid var(--line);border-radius:8px;padding:10px 11px}
+.hashbox{display:grid;gap:14px;padding:16px;border-bottom:1px solid var(--line)}
+.hashbox label{font:500 10px/1 var(--mono);color:var(--dimmer);text-transform:uppercase;letter-spacing:.14em;display:block;margin-bottom:7px}
+.hashbox input[type=text],.hashbox input[type=number]{width:100%;font:500 13px/1.2 var(--mono);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:11px}
 .hrow{display:grid;grid-template-columns:1fr 160px auto;gap:10px;align-items:end}
-.hashout{font:500 13px/1.5 var(--mono);word-break:break-all;background:#07090d;border:1px solid var(--line);border-radius:8px;padding:10px 11px}
-.hashout .z{color:var(--gold);font-weight:700}
+.hashout{font:500 13px/1.6 var(--mono);word-break:break-all;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:11px}
+.hashout .z{color:var(--bg);background:var(--gold);font-weight:700;border-radius:2px;padding:0 1px}
+.z:empty{display:none}
 .hashout .ok{color:var(--gpu)} .hashout .no{color:var(--bad)}
 .minestats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-top:1px solid var(--line)}
-.minestats > div{background:var(--panel);padding:12px 16px;min-width:0}
-.minestats h4{margin:0 0 6px;font:600 14px/1 var(--disp)}
-.minestats .big{font:700 20px/1.2 var(--mono)}
-.minestats .small{font:400 12px/1.5 var(--mono);color:var(--dim);word-break:break-all}
+.minestats > div{background:var(--panel);padding:14px 16px;min-width:0}
+.minestats h4{margin:0 0 8px;font:800 15px/1 var(--disp);font-stretch:112%}
+.minestats .big{font:700 19px/1.25 var(--mono)}
+.minestats .small{font:400 11px/1.6 var(--mono);color:var(--dim);word-break:break-all;margin-top:4px}
+.minestats .small .z{color:var(--gold);font-weight:700}
 
-/* log bars */
-.logbars{display:grid;gap:12px;margin:22px 0 6px}
-.lb{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center;font-size:14px}
-.lb .track{height:24px;background:var(--panel);border-radius:6px;position:relative;overflow:hidden;border:1px solid var(--line)}
-.lb .fill{position:absolute;inset:0 auto 0 0;border-radius:5px}
-.lb .val{position:absolute;left:8px;top:0;bottom:0;display:flex;align-items:center;font:600 12px/1 var(--mono);color:var(--fg);text-shadow:0 1px 3px #000}
-.lb .name{color:var(--dim)}
+/* log bars, printed on the paper */
+.logbars{display:grid;gap:0;margin:26px 0 6px;border-top:1px solid var(--ink)}
+.lb{display:grid;grid-template-columns:170px 1fr 160px;gap:16px;align-items:center;font-size:15px;padding:10px 0;border-bottom:1px solid var(--rule)}
+.lb .name{font:600 15px/1.2 var(--disp);font-stretch:106%}
+.lb .track{height:18px;position:relative;background:repeating-linear-gradient(90deg,var(--rule) 0 1px,transparent 1px 10%)}
+.lb .fill{position:absolute;inset:0 auto 0 0;border-radius:1px;transform-origin:left;transition:transform 1.1s cubic-bezier(.2,.7,.2,1)}
+.js .lb .fill{transform:scaleX(0)}
+.js section.in .lb .fill{transform:none}
+.lb .val{font:600 12px/1.2 var(--mono);text-align:right}
 
 /* llm calc */
-.calc{display:grid;grid-template-columns:1fr 1fr;gap:0}
-.calc .in{padding:16px;border-right:1px solid var(--line);display:grid;gap:16px;align-content:start}
-.calc .out{padding:16px;display:grid;gap:12px;align-content:start}
-.field > label{display:flex;justify-content:space-between;font-size:14px;color:var(--dim);margin-bottom:6px}
-.field > label b{font:700 14px/1 var(--mono);color:var(--fg)}
+.calc{display:grid;grid-template-columns:1fr 1fr}
+.calc .in{padding:18px 16px;border-right:1px solid var(--line);display:grid;gap:20px;align-content:start}
+.calc .out{padding:18px 16px;display:grid;gap:12px;align-content:start;background:var(--bg)}
+.field > label{display:flex;justify-content:space-between;font-size:15px;color:var(--dim);margin-bottom:8px}
+.field > label b{font:700 13px/1.4 var(--mono);color:var(--gold)}
 .hwlist{display:grid;gap:6px}
-.hw{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;padding:9px 11px;border:1px solid var(--line);border-radius:9px;cursor:pointer;font-size:14px;background:var(--panel-2)}
-.hw input{accent-color:var(--gpu)}
-.hw small{display:block;font:400 11px/1.4 var(--mono);color:var(--dimmer)}
-.stat{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#07090d}
-.stat .k{font:500 11px/1 var(--mono);color:var(--dimmer);text-transform:uppercase;letter-spacing:.1em}
-.stat .v{font:700 26px/1.2 var(--mono);margin-top:6px}
-.stat .n{font-size:13px;color:var(--dim);margin-top:4px}
-.speedo{height:12px;border-radius:6px;background:var(--panel-2);overflow:hidden;margin-top:8px;position:relative}
-.speedo span{position:absolute;inset:0 auto 0 0;background:var(--gpu);border-radius:6px;transition:width .3s}
-.speedo i{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--fg);opacity:.6}
+.hw{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:4px;cursor:pointer;font:600 15px/1.3 var(--disp);font-stretch:104%;background:var(--panel-2);transition:border-color .15s}
+.hw:has(input:checked){border-color:var(--gold);background:#24241b}
+.hw input{accent-color:var(--gold)}
+.hw small{display:block;font:400 10px/1.5 var(--mono);color:var(--dimmer);margin-top:2px}
+.stat{border:1px solid var(--line);border-radius:4px;padding:13px 14px;background:var(--panel)}
+.stat .k{font:500 9.5px/1 var(--mono);color:var(--dimmer);text-transform:uppercase;letter-spacing:.14em}
+.stat .v{font:900 30px/1.15 var(--disp);font-stretch:118%;letter-spacing:-.02em;margin-top:8px}
+.stat .n{font-size:14px;color:var(--dim);margin-top:4px;line-height:1.5}
+.speedo{height:10px;border-radius:2px;background:var(--panel-2);overflow:hidden;margin-top:10px;position:relative}
+.speedo span{position:absolute;inset:0 auto 0 0;background:var(--gpu);border-radius:2px;transition:width .4s}
+.speedo i{position:absolute;top:0;bottom:0;width:2px;background:var(--fg);opacity:.7}
 
-.callout{border-left:3px solid var(--gpu);padding:4px 0 4px 18px;margin:24px 0;color:var(--dim)}
-.callout strong{color:var(--fg)}
-table.sum{width:100%;border-collapse:collapse;margin-top:20px;font-size:15px}
-table.sum th,table.sum td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-table.sum th{font:600 13px/1.2 var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
-table.sum td:first-child{color:var(--dim);white-space:nowrap}
-footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px solid var(--line)}
+.callout{position:relative;border:1.5px solid var(--ink);padding:22px 22px 18px;margin:34px 0 28px;background:var(--paper);color:var(--ink-2);font-size:17px}
+.callout::before{content:"Note";position:absolute;top:-9px;left:16px;background:var(--ink);color:var(--paper);font:600 9.5px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;padding:4px 7px}
+.callout strong{color:var(--ink)}
+
+table.sum{width:100%;border-collapse:collapse;margin-top:12px;font-size:16px;border-top:2px solid var(--ink)}
+table.sum th,table.sum td{text-align:left;padding:14px 12px 14px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+table.sum thead th{font:900 22px/1 var(--disp);font-stretch:122%;letter-spacing:-.02em;border-bottom:1px solid var(--ink);padding-top:16px}
+table.sum td:first-child{font:500 10.5px/1.9 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);white-space:nowrap;width:150px}
+table.sum tbody tr:hover{background:rgba(23,21,15,.035)}
+.takeaway{margin-top:40px;font:800 clamp(24px,3vw,34px)/1.2 var(--disp);font-stretch:112%;letter-spacing:-.015em;max-width:860px;text-wrap:balance}
+.takeaway em{font:italic 400 1em/1 var(--body);letter-spacing:0}
+
+footer{border-top:2px solid var(--ink);padding:14px 0 60px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font:500 10px/1.6 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
 .err3d{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--dim);font-size:14px}
 
+@media (max-width:900px){
+  section > .wrap{grid-template-columns:1fr}
+  section > .wrap > .num{grid-column:1;grid-row:auto;position:static;display:flex;align-items:flex-end;gap:14px;font-size:56px;margin-bottom:18px}
+  section > .wrap > *{grid-column:1}
+  .num::after{border-top:0;margin:0 0 4px;padding:0}
+  .hero-body{grid-template-columns:1fr}
+  .titlerow{grid-template-columns:1fr;gap:0}
+  .specs{margin-bottom:26px}
+}
 @media (max-width:760px){
-  body{font-size:16px}
+  body{font-size:17px}
+  .package{margin:44px 14px 0}
+  .docmeta span:nth-child(2),.die .label span:last-child{display:none}
+  .cores{grid-template-columns:1fr}
   .analogy{grid-template-columns:1fr}
-  .race{grid-template-columns:1fr}
-  .calc{grid-template-columns:1fr}
+  .analogy div+div{padding-left:0;border-left:0;border-top:1px solid var(--rule);margin-top:16px}
+  .race,.calc,.minestats{grid-template-columns:1fr}
   .calc .in{border-right:0;border-bottom:1px solid var(--line)}
   .hrow{grid-template-columns:1fr 1fr}
   .hrow > :first-child{grid-column:1/-1}
-  .lb{grid-template-columns:1fr;gap:4px}
+  .lb{grid-template-columns:1fr auto;gap:6px 12px}
+  .lb .track{grid-column:1/-1;grid-row:2}
   .slider-row{grid-template-columns:1fr auto}
   .slider-row span:first-child{grid-column:1/-1}
-  .minestats{grid-template-columns:1fr}
-  table.sum td:first-child{white-space:normal}
+  table.sum td:first-child{white-space:normal;width:auto}
+  table.sum, table.sum tbody, table.sum tr, table.sum td{display:block}
+  table.sum thead{display:none}
+  table.sum tr{border-bottom:1px solid var(--rule);padding:10px 0}
+  table.sum td{border:0;padding:4px 0}
+  table.sum td:nth-child(2)::before{content:"CPU — ";font-weight:600;color:var(--cpu)}
+  table.sum td:nth-child(3)::before{content:"GPU — ";font-weight:600;color:var(--gpu)}
 }
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js section > .wrap > *{opacity:1;transform:none}
+  .js .lb .fill{transform:none}
+}
 </style>
 <script type="importmap">
 { "imports": {
@@ -184,26 +301,49 @@ footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px sol
 <body>
 
 <header class="hero wrap">
-  <span class="kicker">An interactive explainer</span>
-  <h1><span class="cpu">CPU</span> vs <span class="gpu">GPU</span></h1>
-  <p class="lede">Both are chips made of billions of transistors, and both do arithmetic. <strong>They are built for opposite jobs.</strong> This page shows the difference, then explains why Bitcoin miners and AI chatbots ended up buying graphics cards.</p>
-  <div class="analogy">
-    <div><b class="cpu">A CPU is a few professors</b><span>Each one is brilliant and fast and can handle any problem you throw at them, including tricky ones with lots of "if this, then that".</span></div>
-    <div><b class="gpu">A GPU is a stadium of students</b><span>Each one is slower and can only follow simple instructions, but there are thousands of them and they all work at once.</span></div>
+  <div class="docmeta"><span>Doc. CVG-01</span><span>An interactive explainer</span><span>Rev. B</span></div>
+  <div class="package" aria-hidden="false">
+    <div class="die">
+      <div class="label"><span>Processor family comparison</span><span>Silicon, 2 dies</span></div>
+      <div class="titlerow">
+        <h1><span class="cpu">CPU</span><span class="vs">versus</span><span class="gpu">GPU</span></h1>
+        <dl class="specs">
+          <div class="h"><dt>Parameter</dt><dd class="cpu">CPU</dd><dd class="gpu">GPU</dd></div>
+          <div><dt>Cores</dt><dd>8–24</dd><dd>~16,000</dd></div>
+          <div><dt>Clock</dt><dd>~5 GHz</dd><dd>~2.5 GHz</dd></div>
+          <div><dt>Memory speed</dt><dd>~80 GB/s</dd><dd>~1–3 TB/s</dd></div>
+          <div><dt>Optimised for</dt><dd>latency</dd><dd>throughput</dd></div>
+        </dl>
+      </div>
+      <div class="cores" aria-hidden="true">
+        <div><div class="cpucores"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="cap">8 big cores</div></div>
+        <div><div class="gpucores"></div><div class="cap">Thousands of small ones</div></div>
+      </div>
+    </div>
   </div>
-  <nav class="toc">
-    <a href="#chips">1 · Inside the chips</a>
-    <a href="#race">2 · The paint race</a>
-    <a href="#mining">3 · Crypto mining</a>
-    <a href="#llm">4 · Large language models</a>
-    <a href="#summary">5 · Summary</a>
-  </nav>
+  <div class="hero-body">
+    <div>
+      <p class="lede">Both are chips made of billions of transistors, and both do arithmetic. <strong>They are built for opposite jobs.</strong> This page shows the difference, then explains why Bitcoin miners and AI chatbots ended up buying graphics cards.</p>
+      <div class="analogy">
+        <div><span class="n cpu">×8</span><b>A CPU is a few professors</b><span>Each one is brilliant and fast and can handle any problem you throw at them, including tricky ones with lots of "if this, then that".</span></div>
+        <div><span class="n gpu">×10,000</span><b>A GPU is a stadium of students</b><span>Each one is slower and can only follow simple instructions, but there are thousands of them and they all work at once.</span></div>
+      </div>
+    </div>
+    <nav class="toc">
+      <h4>Contents</h4>
+      <a href="#chips"><span>Inside the chips</span><i></i><b>01</b></a>
+      <a href="#race"><span>The paint race</span><i></i><b>02</b></a>
+      <a href="#mining"><span>Crypto mining</span><i></i><b>03</b></a>
+      <a href="#llm"><span>Large language models</span><i></i><b>04</b></a>
+      <a href="#summary"><span>Summary</span><i></i><b>05</b></a>
+    </nav>
+  </div>
 </header>
 
 <!-- 1 CHIPS -->
 <section id="chips">
   <div class="wrap">
-    <span class="num">01</span>
+    <span class="num" data-label="Architecture">01</span>
     <div class="prose">
       <h2>Inside the chips</h2>
       <p>Every chip has a fixed amount of space, called its <em>die area</em>, to spend on transistors. What makes CPUs and GPUs different is how they spend it.</p>
@@ -213,7 +353,7 @@ footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px sol
 
     <div class="sim" id="chipSim">
       <div class="sim-head">
-        <div class="sim-title">Two dies, built to different plans</div>
+        <div class="sim-title" data-fig="Fig. 1.1">Two dies, built to different plans</div>
         <div class="ctrls">
           <div class="seg" id="chipSeg">
             <button data-v="cpu" class="on">CPU</button>
@@ -248,7 +388,7 @@ footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px sol
 <!-- 2 RACE -->
 <section id="race">
   <div class="wrap">
-    <span class="num">02</span>
+    <span class="num" data-label="Parallelism">02</span>
     <div class="prose">
       <h2>The paint race</h2>
       <p>Let's race them. Each chip has to work out the colour of 2,560 pixels. The <b class="cpu">CPU</b> has 8 fast cores. The <b class="gpu">GPU</b> has 512 cores, but each one takes four times as long per pixel.</p>
@@ -257,7 +397,7 @@ footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px sol
 
     <div class="sim">
       <div class="sim-head">
-        <div class="sim-title">2,560 pixels, two chips</div>
+        <div class="sim-title" data-fig="Fig. 2.1">2,560 pixels, two chips</div>
         <div class="ctrls">
           <button id="raceGo" class="primary">Start race</button>
           <button id="raceReset">Reset</button>
@@ -298,7 +438,7 @@ footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px sol
 <!-- 3 MINING -->
 <section id="mining">
   <div class="wrap">
-    <span class="num">03</span>
+    <span class="num" data-label="Proof of work">03</span>
     <div class="prose">
       <h2>Why crypto mining wanted GPUs</h2>
       <p>Bitcoin and similar cryptocurrencies use <strong>proof of work</strong>. To add a new block of transactions to the shared ledger, a miner has to find a number, called a <em>nonce</em>, that makes the block's <strong>hash</strong> come out below a target. In practice that means the hash has to start with a certain number of zeros.</p>
@@ -307,7 +447,7 @@ footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px sol
 
     <div class="sim">
       <div class="sim-head">
-        <div class="sim-title">Guess a nonce by hand</div>
+        <div class="sim-title" data-fig="Fig. 3.1">Guess a nonce by hand</div>
         <div class="ctrls"><span class="mono" style="font-size:12px;color:var(--dim)">real SHA-256, computed in your browser</span></div>
       </div>
       <div class="hashbox">
@@ -330,7 +470,7 @@ footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px sol
 
     <div class="sim">
       <div class="sim-head">
-        <div class="sim-title">Mining race: 8 CPU lanes vs 1,024 GPU lanes</div>
+        <div class="sim-title" data-fig="Fig. 3.2">Mining race: 8 CPU lanes vs 1,024 GPU lanes</div>
         <div class="ctrls">
           <div class="seg" id="diffSeg">
             <button data-v="2">2 zeros</button>
@@ -366,7 +506,7 @@ footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px sol
 <!-- 4 LLM -->
 <section id="llm">
   <div class="wrap">
-    <span class="num">04</span>
+    <span class="num" data-label="Matrix maths">04</span>
     <div class="prose">
       <h2>Why large language models need GPUs</h2>
       <p>A large language model (LLM) such as ChatGPT or Claude is, underneath, a huge stack of numbers called <strong>weights</strong>, often tens or hundreds of billions of them. Turning your words into the next word of the reply means multiplying lists of numbers by those weights, layer after layer. Almost all of that work is one operation: <strong>matrix multiplication</strong>.</p>
@@ -375,7 +515,7 @@ footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px sol
 
     <div class="sim">
       <div class="sim-head">
-        <div class="sim-title">An 8×8 matrix multiplication = 512 multiply-adds</div>
+        <div class="sim-title" data-fig="Fig. 4.1">An 8×8 matrix multiplication = 512 multiply-adds</div>
         <div class="ctrls">
           <div class="seg" id="mmSeg">
             <button data-v="cpu" class="on">CPU · 4 cores</button>
@@ -403,7 +543,7 @@ footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px sol
 
     <div class="sim">
       <div class="sim-head">
-        <div class="sim-title">How fast could this hardware run this model?</div>
+        <div class="sim-title" data-fig="Fig. 4.2">How fast could this hardware run this model?</div>
       </div>
       <div class="calc">
         <div class="in">
@@ -444,7 +584,7 @@ footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px sol
 <!-- 5 SUMMARY -->
 <section id="summary">
   <div class="wrap">
-    <span class="num">05</span>
+    <span class="num" data-label="Recap">05</span>
     <h2>Summary</h2>
     <table class="sum">
       <thead><tr><th></th><th class="cpu">CPU</th><th class="gpu">GPU</th></tr></thead>
@@ -458,13 +598,11 @@ footer{padding:40px 0 60px;color:var(--dimmer);font-size:14px;border-top:1px sol
         <tr><td>LLMs</td><td>Can run small models slowly; can't realistically train them</td><td>Where nearly all AI training and serving happens</td></tr>
       </tbody>
     </table>
-    <div class="prose" style="margin-top:28px">
-      <p><strong>One sentence to remember:</strong> if a job can be split into millions of identical, independent pieces, a GPU will usually win, and both mining and AI are exactly that kind of job.</p>
-    </div>
+    <p class="takeaway">If a job can be split into millions of identical, independent pieces, a GPU will usually win. <em>Mining and AI are exactly that kind of job.</em></p>
   </div>
 </section>
 
-<footer><div class="wrap">CPU vs GPU · an interactive explainer. All figures are approximate and meant to show orders of magnitude.</div></footer>
+<footer><div class="wrap"><span>CVG-01 · CPU vs GPU</span><span>All figures approximate · orders of magnitude</span><span>End of document</span></div></footer>
 
 <script>
 /* ---------- SHA-256 (synchronous, small and self-contained) ---------- */
@@ -533,8 +671,8 @@ window.seg = seg; window.zeros = zeros; window.fmt = fmt; window.hashHTML = hash
     let zr = 0, zi = 0, k = 0; const max = 60;
     while (k < max && zr * zr + zi * zi < 4) { const t = zr * zr - zi * zi + cr; zi = 2 * zr * zi + ci; zr = t; k++; }
     const i = (y * W + x) * 4, f = k / max;
-    if (k === max) { pix[i] = 12; pix[i + 1] = 14; pix[i + 2] = 30; }
-    else { pix[i] = 40 + 215 * Math.pow(f, .5); pix[i + 1] = 60 + 160 * Math.pow(f, .9); pix[i + 2] = 140 + 115 * (1 - f); }
+    if (k === max) { pix[i] = 14; pix[i + 1] = 14; pix[i + 2] = 11; }
+    else { pix[i] = 66 + 189 * Math.pow(f, .45); pix[i + 1] = 38 + 190 * Math.pow(f, .85); pix[i + 2] = 26 + 120 * Math.pow(f, 1.6); }
     pix[i + 3] = 255;
   }
   let p = 1, t = 0, running = false, last = 0, rate = 1;
@@ -560,7 +698,7 @@ window.seg = seg; window.zeros = zeros; window.fmt = fmt; window.hashHTML = hash
         const j = i * 4;
         if (i < st.done) { im.data[j] = pix[j]; im.data[j + 1] = pix[j + 1]; im.data[j + 2] = pix[j + 2]; im.data[j + 3] = 255; }
         else if (running && i < st.done + st.busy && t < pl.total) { im.data[j] = 255; im.data[j + 1] = 255; im.data[j + 2] = 255; im.data[j + 3] = 255; }
-        else { im.data[j] = 20; im.data[j + 1] = 24; im.data[j + 2] = 34; im.data[j + 3] = 255; }
+        else { im.data[j] = 26; im.data[j + 1] = 27; im.data[j + 2] = 21; im.data[j + 3] = 255; }
       }
       ctx.putImageData(im, 0, 0);
       // workers
@@ -571,7 +709,7 @@ window.seg = seg; window.zeros = zeros; window.fmt = fmt; window.hashHTML = hash
       const busy = (running || t > 0) && t < pl.total ? st.busy : 0;
       for (let i = 0; i < n; i++) {
         const x = (i % cols + .5) * cw, y = (Math.floor(i / cols) + .5) * ch;
-        g.fillStyle = i < busy ? l.color : '#2a3242';
+        g.fillStyle = i < busy ? l.color : '#34352d';
         g.beginPath(); g.arc(x, y, r, 0, 7); g.fill();
       }
       const shown = Math.min(t, pl.total);
@@ -621,10 +759,15 @@ window.seg = seg; window.zeros = zeros; window.fmt = fmt; window.hashHTML = hash
 /* ---------- Log bars ---------- */
 function logBars(el, rows, lo, hi) {
   el.innerHTML = rows.map(r => {
-    const w = Math.max(3, (Math.log10(r.v) - lo) / (hi - lo) * 100);
-    return `<div class="lb"><div class="name">${r.name}</div><div class="track"><div class="fill" style="width:${w}%;background:${r.c}"></div><div class="val">${r.label}</div></div></div>`;
+    const w = Math.max(2, (Math.log10(r.v) - lo) / (hi - lo) * 100);
+    return `<div class="lb"><div class="name">${r.name}</div><div class="track"><div class="fill" style="width:${w}%;background:${r.c}"></div></div><div class="val">${r.label}</div></div>`;
   }).join('');
 }
+/* reveal sections as they scroll into view */
+(() => {
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.04 });
+  document.querySelectorAll('section').forEach(sec => io.observe(sec));
+})();
 logBars(hashBars, [
   { name: 'Desktop CPU', v: 5e7, label: '~50 million / s', c: 'var(--cpu)' },
   { name: 'Gaming GPU', v: 3e9, label: '~3 billion / s', c: 'var(--gpu)' },
@@ -684,7 +827,7 @@ logBars(trainBars, [
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-const C = { cpu: 0xffa94d, gpu: 0x3ee6a8, ctrl: 0x6ea8ff, cache: 0xb78cff, gold: 0xffd84a, sub: 0x1a2030, pink: 0xff7fae };
+const C = { cpu: 0xffa94d, gpu: 0x3ee6a8, ctrl: 0x6ea8ff, cache: 0xb78cff, gold: 0xffd84a, sub: 0x1e1f19, pink: 0xff7fae };
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* A small scene helper: one renderer per stage, rendered only while visible. */
@@ -694,7 +837,7 @@ function makeScene(stageId, camPos, target = [0, 0, 0]) {
   try { renderer = new THREE.WebGLRenderer({ antialias: true }); }
   catch (e) { stage.querySelector('.err3d').style.display = 'flex'; return null; }
   renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
-  renderer.setClearColor(0x07090d, 1);
+  renderer.setClearColor(0x0b0c09, 1);
   stage.prepend(renderer.domElement);
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
@@ -704,8 +847,9 @@ function makeScene(stageId, camPos, target = [0, 0, 0]) {
   controls.enableZoom = false; controls.enablePan = false; controls.enableDamping = true;
   controls.autoRotate = !reduced; controls.autoRotateSpeed = 0.6;
   renderer.domElement.addEventListener('pointerdown', () => controls.autoRotate = false);
-  // OrbitControls blocks page scrolling on touch; let vertical swipes scroll the page instead
-  renderer.domElement.style.touchAction = 'pan-y';
+  // A touch or drag inside the 3D area belongs to the 3D view: never let it scroll the page
+  renderer.domElement.style.touchAction = 'none';
+  renderer.domElement.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
   scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x1a1410, 1.4));
   const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(6, 12, 8); scene.add(sun);
   const fill = new THREE.DirectionalLight(0x88aaff, .5); fill.position.set(-8, 4, -6); scene.add(fill);
@@ -748,7 +892,7 @@ const ID_Q = new THREE.Quaternion(), tmpM = new THREE.Matrix4(), tmpC = new THRE
   const SUB = 0.25;
   function substrate(g) {
     const b = new THREE.Mesh(box(10.4, SUB, 10.4), mat(C.sub, { roughness: .9 })); b.position.y = -SUB / 2; g.add(b);
-    const edge = new THREE.LineSegments(new THREE.EdgesGeometry(box(10.4, SUB, 10.4)), new THREE.LineBasicMaterial({ color: 0x2c3548 }));
+    const edge = new THREE.LineSegments(new THREE.EdgesGeometry(box(10.4, SUB, 10.4)), new THREE.LineBasicMaterial({ color: 0x3a3b31 }));
     edge.position.y = -SUB / 2; g.add(edge);
   }
   // CPU: 8 big cores (2 rows × 4), shared L3 strip in the middle
@@ -757,7 +901,7 @@ const ID_Q = new THREE.Quaternion(), tmpM = new THREE.Matrix4(), tmpC = new THRE
   block(cpu, 9.6, .22, 1.6, 0, 0, C.cache); // L3
   for (let r = 0; r < 2; r++) for (let c = 0; c < 4; c++) {
     const x = -3.6 + c * 2.4, z = r ? 2.95 : -2.95, flip = r ? 1 : -1;
-    block(cpu, 2.2, .14, 3.5, x, z, 0x232a3a);                           // core floor
+    block(cpu, 2.2, .14, 3.5, x, z, 0x2a2b23);                           // core floor
     block(cpu, 2.0, .38, 1.5, x, z - flip * .85, C.ctrl, .14);           // control / branch prediction / scheduling
     block(cpu, 2.0, .26, 1.0, x, z + flip * 1.15, C.cache, .14);         // L1 / L2
     for (let a = 0; a < 3; a++) cpuAlus.push(block(cpu, .5, .5, .6, x - .65 + a * .65, z + flip * .2, C.cpu, .14));
@@ -772,7 +916,7 @@ const ID_Q = new THREE.Quaternion(), tmpM = new THREE.Matrix4(), tmpC = new THRE
   let n = 0;
   for (let i = 0; i < SMx; i++) for (let j = 0; j < SMz; j++) {
     const x = -4.2 + i * 1.2, zc = (j < 3 ? -4.05 + j * 1.25 : .95 + (j - 3) * 1.25) + .55;
-    block(gpu, 1.1, .1, 1.15, x, zc, 0x232a3a);
+    block(gpu, 1.1, .1, 1.15, x, zc, 0x2a2b23);
     block(gpu, 1.0, .16, .14, x, zc - .48, C.ctrl, .1);  // one small shared control unit
     block(gpu, 1.0, .12, .14, x, zc + .48, C.cache, .1); // small shared cache
     for (let a = 0; a < ax; a++) for (let b = 0; b < az; b++) {
@@ -833,7 +977,7 @@ const ID_Q = new THREE.Quaternion(), tmpM = new THREE.Matrix4(), tmpC = new THRE
   const floor = (w, d, x, col) => { const m = new THREE.Mesh(box(w, .12, d), mat(col, { roughness: .95 })); m.position.set(x, -.06, 0); s.scene.add(m); };
   floor(3.4, 6.4, -5.73, 0x2a1f12); floor(9.2, 9.2, 2.6, 0x0f2a22);
   s.controls.target.set(-1, 0, 0);
-  const off = new THREE.Color(0x2a3242);
+  const off = new THREE.Color(0x34352d);
   const lanes = {
     cpu: { mesh: cpuMesh, pos: cpuPos, n: CPU_N, size: 1, tries: 0, lvl: new Float32Array(CPU_N), win: -1, col: new THREE.Color(C.cpu), tEl: cpuTries, lEl: cpuLast, best: 0 },
     gpu: { mesh: gpuMesh, pos: gpuPos, n: GPU_N, size: .2, tries: 0, lvl: new Float32Array(GPU_N), win: -1, col: new THREE.Color(C.gpu), tEl: gpuTries, lEl: gpuLast, best: 0 },
@@ -904,7 +1048,7 @@ const ID_Q = new THREE.Quaternion(), tmpM = new THREE.Matrix4(), tmpC = new THRE
   for (let i = 0; i < M; i++) for (let j = 0; j < M; j++) put(Cm, i * M + j, new THREE.Vector3((j - half) * S, -(i - half) * S, PL), r0);
   s.scene.add(vox, A, B, Cm);
   const colA = new THREE.Color(C.pink), colB = new THREE.Color(C.ctrl), colC = new THREE.Color(C.gpu), white = new THREE.Color(0xffffff);
-  const voxOff = new THREE.Color(0x1d2433), voxDone = new THREE.Color(0x3b4a5e), dark = new THREE.Color(0x151a24);
+  const voxOff = new THREE.Color(0x26271f), voxDone = new THREE.Color(0x4d4c41), dark = new THREE.Color(0x1b1c16);
   const done = new Uint8Array(M * M * M), active = new Float32Array(M * M * M);
   const aHot = new Float32Array(M * M), bHot = new Float32Array(M * M), cProg = new Float32Array(M * M);
   let mode = 'cpu', running = false, step = 0, acc = 0, macs = 0, ticks = 0;
