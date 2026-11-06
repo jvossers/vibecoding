@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flow &amp; Return — how our heating works</title>
+<meta name="description" content="An interactive cutaway of a UK house heating system: boiler, hot water cylinder, two heating zones and every radiator. Turn valves and thermostats and watch the water flow.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4efe6; --bg-2:#ebe4d7; --card:#fffdf8; --line:#ddd3c2; --line-2:#c9bca6;
+  --ink:#1f1a14; --dim:#6b6052; --dimmer:#998d7c;
+  --accent:#d9480f; --cool:#2563eb; --ok:#15803d; --warn:#b45309;
+  --sky-1:#cfe3f2; --sky-2:#eef4f7; --wall:#fbf7ef; --wall-line:#b7a68c; --slab:#c7b79e;
+  --roof:#7c4a35; --loft:#efe6d6; --ground:#7aa35a; --pipe-case:#3a3128;
+  --font-d:"Fraunces",Georgia,serif; --font-b:"IBM Plex Sans",-apple-system,"Segoe UI",sans-serif; --font-m:"IBM Plex Mono",ui-monospace,monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16130f; --bg-2:#1e1a15; --card:#221d17; --line:#3a3229; --line-2:#4d4336;
+    --ink:#f3ece0; --dim:#b3a692; --dimmer:#857a69;
+    --accent:#ff7a3d; --cool:#6ea0ff; --ok:#4ade80; --warn:#fbbf24;
+    --sky-1:#1b2733; --sky-2:#232b31; --wall:#2a241d; --wall-line:#5b4d3b; --slab:#4a3f31;
+    --roof:#5a3527; --loft:#231e18; --ground:#3c5a2b; --pipe-case:#0d0b09;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16130f; --bg-2:#1e1a15; --card:#221d17; --line:#3a3229; --line-2:#4d4336;
+  --ink:#f3ece0; --dim:#b3a692; --dimmer:#857a69;
+  --accent:#ff7a3d; --cool:#6ea0ff; --ok:#4ade80; --warn:#fbbf24;
+  --sky-1:#1b2733; --sky-2:#232b31; --wall:#2a241d; --wall-line:#5b4d3b; --slab:#4a3f31;
+  --roof:#5a3527; --loft:#231e18; --ground:#3c5a2b; --pipe-case:#0d0b09;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-b);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1440px;margin:0 auto;padding:20px 16px 60px}
+header.hero{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;margin:6px 0 16px}
+header.hero h1{font-family:var(--font-d);font-weight:800;font-size:clamp(28px,4.4vw,46px);line-height:1.02;margin:0;letter-spacing:-.01em}
+header.hero h1 em{font-style:normal;color:var(--accent)}
+header.hero p{margin:6px 0 0;color:var(--dim);max-width:62ch}
+.kicker{font-family:var(--font-m);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+@media (max-width:1020px){.layout{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
+.stage{padding:8px;position:relative}
+.stage svg{display:block;width:100%;height:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
+.pan-hint{display:none;margin:6px 4px 0}
+@media (max-width:700px){.stage svg{width:820px;max-width:none}.pan-hint{display:block}.legend span:last-child{display:none}}
+.now{margin-top:12px;padding:12px 14px}
+.now h3{margin:0 0 6px;font-family:var(--font-m);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:500}
+.now ol{margin:0;padding-left:20px}
+.now li{margin:3px 0}
+.now li b{font-weight:600}
+.now .hot{color:var(--accent);font-weight:600}
+.now .cold{color:var(--cool);font-weight:600}
+.panel{display:flex;flex-direction:column;gap:12px;position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;padding-right:2px}
+@media (max-width:1020px){.panel{position:static;max-height:none;overflow:visible}}
+.sec{padding:12px 14px}
+.sec h2{margin:0 0 10px;font-family:var(--font-m);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:500;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0}
+.row label,.row .lbl{font-size:14px}
+.sub{font-size:12.5px;color:var(--dim)}
+.mono{font-family:var(--font-m)}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:999px;overflow:hidden;flex-shrink:0}
+.seg button{all:unset;cursor:pointer;padding:5px 11px;font-size:13px;font-family:var(--font-m);color:var(--dim)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--card)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line-2);border-radius:10px;padding:7px 11px;font-size:13.5px;background:var(--card);color:var(--ink);transition:background .15s}
+.btn:hover{background:var(--bg-2)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.stat{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0}
+.stat .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.stat .name{font-weight:600;font-size:14px}
+.stat .where{font-size:12px;color:var(--dim)}
+.stepper{display:flex;align-items:center;gap:8px;margin-top:6px}
+.stepper button{all:unset;cursor:pointer;width:34px;height:34px;border-radius:50%;border:1px solid var(--line-2);display:grid;place-items:center;font-size:20px;line-height:1}
+.stepper button:hover{background:var(--bg-2)}
+.stepper button:focus-visible{outline:2px solid var(--accent)}
+.stepper .set{font-family:var(--font-m);font-size:24px;font-weight:600;min-width:84px;text-align:center}
+.pill{font-family:var(--font-m);font-size:11.5px;padding:2px 8px;border-radius:999px;border:1px solid var(--line-2);color:var(--dim);white-space:nowrap}
+.pill.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.pill.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.rlist{display:flex;flex-direction:column;gap:2px}
+.rlist .zone{font-family:var(--font-m);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dimmer);margin:10px 0 2px}
+.ritem{display:grid;grid-template-columns:12px 1fr 52px 40px;align-items:center;gap:8px;padding:5px 6px;border-radius:8px;cursor:pointer;font-size:13.5px}
+.ritem:hover{background:var(--bg-2)}
+.ritem.sel{background:var(--bg-2);outline:1px solid var(--line-2)}
+.ritem .sw{width:12px;height:12px;border-radius:3px}
+.ritem .t{font-family:var(--font-m);font-size:12.5px;text-align:right;color:var(--dim)}
+.tog{all:unset;cursor:pointer;width:36px;height:20px;border-radius:999px;background:var(--line-2);position:relative;transition:background .15s}
+.tog::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.tog[aria-checked="true"]{background:var(--ok)}
+.tog[aria-checked="true"]::after{left:18px}
+.tog:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.selcard{border:1px solid var(--accent);border-radius:12px;padding:10px 12px;margin-bottom:6px}
+.selcard .readout{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin:8px 0 2px}
+.selcard .readout div{font-size:12px;color:var(--dim)}
+.selcard .readout b{display:block;font-family:var(--font-m);font-size:16px;color:var(--ink);font-weight:600}
+.scen{display:flex;flex-wrap:wrap;gap:6px}
+.legend{display:flex;align-items:center;gap:8px;font-family:var(--font-m);font-size:11.5px;color:var(--dim);margin:6px 4px 0}
+.legend .bar{flex:1;height:8px;border-radius:4px;max-width:260px}
+.clock{font-family:var(--font-m);font-size:26px;font-weight:600}
+/* SVG */
+svg text{font-family:var(--font-b)}
+.s-room{fill:var(--wall);stroke:none}
+.s-wall{stroke:var(--wall-line);stroke-width:3}
+.s-slab{fill:var(--slab)}
+.s-roof{fill:var(--roof)}
+.s-loft{fill:var(--loft)}
+.s-lbl{font-size:15px;font-weight:600;fill:var(--ink)}
+.s-small{font-size:11.5px;fill:var(--dim);font-family:var(--font-m)}
+.s-temp{font-size:13px;fill:var(--dim);font-family:var(--font-m)}
+.s-tag{font-size:11px;font-family:var(--font-m);fill:var(--ink);font-weight:500}
+.case{stroke:var(--pipe-case);fill:none;stroke-linecap:round;stroke-linejoin:round}
+.core{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.dash{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:2 13}
+.rad{cursor:pointer}
+.rad .body{stroke:rgba(0,0,0,.35);stroke-width:1}
+.rad.sel .body{stroke:var(--accent);stroke-width:3}
+.rad .hit{fill:transparent}
+.trv{cursor:pointer}
+.trv:focus{outline:none}
+.trv:focus-visible circle.ring{stroke:var(--accent);stroke-width:3}
+.shimmer path{fill:none;stroke:#f97316;stroke-width:2;stroke-linecap:round;animation:rise 2.4s linear infinite}
+.shimmer path:nth-child(2){animation-delay:-.8s}
+.shimmer path:nth-child(3){animation-delay:-1.6s}
+@keyframes rise{0%{transform:translateY(6px);opacity:0}30%{opacity:1}100%{transform:translateY(-18px);opacity:0}}
+.flame{transform-origin:center bottom;transform-box:fill-box;animation:flick .35s ease-in-out infinite alternate}
+@keyframes flick{from{transform:scaleY(.85) scaleX(1.05)}to{transform:scaleY(1.1) scaleX(.95)}}
+.domestic{display:none}
+.mode-regular .only-regular{display:inline}
+.mode-system .only-system{display:inline}
+.only-regular,.only-system{display:none}
+@media (prefers-reduced-motion: reduce){.shimmer path,.flame{animation:none}}
+/* article */
+article{margin-top:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+article section{padding:18px 20px}
+article h2{font-family:var(--font-d);font-weight:800;font-size:22px;margin:0 0 8px;line-height:1.15}
+article p,article li{color:var(--ink)}
+article p{margin:8px 0}
+article ul,article ol{padding-left:20px;margin:8px 0}
+article li{margin:4px 0}
+article .note{font-size:13.5px;color:var(--dim)}
+.wide{grid-column:1/-1}
+.steps{counter-reset:s;list-style:none;padding:0 !important;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.steps li{counter-increment:s;border:1px solid var(--line);border-radius:12px;padding:12px;margin:0 !important;background:var(--bg)}
+.steps li::before{content:counter(s);display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-family:var(--font-m);font-size:13px;margin-right:6px;font-weight:600}
+footer{margin-top:28px;color:var(--dimmer);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <div class="kicker">Our house · interactive</div>
+      <h1>Flow <em>&amp;</em> Return</h1>
+      <p>A live cutaway of the heating. Hot water leaves the boiler, goes round the radiators and the hot water cylinder, and comes back cooler. Tap a radiator to work its valve, and turn the thermostats up or down to see what happens.</p>
+    </div>
+    <div class="seg" role="group" aria-label="Boiler type">
+      <button id="typeReg" aria-pressed="true" title="Tanks in the loft, open-vented">Regular boiler</button>
+      <button id="typeSys" aria-pressed="false" title="Sealed system with a pressure gauge">System boiler</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div>
+      <div class="card stage" id="stage">
+        <div class="scroller"><svg id="svg" viewBox="0 0 1200 980" role="img" aria-label="Cutaway of a three-storey house showing the boiler, pipes, hot water cylinder and radiators"></svg></div>
+        <p class="pan-hint sub">Swipe sideways to see the whole house.</p>
+        <div class="legend"><span>cold</span><span class="bar" id="legendBar"></span><span>hot</span><span style="margin-left:auto">pipe colour = water temperature · moving dots = water flowing</span></div>
+      </div>
+      <div class="card now" aria-live="polite">
+        <h3>What's happening right now</h3>
+        <ol id="narr"></ol>
+      </div>
+    </div>
+
+    <aside class="panel">
+      <div class="card sec">
+        <h2>Clock <span class="pill" id="speedPill">1 s = 5 min</span></h2>
+        <div class="row">
+          <div class="clock" id="clock">06:30</div>
+          <div style="display:flex;gap:6px">
+            <button class="btn" id="pauseBtn" aria-label="Pause">❚❚</button>
+            <div class="seg" role="group" aria-label="Speed">
+              <button data-speed="60" aria-pressed="false">1×</button>
+              <button data-speed="300" aria-pressed="true">5×</button>
+              <button data-speed="900" aria-pressed="false">15×</button>
+            </div>
+          </div>
+        </div>
+        <div class="row"><label for="outT">Outside</label><span class="mono" id="outTv">5 °C</span></div>
+        <input type="range" id="outT" min="-5" max="18" step="1" value="5" aria-label="Outside temperature">
+      </div>
+
+      <div class="card sec">
+        <h2>Programmer</h2>
+        <div class="row"><span class="lbl">Central heating</span><button class="tog" role="switch" id="chTog" aria-checked="true" aria-label="Central heating on"></button></div>
+        <div class="row"><span class="lbl">Hot water</span><button class="tog" role="switch" id="hwTog" aria-checked="true" aria-label="Hot water on"></button></div>
+        <p class="sub" style="margin:4px 0 0">The timer on the wall (or in the boiler) decides <i>when</i> each one is allowed to run. The thermostats then decide <i>whether</i> it needs to.</p>
+      </div>
+
+      <div class="card sec">
+        <h2>Thermostats · first floor</h2>
+        <div class="stat" id="stat1">
+          <div class="top"><span class="name">Thermostat 1</span><span class="pill" id="s1pill">idle</span></div>
+          <div class="where">In the living room · controls the 4 living-room radiators (zone 1)</div>
+          <div class="stepper"><button aria-label="Thermostat 1 down" data-stat="1" data-d="-0.5">−</button><span class="set" id="s1set">21.0°</span><button aria-label="Thermostat 1 up" data-stat="1" data-d="0.5">+</button><span class="sub">room now <b class="mono" id="s1now">–</b></span></div>
+        </div>
+        <div class="stat" id="stat2">
+          <div class="top"><span class="name">Thermostat 2</span><span class="pill" id="s2pill">idle</span></div>
+          <div class="where">On the landing · controls the other 7 radiators on all three floors (zone 2)</div>
+          <div class="stepper"><button aria-label="Thermostat 2 down" data-stat="2" data-d="-0.5">−</button><span class="set" id="s2set">19.0°</span><button aria-label="Thermostat 2 up" data-stat="2" data-d="0.5">+</button><span class="sub">landing now <b class="mono" id="s2now">–</b></span></div>
+        </div>
+      </div>
+
+      <div class="card sec">
+        <h2>Radiators <span class="sub" style="text-transform:none;letter-spacing:0">tap one to adjust</span></h2>
+        <div id="selPanel"></div>
+        <div class="rlist" id="rlist"></div>
+      </div>
+
+      <div class="card sec">
+        <h2>Boiler &amp; cylinder</h2>
+        <div class="row"><label for="flowSet">Boiler flow temperature</label><span class="mono" id="flowSetV">70 °C</span></div>
+        <input type="range" id="flowSet" min="45" max="80" step="1" value="70">
+        <div class="row"><label for="cylSet">Cylinder thermostat</label><span class="mono" id="cylSetV">60 °C</span></div>
+        <input type="range" id="cylSet" min="45" max="65" step="1" value="60">
+        <div class="row" style="margin-top:12px"><button class="btn" id="bathBtn">🛁 Run a bath</button><span class="sub" id="bathInfo"></span></div>
+      </div>
+
+      <div class="card sec">
+        <h2>Try this</h2>
+        <div class="scen">
+          <button class="btn" data-scen="cold">Cold morning</button>
+          <button class="btn" data-scen="closeLR">Close all living-room radiators</button>
+          <button class="btn" data-scen="landing">Warm landing, cold bedrooms</button>
+          <button class="btn" data-scen="summer">Summer: hot water only</button>
+          <button class="btn" data-scen="low">Low flow temp (condensing)</button>
+        </div>
+        <p class="sub" id="scenNote" style="margin:8px 0 0"></p>
+      </div>
+    </aside>
+  </div>
+
+  <article>
+    <section class="card wide">
+      <h2>Two separate kinds of water</h2>
+      <p>The single most useful thing to know: there are <b>two water circuits</b> in the house, and they never mix.</p>
+      <ul>
+        <li><b>The heating water (the “primary” circuit).</b> A closed loop: the same water goes round and round, boiler → radiators and cylinder coil → back to the boiler. It's usually dark and has inhibitor in it. It's drawn as the thick pipes here.</li>
+        <li><b>The water you use at the taps (“domestic” hot water).</b> It sits in the cylinder upstairs. The boiler never heats it directly. Instead, hot heating water runs through a copper <b>coil</b> inside the cylinder and warms it, like a kettle element. It's drawn as the thin pipes.</li>
+      </ul>
+      <p>That's why your boiler isn't a combi. A combi heats tap water instantly and has no cylinder. Because you have a tank on the first floor, you have either a <b>regular</b> or a <b>system</b> boiler. Use the switch at the top to see each one:</p>
+      <ul>
+        <li><b>Regular (heat-only, “conventional”).</b> There's a big cold-water tank in the loft that feeds the cylinder, and a small <i>feed &amp; expansion</i> tank that keeps the heating circuit topped up. The pump and valves sit in the airing cupboard. The boiler has no pressure gauge.</li>
+        <li><b>System boiler.</b> It's sealed: there are no loft tanks, the pump and expansion vessel are inside the boiler, and there's a <b>pressure gauge</b> on the front (normally 1 to 1.5 bar when cold). The cylinder is fed straight from the mains.</li>
+      </ul>
+      <p class="note">Quick check: is there a pressure gauge on the boiler? Then it's a system boiler. Are there tanks in the loft? Then it's a regular one. Either way, the heating works the same way.</p>
+    </section>
+
+    <section class="card wide">
+      <h2>What happens when a room gets cold</h2>
+      <ol class="steps">
+        <li><b>The programmer allows it.</b> The heating channel is on for this time of day.</li>
+        <li><b>The thermostat calls.</b> It only measures the air <i>where it's mounted</i>. When that air drops below the setting, it switches on.</li>
+        <li><b>The zone valve opens.</b> A motorised valve in the airing cupboard opens the pipe to that zone. This takes 10 to 20 seconds. When it's fully open, a small switch inside it tells the boiler and pump to start.</li>
+        <li><b>The boiler fires and the pump pushes.</b> About 15 to 20 litres a minute leave the boiler on the <span style="color:#dc2626;font-weight:600">flow</span> pipe. The water splits between every open radiator in the zone.</li>
+        <li><b>It comes back cooler.</b> Each radiator gives off heat, and the water returns through the <span style="color:#2563eb;font-weight:600">return</span> pipe 10 to 20 °C cooler, to be heated again.</li>
+        <li><b>The room warms and the thermostat clicks off.</b> The zone valve closes. If no other zone or the cylinder needs heat, the boiler and pump stop.</li>
+      </ol>
+      <p class="note">Three motorised valves, one per zone plus one for hot water, is called an <b>S-plan</b>. With two heating thermostats and a cylinder, that's almost certainly what you have. If you only find one valve with three pipes, it's a Y-plan, but that can't give you two separate heating zones. You may have one of those and a second 2-port valve.</p>
+    </section>
+
+    <section class="card">
+      <h2>The valves on each radiator</h2>
+      <p>Every radiator has a valve at each end:</p>
+      <ul>
+        <li><b>The one you turn.</b> Either a plain wheel (on/off) or a <b>TRV</b> (thermostatic radiator valve) numbered *, 1 to 5. A TRV has its own little thermostat. It closes when <i>that room</i> is warm enough. Roughly, 3 means about 20 °C.</li>
+        <li><b>The lockshield.</b> A plastic cap on the other end. The installer sets it once to <i>balance</i> the system, so that radiators near the boiler don't take all the flow.</li>
+      </ul>
+      <p>Close one radiator in the simulator and watch the others in that zone: they get a bit more flow. Close <i>all</i> of them while the thermostat is still calling, and the water has nowhere to go but the <b>bypass</b> valve. The boiler then heats up fast and switches itself off and on (“cycling”).</p>
+      <p class="note">Don't put a TRV on the radiators in the room with the wall thermostat. If the TRV closes first, the thermostat never warms up and keeps the boiler running for nothing.</p>
+    </section>
+
+    <section class="card">
+      <h2>Why one zone can feel wrong</h2>
+      <p>Thermostat 2 is on the landing, but it controls radiators on three floors. Heat rises up the stairwell, so the landing is often warm before the bedrooms are. When the landing hits its setting, <b>all</b> zone-2 radiators turn off, even if the bedroom upstairs is still cold. Try “Warm landing, cold bedrooms”.</p>
+      <p>Common fixes:</p>
+      <ul>
+        <li>Set Thermostat 2 a little higher, and put TRVs on the bedroom radiators so each room stops at its own temperature.</li>
+        <li>Turn the landing radiator down, so the landing doesn't warm up first.</li>
+        <li>Balance the lockshields, so the far radiators (top floor) get their share.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Radiator cold? A quick checklist</h2>
+      <ul>
+        <li><b>Whole radiator cold:</b> its valve is shut, a TRV pin is stuck, or that zone isn't calling (check its thermostat).</li>
+        <li><b>Cold at the top, warm at the bottom:</b> there's air in it. Bleed it with a radiator key. On a system boiler, top the pressure back up afterwards.</li>
+        <li><b>Warm at the top, cold at the bottom:</b> sludge has built up. It usually needs a power flush.</li>
+        <li><b>Far radiators lukewarm, near ones hot:</b> the system needs balancing at the lockshields.</li>
+        <li><b>Nothing at all:</b> check the programmer, then the boiler display for a fault code. On a system boiler, check the pressure is above 1 bar.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Flow temperature and your gas bill</h2>
+      <p>Modern boilers are <b>condensing</b> boilers. They recover extra heat from the exhaust, but only when the water coming <i>back</i> is below about 55 °C. With the flow at 70 to 80 °C, the return is often too hot, and you lose around 10% efficiency.</p>
+      <p>Turning the flow down to about 55 °C means the radiators run a bit cooler and take a little longer to heat the room, but the boiler condenses most of the time. Watch the boiler's “condensing” tag in the diagram while you move the slider.</p>
+    </section>
+  </article>
+
+  <footer>A simplified model. Real houses have more pipes, different layouts and lag. The radiator layout is a best guess, so treat the numbers as illustrative.</footer>
+</div>
+
+<script>
+(() => {
+'use strict';
+const NS = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('svg');
+const CP = 4186;
+
+/* ───────── colour scales ───────── */
+const PIPE_STOPS = [[10,[70,110,210]],[25,[56,170,230]],[40,[234,190,40]],[55,[245,120,30]],[75,[214,40,40]]];
+const ROOM_STOPS = [[12,[110,160,240]],[18,[235,232,226]],[24,[250,150,70]]];
+function scale(stops, t){
+  if (t <= stops[0][0]) return stops[0][1];
+  for (let i = 1; i < stops.length; i++){
+    if (t <= stops[i][0]){
+      const [a,ca] = stops[i-1], [b,cb] = stops[i]; const f = (t-a)/(b-a);
+      return ca.map((c,j)=>Math.round(c + (cb[j]-c)*f));
+    }
+  }
+  return stops[stops.length-1][1];
+}
+const rgb = c => `rgb(${c[0]},${c[1]},${c[2]})`;
+const pipeColor = t => rgb(scale(PIPE_STOPS,t));
+const roomColor = t => rgb(scale(ROOM_STOPS,t));
+document.getElementById('legendBar').style.background =
+  `linear-gradient(90deg,${[10,25,40,55,75].map(pipeColor).join(',')})`;
+
+/* ───────── house geometry ───────── */
+const FL = {2:{top:150,slab:400},1:{top:410,slab:660},0:{top:670,slab:920}};
+const PIPE_Y = f => ({F:FL[f].slab-22, R:FL[f].slab-12});
+const ROOMS = {
+  bed1:   {name:'Bedroom 1',  floor:2,x0:60, x1:420, UA:55, C:6e5, lx:214, ly:206},
+  bath:   {name:'Bathroom',   floor:2,x0:420,x1:700, UA:40, C:4e5, lx:640, ly:206, anchor:'end'},
+  bed2:   {name:'Bedroom 2',  floor:2,x0:700,x1:1140,UA:60, C:7e5},
+  cup:    {name:'Airing cupboard',floor:1,x0:60,x1:300,UA:8,C:1.5e5, nolabel:true},
+  landing:{name:'Landing',    floor:1,x0:300,x1:470, UA:30, C:3e5, lx:332, ly:436},
+  living: {name:'Living room',floor:1,x0:470,x1:1140,UA:150,C:1.6e6},
+  kitchen:{name:'Kitchen',    floor:0,x0:60, x1:480, UA:60, C:7e5, lx:84, ly:858},
+  hall:   {name:'Hall',       floor:0,x0:480,x1:700, UA:45, C:4e5},
+  dining: {name:'Dining room',floor:0,x0:700,x1:1140,UA:70, C:8e5},
+};
+const NEIGH = [['kitchen','hall'],['hall','dining'],['hall','landing'],['kitchen','cup'],['cup','landing'],['landing','living'],['landing','bed1'],['living','bed2'],['living','bath'],['bed1','bath'],['bath','bed2'],['dining','living'],['kitchen','landing']];
+const RADS = [
+  {id:'lr1',name:'Living room 1',room:'living',zone:1,x:500,w:110,rated:1400},
+  {id:'lr2',name:'Living room 2',room:'living',zone:1,x:640,w:110,rated:1400},
+  {id:'lr3',name:'Living room 3',room:'living',zone:1,x:790,w:110,rated:1400},
+  {id:'lr4',name:'Living room 4',room:'living',zone:1,x:940,w:110,rated:1400},
+  {id:'kitchen',name:'Kitchen',room:'kitchen',zone:2,x:360,w:100,rated:1200},
+  {id:'hall',name:'Hall',room:'hall',zone:2,x:540,w:90,rated:1000},
+  {id:'dining',name:'Dining room',room:'dining',zone:2,x:820,w:130,rated:1600},
+  {id:'landing',name:'Landing',room:'landing',zone:2,x:360,w:80,h:55,bottom:575,rated:800},
+  {id:'bed1',name:'Bedroom 1',room:'bed1',zone:2,x:140,w:110,rated:1100},
+  {id:'bath',name:'Bathroom towel rail',room:'bath',zone:2,x:610,w:50,h:84,rated:500,towel:true},
+  {id:'bed2',name:'Bedroom 2',room:'bed2',zone:2,x:880,w:120,rated:1300},
+];
+const RAD = {};
+RADS.forEach(r=>{
+  const f = ROOMS[r.room].floor; r.floor = f;
+  r.h = r.h || 62; r.bottom = r.bottom || FL[f].slab-34; r.top = r.bottom - r.h;
+  r.fx = r.x + 10; r.rx = r.x + r.w - 10; RAD[r.id] = r;
+});
+const Z1 = RADS.filter(r=>r.zone===1).map(r=>r.id);
+const Z2 = RADS.filter(r=>r.zone===2).map(r=>r.id);
+const GROUND = ['kitchen','hall','dining'], SECOND = ['bed1','bath','bed2'];
+const ALLRADS = RADS.map(r=>r.id);
+
+/* ───────── pipe network (each segment knows what it feeds) ───────── */
+const SEGS = [];
+const seg = (kind, pts, serves, w) => SEGS.push({kind, pts, serves, w: w || 7});
+// primary
+seg('flow',[[255,700],[255,590]],[...ALLRADS,'hw','bypass']);
+seg('flow',[[255,590],[215,590]],['bypass'],5);
+seg('ret', [[215,590],[215,605]],['bypass'],5);
+seg('flow',[[255,590],[255,540]],[...ALLRADS,'hw']);
+seg('flow',[[255,540],[255,490]],[...Z2,'hw']);
+seg('flow',[[255,490],[255,450]],Z2);
+// hot water coil
+seg('flow',[[255,490],[170,490],[170,505]],['hw']);
+seg('coil',[[170,505],[108,516],[162,529],[108,542],[162,555],[108,568],[162,581],[108,594],[170,605]],['hw'],5);
+seg('ret', [[170,605],[215,605]],['hw']);
+seg('ret', [[215,605],[215,648]],['hw','bypass']);
+seg('ret', [[215,648],[215,700]],[...ALLRADS,'hw','bypass']);
+// zone 1
+seg('flow',[[255,540],[285,540],[285,638]],Z1);
+// zone 2 risers
+seg('flow',[[255,450],[310,450]],Z2);
+seg('flow',[[310,450],[310,378]],SECOND);
+seg('flow',[[310,450],[310,596]],['landing',...GROUND]);
+seg('flow',[[310,596],[310,898]],GROUND);
+seg('flow',[[310,596],[370,596],[370,575]],['landing'],5);
+seg('ret', [[430,575],[430,606],[322,606]],['landing'],5);
+seg('ret', [[322,388],[322,606]],SECOND);
+seg('ret', [[322,606],[322,648]],[...SECOND,'landing']);
+seg('ret', [[322,908],[322,648]],GROUND);
+seg('ret', [[322,648],[215,648]],[...Z1,...Z2]);
+function run(f, fx0, rx0, ids, dir){
+  const {F,R} = PIPE_Y(f);
+  const list = ids.map(i=>RAD[i]).sort((a,b)=>dir*(a.x-b.x));
+  let px = fx0;
+  list.forEach((r,i)=>{ seg('flow',[[px,F],[r.fx,F]],list.slice(i).map(q=>q.id)); px = r.fx; });
+  for (let i=list.length-1;i>=0;i--){
+    const r = list[i], to = i>0 ? list[i-1].rx : rx0;
+    seg('ret',[[r.rx,R],[to,R]],list.slice(i).map(q=>q.id));
+  }
+  list.forEach(r=>{
+    seg('flow',[[r.fx,F],[r.fx,r.bottom]],[r.id],5);
+    seg('ret',[[r.rx,r.bottom],[r.rx,R]],[r.id],5);
+  });
+}
+run(1,285,322,Z1,1);
+run(2,310,322,['bath','bed2'],1);
+run(2,310,322,['bed1'],-1);
+run(0,310,322,GROUND,1);
+
+/* ───────── svg helpers ───────── */
+function el(tag, attrs, parent){
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  (parent || svg).appendChild(e); return e;
+}
+function txt(x,y,s,cls,parent,extra){ const t = el('text',Object.assign({x,y,class:cls},extra||{}),parent); t.textContent = s; return t; }
+const ptsToD = pts => 'M'+pts.map(p=>p.join(' ')).join(' L');
+
+/* ───────── draw static house ───────── */
+const defs = el('defs',{});
+const sky = el('linearGradient',{id:'sky',x1:0,y1:0,x2:0,y2:1},defs);
+el('stop',{offset:0,'stop-color':'var(--sky-1)'},sky); el('stop',{offset:1,'stop-color':'var(--sky-2)'},sky);
+const cylGrad = el('linearGradient',{id:'cylGrad',x1:0,y1:0,x2:0,y2:1},defs);
+const cylStopTop = el('stop',{offset:0,'stop-color':'#f80'},cylGrad);
+const cylStopBot = el('stop',{offset:1,'stop-color':'#08f'},cylGrad);
+const bathClip = el('clipPath',{id:'bathClip'},defs);
+el('path',{d:'M440 338 H590 V352 Q590 372 568 372 H462 Q440 372 440 352 Z'},bathClip);
+
+el('rect',{x:0,y:0,width:1200,height:980,fill:'url(#sky)'});
+el('rect',{x:0,y:930,width:1200,height:50,fill:'var(--ground)'});
+el('polygon',{points:'30,152 600,20 1170,152',class:'s-roof'});
+el('polygon',{points:'78,146 600,34 1122,146',class:'s-loft'});
+txt(140,138,'LOFT','s-small');
+for (const f of [2,1,0]){
+  for (const id in ROOMS){ const r = ROOMS[id]; if (r.floor!==f) continue;
+    el('rect',{x:r.x0,y:FL[f].top,width:r.x1-r.x0,height:FL[f].slab-FL[f].top,class:'s-room'});
+  }
+}
+// room tints (dynamic)
+const roomTint = {};
+for (const id in ROOMS){ const r = ROOMS[id], f = r.floor;
+  roomTint[id] = el('rect',{x:r.x0,y:FL[f].top,width:r.x1-r.x0,height:FL[f].slab-FL[f].top,fill:'#fff',opacity:.22});
+}
+// stairs (decor)
+const stairs = el('g',{opacity:.5,stroke:'var(--wall-line)','stroke-width':2,fill:'none'});
+el('path',{d:'M690 920 '+Array.from({length:10},(_,i)=>`V${920-25*(i+1)} H${690-20*(i+1)}`).join(' ')},stairs);
+el('path',{d:'M468 660 '+Array.from({length:10},(_,i)=>`V${660-25*(i+1)} H${468+20*(i+1)}`).join(' ')+''},stairs).setAttribute('opacity','0');
+// floors/slabs and walls
+for (const f of [2,1,0]) el('rect',{x:40,y:FL[f].slab,width:1120,height:10,class:'s-slab'});
+el('line',{x1:60,y1:150,x2:1140,y2:150,class:'s-wall'});
+el('line',{x1:60,y1:150,x2:60,y2:930,class:'s-wall','stroke-width':8});
+el('line',{x1:1140,y1:150,x2:1140,y2:930,class:'s-wall','stroke-width':8});
+for (const id in ROOMS){ const r = ROOMS[id], f = r.floor;
+  if (r.x0>60) el('line',{x1:r.x0,y1:FL[f].top,x2:r.x0,y2:FL[f].slab-46,class:'s-wall'});
+}
+// windows
+for (const [f,x] of [[2,1140],[1,1140],[0,1140],[2,60],[0,60]]){
+  el('rect',{x:x-6,y:FL[f].top+60,width:12,height:90,fill:'var(--sky-1)',stroke:'var(--wall-line)','stroke-width':2});
+}
+// room labels
+const roomTemp = {};
+for (const id in ROOMS){ const r = ROOMS[id], f = r.floor; if (r.nolabel) continue;
+  const lx = r.lx ?? r.x0+14, ly = r.ly ?? FL[f].top+26, a = r.anchor || 'start';
+  txt(lx,ly,r.name,r.small?'s-small':'s-lbl',null,{'text-anchor':a});
+  roomTemp[id] = txt(lx,ly+(r.small?14:18),'',r.small?'s-small':'s-temp',null,{'text-anchor':a});
+}
+// bath
+const bathG = el('g',{});
+el('path',{d:'M436 334 H594 V352 Q594 376 568 376 H462 Q436 376 436 352 Z',fill:'var(--card)',stroke:'var(--wall-line)','stroke-width':2},bathG);
+const bathWater = el('rect',{x:430,y:376,width:170,height:0,fill:'#7cc4ec','clip-path':'url(#bathClip)'},bathG);
+el('line',{x1:450,y1:376,x2:448,y2:398,stroke:'var(--wall-line)','stroke-width':3},bathG);
+el('line',{x1:580,y1:376,x2:582,y2:398,stroke:'var(--wall-line)','stroke-width':3},bathG);
+const bathStream = el('line',{x1:472,y1:332,x2:472,y2:360,stroke:'#7cc4ec','stroke-width':4,'stroke-linecap':'round',opacity:0},bathG);
+
+/* ───────── domestic water pipes (thin) ───────── */
+const domG = el('g',{});
+function domPipe(d, cls){
+  const g = el('g',{class:cls||''},domG);
+  el('path',{d,class:'case','stroke-width':6},g);
+  const core = el('path',{d,class:'core','stroke-width':3.5},g);
+  const dash = el('path',{d,class:'dash','stroke-width':1.5,opacity:0},g);
+  return {core,dash,off:0};
+}
+const dHot = domPipe('M125 440 V174 H472 V332');
+const dColdReg = domPipe('M450 146 V166 H70 V622 H80','only-regular');
+const dColdSys = domPipe('M30 926 H70 V622 H80','only-system');
+const dFE = domPipe('M612 146 V158 H345 V388','only-regular');
+dColdReg.core.setAttribute('stroke',pipeColor(10));
+dColdSys.core.setAttribute('stroke',pipeColor(10));
+dFE.core.setAttribute('stroke',pipeColor(16));
+// loft tanks (regular)
+const regG = el('g',{class:'only-regular'});
+el('rect',{x:396,y:92,width:124,height:54,rx:4,fill:'#5b6b78',stroke:'var(--pipe-case)'},regG);
+el('rect',{x:400,y:104,width:116,height:38,fill:pipeColor(10),opacity:.8},regG);
+txt(458,86,'Cold water tank','s-tag',regG,{'text-anchor':'middle'});
+el('rect',{x:582,y:112,width:56,height:34,rx:3,fill:'#5b6b78',stroke:'var(--pipe-case)'},regG);
+el('rect',{x:585,y:122,width:50,height:20,fill:pipeColor(16),opacity:.8},regG);
+txt(610,106,'F&E tank','s-tag',regG,{'text-anchor':'middle'});
+// system: mains feed label
+const sysG = el('g',{class:'only-system'});
+txt(32,946,'cold mains in','s-small',sysG);
+
+/* ───────── primary pipes ───────── */
+const order = SEGS.map((s,i)=>i).sort((a,b)=>(SEGS[a].kind==='ret'?0:1)-(SEGS[b].kind==='ret'?0:1));
+// draw cylinder body before the coil
+const cylG = el('g',{});
+el('rect',{x:78,y:436,width:96,height:198,rx:22,fill:'#9ccc65',opacity:.9},cylG);
+const cylBody = el('rect',{x:84,y:442,width:84,height:186,rx:18,fill:'url(#cylGrad)'},cylG);
+const pipeG = el('g',{});
+order.forEach(i=>{
+  const s = SEGS[i]; const d = ptsToD(s.pts); const g = el('g',{},pipeG);
+  s.case = el('path',{d,class:'case','stroke-width':s.w+3},g);
+  s.core = el('path',{d,class:'core','stroke-width':s.w},g);
+  s.dash = el('path',{d,class:'dash','stroke-width':Math.max(1.6,s.w*0.32)},g);
+  s.off = Math.random()*15; s.T = 16;
+});
+const cylTxt = txt(126,470,'','s-tag',cylG,{'text-anchor':'middle'});
+txt(84,652,'Hot water cylinder','s-tag');
+const cylStat = el('rect',{x:88,y:612,width:16,height:10,rx:2,fill:'#333'});
+
+/* ───────── components ───────── */
+// zone valves
+function zoneValve(x,y,label,lx,ly){
+  const g = el('g',{});
+  el('line',{x1:x,y1:y-6,x2:x,y2:y-14,stroke:'var(--pipe-case)','stroke-width':2},g);
+  const head = el('rect',{x:x-9,y:y-26,width:18,height:13,rx:2,fill:'#e5e7eb',stroke:'var(--pipe-case)'},g);
+  const bow = el('path',{d:`M${x-8} ${y-7} L${x+8} ${y+7} L${x+8} ${y-7} L${x-8} ${y+7} Z`,fill:'#9ca3af',stroke:'var(--pipe-case)','stroke-width':1.2},g);
+  txt(lx,ly,label,'s-tag',g,{'text-anchor':'middle'});
+  return {head,bow};
+}
+const ZV = {
+  hw: zoneValve(226,490,'HW',204,474),
+  z1: zoneValve(270,540,'Zone 1',262,508),
+  z2: zoneValve(285,450,'Zone 2',282,430),
+};
+// pump
+const pumpG = el('g',{});
+const pumpX = 255, pumpY = 625;
+el('circle',{cx:pumpX,cy:pumpY,r:13,fill:'#2f6fb0',stroke:'var(--pipe-case)','stroke-width':2},pumpG);
+const imp = el('g',{},pumpG);
+for (let a=0;a<3;a++) el('line',{x1:pumpX,y1:pumpY,x2:pumpX+9*Math.cos(a*2.094),y2:pumpY+9*Math.sin(a*2.094),stroke:'#fff','stroke-width':2.5,'stroke-linecap':'round'},imp);
+const pumpLbl = txt(274,629,'Pump','s-tag',pumpG);
+// bypass valve
+const byG = el('g',{});
+el('path',{d:'M228 584 L242 596 L242 584 L228 596 Z',fill:'#d1d5db',stroke:'var(--pipe-case)','stroke-width':1.2},byG);
+txt(250,580,'bypass','s-small',byG,{'text-anchor':'end'});
+// boiler
+const boilerG = el('g',{});
+el('rect',{x:180,y:700,width:100,height:110,rx:8,fill:'#f5f5f4',stroke:'#78716c','stroke-width':2},boilerG);
+el('rect',{x:190,y:716,width:80,height:30,rx:4,fill:'#111827'},boilerG);
+const boilerTxt = txt(230,736,'','s-tag',boilerG,{'text-anchor':'middle',fill:'#7dd3fc',style:'fill:#7dd3fc'});
+const flame = el('path',{d:'M230 798 C214 790 216 774 224 764 C224 774 230 776 231 770 C233 760 240 756 242 750 C248 766 250 784 230 798 Z',fill:'#f97316',class:'flame'},boilerG);
+const flameIn = el('path',{d:'M230 796 C222 790 224 782 228 776 C230 782 234 780 236 776 C240 784 238 792 230 796 Z',fill:'#3b82f6',class:'flame'},boilerG);
+txt(230,826,'Boiler','s-lbl',boilerG,{'text-anchor':'middle'});
+const condTag = txt(230,842,'','s-small',boilerG,{'text-anchor':'middle'});
+// system-boiler extras: pressure gauge + expansion vessel
+const sysB = el('g',{class:'only-system'});
+el('circle',{cx:205,cy:775,r:10,fill:'#fff',stroke:'#444'},sysB);
+el('line',{x1:205,y1:775,x2:198,y2:770,stroke:'#dc2626','stroke-width':2},sysB);
+txt(192,779,'1.2 bar','s-small',sysB,{'text-anchor':'end'});
+el('rect',{x:140,y:700,width:26,height:56,rx:12,fill:'#dc2626',opacity:.85},sysB);
+txt(116,694,'expansion','s-small',sysB);
+// thermostats
+function wallStat(x,y,label){
+  const g = el('g',{});
+  el('rect',{x,y,width:40,height:50,rx:6,fill:'#fafafa',stroke:'#57534e','stroke-width':1.5},g);
+  const disp = txt(x+20,y+22,'21.0','s-tag',g,{'text-anchor':'middle','font-size':12});
+  const led = el('circle',{cx:x+20,cy:y+38,r:4,fill:'#9ca3af'},g);
+  txt(x+20,y-6,label,'s-tag',g,{'text-anchor':'middle'});
+  return {disp,led};
+}
+const ST1 = wallStat(1080,470,'Stat 1');
+const ST2 = wallStat(420,446,'Stat 2');
+// clock & outside
+const clockSvg = txt(1150,40,'','s-lbl',null,{'text-anchor':'end','font-size':20});
+const outSvg = txt(1150,62,'','s-temp',null,{'text-anchor':'end'});
+
+/* ───────── radiators ───────── */
+RADS.forEach(r=>{
+  const g = el('g',{class:'rad',tabindex:0,role:'button','aria-label':`${r.name} radiator`});
+  r.g = g;
+  const sh = el('g',{class:'shimmer',opacity:0},g); r.sh = sh;
+  for (let k=0;k<3;k++){ const x = r.x + r.w*(k+1)/4; el('path',{d:`M${x} ${r.top-6} q 5 -6 0 -12 t 0 -12`},sh); }
+  if (r.towel){
+    r.body = el('rect',{x:r.x,y:r.top,width:r.w,height:r.h,rx:3,fill:'transparent',class:'body',stroke:'none'},g);
+    r.parts = [];
+    r.parts.push(el('rect',{x:r.x,y:r.top,width:6,height:r.h,rx:3,class:'body'},g));
+    r.parts.push(el('rect',{x:r.x+r.w-6,y:r.top,width:6,height:r.h,rx:3,class:'body'},g));
+    for (let y=r.top+8;y<r.bottom-4;y+=11) r.parts.push(el('rect',{x:r.x+4,y,width:r.w-8,height:5,rx:2,class:'body'},g));
+  } else {
+    r.body = el('rect',{x:r.x,y:r.top,width:r.w,height:r.h,rx:4,class:'body'},g);
+    r.parts = [r.body];
+    for (let x=r.x+7;x<r.x+r.w-4;x+=8) el('line',{x1:x,y1:r.top+5,x2:x,y2:r.bottom-5,stroke:'rgba(0,0,0,.16)','stroke-width':1.5},g);
+  }
+  el('rect',{x:r.x-6,y:r.top-30,width:r.w+12,height:r.h+30,class:'hit'},g);
+  r.lbl = txt(r.x+r.w/2,r.top+r.h/2+4,'','s-tag',g,{'text-anchor':'middle','style':'pointer-events:none;font-weight:600'});
+  // valve head (TRV / wheelhead) on the flow side
+  const vg = el('g',{class:'trv',tabindex:0,role:'button','aria-label':`Toggle ${r.name} valve`});
+  r.vg = vg;
+  const vx = r.x-9, vy = r.bottom+3;
+  el('circle',{cx:vx,cy:vy,r:16,fill:'transparent'},vg);
+  el('line',{x1:vx+5,y1:vy+4,x2:r.fx,y2:vy+4,stroke:'var(--pipe-case)','stroke-width':3},vg);
+  r.ring = el('circle',{cx:vx,cy:vy,r:7.5,class:'ring',fill:'#22c55e',stroke:'var(--pipe-case)','stroke-width':1.5},vg);
+  r.vmark = el('line',{x1:vx,y1:vy-5,x2:vx,y2:vy+5,stroke:'#fff','stroke-width':2,'stroke-linecap':'round'},vg);
+  r.vx = vx; r.vy = vy;
+});
+
+/* ───────── state ───────── */
+const S = {
+  t: 6.5*3600, Tf: 18, P: 0, firing:false, gas:0,
+  rooms:{}, rads:{}, cyl:{T:42, Ttop:44, Tbot:36},
+  zv:{z1:0,z2:0,hw:0}, call:{z1:false,z2:false,hw:false},
+  flows:{}, ret:{}, M:0, pump:false, demand:false, Tret:18,
+  bath:{state:'idle', level:0, timer:0}
+};
+const CFG = {ch:true, hw:true, stat1:21, stat2:19, flowSet:70, cylSet:60, Tout:5, speed:300, paused:false, type:'regular'};
+for (const id in ROOMS) S.rooms[id] = {T:16};
+RADS.forEach(r=>{ S.rads[r.id] = {Tr:16, mode:'manual', valve:1, trv:3, open:1, m:0, Q:0}; });
+let selected = null;
+
+/* ───────── physics ───────── */
+const TRV_T = [7,12,16,20,24,28];
+function trvOpen(set, T){ const target = set<=0 ? 7 : 12 + (set-1)*4; return Math.max(0,Math.min(1,(target+1-T)/2)); }
+function step(dt){
+  const R = S.rooms;
+  // thermostats (0.25 °C hysteresis either side)
+  const t1 = R.living.T, t2 = R.landing.T;
+  S.call.z1 = CFG.ch && (S.call.z1 ? t1 < CFG.stat1+0.25 : t1 < CFG.stat1-0.25);
+  S.call.z2 = CFG.ch && (S.call.z2 ? t2 < CFG.stat2+0.25 : t2 < CFG.stat2-0.25);
+  S.call.hw = CFG.hw && (S.call.hw ? S.cyl.T < CFG.cylSet : S.cyl.T < CFG.cylSet-5);
+  for (const k of ['z1','z2','hw']){
+    const tgt = S.call[k] ? 1 : 0, v = S.zv[k];
+    S.zv[k] = tgt ? Math.min(1, v+dt/15) : Math.max(0, v-dt/8);
+  }
+  S.demand = S.zv.z1>0.95 || S.zv.z2>0.95 || S.zv.hw>0.95;
+  S.pump = S.demand;
+  // hydraulics: conductance split with a simple pump curve
+  const G = {}; let Gp = 0;
+  RADS.forEach(r=>{
+    const st = S.rads[r.id];
+    st.open = st.mode==='trv' ? trvOpen(st.trv, R[r.room].T) : st.valve;
+    G[r.id] = st.open * (r.zone===1 ? S.zv.z1 : S.zv.z2); Gp += G[r.id];
+  });
+  G.hw = 2*S.zv.hw; Gp += G.hw;
+  G.bypass = S.pump ? Math.max(0, 0.6 - Gp) : 0;
+  const Gt = Gp + G.bypass;
+  S.M = S.pump ? 0.4*Gt/(Gt+1.5) : 0;
+  for (const k in G) S.flows[k] = Gt>0 ? S.M*G[k]/Gt : 0;
+  // radiators
+  let load = 0, mret = 0;
+  RADS.forEach(r=>{
+    const st = S.rads[r.id], Troom = R[r.room].T, m = S.flows[r.id];
+    st.m = m;
+    const dT = st.Tr - Troom;
+    st.Q = dT>0 ? r.rated*Math.pow(dT/50,1.3) : 0;
+    const Cr = r.rated*45;
+    st.Tr += dt*(m*CP*(S.Tf - st.Tr) - st.Q)/Cr;
+    if (st.Tr < Troom) st.Tr += (Troom-st.Tr)*Math.min(1,dt/300);
+    S.ret[r.id] = st.Tr;
+    load += m*CP*(S.Tf - st.Tr); mret += m*st.Tr;
+  });
+  // cylinder coil
+  const mh = S.flows.hw; let Qc = 0;
+  if (mh>0 && S.Tf > S.cyl.T){ Qc = mh*CP*(S.Tf - S.cyl.T)*0.7; }
+  S.ret.hw = mh>0 ? S.Tf - Qc/(mh*CP) : S.cyl.T;
+  load += Qc; mret += mh*S.ret.hw;
+  S.ret.bypass = S.Tf; mret += S.flows.bypass*S.Tf;
+  S.Tret = S.M>0 ? mret/S.M : S.Tret + (R.kitchen.T - S.Tret)*Math.min(1,dt/1200);
+  const Ccyl = 120*CP;
+  let draw = 0;
+  const b = S.bath;
+  if (b.state==='filling'){ const mf = 0.2; draw = mf*CP*(S.cyl.T-10); b.level = Math.min(1, b.level + dt*mf/75); if (b.level>=1){ b.state='full'; b.timer=0; } }
+  else if (b.state==='full'){ b.timer += dt; if (b.timer>900) b.state='draining'; }
+  else if (b.state==='draining'){ b.level = Math.max(0, b.level - dt/240); if (b.level<=0) b.state='idle'; }
+  const cylLoss = 2.5*(S.cyl.T - R.cup.T);
+  S.cyl.T += dt*(Qc - draw - cylLoss)/Ccyl;
+  // stratification for the picture
+  const tgtTop = S.cyl.T + (b.state==='filling' ? 2 : 3);
+  const tgtBot = S.cyl.T - (b.state==='filling' ? 22 : (Qc>0 ? 4 : 9));
+  S.cyl.Ttop += (tgtTop - S.cyl.Ttop)*Math.min(1,dt/120);
+  S.cyl.Tbot += (tgtBot - S.cyl.Tbot)*Math.min(1,dt/120);
+  // boiler
+  if (!S.demand) S.firing = false;
+  else {
+    if (S.firing && S.Tf > CFG.flowSet+3) S.firing = false;
+    else if (!S.firing && S.Tf < CFG.flowSet-6) S.firing = true;
+  }
+  S.P = S.firing ? Math.max(5000, Math.min(24000, load + 2500*(CFG.flowSet - S.Tf))) : 0;
+  S.gas += S.P*dt/3.6e6/(S.Tret<54 ? 0.97 : 0.87);
+  const loss = 8*(S.Tf - R.kitchen.T);
+  S.Tf += dt*(S.P - load - loss)/(25*CP);
+  S.load = load;
+  // rooms
+  const Qin = {}; for (const id in R) Qin[id] = 0;
+  RADS.forEach(r=>{ Qin[r.room] += S.rads[r.id].Q; });
+  Qin.cup += cylLoss;
+  Qin.kitchen += loss*0.6;
+  NEIGH.forEach(([a,c])=>{ const q = 25*(R[a].T - R[c].T); Qin[a] -= q; Qin[c] += q; });
+  for (const id in R){ const rm = ROOMS[id]; R[id].T += dt*(Qin[id] - rm.UA*(R[id].T - CFG.Tout))/rm.C; }
+  S.t += dt;
+}
+
+/* ───────── rendering ───────── */
+const SERVE_TEMP = (s) => {
+  let m = 0, mt = 0;
+  for (const k of s.serves){ const f = S.flows[k]||0; m += f; mt += f*(s.kind==='ret' ? (S.ret[k] ?? S.Tf) : S.Tf); }
+  return {m, T: m>0 ? mt/m : null};
+};
+function fmtT(t){ return t.toFixed(1)+'°'; }
+function fmtClock(t){ const d = Math.floor(t/86400); t%=86400; const h=Math.floor(t/3600), m=Math.floor(t%3600/60); return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'); }
+function render(realDt, simDt){
+  // pipes
+  SEGS.forEach(s=>{
+    const {m,T} = SERVE_TEMP(s);
+    let tgt;
+    if (s.kind==='coil') tgt = m>0 ? (S.Tf + S.ret.hw)/2 : S.cyl.T;
+    else tgt = m>0 ? T : 18;
+    const tau = m>0 ? 8 : (s.kind==='flow' ? 600 : 900);
+    if (m<=0 && s.kind==='flow' && S.Tf>s.T && s.serves.length>8) tgt = S.Tf; // pipe next to boiler stays warm
+    s.T += (tgt - s.T)*Math.min(1, simDt/tau);
+    s.core.setAttribute('stroke', pipeColor(s.T));
+    const lpm = m*60;
+    if (lpm>0.02){ s.off -= realDt*(28*Math.sqrt(lpm)+6); s.dash.setAttribute('opacity',.9); s.dash.setAttribute('stroke-dashoffset',s.off.toFixed(1)); }
+    else s.dash.setAttribute('opacity',0);
+  });
+  // domestic
+  const filling = S.bath.state==='filling';
+  [[dHot,filling,S.cyl.Ttop],[dColdReg,filling,10],[dColdSys,filling,10]].forEach(([p,on,T])=>{
+    if (p===dHot){ p.T = p.T ?? 18; p.T += ((on?T:18)-p.T)*Math.min(1,simDt/(on?10:900)); p.core.setAttribute('stroke',pipeColor(p.T)); }
+    if (on){ p.off -= realDt*90; p.dash.setAttribute('opacity',.9); p.dash.setAttribute('stroke-dashoffset',p.off.toFixed(1)); }
+    else p.dash.setAttribute('opacity',0);
+  });
+  // rooms
+  for (const id in ROOMS){ const T = S.rooms[id].T; roomTint[id].setAttribute('fill',roomColor(T)); if (roomTemp[id]) roomTemp[id].textContent = T.toFixed(1)+' °C'; }
+  // rads
+  RADS.forEach(r=>{
+    const st = S.rads[r.id], c = pipeColor(st.Tr);
+    r.parts.forEach(p=>p.setAttribute('fill',c));
+    r.lbl.textContent = r.towel ? '' : Math.round(st.Tr)+'°';
+    r.sh.setAttribute('opacity', Math.max(0,Math.min(1, (st.Q-150)/800)).toFixed(2));
+    const o = st.open;
+    r.ring.setAttribute('fill', rgb([Math.round(220-186*o),Math.round(38+159*o),Math.round(38+56*o)]));
+    r.vmark.setAttribute('transform',`rotate(${(1-o)*90} ${r.vx} ${r.vy})`);
+    r.g.classList.toggle('sel', selected===r.id);
+  });
+  // components
+  const zvc = v => v>0.95 ? '#22c55e' : v>0.02 ? '#f59e0b' : '#9ca3af';
+  for (const k in ZV) ZV[k].bow.setAttribute('fill', zvc(S.zv[k]));
+  flame.style.display = S.firing ? '' : 'none'; flameIn.style.display = S.firing ? '' : 'none';
+  boilerTxt.textContent = Math.round(S.Tf)+'°C' + (S.firing ? ' 🔥' : '');
+  condTag.textContent = S.M>0 ? (S.Tret<54 ? `return ${Math.round(S.Tret)}° · condensing ✓` : `return ${Math.round(S.Tret)}° · not condensing`) : '';
+  pumpRot += S.pump ? realDt*720 : 0;
+  imp.setAttribute('transform',`rotate(${pumpRot%360} ${pumpX} ${pumpY})`);
+  // cylinder
+  cylStopTop.setAttribute('stop-color',pipeColor(S.cyl.Ttop));
+  cylStopBot.setAttribute('stop-color',pipeColor(S.cyl.Tbot));
+  cylTxt.textContent = Math.round(S.cyl.T)+'°C';
+  cylStat.setAttribute('fill', S.call.hw ? '#dc2626' : '#333');
+  // stats
+  ST1.disp.textContent = CFG.stat1.toFixed(1); ST2.disp.textContent = CFG.stat2.toFixed(1);
+  ST1.led.setAttribute('fill', S.call.z1 ? '#ef4444' : '#9ca3af'); ST2.led.setAttribute('fill', S.call.z2 ? '#ef4444' : '#9ca3af');
+  // bath
+  const lvl = S.bath.level*38;
+  bathWater.setAttribute('y', 376-lvl); bathWater.setAttribute('height', lvl);
+  bathWater.setAttribute('fill', S.bath.level>0 ? '#8ccbf0' : 'none');
+  bathStream.setAttribute('opacity', filling ? .9 : 0);
+  clockSvg.textContent = fmtClock(S.t);
+  outSvg.textContent = 'outside '+CFG.Tout+' °C';
+}
+let pumpRot = 0;
+
+/* ───────── side panel ───────── */
+const $ = id => document.getElementById(id);
+const rlist = $('rlist');
+const rItems = {};
+[['Zone 1 · Thermostat 1',Z1],['Zone 2 · Thermostat 2',Z2]].forEach(([title,ids])=>{
+  const z = document.createElement('div'); z.className='zone'; z.textContent = title; rlist.appendChild(z);
+  ids.forEach(id=>{
+    const r = RAD[id];
+    const d = document.createElement('div'); d.className='ritem'; d.tabIndex = 0; d.setAttribute('role','button');
+    d.innerHTML = `<span class="sw"></span><span>${r.name}</span><span class="t"></span><button class="tog" role="switch" aria-label="${r.name} valve open"></button>`;
+    d.addEventListener('click',e=>{ if (e.target.classList.contains('tog')) return; select(id); });
+    d.addEventListener('keydown',e=>{ if ((e.key==='Enter'||e.key===' ') && e.target===d){ e.preventDefault(); select(id); } });
+    d.querySelector('.tog').addEventListener('click',()=>toggleValve(id));
+    rlist.appendChild(d); rItems[id] = d;
+  });
+});
+function toggleValve(id){
+  const st = S.rads[id];
+  if (st.mode==='trv') st.trv = st.trv>0 ? 0 : 3;
+  else st.valve = st.valve>0.05 ? 0 : 1;
+  if (selected===id) buildSel(); else select(id);
+}
+function select(id){ selected = id; buildSel(); }
+RADS.forEach(r=>{
+  r.g.addEventListener('click',()=>select(r.id));
+  r.g.addEventListener('keydown',e=>{ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); select(r.id); } });
+  r.vg.addEventListener('click',e=>{ e.stopPropagation(); toggleValve(r.id); });
+  r.vg.addEventListener('keydown',e=>{ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleValve(r.id); } });
+});
+function buildSel(){
+  const box = $('selPanel');
+  if (!selected){ box.innerHTML = '<p class="sub" style="margin:0 0 6px">Tap a radiator in the picture, or a row below. The round knob beside each radiator is its valve: tap it to open or close it.</p>'; return; }
+  const r = RAD[selected], st = S.rads[selected];
+  box.innerHTML = `<div class="selcard">
+    <div class="row" style="margin-top:0"><b>${r.name}</b><span class="pill">zone ${r.zone}</span></div>
+    <div class="row"><span class="sub">Valve type</span><div class="seg" role="group" aria-label="Valve type">
+      <button data-mode="manual" aria-pressed="${st.mode==='manual'}">Manual</button><button data-mode="trv" aria-pressed="${st.mode==='trv'}">TRV</button></div></div>
+    ${st.mode==='manual'
+      ? `<div class="row"><label for="vSl">How open</label><span class="mono" id="vV">${Math.round(st.valve*100)}%</span></div>
+         <input type="range" id="vSl" min="0" max="100" step="5" value="${Math.round(st.valve*100)}">`
+      : `<div class="row"><label for="vSl">TRV setting</label><span class="mono" id="vV">${trvLabel(st.trv)}</span></div>
+         <input type="range" id="vSl" min="0" max="5" step="1" value="${st.trv}">
+         <p class="sub" style="margin:2px 0 0">The TRV closes itself as <i>this room</i> nears its setting.</p>`}
+    <div class="readout">
+      <div>radiator<b id="sTr">–</b></div><div>room<b id="sRoom">–</b></div>
+      <div>water through it<b id="sFlow">–</b></div><div>heat given off<b id="sQ">–</b></div>
+    </div>
+    <p class="sub" id="sWhy" style="margin:6px 0 0"></p>
+  </div>`;
+  box.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{ st.mode = b.dataset.mode; buildSel(); }));
+  $('vSl').addEventListener('input',e=>{
+    const v = +e.target.value;
+    if (st.mode==='manual'){ st.valve = v/100; $('vV').textContent = v+'%'; }
+    else { st.trv = v; $('vV').textContent = trvLabel(v); }
+  });
+}
+function trvLabel(v){ return v===0 ? '✱ off (frost)' : `${v} ≈ ${TRV_T[v]} °C`; }
+function updatePanel(){
+  RADS.forEach(r=>{
+    const st = S.rads[r.id], it = rItems[r.id];
+    it.querySelector('.sw').style.background = pipeColor(st.Tr);
+    it.querySelector('.t').textContent = Math.round(st.Tr)+'°C';
+    const on = st.mode==='trv' ? st.trv>0 : st.valve>0.05;
+    it.querySelector('.tog').setAttribute('aria-checked', on);
+    it.classList.toggle('sel', selected===r.id);
+  });
+  if (selected && $('sTr')){
+    const r = RAD[selected], st = S.rads[selected], zoneOpen = r.zone===1 ? S.zv.z1 : S.zv.z2;
+    $('sTr').textContent = st.Tr.toFixed(0)+' °C';
+    $('sRoom').textContent = S.rooms[r.room].T.toFixed(1)+' °C';
+    $('sFlow').textContent = (st.m*60).toFixed(1)+' L/min';
+    $('sQ').textContent = Math.round(st.Q)+' W';
+    let why;
+    if (st.open<0.02) why = st.mode==='trv' && st.trv>0 ? 'The TRV has closed because the room reached its setting.' : 'Its valve is shut, so no water gets in. It cools to room temperature.';
+    else if (zoneOpen<0.05) why = `The valve is open, but Thermostat ${r.zone} isn't calling, so the zone ${r.zone} valve is shut. No water flows.`;
+    else if (!S.pump) why = 'The zone valve is still opening…';
+    else if (st.open<0.5) why = "It's only partly open, so a trickle of water comes through. Less flow means a cooler radiator.";
+    else why = 'Hot water is flowing through it from the zone '+r.zone+' pipe.';
+    $('sWhy').textContent = why;
+  }
+  $('s1now').textContent = S.rooms.living.T.toFixed(1)+'°';
+  $('s2now').textContent = S.rooms.landing.T.toFixed(1)+'°';
+  setPill($('s1pill'), S.call.z1, CFG.ch); setPill($('s2pill'), S.call.z2, CFG.ch);
+  $('clock').textContent = fmtClock(S.t);
+  const b = S.bath;
+  $('bathInfo').textContent = b.state==='filling' ? `filling… ${Math.round(b.level*75)} L` : b.state==='full' ? 'bath is full' : b.state==='draining' ? 'draining' : '';
+  $('bathBtn').disabled = b.state!=='idle';
+}
+function setPill(p, calling, on){
+  p.className = 'pill' + (calling ? ' on' : on ? ' ok' : '');
+  p.textContent = !on ? 'heating off' : calling ? 'calling for heat' : 'satisfied';
+}
+function narrate(){
+  const L = [], R = S.rooms;
+  const c = (v,cls) => `<span class="${cls}">${v}</span>`;
+  if (!CFG.ch) L.push('The programmer has <b>central heating off</b>, so neither thermostat can call for heat.');
+  else {
+    L.push(`Thermostat 1 reads the living room at <b>${R.living.T.toFixed(1)} °C</b> (set ${CFG.stat1.toFixed(1)}) → ${S.call.z1 ? c('calling for heat','hot') : c('satisfied','cold')}.`);
+    L.push(`Thermostat 2 reads the landing at <b>${R.landing.T.toFixed(1)} °C</b> (set ${CFG.stat2.toFixed(1)}) → ${S.call.z2 ? c('calling for heat','hot') : c('satisfied','cold')}.`);
+  }
+  L.push(!CFG.hw ? 'Hot water is <b>off</b> on the programmer.' :
+    `The cylinder is at <b>${S.cyl.T.toFixed(0)} °C</b> (stat ${CFG.cylSet}) → ${S.call.hw ? c('wants heat','hot') : c('satisfied','cold')}.`);
+  const open = [['z1','Zone 1'],['z2','Zone 2'],['hw','Hot water']].filter(([k])=>S.zv[k]>0.02).map(([k,n])=>S.zv[k]>0.95 ? n : n+' (opening)');
+  L.push(open.length ? `Valves open: <b>${open.join(', ')}</b>.` : 'All motorised valves are <b>shut</b>.');
+  if (!S.demand) L.push('Nothing is asking for heat, so <b>the boiler and pump are off</b>. The water in the pipes slowly cools.');
+  else {
+    L.push(`Pump running: <b>${(S.M*60).toFixed(1)} L/min</b> leaving the boiler at ${c(Math.round(S.Tf)+' °C','hot')}, coming back at ${c(Math.round(S.Tret)+' °C','cold')}.`);
+    if (S.firing) L.push(`Boiler <b>burning at ${(S.P/1000).toFixed(1)} kW</b>${S.Tret<54 ? ' and condensing (efficient)' : ', return too hot to condense'}.`);
+    else L.push(`Boiler <b>paused</b>: the water's already hotter than the ${CFG.flowSet} °C target. It relights when it drops (“cycling”).`);
+    if (S.flows.bypass > 0.01) L.push(`Not enough radiators are open, so <b>${(S.flows.bypass*60).toFixed(1)} L/min goes through the bypass</b> straight back to the boiler.`);
+  }
+  if (S.bath.state==='filling') L.push('Running the bath: hot water leaves the top of the cylinder, and cold water refills it from the bottom.');
+  L.push(`Gas used since 06:30: <b>${S.gas.toFixed(1)} kWh</b>.`);
+  $('narr').innerHTML = L.map(s=>`<li>${s}</li>`).join('');
+}
+
+/* ───────── controls ───────── */
+document.querySelectorAll('[data-stat]').forEach(b=>b.addEventListener('click',()=>{
+  const k = 'stat'+b.dataset.stat; CFG[k] = Math.max(5, Math.min(28, CFG[k] + +b.dataset.d));
+  $('s'+b.dataset.stat+'set').textContent = CFG[k].toFixed(1)+'°';
+}));
+function bindTog(id, key){ const t = $(id); t.addEventListener('click',()=>{ CFG[key] = !CFG[key]; t.setAttribute('aria-checked',CFG[key]); }); }
+bindTog('chTog','ch'); bindTog('hwTog','hw');
+function bindRange(id, key, fmt){ const i = $(id); i.addEventListener('input',()=>{ CFG[key] = +i.value; $(id+(id==='outT'?'v':'V')).textContent = fmt(+i.value); }); }
+bindRange('flowSet','flowSet',v=>v+' °C'); bindRange('cylSet','cylSet',v=>v+' °C'); bindRange('outT','Tout',v=>v+' °C');
+document.querySelectorAll('[data-speed]').forEach(b=>b.addEventListener('click',()=>{
+  CFG.speed = +b.dataset.speed;
+  document.querySelectorAll('[data-speed]').forEach(x=>x.setAttribute('aria-pressed', x===b));
+  $('speedPill').textContent = '1 s = '+(CFG.speed/60)+' min';
+}));
+$('pauseBtn').addEventListener('click',()=>{ CFG.paused = !CFG.paused; $('pauseBtn').textContent = CFG.paused ? '▶' : '❚❚'; $('pauseBtn').setAttribute('aria-label',CFG.paused?'Play':'Pause'); });
+$('bathBtn').addEventListener('click',()=>{ if (S.bath.state==='idle'){ S.bath.state='filling'; S.bath.level=0; } });
+function setType(t){
+  CFG.type = t; document.body.classList.toggle('mode-regular', t==='regular'); document.body.classList.toggle('mode-system', t==='system');
+  $('typeReg').setAttribute('aria-pressed', t==='regular'); $('typeSys').setAttribute('aria-pressed', t==='system');
+  // in a system boiler the pump lives inside the boiler
+  pumpG.setAttribute('transform', t==='system' ? 'translate(7,165)' : '');
+  pumpLbl.style.display = t==='system' ? 'none' : '';
+  svg.appendChild(pumpG);
+}
+$('typeReg').addEventListener('click',()=>setType('regular'));
+$('typeSys').addEventListener('click',()=>setType('system'));
+setType('regular');
+
+function setStat(n,v){ CFG['stat'+n] = v; $('s'+n+'set').textContent = v.toFixed(1)+'°'; }
+function setTog(id,key,v){ CFG[key] = v; $(id).setAttribute('aria-checked',v); }
+function setRange(id,key,v){ CFG[key] = v; $(id).value = v; $(id+(id==='outT'?'v':'V')).textContent = v+' °C'; }
+function resetRads(){ RADS.forEach(r=>Object.assign(S.rads[r.id],{mode:'manual',valve:1,trv:3})); }
+const SCEN = {
+  cold(){ resetRads(); for (const id in S.rooms) S.rooms[id].T = 13.5; RADS.forEach(r=>S.rads[r.id].Tr=13.5); S.Tf = 15; S.cyl.T = 38; S.t = 6*3600; S.gas = 0;
+    setTog('chTog','ch',true); setTog('hwTog','hw',true); setStat(1,21); setStat(2,19); setRange('outT','Tout',2); setRange('flowSet','flowSet',70);
+    return 'Everything starts at 13.5 °C on a frosty morning. Both thermostats and the cylinder call at once. Watch the zone valves open, then the boiler fire, then the flow (red) and return (blue) set up. The far radiators warm last.'; },
+  closeLR(){ resetRads(); Z1.forEach(id=>S.rads[id].valve=0); setTog('chTog','ch',true); setStat(1,23); setStat(2,15); setTog('hwTog','hw',false);
+    return 'Thermostat 1 is calling, but all four living-room valves are shut. The zone valve opens, yet the water has nowhere to go but the bypass. The boiler overheats quickly and keeps stopping and restarting, and the room never warms.'; },
+  landing(){ resetRads(); S.rooms.landing.T = 21; S.rooms.hall.T = 20; S.rooms.bed1.T = 15; S.rooms.bed2.T = 14.5; S.rooms.bath.T = 15; setStat(2,19); setStat(1,20); setTog('chTog','ch',true); setRange('outT','Tout',1);
+    return 'The landing is already 21 °C from heat rising up the stairs, so Thermostat 2 is satisfied and zone 2 stays shut, even though the bedrooms are cold. Try turning Thermostat 2 up to 22, then put the bedroom radiators on TRV mode so each one stops at its own temperature.'; },
+  summer(){ resetRads(); setTog('chTog','ch',false); setTog('hwTog','hw',true); setRange('outT','Tout',16); S.cyl.T = 30; for (const id in S.rooms) S.rooms[id].T = Math.max(S.rooms[id].T, 19);
+    return "Heating is off on the programmer, so only the hot-water valve opens. All the boiler's heat goes into the coil inside the cylinder. Then run a bath and watch the cylinder cool from the bottom up."; },
+  low(){ setRange('flowSet','flowSet',55); setTog('chTog','ch',true);
+    return 'Flow is now 55 °C. The radiators run cooler and rooms take longer to warm, but the return water is below about 54 °C, so the boiler condenses and recovers extra heat. Check the tag under the boiler.'; },
+};
+document.querySelectorAll('[data-scen]').forEach(b=>b.addEventListener('click',()=>{ $('scenNote').textContent = SCEN[b.dataset.scen](); buildSel(); }));
+
+/* ───────── loop ───────── */
+// warm start: a little history so the picture isn't blank on load
+for (let i=0;i<60;i++) step(1);
+buildSel();
+let last = performance.now(), narrT = 0;
+function frame(now){
+  const realDt = Math.min(0.1,(now-last)/1000); last = now;
+  let simDt = 0;
+  if (!CFG.paused){
+    simDt = realDt*CFG.speed;
+    const n = Math.min(120, Math.ceil(simDt/1));
+    for (let i=0;i<n;i++) step(simDt/n);
+  }
+  render(realDt, simDt);
+  narrT -= realDt;
+  if (narrT<=0){ narrT = 0.25; updatePanel(); narrate(); }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -23,6 +23,7 @@
     "examtutor":     { "title": "Full Marks",             "group": "Teaching",     "description": "Rank answers by the marks they'd earn and learn GCSE exam technique." },
     "fauxreel":      { "title": "Faux Reel",              "group": "Tools",        "description": "Turn a chat transcript into a fake phone screen recording, exported as GIF or video." },
     "foodgame":      { "title": "Feed Me Right!",         "group": "Toys & games", "description": "Tap the healthy food and dodge the junk before the character explodes." },
+    "heating":       { "title": "Flow & Return",          "group": "Explainers",   "description": "Play with the valves and thermostats in a cutaway of a UK boiler, cylinder and radiator system." },
     "geo":           { "title": "Geography Blackjack",    "group": "Toys & games", "description": "Fill a target country with other countries' land area without going over 100%." },
     "http":          { "title": "HTTP Requests",          "group": "Teaching",     "description": "Ten click-along pages for watching HTTP requests in DevTools." },
     "mass":          { "title": "Understanding the Mass", "group": "Explainers",   "description": "A guided timeline through the structure of a Catholic Mass." },
