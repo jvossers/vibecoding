@@ -283,7 +283,7 @@ footer{margin-top:28px;color:var(--dimmer);font-size:13px;text-align:center}
       <h2>The valves on each radiator</h2>
       <p>Every radiator has a valve at each end, and water only flows through when <b>both</b> are open. One lets water in and the other lets it out, so shutting either one stops the flow.</p>
       <ul>
-        <li><b>● The thermostatic valve (TRV)</b> is the numbered head (*, 1 to 5) on the way in. It has its own little thermostat and closes by itself when <i>that room</i> is warm enough. Roughly, 3 means about 20 °C. At * it stays shut, apart from frost protection.</li>
+        <li><b>● The thermostatic valve (TRV)</b> is the numbered head (*, 1 to 5) on the way in. The number is a <b>target temperature</b>, roughly 1 ≈ 12 °C, 3 ≈ 20 °C and 5 ≈ 28 °C, not a fixed opening. A wax capsule in the head expands as the air around it warms and slowly pushes the valve shut. It's fully open when the room is well below the number, partly open as the room gets close, and shut once it's there. So turning it down <i>does</i> mean less water and a cooler radiator, but only once the room is near the new number. In a cold room, 2 and 5 both start fully open. At * it stays shut, apart from frost protection.</li>
         <li><b>■ The control valve (lockshield)</b> is on the way out, usually under a plastic cap. It doesn't react to temperature. The installer sets it once to <i>balance</i> the system, so radiators near the boiler don't take all the flow. You can also shut it fully to take a radiator off the wall.</li>
       </ul>
       <p>In the simulator, the knob colour shows how open each valve is (green open, red shut). A TRV turns red by itself when its room warms up.</p>
@@ -657,8 +657,14 @@ RADS.forEach(r=>{ S.rads[r.id] = {Tr:16, trv:TRV_DEFAULT(r.id), trvPrev:TRV_DEFA
 let selected = null;
 
 /* ───────── physics ───────── */
-const TRV_T = [7,12,16,20,24,28];
-function trvOpen(set, T){ const target = set<=0 ? 7 : 12 + (set-1)*4; return Math.max(0,Math.min(1,(target+1-T)/2)); }
+// A TRV number is a target temperature, not a fixed opening. The wax capsule in the head
+// expands as the air around it warms and pushes the valve pin in: fully open about 1 °C
+// below the target, fully shut about 1 °C above it, and partly open in between.
+const TRV_BAND = 2;
+const trvTarget = set => set<=0 ? 7 : set<1 ? 7 + set*5 : 12 + (set-1)*4;
+function trvOpen(set, Tsense){ return Math.max(0,Math.min(1,(trvTarget(set) + TRV_BAND/2 - Tsense)/TRV_BAND)); }
+// The head sits right next to the radiator, so it feels a little warmer than the room as a whole.
+const trvSensed = (Troom, Trad) => Troom + 0.04*Math.max(0, Trad - Troom);
 function step(dt){
   const R = S.rooms;
   // thermostats (0.25 °C hysteresis either side)
@@ -677,7 +683,9 @@ function step(dt){
   RADS.forEach(r=>{
     const st = S.rads[r.id];
     // water only gets through if BOTH valves are open: the TRV on the way in and the control valve on the way out
-    st.trvOpen = trvOpen(st.trv, R[r.room].T);
+    st.sensed = trvSensed(R[r.room].T, st.Tr);
+    // the wax reacts over a minute or two rather than instantly
+    st.trvOpen += (trvOpen(st.trv, st.sensed) - st.trvOpen)*Math.min(1, dt/90);
     st.open = st.trvOpen * st.lock;
     G[r.id] = st.open * (r.zone===1 ? S.zv.z1 : S.zv.z2); Gp += G[r.id];
   });
@@ -852,8 +860,11 @@ function buildSel(){
   box.innerHTML = `<div class="selcard">
     <div class="row" style="margin-top:0"><b>${r.name}</b><span class="pill">zone ${r.zone}</span></div>
     <div class="row"><label for="tSl">● Thermostatic valve (TRV)</label><span class="mono" id="tV">${trvLabel(st.trv)}</span></div>
-    <input type="range" id="tSl" min="0" max="5" step="1" value="${st.trv}">
-    <p class="sub" style="margin:0 0 6px">On the way in. It closes itself as <i>this room</i> nears its number. Now <b class="mono" id="tOpen">–</b> open.</p>
+    <input type="range" id="tSl" min="0" max="5" step="0.5" value="${st.trv}">
+    <p class="sub" style="margin:0 0 4px">On the way in. The number is a <b>temperature</b>, not an opening. The valve closes gradually as the air around its head warms towards that temperature. It feels <b class="mono" id="tSense">–</b> and is <b class="mono" id="tOpen">–</b> open.</p>
+    <svg id="trvChart" viewBox="0 0 300 104" width="100%" style="display:block;margin:2px 0 8px" role="img" aria-label="How far the TRV is open at each temperature">
+      <g class="s-small" style="font-size:10px"></g>
+    </svg>
     <div class="row"><label for="lSl">■ Control valve (lockshield)</label><span class="mono" id="lV">${Math.round(st.lock*100)}%</span></div>
     <input type="range" id="lSl" min="0" max="100" step="5" value="${Math.round(st.lock*100)}">
     <p class="sub" style="margin:0">On the way out. It stays where it's set and doesn't react to temperature.</p>
@@ -864,10 +875,42 @@ function buildSel(){
     </div>
     <p class="sub" id="sWhy" style="margin:6px 0 0"></p>
   </div>`;
-  $('tSl').addEventListener('input',e=>{ st.trv = +e.target.value; if (st.trv>0) st.trvPrev = st.trv; $('tV').textContent = trvLabel(st.trv); });
+  $('tSl').addEventListener('input',e=>{ st.trv = +e.target.value; if (st.trv>0) st.trvPrev = st.trv; $('tV').textContent = trvLabel(st.trv); drawTrvChart(); });
+  drawTrvChart();
   $('lSl').addEventListener('input',e=>{ st.lock = +e.target.value/100; $('lV').textContent = e.target.value+'%'; });
 }
-function trvLabel(v){ return v===0 ? '✱ off (frost)' : `${v} ≈ ${TRV_T[v]} °C`; }
+function trvLabel(v){ return v===0 ? '✱ frost (7 °C)' : `${v} ≈ ${Math.round(trvTarget(v))} °C`; }
+// Small chart: valve opening against the temperature its head feels, for the current setting
+const CH = {x0:28, x1:292, y0:84, y1:8, t0:8, t1:30};
+const chX = t => CH.x0 + (Math.max(CH.t0,Math.min(CH.t1,t))-CH.t0)/(CH.t1-CH.t0)*(CH.x1-CH.x0);
+const chY = o => CH.y0 - o*(CH.y0-CH.y1);
+function drawTrvChart(){
+  const c = $('trvChart'); if (!c || !selected) return;
+  const st = S.rads[selected];
+  let h = `<line x1="${CH.x0}" y1="${CH.y0}" x2="${CH.x1}" y2="${CH.y0}" stroke="var(--line-2)"/>
+    <line x1="${CH.x0}" y1="${CH.y1}" x2="${CH.x0}" y2="${CH.y0}" stroke="var(--line-2)"/>
+    <text x="${CH.x0-4}" y="${CH.y1+4}" text-anchor="end" class="s-small" style="font-size:10px">open</text>
+    <text x="${CH.x0-4}" y="${CH.y0}" text-anchor="end" class="s-small" style="font-size:10px">shut</text>`;
+  for (let t=10;t<=30;t+=5) h += `<text x="${chX(t)}" y="${CH.y0+14}" text-anchor="middle" class="s-small" style="font-size:10px">${t}°</text>`;
+  // faint curves for every whole number, bold for the chosen setting
+  for (let n=1;n<=5;n++){
+    const tt = trvTarget(n);
+    h += `<path d="M${CH.x0} ${chY(1)} H${chX(tt-1)} L${chX(tt+1)} ${chY(0)} H${CH.x1}" fill="none" stroke="var(--line-2)" stroke-width="1"/>
+          <text x="${chX(tt+1)+2}" y="${CH.y0-4}" class="s-small" style="font-size:9.5px">${n}</text>`;
+  }
+  const tt = trvTarget(st.trv);
+  h += `<path d="M${CH.x0} ${chY(1)} H${chX(tt-1)} L${chX(tt+1)} ${chY(0)} H${CH.x1}" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+        <line id="chV" x1="0" y1="${CH.y1}" x2="0" y2="${CH.y0}" stroke="var(--cool)" stroke-dasharray="3 3"/>
+        <circle id="chDot" r="5" fill="var(--accent)" stroke="var(--card)" stroke-width="2"/>`;
+  c.innerHTML = h;
+  updateTrvChart();
+}
+function updateTrvChart(){
+  const d = document.getElementById('chDot'); if (!d || !selected) return;
+  const st = S.rads[selected], x = chX(st.sensed ?? 16);
+  d.setAttribute('cx', x); d.setAttribute('cy', chY(st.trvOpen));
+  const v = document.getElementById('chV'); v.setAttribute('x1', x); v.setAttribute('x2', x);
+}
 function updatePanel(){
   RADS.forEach(r=>{
     const st = S.rads[r.id], it = rItems[r.id];
@@ -882,6 +925,8 @@ function updatePanel(){
     $('sTr').textContent = st.Tr.toFixed(0)+' °C';
     $('sOpen').textContent = Math.round(st.open*100)+'%';
     $('tOpen').textContent = Math.round(st.trvOpen*100)+'%';
+    $('tSense').textContent = (st.sensed ?? 16).toFixed(1)+' °C';
+    updateTrvChart();
     $('sRoom').textContent = S.rooms[r.room].T.toFixed(1)+' °C';
     $('sFlow').textContent = (st.m*60).toFixed(1)+' L/min';
     $('sQ').textContent = Math.round(st.Q)+' W';
@@ -889,10 +934,10 @@ function updatePanel(){
     const trvShut = st.trvOpen<0.02, lockShut = st.lock<0.02;
     if (trvShut && lockShut) why = 'Both valves are shut, so no water gets in. It cools to room temperature.';
     else if (lockShut) why = 'The TRV is open, but the control valve on the way out is shut. The water has no way out, so none flows in either.';
-    else if (trvShut) why = st.trv===0 ? 'The TRV is turned to off, so no water gets in, even though the control valve is open.' : `The TRV has closed by itself because the room reached about ${TRV_T[st.trv]} °C (setting ${st.trv}). The control valve being open doesn't help.`;
+    else if (trvShut) why = st.trv===0 ? 'The TRV is turned to off, so no water gets in, even though the control valve is open.' : `The TRV has closed by itself because the air around it reached about ${Math.round(trvTarget(st.trv))} °C (setting ${st.trv}). The control valve being open doesn't help.`;
     else if (zoneOpen<0.05) why = `Both valves are open, but Thermostat ${r.zone} isn't calling, so the zone ${r.zone} valve is shut. No water flows.`;
     else if (!S.pump) why = 'The zone valve is still opening…';
-    else if (st.open<0.5) why = (st.lock<0.5 ? 'The control valve is only partly open' : 'The TRV is starting to close as the room nears its setting')+', so only a trickle of water comes through. Less flow means a cooler radiator.';
+    else if (st.open<0.9) why = (st.lock<0.9 && st.lock<st.trvOpen ? 'The control valve is only partly open' : `The TRV is partly closed (setting ${st.trv}, feeling ${st.sensed.toFixed(1)} °C)`)+', so less water comes through. Less flow means a cooler radiator. Turn the TRV up and it opens wider.';
     else why = 'Hot water is flowing through it from the zone '+r.zone+' pipe.';
     $('sWhy').textContent = why;
   }
