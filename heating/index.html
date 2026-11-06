@@ -161,7 +161,7 @@ footer{margin-top:28px;color:var(--dimmer);font-size:13px;text-align:center}
     <div>
       <div class="kicker">Our house · interactive</div>
       <h1>Flow <em>&amp;</em> Return</h1>
-      <p>A live cutaway of the heating. Hot water leaves the boiler, goes round the radiators and the hot water cylinder, and comes back cooler. Tap a radiator to work its valve, and turn the thermostats up or down to see what happens.</p>
+      <p>A live cutaway of the heating. Hot water leaves the boiler, goes round the radiators and the hot water cylinder, and comes back cooler. Tap a radiator to work its two valves, and turn the thermostats up or down to see what happens.</p>
     </div>
     <div class="seg" role="group" aria-label="Boiler type">
       <button id="typeReg" aria-pressed="true" title="Tanks in the loft, open-vented">Regular boiler</button>
@@ -281,11 +281,12 @@ footer{margin-top:28px;color:var(--dimmer);font-size:13px;text-align:center}
 
     <section class="card">
       <h2>The valves on each radiator</h2>
-      <p>Every radiator has a valve at each end:</p>
+      <p>Every radiator has a valve at each end, and water only flows through when <b>both</b> are open. One lets water in and the other lets it out, so shutting either one stops the flow.</p>
       <ul>
-        <li><b>The one you turn.</b> Either a plain wheel (on/off) or a <b>TRV</b> (thermostatic radiator valve) numbered *, 1 to 5. A TRV has its own little thermostat. It closes when <i>that room</i> is warm enough. Roughly, 3 means about 20 °C.</li>
-        <li><b>The lockshield.</b> A plastic cap on the other end. The installer sets it once to <i>balance</i> the system, so that radiators near the boiler don't take all the flow.</li>
+        <li><b>● The thermostatic valve (TRV)</b> is the numbered head (*, 1 to 5) on the way in. It has its own little thermostat and closes by itself when <i>that room</i> is warm enough. Roughly, 3 means about 20 °C. At * it stays shut, apart from frost protection.</li>
+        <li><b>■ The control valve (lockshield)</b> is on the way out, usually under a plastic cap. It doesn't react to temperature. The installer sets it once to <i>balance</i> the system, so radiators near the boiler don't take all the flow. You can also shut it fully to take a radiator off the wall.</li>
       </ul>
+      <p>In the simulator, the knob colour shows how open each valve is (green open, red shut). A TRV turns red by itself when its room warms up.</p>
       <p>Close one radiator in the simulator and watch the others in that zone: they get a bit more flow. Close <i>all</i> of them while the thermostat is still calling, and the water has nowhere to go but the <b>bypass</b> valve. The boiler then heats up fast and switches itself off and on (“cycling”).</p>
       <p class="note">Don't put a TRV on the radiators in the room with the wall thermostat. If the TRV closes first, the thermostat never warms up and keeps the boiler running for nothing.</p>
     </section>
@@ -304,7 +305,7 @@ footer{margin-top:28px;color:var(--dimmer);font-size:13px;text-align:center}
     <section class="card">
       <h2>Radiator cold? A quick checklist</h2>
       <ul>
-        <li><b>Whole radiator cold:</b> its valve is shut, a TRV pin is stuck, or that zone isn't calling (check its thermostat).</li>
+        <li><b>Whole radiator cold:</b> one of its two valves is shut, a TRV pin is stuck, or that zone isn't calling (check its thermostat).</li>
         <li><b>Cold at the top, warm at the bottom:</b> there's air in it. Bleed it with a radiator key. On a system boiler, top the pressure back up afterwards.</li>
         <li><b>Warm at the top, cold at the bottom:</b> sludge has built up. It usually needs a power flush.</li>
         <li><b>Far radiators lukewarm, near ones hot:</b> the system needs balancing at the lockshields.</li>
@@ -622,15 +623,23 @@ RADS.forEach(r=>{
   }
   el('rect',{x:r.x-6,y:r.top-30,width:r.w+12,height:r.h+30,class:'hit'},g);
   r.lbl = txt(r.x+r.w/2,r.top+r.h/2+4,'','s-tag',g,{'text-anchor':'middle','style':'pointer-events:none;font-weight:600'});
-  // valve head (TRV / wheelhead) on the flow side
-  const vg = el('g',{class:'trv',tabindex:0,role:'button','aria-label':`Toggle ${r.name} valve`});
-  r.vg = vg;
-  const vx = r.x-9, vy = r.bottom+3;
-  el('circle',{cx:vx,cy:vy,r:16,fill:'transparent'},vg);
+  // thermostatic valve (TRV) on the flow side: round head
+  const vy = r.bottom+3;
+  const vg = el('g',{class:'trv',tabindex:0,role:'button','aria-label':`Toggle ${r.name} thermostatic valve`});
+  r.vg = vg; const vx = r.x-7;
+  el('circle',{cx:vx,cy:vy,r:10,fill:'transparent'},vg);
   el('line',{x1:vx+5,y1:vy+4,x2:r.fx,y2:vy+4,stroke:'var(--pipe-case)','stroke-width':3},vg);
-  r.ring = el('circle',{cx:vx,cy:vy,r:7.5,class:'ring',fill:'#22c55e',stroke:'var(--pipe-case)','stroke-width':1.5},vg);
-  r.vmark = el('line',{x1:vx,y1:vy-5,x2:vx,y2:vy+5,stroke:'#fff','stroke-width':2,'stroke-linecap':'round'},vg);
+  r.ring = el('circle',{cx:vx,cy:vy,r:7,class:'ring',fill:'#22c55e',stroke:'var(--pipe-case)','stroke-width':1.5},vg);
+  r.vmark = el('line',{x1:vx,y1:vy-4.5,x2:vx,y2:vy+4.5,stroke:'#fff','stroke-width':2,'stroke-linecap':'round'},vg);
   r.vx = vx; r.vy = vy;
+  // control valve (lockshield) on the return side: square cap
+  const lg = el('g',{class:'trv',tabindex:0,role:'button','aria-label':`Toggle ${r.name} control valve`});
+  r.lg = lg; const lx = r.x+r.w+7;
+  el('circle',{cx:lx,cy:vy,r:10,fill:'transparent'},lg);
+  el('line',{x1:lx-5,y1:vy+4,x2:r.rx,y2:vy+4,stroke:'var(--pipe-case)','stroke-width':3},lg);
+  r.lring = el('rect',{x:lx-6,y:vy-6,width:12,height:12,rx:2,class:'ring',fill:'#22c55e',stroke:'var(--pipe-case)','stroke-width':1.5},lg);
+  r.lmark = el('line',{x1:lx,y1:vy-4,x2:lx,y2:vy+4,stroke:'#fff','stroke-width':2,'stroke-linecap':'round'},lg);
+  r.lx = lx;
 });
 
 /* ───────── state ───────── */
@@ -643,7 +652,8 @@ const S = {
 };
 const CFG = {ch:true, hw:true, stat1:21, stat2:19, flowSet:70, cylSet:60, Tout:5, speed:300, paused:false, type:'regular'};
 for (const id in ROOMS) S.rooms[id] = {T:16};
-RADS.forEach(r=>{ S.rads[r.id] = {Tr:16, mode:'manual', valve:1, trv:3, open:1, m:0, Q:0}; });
+const TRV_DEFAULT = id => RAD[id].zone===1 ? 5 : 4;
+RADS.forEach(r=>{ S.rads[r.id] = {Tr:16, trv:TRV_DEFAULT(r.id), trvPrev:TRV_DEFAULT(r.id), lock:1, trvOpen:1, open:1, m:0, Q:0}; });
 let selected = null;
 
 /* ───────── physics ───────── */
@@ -666,7 +676,9 @@ function step(dt){
   const G = {}; let Gp = 0;
   RADS.forEach(r=>{
     const st = S.rads[r.id];
-    st.open = st.mode==='trv' ? trvOpen(st.trv, R[r.room].T) : st.valve;
+    // water only gets through if BOTH valves are open: the TRV on the way in and the control valve on the way out
+    st.trvOpen = trvOpen(st.trv, R[r.room].T);
+    st.open = st.trvOpen * st.lock;
     G[r.id] = st.open * (r.zone===1 ? S.zv.z1 : S.zv.z2); Gp += G[r.id];
   });
   G.hw = 2*S.zv.hw; Gp += G.hw;
@@ -766,9 +778,11 @@ function render(realDt, simDt){
     r.parts.forEach(p=>p.setAttribute('fill',c));
     r.lbl.textContent = r.towel ? '' : Math.round(st.Tr)+'°';
     r.sh.setAttribute('opacity', Math.max(0,Math.min(1, (st.Q-150)/800)).toFixed(2));
-    const o = st.open;
-    r.ring.setAttribute('fill', rgb([Math.round(220-186*o),Math.round(38+159*o),Math.round(38+56*o)]));
-    r.vmark.setAttribute('transform',`rotate(${(1-o)*90} ${r.vx} ${r.vy})`);
+    const oc = o => rgb([Math.round(220-186*o),Math.round(38+159*o),Math.round(38+56*o)]);
+    r.ring.setAttribute('fill', oc(st.trvOpen));
+    r.vmark.setAttribute('transform',`rotate(${(1-st.trvOpen)*90} ${r.vx} ${r.vy})`);
+    r.lring.setAttribute('fill', oc(st.lock));
+    r.lmark.setAttribute('transform',`rotate(${(1-st.lock)*90} ${r.lx} ${r.vy})`);
     r.g.classList.toggle('sel', selected===r.id);
   });
   // components
@@ -813,45 +827,45 @@ const rItems = {};
     rlist.appendChild(d); rItems[id] = d;
   });
 });
-function toggleValve(id){
+function toggleTrv(st){ if (st.trv>0){ st.trvPrev = st.trv; st.trv = 0; } else st.trv = st.trvPrev || 4; }
+function toggleValve(id, which){
   const st = S.rads[id];
-  if (st.mode==='trv') st.trv = st.trv>0 ? 0 : 3;
-  else st.valve = st.valve>0.05 ? 0 : 1;
+  if (which==='trv') toggleTrv(st);
+  else if (which==='lock') st.lock = st.lock>0.05 ? 0 : 1;
+  else if (st.trv>0 && st.lock>0.05) toggleTrv(st);           // list switch: shut it at the TRV
+  else { if (st.trv===0) toggleTrv(st); if (st.lock<=0.05) st.lock = 1; }  // ...or open both
   if (selected===id) buildSel(); else select(id);
 }
 function select(id){ selected = id; buildSel(); }
 RADS.forEach(r=>{
   r.g.addEventListener('click',()=>select(r.id));
   r.g.addEventListener('keydown',e=>{ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); select(r.id); } });
-  r.vg.addEventListener('click',e=>{ e.stopPropagation(); toggleValve(r.id); });
-  r.vg.addEventListener('keydown',e=>{ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleValve(r.id); } });
+  [[r.vg,'trv'],[r.lg,'lock']].forEach(([g,w])=>{
+    g.addEventListener('click',e=>{ e.stopPropagation(); toggleValve(r.id,w); });
+    g.addEventListener('keydown',e=>{ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); e.stopPropagation(); toggleValve(r.id,w); } });
+  });
 });
 function buildSel(){
   const box = $('selPanel');
-  if (!selected){ box.innerHTML = '<p class="sub" style="margin:0 0 6px">Tap a radiator in the picture, or a row below. The round knob beside each radiator is its valve: tap it to open or close it.</p>'; return; }
+  if (!selected){ box.innerHTML = '<p class="sub" style="margin:0 0 6px">Tap a radiator in the picture, or a row below. Each radiator has two valves: the <b>round</b> knob on the left is the thermostatic valve (TRV), and the <b>square</b> cap on the right is the control valve. Tap either one to open or close it. Water only gets through when both are open.</p>'; return; }
   const r = RAD[selected], st = S.rads[selected];
   box.innerHTML = `<div class="selcard">
     <div class="row" style="margin-top:0"><b>${r.name}</b><span class="pill">zone ${r.zone}</span></div>
-    <div class="row"><span class="sub">Valve type</span><div class="seg" role="group" aria-label="Valve type">
-      <button data-mode="manual" aria-pressed="${st.mode==='manual'}">Manual</button><button data-mode="trv" aria-pressed="${st.mode==='trv'}">TRV</button></div></div>
-    ${st.mode==='manual'
-      ? `<div class="row"><label for="vSl">How open</label><span class="mono" id="vV">${Math.round(st.valve*100)}%</span></div>
-         <input type="range" id="vSl" min="0" max="100" step="5" value="${Math.round(st.valve*100)}">`
-      : `<div class="row"><label for="vSl">TRV setting</label><span class="mono" id="vV">${trvLabel(st.trv)}</span></div>
-         <input type="range" id="vSl" min="0" max="5" step="1" value="${st.trv}">
-         <p class="sub" style="margin:2px 0 0">The TRV closes itself as <i>this room</i> nears its setting.</p>`}
+    <div class="row"><label for="tSl">● Thermostatic valve (TRV)</label><span class="mono" id="tV">${trvLabel(st.trv)}</span></div>
+    <input type="range" id="tSl" min="0" max="5" step="1" value="${st.trv}">
+    <p class="sub" style="margin:0 0 6px">On the way in. It closes itself as <i>this room</i> nears its number. Now <b class="mono" id="tOpen">–</b> open.</p>
+    <div class="row"><label for="lSl">■ Control valve (lockshield)</label><span class="mono" id="lV">${Math.round(st.lock*100)}%</span></div>
+    <input type="range" id="lSl" min="0" max="100" step="5" value="${Math.round(st.lock*100)}">
+    <p class="sub" style="margin:0">On the way out. It stays where it's set and doesn't react to temperature.</p>
     <div class="readout">
-      <div>radiator<b id="sTr">–</b></div><div>room<b id="sRoom">–</b></div>
+      <div>water can get through<b id="sOpen">–</b></div><div>radiator<b id="sTr">–</b></div>
       <div>water through it<b id="sFlow">–</b></div><div>heat given off<b id="sQ">–</b></div>
+      <div>room<b id="sRoom">–</b></div>
     </div>
     <p class="sub" id="sWhy" style="margin:6px 0 0"></p>
   </div>`;
-  box.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{ st.mode = b.dataset.mode; buildSel(); }));
-  $('vSl').addEventListener('input',e=>{
-    const v = +e.target.value;
-    if (st.mode==='manual'){ st.valve = v/100; $('vV').textContent = v+'%'; }
-    else { st.trv = v; $('vV').textContent = trvLabel(v); }
-  });
+  $('tSl').addEventListener('input',e=>{ st.trv = +e.target.value; if (st.trv>0) st.trvPrev = st.trv; $('tV').textContent = trvLabel(st.trv); });
+  $('lSl').addEventListener('input',e=>{ st.lock = +e.target.value/100; $('lV').textContent = e.target.value+'%'; });
 }
 function trvLabel(v){ return v===0 ? '✱ off (frost)' : `${v} ≈ ${TRV_T[v]} °C`; }
 function updatePanel(){
@@ -859,21 +873,26 @@ function updatePanel(){
     const st = S.rads[r.id], it = rItems[r.id];
     it.querySelector('.sw').style.background = pipeColor(st.Tr);
     it.querySelector('.t').textContent = Math.round(st.Tr)+'°C';
-    const on = st.mode==='trv' ? st.trv>0 : st.valve>0.05;
+    const on = st.trv>0 && st.lock>0.05;
     it.querySelector('.tog').setAttribute('aria-checked', on);
     it.classList.toggle('sel', selected===r.id);
   });
   if (selected && $('sTr')){
     const r = RAD[selected], st = S.rads[selected], zoneOpen = r.zone===1 ? S.zv.z1 : S.zv.z2;
     $('sTr').textContent = st.Tr.toFixed(0)+' °C';
+    $('sOpen').textContent = Math.round(st.open*100)+'%';
+    $('tOpen').textContent = Math.round(st.trvOpen*100)+'%';
     $('sRoom').textContent = S.rooms[r.room].T.toFixed(1)+' °C';
     $('sFlow').textContent = (st.m*60).toFixed(1)+' L/min';
     $('sQ').textContent = Math.round(st.Q)+' W';
     let why;
-    if (st.open<0.02) why = st.mode==='trv' && st.trv>0 ? 'The TRV has closed because the room reached its setting.' : 'Its valve is shut, so no water gets in. It cools to room temperature.';
-    else if (zoneOpen<0.05) why = `The valve is open, but Thermostat ${r.zone} isn't calling, so the zone ${r.zone} valve is shut. No water flows.`;
+    const trvShut = st.trvOpen<0.02, lockShut = st.lock<0.02;
+    if (trvShut && lockShut) why = 'Both valves are shut, so no water gets in. It cools to room temperature.';
+    else if (lockShut) why = 'The TRV is open, but the control valve on the way out is shut. The water has no way out, so none flows in either.';
+    else if (trvShut) why = st.trv===0 ? 'The TRV is turned to off, so no water gets in, even though the control valve is open.' : `The TRV has closed by itself because the room reached about ${TRV_T[st.trv]} °C (setting ${st.trv}). The control valve being open doesn't help.`;
+    else if (zoneOpen<0.05) why = `Both valves are open, but Thermostat ${r.zone} isn't calling, so the zone ${r.zone} valve is shut. No water flows.`;
     else if (!S.pump) why = 'The zone valve is still opening…';
-    else if (st.open<0.5) why = "It's only partly open, so a trickle of water comes through. Less flow means a cooler radiator.";
+    else if (st.open<0.5) why = (st.lock<0.5 ? 'The control valve is only partly open' : 'The TRV is starting to close as the room nears its setting')+', so only a trickle of water comes through. Less flow means a cooler radiator.';
     else why = 'Hot water is flowing through it from the zone '+r.zone+' pipe.';
     $('sWhy').textContent = why;
   }
@@ -944,15 +963,15 @@ setType('regular');
 function setStat(n,v){ CFG['stat'+n] = v; $('s'+n+'set').textContent = v.toFixed(1)+'°'; }
 function setTog(id,key,v){ CFG[key] = v; $(id).setAttribute('aria-checked',v); }
 function setRange(id,key,v){ CFG[key] = v; $(id).value = v; $(id+(id==='outT'?'v':'V')).textContent = v+' °C'; }
-function resetRads(){ RADS.forEach(r=>Object.assign(S.rads[r.id],{mode:'manual',valve:1,trv:3})); }
+function resetRads(){ RADS.forEach(r=>Object.assign(S.rads[r.id],{trv:TRV_DEFAULT(r.id),trvPrev:TRV_DEFAULT(r.id),lock:1})); }
 const SCEN = {
   cold(){ resetRads(); for (const id in S.rooms) S.rooms[id].T = 13.5; RADS.forEach(r=>S.rads[r.id].Tr=13.5); S.Tf = 15; S.cyl.T = 38; S.t = 6*3600; S.gas = 0;
     setTog('chTog','ch',true); setTog('hwTog','hw',true); setStat(1,21); setStat(2,19); setRange('outT','Tout',2); setRange('flowSet','flowSet',70);
     return 'Everything starts at 13.5 °C on a frosty morning. Both thermostats and the cylinder call at once. Watch the zone valves open, then the boiler fire, then the flow (red) and return (blue) set up. The far radiators warm last.'; },
-  closeLR(){ resetRads(); Z1.forEach(id=>S.rads[id].valve=0); setTog('chTog','ch',true); setStat(1,23); setStat(2,15); setTog('hwTog','hw',false);
-    return 'Thermostat 1 is calling, but all four living-room valves are shut. The zone valve opens, yet the water has nowhere to go but the bypass. The boiler overheats quickly and keeps stopping and restarting, and the room never warms.'; },
+  closeLR(){ resetRads(); Z1.forEach(id=>{ S.rads[id].trvPrev = S.rads[id].trv; S.rads[id].trv=0; }); setTog('chTog','ch',true); setStat(1,23); setStat(2,15); setTog('hwTog','hw',false);
+    return 'Thermostat 1 is calling, but all four living-room TRVs are turned to off. The zone valve opens, yet the water has nowhere to go but the bypass. The boiler overheats quickly and keeps stopping and restarting, and the room never warms.'; },
   landing(){ resetRads(); S.rooms.landing.T = 21; S.rooms.hall.T = 20; S.rooms.bed1.T = 15; S.rooms.bed2.T = 14.5; S.rooms.bath.T = 15; setStat(2,19); setStat(1,20); setTog('chTog','ch',true); setRange('outT','Tout',1);
-    return 'The landing is already 21 °C from heat rising up the stairs, so Thermostat 2 is satisfied and zone 2 stays shut, even though the bedrooms are cold. Try turning Thermostat 2 up to 22, then put the bedroom radiators on TRV mode so each one stops at its own temperature.'; },
+    return 'The landing is already 21 °C from heat rising up the stairs, so Thermostat 2 is satisfied and zone 2 stays shut, even though the bedrooms are cold. Try turning Thermostat 2 up to 22, then turn the bedroom TRVs down to 3 so each one stops at about 20 °C by itself.'; },
   summer(){ resetRads(); setTog('chTog','ch',false); setTog('hwTog','hw',true); setRange('outT','Tout',16); S.cyl.T = 30; for (const id in S.rooms) S.rooms[id].T = Math.max(S.rooms[id].T, 19);
     return "Heating is off on the programmer, so only the hot-water valve opens. All the boiler's heat goes into the coil inside the cylinder. Then run a bath and watch the cylinder cool from the bottom up."; },
   low(){ setRange('flowSet','flowSet',55); setTog('chTog','ch',true);
