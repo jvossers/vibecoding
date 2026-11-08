@@ -6,14 +6,18 @@ import { emptyState } from './ui/components.js';
 import { validateCatalogue } from './domain/validation.js';
 import { renderCatalogue } from './ui/catalogue.js';
 import { renderProductDetail } from './ui/productDetail.js';
+import { renderRollout } from './ui/rollout.js';
 import { closeProductDialog } from './ui/productDialog.js';
 
-const repo = createCatalogueRepository({ baseUrl: './data/' });
+// The single-file build embeds the catalogue in a <script type="application/json"> block.
+const embeddedEl = document.getElementById('parity-data');
+const repo = createCatalogueRepository({ baseUrl: './data/', embedded: embeddedEl ? JSON.parse(embeddedEl.textContent) : null });
 const view = document.getElementById('view');
 
 const ROUTES = [
   { pattern: /^\/?$/, title: 'Find an alternative', render: renderCatalogue },
   { pattern: /^\/product\/([^/]+)$/, keys: ['id'], title: 'Product', render: renderProductDetail },
+  { pattern: /^\/rollout$/, title: 'Rolling Parity out', render: renderRollout },
 ];
 
 function parseHash() {
