@@ -1,10 +1,11 @@
-// The only module that knows where catalogue data comes from. Today it reads the local
-// JSON fixtures and applies the rules in the browser; a future API client can implement
-// the same async methods and the UI will not need to change.
+// The only module that knows where catalogue data comes from. It reads the local JSON
+// fixtures, or uses data embedded in the page (the single-file build, see
+// scripts/buildStandalone.js), and applies the rules in the browser. A future API client
+// can implement the same async methods and the UI will not need to change.
 
 import { findAlternatives } from '../domain/matching.js';
 
-export function createCatalogueRepository({ baseUrl = './data/', fetchImpl = (...a) => globalThis.fetch(...a) } = {}) {
+export function createCatalogueRepository({ baseUrl = './data/', fetchImpl = (...a) => globalThis.fetch(...a), embedded = null } = {}) {
   let loading = null;
 
   async function fetchJson(file) {
@@ -15,7 +16,9 @@ export function createCatalogueRepository({ baseUrl = './data/', fetchImpl = (..
 
   function load() {
     loading ??= (async () => {
-      const [products, families] = await Promise.all([fetchJson('products.json'), fetchJson('instrument-families.json')]);
+      const [products, families] = embedded
+        ? [embedded.products, embedded.families]
+        : await Promise.all([fetchJson('products.json'), fetchJson('instrument-families.json')]);
       return {
         products,
         families,

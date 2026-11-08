@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "generate": "node scripts/generateSyntheticCatalogue.js",
+    "build:standalone": "node scripts/buildStandalone.js",
     "test": "node --test tests/*.test.js"
   }
 }

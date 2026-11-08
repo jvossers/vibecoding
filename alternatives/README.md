@@ -22,6 +22,7 @@ python3 -m http.server 8000
 |---|---|
 | `node --test tests/*.test.js` (or `npm test`) | Runs the tests with Node's built-in test runner. No packages needed. |
 | `node scripts/generateSyntheticCatalogue.js` (or `npm run generate`) | Regenerates `data/*.json` and `assets/illustrations/*.svg` from a fixed seed. |
+| `node scripts/buildStandalone.js` (or `npm run build:standalone`) | Writes `standalone/parity.html`: the whole app and catalogue in one self-contained HTML file (see below). |
 | `node scripts/generateSyntheticCatalogue.js --check` | Validates the catalogue and prints counts, including how many tips have alternatives under the current rules. |
 
 `package.json` only sets `"type": "module"`. It has no dependencies, and `npm install` is never needed.
@@ -34,6 +35,14 @@ python3 -m http.server 8000
   - **Product details**: the description and all specifications.
 
   Export PDF sits in the dialog header. Clicking an alternative shows it in the same dialog, with a link back. The open product is kept in the URL (`?product=…`), so a link reopens the dialog. Ctrl/Cmd-click on a product name still opens the full product page (`#/product/<id>`) in a new tab.
+
+## Single-file build (for Teams)
+
+`node scripts/buildStandalone.js` packs `index.html`, the CSS, every JS module and both data files into `standalone/parity.html` (about 230 KB). It needs no server: it opens from disk, works offline, and can be pinned as a Website tab in Microsoft Teams. A Content-Security-Policy in the file blocks every outside request. The repository reads the embedded catalogue instead of calling `fetch()`.
+
+To roll out with real data, convert the real catalogue into `data/products.json` and `data/instrument-families.json` (same fields) and rebuild. The integrity checks in `js/domain/validation.js` can be run on the converted data before it ships. A test fails if `standalone/parity.html` is stale, so rebuild after any change to the app or data.
+
+The (i) button in the top bar opens `#/rollout`, a one-page slide for IT that explains this process. It prints as one A4 landscape page.
 
 ## Export PDF
 
@@ -79,11 +88,13 @@ js/ui/productDialog.js         product dialog (Alternatives / Product details ta
 js/ui/productParts.js          pieces shared by the dialog and the product page
 js/ui/productDetail.js         full product page (direct links)
 js/ui/exportSheet.js           one-page PDF summary (via the browser's print dialog)
+js/ui/rollout.js               the rollout slide for IT (#/rollout)
 js/ui/components.js, dom.js    small DOM helpers (text nodes only for data and input)
 js/ui/illustrations.js         generic SVG files for assets/ (used by the generator only)
 data/products.json             127 synthetic SKUs (91 tips, 26 pipettes, 10 accessories), each with a price
 data/instrument-families.json  7 fictional pipette families and their tip interfaces
 scripts/generateSyntheticCatalogue.js  deterministic generator
+scripts/buildStandalone.js     single-file build -> standalone/parity.html
 tests/*.test.js                node:test suites
 ```
 

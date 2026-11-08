@@ -11,4 +11,5 @@
 - The rules in `rules.js` are placeholders until the user supplies the real ones.
 - Never use real manufacturer names, product names, SKUs, images or URLs. `tests/data.test.js` checks the data against a hashed deny-list.
 - Data changes go through `scripts/generateSyntheticCatalogue.js`; run it after editing, then `node --test tests/*.test.js` (a test fails if the committed fixtures are stale).
+- `standalone/parity.html` is the single-file build (for Teams). After changing any app file or data, run `node scripts/buildStandalone.js`; a test fails if it is stale. The bundler only supports named imports and `export function|const|let|class`.
 - Render data and user input as text nodes (`h()` in `js/ui/dom.js`), never via `innerHTML`.
