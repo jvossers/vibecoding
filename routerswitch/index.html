@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Routers vs Switches</title>
+<meta name="description" content="Interactive GCSE (OCR J277) explainer on the difference between routers and switches, with a packet simulator and quiz.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script>try{var t=localStorage.getItem('rs-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<style>
+:root{
+  --bg:#f6f4ee; --surface:#ffffff; --surface-2:#efece3; --line:#d9d4c6;
+  --ink:#1c1b18; --ink-2:#4a473f; --ink-3:#7c776b;
+  --sw:#0f7d78; --sw-soft:#d7efed;      /* switch = teal */
+  --rt:#c25a12; --rt-soft:#fbe5d3;      /* router = orange */
+  --both:#5b49b8; --both-soft:#e4e0f7;
+  --ok:#1f7a3a; --ok-soft:#dcf1e1; --bad:#b3261e; --bad-soft:#f8dedb;
+  --wire:#b9b2a1; --dot:#1c1b18;
+  --font:"Space Grotesk",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121311; --surface:#1b1c19; --surface-2:#242521; --line:#34352f;
+    --ink:#ecebe5; --ink-2:#bdbab0; --ink-3:#8a877d;
+    --sw:#3fd0c8; --sw-soft:#14312f; --rt:#ff9a52; --rt-soft:#3a2416;
+    --both:#a99bff; --both-soft:#26223f;
+    --ok:#5fd17e; --ok-soft:#173022; --bad:#ff7a6e; --bad-soft:#3a1c19;
+    --wire:#4a4b44; --dot:#ecebe5;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121311; --surface:#1b1c19; --surface-2:#242521; --line:#34352f;
+  --ink:#ecebe5; --ink-2:#bdbab0; --ink-3:#8a877d;
+  --sw:#3fd0c8; --sw-soft:#14312f; --rt:#ff9a52; --rt-soft:#3a2416;
+  --both:#a99bff; --both-soft:#26223f;
+  --ok:#5fd17e; --ok-soft:#173022; --bad:#ff7a6e; --bad-soft:#3a1c19;
+  --wire:#4a4b44; --dot:#ecebe5;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--font)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+header.top{padding:64px 0 8px}
+.kicker{font:600 13px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+h1{font-size:clamp(34px,6vw,58px);line-height:1.05;margin:12px 0 14px;letter-spacing:-.02em}
+h1 .sw{color:var(--sw)} h1 .rt{color:var(--rt)}
+.lede{font-size:19px;color:var(--ink-2);max-width:680px;margin:0}
+h2{font-size:clamp(25px,4vw,34px);line-height:1.15;margin:0 0 8px;letter-spacing:-.01em}
+h3{font-size:19px;margin:0 0 6px}
+section{padding:44px 0 8px}
+p{max-width:720px}
+.muted{color:var(--ink-2)}
+code,.mono{font-family:var(--mono);font-size:.88em}
+.tag{display:inline-block;font:600 12px/1 var(--mono);padding:5px 8px;border-radius:6px;letter-spacing:.04em;text-transform:uppercase}
+.tag.sw{background:var(--sw-soft);color:var(--sw)} .tag.rt{background:var(--rt-soft);color:var(--rt)} .tag.both{background:var(--both-soft);color:var(--both)}
+.themebtn{position:absolute;top:16px;right:16px;background:var(--surface);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:6px 12px;font:500 14px var(--font);cursor:pointer}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}}
+.big-idea .card h3{display:flex;gap:10px;align-items:center}
+.big-idea .card.sw{border-top:5px solid var(--sw)} .big-idea .card.rt{border-top:5px solid var(--rt)}
+.big-idea ul{margin:8px 0 0;padding-left:20px} .big-idea li{margin:4px 0}
+.analogy{margin-top:16px;background:var(--surface-2);border-radius:var(--radius);padding:16px 20px}
+.analogy p{margin:6px 0}
+
+/* simulator */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:18px}
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.controls label{font-size:14px;color:var(--ink-2);display:flex;gap:6px;align-items:center}
+select,button.btn{font:500 15px var(--font);border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 12px;min-height:40px}
+button.btn{cursor:pointer}
+button.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
+button.btn:disabled{opacity:.45;cursor:not-allowed}
+.controls .spacer{flex:1}
+.netscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.netscroll svg{display:block;min-width:660px;width:100%;height:auto}
+.scrollhint{display:none;font-size:13px;color:var(--ink-3);padding:6px 16px 0}
+@media (max-width:680px){.scrollhint{display:block}}
+.node{cursor:pointer}
+.node .body{fill:var(--surface);stroke:var(--ink-3);stroke-width:2}
+.node.pc .body{stroke:var(--ink-2)}
+.node.switch .body{fill:var(--sw-soft);stroke:var(--sw)}
+.node.router .body{fill:var(--rt-soft);stroke:var(--rt)}
+.node text{fill:var(--ink);font-family:var(--font)}
+.node .lbl{font-size:15px;font-weight:600}
+.node .addr{font:12px var(--mono);fill:var(--ink-2)}
+.node .glyph{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.node.switch .glyph{stroke:var(--sw)} .node.router .glyph{stroke:var(--rt)} .node.pc .glyph{stroke:var(--ink-2)}
+.node.from .body{stroke-width:4;stroke:var(--ink)}
+.node.to .body{stroke-width:4;stroke-dasharray:6 4;stroke:var(--ink)}
+.node.busy .body{filter:drop-shadow(0 0 8px var(--ink-3))}
+.node.got .body{fill:var(--ok-soft);stroke:var(--ok);stroke-width:4}
+.node.ignore .body{fill:var(--bad-soft);stroke:var(--bad)}
+.wire{stroke:var(--wire);stroke-width:4}
+.wire.lit{stroke:var(--ink-2)}
+.cloud{fill:var(--surface-2);stroke:var(--ink-3);stroke-width:2;stroke-dasharray:5 4}
+.netlabel{font:600 13px var(--mono);fill:var(--ink-3);letter-spacing:.06em}
+.netbox{fill:none;stroke:var(--line);stroke-width:2;stroke-dasharray:2 6;stroke-linecap:round}
+.portnum{font:11px var(--mono);fill:var(--ink-3)}
+.packet circle{fill:var(--dot)}
+.packet path{stroke:var(--bg);stroke-width:1.6;fill:none}
+.bubble rect{fill:var(--ink)} .bubble text{fill:var(--bg);font:600 12px var(--font)}
+
+.simbody{display:grid;grid-template-columns:1.2fr 1fr;border-top:1px solid var(--line)}
+@media (max-width:820px){.simbody{grid-template-columns:1fr}}
+.simbody > div{padding:16px}
+.simbody > div + div{border-left:1px solid var(--line)}
+@media (max-width:820px){.simbody > div + div{border-left:0;border-top:1px solid var(--line)}}
+.paneltitle{font:600 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px}
+#log{list-style:none;margin:0;padding:0;max-height:330px;overflow:auto;font-size:15px}
+#log li{padding:8px 10px;border-radius:10px;margin-bottom:6px;background:var(--surface-2);border-left:4px solid var(--ink-3)}
+#log li.sw{border-left-color:var(--sw)} #log li.rt{border-left-color:var(--rt)} #log li.ok{border-left-color:var(--ok)} #log li.bad{border-left-color:var(--bad)}
+#log li b{font-weight:600}
+#log .empty{background:none;border:0;color:var(--ink-3);padding:0}
+
+.frame{border:2px solid var(--ink-3);border-radius:12px;padding:10px;font:13px/1.45 var(--mono);margin-bottom:14px}
+.frame .hdr{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:6px 8px;border-radius:8px;transition:background .2s,outline-color .2s;outline:2px solid transparent}
+.frame .hdr .k{color:var(--ink-3)}
+.frame .ip{margin-top:8px;border:2px dashed var(--ink-3);border-radius:10px;padding:8px}
+.frame .data{margin-top:6px;padding:6px 8px;background:var(--surface-2);border-radius:8px}
+.frame .cap{font:600 11px var(--font);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:2px}
+.frame .mac.reading{background:var(--sw-soft);outline-color:var(--sw)}
+.frame .ipaddr.reading{background:var(--rt-soft);outline-color:var(--rt)}
+.frame .changed{animation:flash 1s}
+@keyframes flash{0%{background:#ffd447}100%{background:transparent}}
+.tables{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:420px){.tables{grid-template-columns:1fr}}
+.tbl{border:1px solid var(--line);border-radius:10px;overflow:hidden;font:12.5px var(--mono)}
+.tbl .th{padding:6px 8px;font:600 12px var(--font);color:#fff}
+.tbl.sw .th{background:var(--sw)} .tbl.rt .th{background:var(--rt)}
+:root[data-theme="dark"] .tbl .th{color:#111}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tbl .th{color:#111}}
+.tbl table{width:100%;border-collapse:collapse}
+.tbl td,.tbl th.c{padding:4px 8px;border-top:1px solid var(--line);text-align:left;font-weight:400}
+.tbl th.c{color:var(--ink-3);font-size:11px}
+.tbl tr.new td{animation:flash 1.2s}
+.tbl tr.hit td{background:var(--rt-soft)}
+.tbl.sw tr.hit td{background:var(--sw-soft)}
+.tbl .none td{color:var(--ink-3);font-style:italic}
+
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;color:var(--ink-2);padding:10px 16px;border-top:1px solid var(--line)}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+.tryit{margin:12px 0 0;padding-left:20px} .tryit li{margin:4px 0}
+
+/* home router */
+.homebox{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin-top:16px}
+@media (max-width:760px){.homebox{grid-template-columns:1fr}}
+.boxart{position:relative;border:3px solid var(--ink);border-radius:18px;padding:52px 16px 16px;background:var(--surface);margin-top:30px}
+.boxart .ant{position:absolute;top:-34px;width:8px;height:44px;background:var(--ink);border-radius:4px}
+.boxart .ant.a{left:30px;transform:rotate(-12deg)} .boxart .ant.b{right:30px;transform:rotate(12deg)}
+.boxart .brand{position:absolute;top:14px;left:18px;font:600 13px var(--mono);color:var(--ink-3)}
+.boxart .leds{position:absolute;top:18px;right:18px;display:flex;gap:6px}
+.boxart .leds i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.parts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.part{border:2px dashed var(--line);border-radius:12px;padding:14px 12px;background:var(--surface-2);cursor:pointer;text-align:left;font:600 16px var(--font);color:var(--ink);min-height:74px}
+.part small{display:block;font:400 13px var(--font);color:var(--ink-3);margin-top:2px}
+.part[aria-pressed="true"]{border-style:solid;border-color:var(--c);background:var(--surface)}
+.part.p-rt{--c:var(--rt)} .part.p-sw{--c:var(--sw)} .part.p-wap{--c:var(--both)} .part.p-mod{--c:var(--ink-2)}
+.ports{display:flex;gap:6px;margin-top:14px;align-items:center;font:11px var(--mono);color:var(--ink-3);flex-wrap:wrap}
+.ports i{display:inline-block;width:22px;height:16px;border-radius:3px;border:2px solid var(--ink-3)}
+.ports i.lan{border-color:var(--sw);background:var(--sw-soft)}
+.ports i.wan{border-color:var(--rt);background:var(--rt-soft)}
+.partinfo{min-height:200px}
+.partinfo h3{margin-top:0}
+
+/* comparison */
+.compare{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:16px;font-size:16px}
+.compare th,.compare td{padding:12px 14px;text-align:left;vertical-align:top;border-top:1px solid var(--line)}
+.compare thead th{border-top:0;font-size:15px}
+.compare thead th.sw{color:var(--sw)} .compare thead th.rt{color:var(--rt)}
+.compare tbody th{font-weight:600;color:var(--ink-2);width:22%}
+@media (max-width:640px){
+  .compare thead{display:none}
+  .compare,.compare tbody,.compare tr,.compare th,.compare td{display:block;width:100%}
+  .compare tbody th{border-top:1px solid var(--line);background:var(--surface-2);width:100%}
+  .compare td{border-top:0;padding-top:6px}
+  .compare td::before{content:attr(data-h);display:block;font:600 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+  .compare td.sw{--c:var(--sw)} .compare td.rt{--c:var(--rt)}
+}
+
+/* sort game */
+.sortlist{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:10px}
+.stmt{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between}
+.stmt .txt{flex:1 1 300px}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{font:600 14px var(--font);border:0;background:var(--surface);color:var(--ink-2);padding:8px 12px;cursor:pointer;min-height:40px}
+.seg button + button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"].o-sw{background:var(--sw);color:var(--bg)}
+.seg button[aria-pressed="true"].o-rt{background:var(--rt);color:var(--bg)}
+.seg button[aria-pressed="true"].o-both{background:var(--both);color:var(--bg)}
+.stmt.right{border-color:var(--ok);background:var(--ok-soft)}
+.stmt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.stmt .why{flex-basis:100%;font-size:14px;color:var(--ink-2);display:none}
+.stmt.right .why,.stmt.wrong .why{display:block}
+.score{font:600 18px var(--font);margin-left:10px}
+.gamebar{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+
+/* exam */
+details.q{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-top:12px}
+details.q summary{cursor:pointer;padding:14px 16px;font-weight:600;list-style:none;display:flex;gap:12px;align-items:baseline}
+details.q summary::-webkit-details-marker{display:none}
+details.q summary .m{font:600 12px var(--mono);color:var(--ink-3);white-space:nowrap;margin-left:auto}
+details.q .ans{padding:0 16px 14px;border-top:1px dashed var(--line)}
+details.q .ans p{margin:10px 0 6px}
+details.q ul{margin:4px 0;padding-left:20px}
+details.q summary::after{content:"Show answer";font:500 13px var(--font);color:var(--ink-3);white-space:nowrap}
+details.q[open] summary::after{content:"Hide"}
+.tip{border-left:4px solid var(--both);background:var(--both-soft);padding:10px 14px;border-radius:0 10px 10px 0;margin-top:16px}
+.tip p{margin:4px 0}
+dl.gloss{display:grid;grid-template-columns:max-content 1fr;gap:8px 18px;margin:16px 0 0}
+dl.gloss dt{font-weight:600}
+dl.gloss dd{margin:0;color:var(--ink-2)}
+@media (max-width:560px){dl.gloss{grid-template-columns:1fr}dl.gloss dd{margin-bottom:8px}}
+footer{padding:40px 0 50px;color:var(--ink-3);font-size:14px}
+footer a{color:inherit}
+</style>
+</head>
+<body>
+<button class="themebtn" id="themebtn" type="button">Theme</button>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">OCR GCSE Computer Science · J277 · 1.3 Networks</div>
+  <h1><span class="sw">Switches</span> and <span class="rt">routers</span>:<br>what's the difference?</h1>
+  <p class="lede">Both boxes pass data along, so they're easy to mix up. Here's the short version: a <strong>switch</strong> moves data <em>inside</em> one network, and a <strong>router</strong> moves data <em>between</em> networks. Send some messages below and watch each one at work.</p>
+</header>
+
+<section class="big-idea" aria-labelledby="h-idea">
+  <h2 id="h-idea">The big idea</h2>
+  <div class="grid2">
+    <div class="card sw">
+      <h3><span class="tag sw">Switch</span> Inside a LAN</h3>
+      <ul>
+        <li>Connects devices together <strong>within one local area network (LAN)</strong>.</li>
+        <li>Reads the <strong>MAC address</strong> of the device the data is going to.</li>
+        <li>Keeps a table of which MAC address is plugged into which port.</li>
+        <li>Sends the data <strong>only to the device it's meant for</strong>, not to every device.</li>
+      </ul>
+    </div>
+    <div class="card rt">
+      <h3><span class="tag rt">Router</span> Between networks</h3>
+      <ul>
+        <li>Connects <strong>different networks</strong> together, such as a LAN to the internet (a WAN).</li>
+        <li>Reads the <strong>IP address</strong> the packet is going to.</li>
+        <li>Uses a routing table to decide <strong>where to forward the packet next</strong>.</li>
+        <li>Works out a route for packets to reach their destination network.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="analogy">
+    <p><strong>Think of posting a letter.</strong> The <span class="tag rt">IP address</span> is the address written on the envelope: it says where the letter is finally going, and it never changes on the way.</p>
+    <p>The <span class="tag sw">MAC address</span> is more like "hand this to the next person in the chain". A <strong>switch</strong> is the post room inside one building, handing letters to the right desk. A <strong>router</strong> is the sorting office that decides which town the letter goes to next.</p>
+  </div>
+</section>
+
+<section aria-labelledby="h-sim">
+  <h2 id="h-sim">Try it: send a message</h2>
+  <p class="muted">Two LANs are joined by a WAN link. Pick who sends and who receives, then press <strong>Send</strong>. You can also tap devices on the diagram: the first tap picks the sender, the second picks the receiver.</p>
+  <ol class="tryit muted">
+    <li>Send from <strong>Ava</strong> to <strong>Ben</strong>. Same LAN, so only the switch is needed. The switch doesn't know Ben yet, so watch what it does.</li>
+    <li>Now send <strong>Ben</strong> back to <strong>Ava</strong>. The switch has learnt where Ava is, so it doesn't need to guess.</li>
+    <li>Send from <strong>Ava</strong> to the <strong>Web server</strong> on the other LAN. Now the routers have to get involved.</li>
+  </ol>
+
+  <div class="sim">
+    <div class="controls">
+      <label>From <select id="from"></select></label>
+      <label>To <select id="to"></select></label>
+      <button class="btn primary" id="send" type="button">Send ▸</button>
+      <span class="spacer"></span>
+      <label>Speed <select id="speed"><option value="1.6">Slow</option><option value="1" selected>Normal</option><option value="0.5">Fast</option></select></label>
+      <button class="btn" id="reset" type="button">Reset tables</button>
+    </div>
+    <div class="scrollhint">Scroll sideways to see the whole network →</div>
+    <div class="netscroll"><svg id="net" viewBox="0 0 960 470" role="img" aria-label="Network diagram: three devices connect to Switch A, which connects to Router A. Router A links over a WAN to Router B, which connects to Switch B and three more devices."></svg></div>
+    <div class="legend">
+      <span style="--c:var(--sw)">Switch: reads MAC addresses</span>
+      <span style="--c:var(--rt)">Router: reads IP addresses</span>
+      <span style="--c:var(--ok)">Received</span>
+      <span style="--c:var(--bad)">"Not for me", ignored</span>
+    </div>
+    <div class="simbody">
+      <div>
+        <p class="paneltitle">What's happening</p>
+        <ol id="log"><li class="empty">Press Send to start.</li></ol>
+      </div>
+      <div>
+        <p class="paneltitle">The data being sent</p>
+        <div class="frame" id="frame">
+          <div class="cap">Frame (used on each link)</div>
+          <div class="hdr mac" id="f-mac"><span class="k">from MAC</span><span id="f-smac">–</span><span class="k">to MAC</span><span id="f-dmac">–</span></div>
+          <div class="ip">
+            <div class="cap">Packet inside (end to end)</div>
+            <div class="hdr ipaddr" id="f-ip"><span class="k">from IP</span><span id="f-sip">–</span><span class="k">to IP</span><span id="f-dip">–</span></div>
+            <div class="data">data: "Hello!"</div>
+          </div>
+        </div>
+        <p class="paneltitle">Tables inside the boxes</p>
+        <div class="tables" id="tables"></div>
+        <p class="muted" style="font-size:13px;margin:10px 0 0">Real MAC addresses are 48 bits, written like <code>3C:22:FB:9A:10:01</code>. They're shortened here to keep things readable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-home">
+  <h2 id="h-home">"But my home has a router, not a switch…"</h2>
+  <p class="muted">The box your broadband company gave you is usually called a router, but it's really several devices in one case. Tap each part to see what it does.</p>
+  <div class="homebox">
+    <div class="boxart">
+      <i class="ant a"></i><i class="ant b"></i>
+      <span class="brand">BROADBAND HUB</span>
+      <span class="leds"><i></i><i></i><i></i></span>
+      <div class="parts" id="parts">
+        <button class="part p-rt" data-part="rt" aria-pressed="false">Router<small>the "brain"</small></button>
+        <button class="part p-sw" data-part="sw" aria-pressed="false">Switch<small>the LAN ports</small></button>
+        <button class="part p-wap" data-part="wap" aria-pressed="false">Wireless access point<small>the antennas</small></button>
+        <button class="part p-mod" data-part="mod" aria-pressed="false">Modem<small>the phone/fibre socket</small></button>
+      </div>
+      <div class="ports" aria-hidden="true"><i class="wan"></i> WAN&nbsp;&nbsp;<i class="lan"></i><i class="lan"></i><i class="lan"></i><i class="lan"></i> LAN 1–4</div>
+    </div>
+    <div class="card partinfo" id="partinfo" aria-live="polite">
+      <h3>Pick a part</h3>
+      <p class="muted">Each part does a different job. In the exam, treat them as separate pieces of hardware, even though at home they share one box.</p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-compare">
+  <h2 id="h-compare">Side by side</h2>
+  <table class="compare">
+    <thead><tr><th></th><th class="sw">Switch</th><th class="rt">Router</th></tr></thead>
+    <tbody>
+      <tr><th>Main job</th><td class="sw" data-h="Switch">Connects devices together inside a LAN.</td><td class="rt" data-h="Router">Connects networks together, e.g. a LAN to the internet.</td></tr>
+      <tr><th>Address it reads</th><td class="sw" data-h="Switch">MAC address</td><td class="rt" data-h="Router">IP address</td></tr>
+      <tr><th>Table it keeps</th><td class="sw" data-h="Switch">MAC address → port it's plugged into.</td><td class="rt" data-h="Router">Network → where to send packets next (routing table).</td></tr>
+      <tr><th>Where data goes</th><td class="sw" data-h="Switch">Only to the device it's addressed to on the same LAN.</td><td class="rt" data-h="Router">Forwards packets on towards the destination network, choosing a route.</td></tr>
+      <tr><th>Unit of data</th><td class="sw" data-h="Switch">Frames</td><td class="rt" data-h="Router">Packets</td></tr>
+      <tr><th>Typical place</th><td class="sw" data-h="Switch">A school computer room, an office floor.</td><td class="rt" data-h="Router">Where a LAN meets the internet, and all over the internet itself.</td></tr>
+    </tbody>
+  </table>
+  <div class="tip">
+    <p><strong>Don't confuse these with a wireless access point (WAP).</strong> A WAP lets wireless devices join a LAN. It doesn't choose routes and it isn't a router, even though it's often in the same box.</p>
+  </div>
+</section>
+
+<section aria-labelledby="h-sort">
+  <h2 id="h-sort">Sort it: router, switch or both?</h2>
+  <p class="muted">Choose an answer for each statement, then check.</p>
+  <ul class="sortlist" id="sortlist"></ul>
+  <div class="gamebar">
+    <button class="btn primary" id="check" type="button">Check answers</button>
+    <button class="btn" id="again" type="button">Start again</button>
+    <span class="score" id="score" aria-live="polite"></span>
+  </div>
+</section>
+
+<section aria-labelledby="h-exam">
+  <h2 id="h-exam">Exam-style questions</h2>
+  <p class="muted">Write your answer first, then open the mark scheme. These are in the style of OCR J277 Paper 1 questions.</p>
+
+  <details class="q"><summary>1. State the purpose of a switch in a LAN. <span class="m">[1]</span></summary><div class="ans">
+    <p>Any one of:</p>
+    <ul><li>To connect devices together on a LAN.</li><li>To receive data and send it on to the correct device on the LAN.</li></ul>
+  </div></details>
+
+  <details class="q"><summary>2. Describe the role of a router. <span class="m">[2]</span></summary><div class="ans">
+    <p>1 mark each, up to 2:</p>
+    <ul>
+      <li>Connects different networks together / connects a LAN to a WAN or the internet.</li>
+      <li>Receives packets and reads the destination IP address.</li>
+      <li>Forwards packets towards their destination / chooses the route a packet takes.</li>
+    </ul>
+  </div></details>
+
+  <details class="q"><summary>3. Give two differences between a router and a switch. <span class="m">[2]</span></summary><div class="ans">
+    <p>1 mark for each difference. Each must say what <em>both</em> devices do, or be clearly comparative:</p>
+    <ul>
+      <li>A switch connects devices within one network; a router connects different networks.</li>
+      <li>A switch uses MAC addresses; a router uses IP addresses.</li>
+      <li>A switch sends frames to the correct device on the LAN; a router forwards packets to other networks / chooses routes.</li>
+    </ul>
+    <p class="muted">"A router connects to the internet" on its own only gets the mark if you also say what the switch does instead.</p>
+  </div></details>
+
+  <details class="q"><summary>4. A school has a computer room with 30 desktop computers and a printer. Explain why the room needs a switch. <span class="m">[2]</span></summary><div class="ans">
+    <ul>
+      <li>The switch connects all the computers and the printer to each other to form a LAN (1).</li>
+      <li>It sends data only to the device it's addressed to, using its MAC address (1)…</li>
+      <li>…which reduces unnecessary traffic, so the network stays fast (1).</li>
+    </ul>
+  </div></details>
+
+  <details class="q"><summary>5. A family's broadband "router" lets their laptops and games console go online. Identify two separate devices inside the box and state what each does. <span class="m">[4]</span></summary><div class="ans">
+    <p>1 mark for naming the device, 1 for its job, for two devices:</p>
+    <ul>
+      <li><strong>Router</strong>: sends packets between the home LAN and the internet.</li>
+      <li><strong>Switch</strong>: connects the wired devices together on the home LAN.</li>
+      <li><strong>Wireless access point</strong>: lets wireless devices connect to the LAN.</li>
+      <li><strong>Modem</strong>: converts the signal from the broadband line into data the router can use.</li>
+    </ul>
+  </div></details>
+
+  <div class="tip">
+    <p><strong>Exam tip:</strong> when a question asks for a <em>difference</em>, write one sentence that covers both devices, joined with "whereas". For example: "A switch uses MAC addresses to send data within a LAN, <em>whereas</em> a router uses IP addresses to send data between networks."</p>
+  </div>
+</section>
+
+<section aria-labelledby="h-gloss">
+  <h2 id="h-gloss">Key words</h2>
+  <dl class="gloss">
+    <dt>LAN</dt><dd>Local area network. Covers a small area such as one building, and the hardware is usually owned by the organisation using it.</dd>
+    <dt>WAN</dt><dd>Wide area network. Covers a large geographical area and often uses lines owned by telecoms companies. The internet is the biggest WAN.</dd>
+    <dt>MAC address</dt><dd>A unique, permanent address given to a network interface card (NIC) when it's made. Used by switches to deliver data within a LAN.</dd>
+    <dt>IP address</dt><dd>An address given to a device on a network, which can change. Used by routers to send packets between networks.</dd>
+    <dt>Packet</dt><dd>A small chunk of data with a header holding the source and destination IP addresses.</dd>
+    <dt>Frame</dt><dd>What a packet travels inside on each link, with the source and destination MAC addresses.</dd>
+    <dt>NIC</dt><dd>Network interface card. The hardware that lets a device connect to a network; it has the MAC address.</dd>
+  </dl>
+</section>
+
+<footer>
+  An independent revision aid for the <a href="https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/" target="_blank" rel="noopener">OCR J277 specification</a>, not endorsed by OCR. The simulation is simplified: real networks also use ARP to find MAC addresses, and many routers sit between the two LANs.
+</footer>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const SVGNS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs = {}, parent) => {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+};
+
+/* ---------- theme ---------- */
+const themeBtn = $('#themebtn');
+const curTheme = () => document.documentElement.getAttribute('data-theme') ||
+  (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+const setThemeLabel = () => themeBtn.textContent = curTheme() === 'dark' ? '☀ Light' : '☾ Dark';
+themeBtn.onclick = () => {
+  const t = curTheme() === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  try { localStorage.setItem('rs-theme', t); } catch (e) {}
+  setThemeLabel();
+};
+setThemeLabel();
+
+/* ---------- network model ---------- */
+const N = {
+  ava:  {type:'pc', name:'Ava',        x:80,  y:90,  net:'A', ip:'192.168.1.10', mac:'0A-11', kind:'laptop'},
+  ben:  {type:'pc', name:'Ben',        x:80,  y:240, net:'A', ip:'192.168.1.11', mac:'0A-12', kind:'pc'},
+  prn:  {type:'pc', name:'Printer',    x:80,  y:390, net:'A', ip:'192.168.1.12', mac:'0A-13', kind:'printer'},
+  swA:  {type:'switch', name:'Switch A', x:235, y:240, net:'A'},
+  ra:   {type:'router', name:'Router A', x:375, y:240, net:'A', ip:'192.168.1.1', mac:'0A-FE', wanMac:'0C-01'},
+  wan:  {type:'cloud', name:'WAN', x:480, y:240},
+  rb:   {type:'router', name:'Router B', x:585, y:240, net:'B', ip:'192.168.2.1', mac:'0B-FE', wanMac:'0C-02'},
+  swB:  {type:'switch', name:'Switch B', x:725, y:240, net:'B'},
+  srv:  {type:'pc', name:'Web server', x:880, y:90,  net:'B', ip:'192.168.2.20', mac:'0B-21', kind:'server'},
+  cara: {type:'pc', name:'Cara',       x:880, y:240, net:'B', ip:'192.168.2.21', mac:'0B-22', kind:'laptop'},
+  dev:  {type:'pc', name:'Dev',        x:880, y:390, net:'B', ip:'192.168.2.22', mac:'0B-23', kind:'pc'},
+};
+const SWITCH = {
+  swA: {router:'ra', ports:{1:'ava', 2:'ben', 3:'prn', 4:'ra'}, table:{}},
+  swB: {router:'rb', ports:{1:'rb', 2:'srv', 3:'cara', 4:'dev'}, table:{}},
+};
+const ROUTER = {
+  ra: {sw:'swA', rows:[['192.168.1.x','Switch A (my LAN)'],['192.168.2.x','WAN link → Router B']]},
+  rb: {sw:'swB', rows:[['192.168.2.x','Switch B (my LAN)'],['192.168.1.x','WAN link → Router A']]},
+};
+const WIRES = [['ava','swA'],['ben','swA'],['prn','swA'],['swA','ra'],['ra','wan'],['wan','rb'],['rb','swB'],['swB','srv'],['swB','cara'],['swB','dev']];
+const ENDS = ['ava','ben','prn','srv','cara','dev'];
+const portOf = (sw, node) => +Object.keys(SWITCH[sw].ports).find(p => SWITCH[sw].ports[p] === node);
+
+/* ---------- draw ---------- */
+const svg = $('#net');
+el('rect', {class:'netbox', x:20, y:22, width:420, height:432, rx:22}, svg);
+el('rect', {class:'netbox', x:520, y:22, width:420, height:432, rx:22}, svg);
+el('text', {class:'netlabel', x:36, y:46}, svg).textContent = 'LAN A · 192.168.1.x';
+el('text', {class:'netlabel', x:924, y:46, 'text-anchor':'end'}, svg).textContent = 'LAN B · 192.168.2.x';
+const wireEls = {};
+const wireG = el('g', {}, svg);
+for (const [a, b] of WIRES) {
+  wireEls[a + b] = wireEls[b + a] = el('line', {class:'wire', x1:N[a].x, y1:N[a].y, x2:N[b].x, y2:N[b].y}, wireG);
+}
+// port numbers next to switches
+for (const sw in SWITCH) {
+  const s = N[sw];
+  for (const p in SWITCH[sw].ports) {
+    const o = N[SWITCH[sw].ports[p]];
+    const dx = o.x - s.x, dy = o.y - s.y, d = Math.hypot(dx, dy);
+    const at = Math.min(95, d / 2), px = s.x + dx / d * at, py = s.y + dy / d * at - 7;
+    el('text', {class:'portnum', x:px, y:py, 'text-anchor':'middle'}, svg).textContent = 'port ' + p;
+  }
+}
+const nodeEls = {};
+function glyph(g, n) {
+  const G = (d) => el('path', {class:'glyph', d}, g);
+  if (n.type === 'switch') {
+    for (let i = 0; i < 4; i++) el('rect', {x:-30 + i * 16, y:-4, width:12, height:9, rx:2, class:'glyph'}, g);
+    G('M-30 -14 h60 M-30 14 h60');
+  } else if (n.type === 'router') {
+    G('M-12 -6 l6 -6 l6 6 M-6 -12 v14'); G('M12 6 l-6 6 l-6 -6 M6 12 v-14');
+  } else if (n.kind === 'laptop') {
+    G('M-14 -10 h28 v16 h-28 z M-19 9 h38');
+  } else if (n.kind === 'printer') {
+    G('M-10 -12 h20 v8 M-16 -4 h32 v12 h-32 z M-10 8 v6 h20 v-6');
+  } else if (n.kind === 'server') {
+    G('M-11 -14 h22 v28 h-22 z M-11 -5 h22 M-11 4 h22'); el('circle', {cx:6, cy:-10, r:1.5, class:'glyph'}, g);
+  } else {
+    G('M-15 -13 h30 v19 h-30 z M-5 10 h10 M0 6 v4');
+  }
+}
+for (const id in N) {
+  const n = N[id];
+  if (n.type === 'cloud') {
+    const g = el('g', {transform:`translate(${n.x},${n.y})`}, svg);
+    el('path', {class:'cloud', d:'M-36 18 a18 18 0 0 1 -4 -34 a22 22 0 0 1 38 -10 a20 20 0 0 1 36 16 a16 16 0 0 1 -4 28 z'}, g);
+    el('text', {class:'netlabel', y:6, 'text-anchor':'middle'}, g).textContent = 'WAN';
+    continue;
+  }
+  const g = el('g', {class:`node ${n.type}`, transform:`translate(${n.x},${n.y})`, tabindex: n.type === 'pc' ? 0 : -1}, svg);
+  if (n.type === 'switch') el('rect', {class:'body', x:-42, y:-24, width:84, height:48, rx:10}, g);
+  else if (n.type === 'router') el('circle', {class:'body', r:30}, g);
+  else el('rect', {class:'body', x:-30, y:-26, width:60, height:52, rx:12}, g);
+  glyph(g, n);
+  const below = n.type === 'router' ? 50 : 46;
+  el('text', {class:'lbl', y:below, 'text-anchor':'middle'}, g).textContent = n.name;
+  if (n.type !== 'switch') {
+    el('text', {class:'addr', y:below + 16, 'text-anchor':'middle'}, g).textContent = n.ip;
+    el('text', {class:'addr', y:below + 31, 'text-anchor':'middle'}, g).textContent = 'MAC ' + n.mac;
+  }
+  nodeEls[id] = g;
+}
+const packetLayer = el('g', {}, svg);
+
+/* ---------- controls ---------- */
+const fromSel = $('#from'), toSel = $('#to');
+for (const id of ENDS) {
+  fromSel.add(new Option(`${N[id].name} (${N[id].ip})`, id));
+  toSel.add(new Option(`${N[id].name} (${N[id].ip})`, id));
+}
+fromSel.value = 'ava'; toSel.value = 'ben';
+function markSel() {
+  for (const id of ENDS) {
+    nodeEls[id].classList.toggle('from', fromSel.value === id);
+    nodeEls[id].classList.toggle('to', toSel.value === id);
+  }
+}
+fromSel.onchange = toSel.onchange = markSel; markSel();
+let pickNext = 'from';
+for (const id of ENDS) {
+  const pick = () => {
+    if (busy) return;
+    if (pickNext === 'from') { fromSel.value = id; pickNext = 'to'; }
+    else { if (id !== fromSel.value) { toSel.value = id; } pickNext = 'from'; }
+    markSel();
+  };
+  nodeEls[id].addEventListener('click', pick);
+  nodeEls[id].addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+}
+
+/* ---------- tables ---------- */
+const tablesEl = $('#tables');
+function renderTables(hit = {}, fresh = {}) {
+  let h = '';
+  for (const sw of ['swA', 'swB', 'ra', 'rb']) {
+    if (SWITCH[sw]) {
+      const t = SWITCH[sw].table, keys = Object.keys(t);
+      h += `<div class="tbl sw"><div class="th">${N[sw].name}: MAC table</div><table><tr><th class="c">MAC</th><th class="c">Port</th></tr>`;
+      if (!keys.length) h += `<tr class="none"><td colspan="2">empty (nothing learnt yet)</td></tr>`;
+      for (const m of keys) h += `<tr class="${hit[sw] === m ? 'hit' : ''} ${fresh[sw] === m ? 'new' : ''}"><td>${m}</td><td>${t[m]}</td></tr>`;
+      h += `</table></div>`;
+    } else {
+      h += `<div class="tbl rt"><div class="th">${N[sw].name}: routing table</div><table><tr><th class="c">Network</th><th class="c">Send to</th></tr>`;
+      ROUTER[sw].rows.forEach((r, i) => h += `<tr class="${hit[sw] === i ? 'hit' : ''}"><td>${r[0]}</td><td style="font-family:var(--font)">${r[1]}</td></tr>`);
+      h += `</table></div>`;
+    }
+  }
+  tablesEl.innerHTML = h;
+}
+renderTables();
+
+/* ---------- frame panel ---------- */
+const F = {smac:$('#f-smac'), dmac:$('#f-dmac'), sip:$('#f-sip'), dip:$('#f-dip'), mac:$('#f-mac'), ip:$('#f-ip')};
+function showFrame(fr, changed) {
+  F.smac.textContent = fr.smac + nameOfMac(fr.smac);
+  F.dmac.textContent = fr.dmac + nameOfMac(fr.dmac);
+  F.sip.textContent = fr.sip; F.dip.textContent = fr.dip;
+  if (changed) { F.mac.classList.remove('changed'); void F.mac.offsetWidth; F.mac.classList.add('changed'); }
+}
+function nameOfMac(m) {
+  for (const id in N) {
+    if (N[id].mac === m) return ` (${N[id].name})`;
+    if (N[id].wanMac === m) return ` (${N[id].name}, WAN side)`;
+  }
+  return '';
+}
+function reading(which) {
+  F.mac.classList.toggle('reading', which === 'mac');
+  F.ip.classList.toggle('reading', which === 'ip');
+}
+
+/* ---------- log ---------- */
+const logEl = $('#log');
+function log(html, cls = '') {
+  const first = logEl.querySelector('.empty'); if (first) first.remove();
+  const li = document.createElement('li'); li.className = cls; li.innerHTML = html;
+  logEl.appendChild(li); logEl.scrollTop = logEl.scrollHeight;
+}
+
+/* ---------- animation ---------- */
+const speed = () => +$('#speed').value;
+const wait = ms => new Promise(r => setTimeout(r, ms * speed()));
+function makePacket() {
+  const g = el('g', {class:'packet'}, packetLayer);
+  el('circle', {r:11}, g);
+  el('path', {d:'M-6 -4 h12 v8 h-12 z M-6 -4 l6 5 l6 -5'}, g);
+  return g;
+}
+function move(g, path, ms) {
+  // path: array of node ids
+  const pts = path.map(id => [N[id].x, N[id].y]);
+  const segs = []; let total = 0;
+  for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i-1][0], pts[i][1] - pts[i-1][1]); segs.push(d); total += d; }
+  for (let i = 1; i < path.length; i++) { const w = wireEls[path[i-1] + path[i]]; if (w) w.classList.add('lit'); }
+  const dur = ms * speed();
+  return new Promise(res => {
+    const t0 = performance.now();
+    const step = now => {
+      let t = Math.min(1, (now - t0) / dur);
+      t = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      let dist = t * total, i = 0;
+      while (i < segs.length - 1 && dist > segs[i]) { dist -= segs[i]; i++; }
+      const f = segs[i] ? dist / segs[i] : 1;
+      const x = pts[i][0] + (pts[i+1][0] - pts[i][0]) * f, y = pts[i][1] + (pts[i+1][1] - pts[i][1]) * f;
+      g.setAttribute('transform', `translate(${x},${y})`);
+      if (t < 1) requestAnimationFrame(step); else res();
+    };
+    requestAnimationFrame(step);
+  });
+}
+const busyOn = id => nodeEls[id] && nodeEls[id].classList.add('busy');
+const busyOff = id => nodeEls[id] && nodeEls[id].classList.remove('busy');
+function clearMarks() {
+  packetLayer.innerHTML = '';
+  for (const id in nodeEls) nodeEls[id].classList.remove('got', 'ignore', 'busy');
+  for (const k in wireEls) wireEls[k].classList.remove('lit');
+  reading(null);
+}
+
+/* switch handles a frame arriving from node `fromId`; returns the node that accepted it */
+async function throughSwitch(sw, fromId, fr) {
+  const S = SWITCH[sw], inPort = portOf(sw, fromId);
+  busyOn(sw); reading('mac');
+  const learnt = !(fr.smac in S.table);
+  S.table[fr.smac] = inPort;
+  renderTables({}, learnt ? {[sw]: fr.smac} : {});
+  log(`<b>${N[sw].name}</b> gets the frame on port ${inPort}. ${learnt ? `It notes that MAC <code>${fr.smac}</code> is on port ${inPort}.` : `It already knows <code>${fr.smac}</code> is on port ${inPort}.`}`, 'sw');
+  await wait(900);
+  const known = S.table[fr.dmac];
+  if (known) {
+    renderTables({[sw]: fr.dmac});
+    log(`<b>${N[sw].name}</b> reads the destination MAC <code>${fr.dmac}</code>. Its table says port ${known}, so it sends the frame <b>only</b> out of port ${known}.`, 'sw');
+    await wait(700);
+    busyOff(sw);
+    const target = S.ports[known];
+    const p = makePacket();
+    await move(p, [sw, target], 900);
+    p.remove();
+    return target;
+  }
+  log(`<b>${N[sw].name}</b> reads the destination MAC <code>${fr.dmac}</code>, but it isn't in its table yet. So this one time it sends the frame out of <b>every other port</b>.`, 'sw');
+  await wait(900);
+  busyOff(sw);
+  const targets = Object.values(S.ports).filter(id => id !== fromId);
+  await Promise.all(targets.map(async id => { const p = makePacket(); await move(p, [sw, id], 900); p.remove(); }));
+  let accepted = null;
+  const ignored = [];
+  for (const id of targets) {
+    if (N[id].mac === fr.dmac) { accepted = id; }
+    else { nodeEls[id].classList.add('ignore'); ignored.push(N[id].name); }
+  }
+  log(`${ignored.join(', ')} ${ignored.length > 1 ? 'see' : 'sees'} the frame isn't addressed to their MAC and ${ignored.length > 1 ? 'ignore' : 'ignores'} it.`, 'bad');
+  await wait(800);
+  for (const id of targets) if (id !== accepted) nodeEls[id].classList.remove('ignore');
+  return accepted;
+}
+
+let busy = false;
+async function send() {
+  const src = fromSel.value, dst = toSel.value;
+  if (src === dst) { log('Pick two different devices.', 'bad'); return; }
+  busy = true; $('#send').disabled = $('#reset').disabled = fromSel.disabled = toSel.disabled = true;
+  clearMarks();
+  logEl.innerHTML = '';
+  const s = N[src], d = N[dst], same = s.net === d.net;
+  const swS = s.net === 'A' ? 'swA' : 'swB', swD = d.net === 'A' ? 'swA' : 'swB';
+  const rS = s.net === 'A' ? 'ra' : 'rb', rD = d.net === 'A' ? 'ra' : 'rb';
+  const fr = {sip:s.ip, dip:d.ip, smac:s.mac, dmac: same ? d.mac : N[rS].mac};
+  showFrame(fr);
+  nodeEls[src].classList.add('busy');
+  if (same) {
+    log(`<b>${s.name}</b> wants to send to ${d.name} (<code>${d.ip}</code>). That's on the same LAN, so the frame is addressed straight to ${d.name}'s MAC <code>${d.mac}</code>.`);
+  } else {
+    log(`<b>${s.name}</b> wants to send to ${d.name} (<code>${d.ip}</code>). That's on a <b>different network</b>, so ${s.name} addresses the frame to its router's MAC <code>${N[rS].mac}</code>. The IP address still says ${d.name}.`);
+  }
+  await wait(1300);
+  busyOff(src);
+  let p = makePacket();
+  await move(p, [src, swS], 900); p.remove();
+  let got = await throughSwitch(swS, src, fr);
+
+  if (!same) {
+    // at first router
+    busyOn(rS); reading('ip');
+    renderTables({[rS]: 1});
+    log(`<b>${N[rS].name}</b> unwraps the frame and reads the destination <b>IP address</b> <code>${d.ip}</code>. Its routing table says ${ROUTER[rS].rows[1][0]} is reached over the WAN link, so it forwards the packet towards ${N[rD].name}.`, 'rt');
+    await wait(1600);
+    fr.smac = N[rS].wanMac; fr.dmac = N[rD].wanMac; showFrame(fr, true);
+    log(`It puts the packet in a <b>new frame</b> for the next link. The MAC addresses change, but the IP addresses don't.`, 'rt');
+    await wait(1100);
+    busyOff(rS); reading(null);
+    p = makePacket();
+    await move(p, [rS, 'wan', rD], 1500); p.remove();
+    busyOn(rD); reading('ip');
+    renderTables({[rD]: 0});
+    log(`<b>${N[rD].name}</b> reads the destination IP <code>${d.ip}</code>. Its routing table says that network is its own LAN, so it sends the packet to ${N[swD].name}.`, 'rt');
+    await wait(1600);
+    fr.smac = N[rD].mac; fr.dmac = d.mac; showFrame(fr, true);
+    log(`New frame again: from ${N[rD].name}'s MAC <code>${N[rD].mac}</code> to ${d.name}'s MAC <code>${d.mac}</code>.`, 'rt');
+    await wait(1100);
+    busyOff(rD); reading(null);
+    p = makePacket();
+    await move(p, [rD, swD], 900); p.remove();
+    got = await throughSwitch(swD, rD, fr);
+  }
+  reading(null);
+  if (got === dst) {
+    nodeEls[dst].classList.add('got');
+    log(`<b>${d.name}</b> checks the MAC <code>${fr.dmac}</code>: it's addressed to them, so they accept it. Delivered! ${same ? 'No router was needed because both devices are on the same LAN.' : 'The switches used MAC addresses inside each LAN; the routers used the IP address to get between networks.'}`, 'ok');
+  }
+  busy = false; $('#send').disabled = $('#reset').disabled = fromSel.disabled = toSel.disabled = false;
+  renderTables();
+  // suggest the reverse trip
+  if (got === dst) { fromSel.value = dst; toSel.value = src; markSel(); }
+}
+$('#send').onclick = send;
+$('#reset').onclick = () => {
+  for (const sw in SWITCH) SWITCH[sw].table = {};
+  clearMarks(); renderTables();
+  logEl.innerHTML = '<li class="empty">Tables cleared. The switches have forgotten every MAC address.</li>';
+  F.smac.textContent = F.dmac.textContent = F.sip.textContent = F.dip.textContent = '–';
+};
+
+/* ---------- home router parts ---------- */
+const PARTS = {
+  rt: ['Router', 'rt', `Connects your home LAN to the internet (a WAN). It reads the destination IP address on every packet and decides whether it stays at home or goes out to your broadband provider. It also hands out IP addresses to devices that join.`],
+  sw: ['Switch', 'sw', `The LAN ports on the back (often yellow) are a small built-in switch. A games console or PC plugged in by cable is connected through it, and it sends frames only to the right device using MAC addresses. If you need more ports, you add a separate switch.`],
+  wap: ['Wireless access point', 'both', `Lets phones, laptops and tablets join the LAN by Wi-Fi instead of a cable. It's not the same as a router: a WAP only connects wireless devices to the network. Big buildings like schools have lots of separate WAPs.`],
+  mod: ['Modem', 'both', `Converts the signal on your phone line or fibre into data the router can use, and back again. Modems aren't on the OCR spec in detail, but it helps to know why the box plugs into the wall.`],
+};
+const partInfo = $('#partinfo');
+document.querySelectorAll('.part').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.part').forEach(x => x.setAttribute('aria-pressed', x === b));
+  const [t, c, txt] = PARTS[b.dataset.part];
+  partInfo.innerHTML = `<h3><span class="tag ${c}">${t}</span></h3><p>${txt}</p>`;
+});
+
+/* ---------- sort game ---------- */
+const STMTS = [
+  ['Connects devices together within one LAN', 'sw', 'A switch joins the devices in one local network.'],
+  ['Sends data between different networks', 'rt', 'Joining networks together is the router’s job.'],
+  ['Reads MAC addresses to decide where to send data', 'sw', 'Switches use MAC addresses; routers use IP addresses.'],
+  ['Reads IP addresses to decide where to send data', 'rt', 'IP addresses identify networks, which is what routers care about.'],
+  ['Connects a school’s LAN to the internet', 'rt', 'The internet is a WAN, a different network, so you need a router.'],
+  ['Keeps a table of which MAC address is on which port', 'sw', 'That’s the switch’s MAC table. A router keeps a routing table instead.'],
+  ['Chooses a route for packets to take across the internet', 'rt', 'Routers forward packets hop by hop towards the destination network.'],
+  ['Sends data only to the device it’s meant for, not every device on the LAN', 'sw', 'A switch looks up the MAC address and uses just one port.'],
+  ['Is a piece of hardware that receives data and forwards it on', 'both', 'Both do this. The difference is <em>where</em> they forward it, and which address they use.'],
+  ['Is found inside a typical home broadband “router” box', 'both', 'The box contains a router, a switch, a wireless access point and usually a modem.'],
+];
+const sortList = $('#sortlist');
+function buildSort() {
+  const order = STMTS.map((s, i) => i).sort(() => Math.random() - .5);
+  sortList.innerHTML = '';
+  $('#score').textContent = '';
+  for (const i of order) {
+    const [txt, , why] = STMTS[i];
+    const li = document.createElement('li');
+    li.className = 'stmt'; li.dataset.i = i;
+    li.innerHTML = `<span class="txt">${txt}</span><span class="seg" role="group" aria-label="Answer">` +
+      [['sw','Switch'],['rt','Router'],['both','Both']].map(([v, l]) => `<button type="button" class="o-${v}" data-v="${v}" aria-pressed="false">${l}</button>`).join('') +
+      `</span><span class="why">${why}</span>`;
+    li.querySelectorAll('button').forEach(b => b.onclick = () => {
+      li.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+      li.dataset.v = b.dataset.v; li.classList.remove('right', 'wrong');
+    });
+    sortList.appendChild(li);
+  }
+}
+$('#check').onclick = () => {
+  let right = 0, answered = 0;
+  sortList.querySelectorAll('.stmt').forEach(li => {
+    li.classList.remove('right', 'wrong');
+    if (!li.dataset.v) return;
+    answered++;
+    const ok = li.dataset.v === STMTS[li.dataset.i][1];
+    li.classList.add(ok ? 'right' : 'wrong');
+    if (ok) right++;
+  });
+  $('#score').textContent = answered < STMTS.length
+    ? `${right} / ${answered} right so far (${STMTS.length - answered} not answered)`
+    : `${right} / ${STMTS.length}${right === STMTS.length ? ' · full marks!' : ''}`;
+};
+$('#again').onclick = buildSort;
+buildSort();
+})();
+</script>
+</body>
+</html>
