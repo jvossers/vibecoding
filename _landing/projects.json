@@ -2,7 +2,8 @@
   "groups": ["Teaching", "Explainers", "Tools", "Toys & games"],
 
   "hidden": [
-    "chatreel"
+    "chatreel",
+    "workspace-demo"
   ],
 
   "projects": {
