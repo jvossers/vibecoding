@@ -18,6 +18,7 @@
   --ball:#c3232c; --blue:#2458b0; --gold:#c2860a; --blue-soft:#dfe8f8; --gold-soft:#f7ead0;
   --ok:#1f7a3a; --bad:#b4232b; --accent:#c3232c;
   --board:#16201a; --board-ink:#f3f0e4; --board-dim:#93a397;
+  --stand:#b5aa90; --sky-top:#cfe2ee; --sky-bot:#f1ece0;
   --font-d:"Young Serif",Georgia,serif; --font-b:"Figtree",-apple-system,"Segoe UI",sans-serif; --font-m:"JetBrains Mono",ui-monospace,monospace;
   --r:16px;
 }
@@ -29,6 +30,7 @@
     --ball:#ef4b53; --blue:#6f9cf0; --gold:#e8b23e; --blue-soft:#1d2a42; --gold-soft:#3a2e15;
     --ok:#4cc46f; --bad:#ff6b72; --accent:#ef4b53;
     --board:#0a0e0b; --board-ink:#f3f0e4; --board-dim:#7d8c81;
+    --stand:#222821; --sky-top:#0d1621; --sky-bot:#1a2019;
   }
 }
 :root[data-theme="dark"]{
@@ -38,6 +40,7 @@
   --ball:#ef4b53; --blue:#6f9cf0; --gold:#e8b23e; --blue-soft:#1d2a42; --gold-soft:#3a2e15;
   --ok:#4cc46f; --bad:#ff6b72; --accent:#ef4b53;
   --board:#0a0e0b; --board-ink:#f3f0e4; --board-dim:#7d8c81;
+  --stand:#222821; --sky-top:#0d1621; --sky-bot:#1a2019;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:64px}
@@ -51,17 +54,17 @@ b,strong{font-weight:700}
 .blue{color:var(--blue);font-weight:700}.gold{color:var(--gold);font-weight:700}.red{color:var(--ball);font-weight:700}
 
 /* ---------- hero ---------- */
-.hero{padding:56px 0 28px;text-align:center}
+.hero{padding:56px 16px 28px;text-align:center}
 .hero .kicker{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:600}
 .hero h1{font-size:clamp(40px,8vw,72px);margin:10px 0 14px}
 .hero h1 em{font-style:normal;color:var(--ball)}
 .hero p{max-width:620px;margin:0 auto 12px;color:var(--dim);font-size:18px}
-.ladder{display:flex;gap:6px;justify-content:center;align-items:flex-end;margin:30px auto 0;max-width:640px}
-.ladder a{flex:1;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:600;line-height:1.2}
-.ladder a span.bar{display:block;width:100%;border-radius:6px 6px 2px 2px;background:var(--grass);opacity:.9;transition:transform .15s}
+.ladder{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin:30px auto 0;max-width:640px}
+.ladder a{text-decoration:none;color:var(--ink);display:grid;grid-template-rows:80px auto auto;justify-items:center;align-content:start;row-gap:4px;font-size:13px;font-weight:700;line-height:1.2;text-align:center}
+.ladder a span.bar{display:block;align-self:end;width:100%;border-radius:6px 6px 2px 2px;background:var(--grass);opacity:.9;transition:transform .15s}
 .ladder a:hover span.bar{transform:translateY(-3px)}
-.ladder a small{color:var(--dim);font-weight:500}
-.ladder-note{font-size:14px;color:var(--dim);margin-top:12px}
+.ladder a small{color:var(--dim);font-weight:500;font-size:12px}
+.ladder-note{font-size:14px;color:var(--dim);margin-top:18px}
 
 /* ---------- sticky nav ---------- */
 nav.zoom{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
@@ -75,7 +78,7 @@ nav.zoom a.on{background:var(--ink);color:var(--bg)}
 /* ---------- sections ---------- */
 section.zoomsec{padding:56px 0 20px}
 .zhead{display:flex;gap:14px;align-items:baseline;margin-bottom:6px}
-.zbadge{font-family:var(--font-m);font-size:12px;font-weight:700;color:var(--bg);background:var(--grass-edge);padding:3px 8px;border-radius:6px;white-space:nowrap;letter-spacing:.04em}
+.zbadge{font-family:var(--font-m);font-size:12px;font-weight:700;color:#f5f1e6;background:var(--grass-edge);padding:3px 8px;border-radius:6px;white-space:nowrap;letter-spacing:.04em}
 .zhead h2{font-size:clamp(28px,5vw,40px)}
 .lede{font-size:20px;line-height:1.5;margin:14px 0 18px;max-width:760px}
 .lede strong{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--gold) 35%,transparent) 62%)}
@@ -110,6 +113,9 @@ section.zoomsec{padding:56px 0 20px}
 .callout{background:var(--bg-2);border-radius:12px;padding:12px 16px;font-size:15.5px;margin:12px 0}
 .callout b{color:var(--ink)}
 svg text{font-family:var(--font-b)}
+.pop{transform-box:fill-box;transform-origin:center;animation:pop .55s cubic-bezier(.2,1.5,.4,1)}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion: reduce){.pop{animation:none}}
 
 /* ---------- zoom 1 ---------- */
 .match-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:center}
@@ -194,7 +200,7 @@ svg text{font-family:var(--font-b)}
 .outtabs button{padding:7px 12px}
 .outtabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .outtabs button small{font-weight:500;opacity:.7;margin-left:4px}
-#sideview{width:100%;height:auto;display:block;background:linear-gradient(var(--sky1,transparent),transparent);border-radius:12px}
+#sideview{width:100%;height:auto;display:block;border-radius:12px}
 .outcap{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;margin-top:10px}
 .outcap h4{margin:0;font-family:var(--font-d);font-weight:400;font-size:24px}
 .outcap .freq{font-size:13px;color:var(--dim);text-align:right;white-space:nowrap}
@@ -261,11 +267,12 @@ button,a,summary{-webkit-tap-highlight-color:transparent}
 /* ---------- phones ---------- */
 @media (max-width:640px){
   body{font-size:16px}
-  .hero{padding:36px 0 20px}
   .hero p{font-size:16.5px}
   .ladder{gap:4px}
-  .ladder a{font-size:11px}
-  .ladder a small{font-size:10.5px}
+  .ladder a{grid-template-rows:64px auto auto}
+  .ladder a small{font-size:10.5px;hyphens:auto}
+  .hero{padding:36px 16px 20px}
+  .hero .kicker{font-size:11.5px}
   section.zoomsec{padding:40px 0 12px}
   .zhead{flex-direction:column;gap:6px}
   .lede{font-size:17.5px}
@@ -278,7 +285,7 @@ button,a,summary{-webkit-tap-highlight-color:transparent}
   .parked{font-size:14.5px}
 
   /* zoom 1 */
-  #m1svg{max-width:300px;margin:0 auto;display:block}
+  #m1svg{max-width:360px;margin:0 auto;display:block}
   .team .sc{font-size:28px}
   .stepper button{min-width:0;font-size:14px;padding:8px 6px}
 
@@ -383,7 +390,7 @@ footer a{color:var(--dim)}
     <h3>Play a whole match in three clicks</h3>
     <div class="sub">Step through it and watch who is on the field. Notice how lopsided it is.</div>
     <div class="match-grid">
-      <svg id="m1svg" viewBox="0 0 300 300" role="img" aria-label="A cricket field showing which team's players are on it"></svg>
+      <svg id="m1svg" viewBox="0 0 340 310" role="img" aria-label="A cricket field showing which team's players are on it"></svg>
       <div>
         <div class="teams">
           <div class="team blues" id="m1Blues"><div class="nm">Blues</div><div class="role" id="m1BluesRole"></div><div class="sc" id="m1BluesSc">–</div></div>
@@ -510,7 +517,7 @@ footer a{color:var(--dim)}
     <h3>You're the batter. Tap the field to hit the ball there.</h3>
     <div class="sub">You can also drag the <span class="gold">gold fielders</span> around to see how the fielding captain plugs the gaps.</div>
     <div class="field-wrap">
-      <svg id="field" viewBox="0 0 400 430" role="img" aria-label="Top-down cricket field. Tap to hit the ball."></svg>
+      <svg id="field" viewBox="-18 -18 436 466" role="img" aria-label="Top-down cricket field. Tap to hit the ball."></svg>
       <div>
         <div class="row" style="margin-bottom:6px">
           <span style="font-size:14px;color:var(--dim);font-weight:600">Shot:</span>
@@ -726,6 +733,75 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* ---------- shared graphics: stadium, grass, shaded player tokens ---------- */
+let gfxN = 0;
+function gfx(svg) {
+  const p = 'gx' + (++gfxN) + '-', U = id => 'url(#' + p + id + ')';
+  const defs = el('defs', {}, svg);
+  const stop = (g, o, c, a = 1) => el('stop', { offset: o, style: 'stop-color:' + c + ';stop-opacity:' + a }, g);
+  let g = el('radialGradient', { id: p + 'shine', cx: .36, cy: .3, r: .75 }, defs);
+  stop(g, 0, '#fff', .6); stop(g, .45, '#fff', .06); stop(g, 1, '#000', .3);
+  g = el('radialGradient', { id: p + 'vig', cx: .5, cy: .42, r: .62 }, defs);
+  stop(g, 0, '#fff', .12); stop(g, .55, '#fff', 0); stop(g, 1, '#000', .26);
+  g = el('linearGradient', { id: p + 'pitch', x1: 0, x2: 1, y1: 0, y2: 0 }, defs);
+  stop(g, 0, 'var(--pitch)'); stop(g, .5, '#fff', .0); stop(g, 1, 'var(--pitch)');
+  g = el('linearGradient', { id: p + 'pitchv', x1: 0, x2: 0, y1: 0, y2: 1 }, defs);
+  stop(g, 0, 'var(--grass-2)'); stop(g, .12, 'var(--pitch)'); stop(g, .88, 'var(--pitch)'); stop(g, 1, 'var(--grass-2)');
+  g = el('linearGradient', { id: p + 'sky', x1: 0, x2: 0, y1: 0, y2: 1 }, defs);
+  stop(g, 0, 'var(--sky-top)'); stop(g, 1, 'var(--sky-bot)');
+  g = el('linearGradient', { id: p + 'turf', x1: 0, x2: 0, y1: 0, y2: 1 }, defs);
+  stop(g, 0, 'var(--grass)'); stop(g, 1, 'var(--grass-edge)');
+  g = el('pattern', { id: p + 'mow', width: 40, height: 40, patternUnits: 'userSpaceOnUse' }, defs);
+  el('rect', { width: 40, height: 40, fill: 'var(--grass)' }, g);
+  el('rect', { width: 40, height: 20, fill: 'var(--grass-2)' }, g);
+  g = el('pattern', { id: p + 'mowv', width: 36, height: 36, patternUnits: 'userSpaceOnUse' }, defs);
+  el('rect', { width: 36, height: 36, fill: 'var(--grass)' }, g);
+  el('rect', { width: 18, height: 36, fill: 'var(--grass-2)' }, g);
+  // crowd: a fixed scatter of coloured heads over the stand colour
+  g = el('pattern', { id: p + 'crowd', width: 18, height: 12, patternUnits: 'userSpaceOnUse' }, defs);
+  el('rect', { width: 18, height: 12, fill: 'var(--stand)' }, g);
+  const C = ['#d0564f', '#4f7fd0', '#e6bd4f', '#f2efe6', '#5aa66c', '#9278c8', '#e2904d', '#f2efe6'];
+  [[2, 3], [7, 2], [12, 4], [16, 2], [4, 8], [9, 9], [14, 8], [17, 10]].forEach(([x, y], i) =>
+    el('circle', { cx: x, cy: y, r: 1.7, fill: C[i], opacity: .6 }, g));
+  return U;
+}
+// oval ground: crowd stand, advertising boards, striped grass, lighting, rope
+function stadium(svg, U, cx, cy, rx, ry, o = {}) {
+  const st = o.stand ?? 18, rope = o.rope ?? 0.93;
+  el('ellipse', { cx, cy, rx: rx + st, ry: ry + st, fill: U('crowd') }, svg);
+  el('ellipse', { cx, cy, rx: rx + st, ry: ry + st, fill: U('vig'), opacity: .9 }, svg);
+  el('ellipse', { cx, cy, rx: rx + 4, ry: ry + 4, fill: 'var(--grass-edge)' }, svg);
+  ['var(--blue)', 'var(--ball)', 'var(--gold)'].forEach((c, i) =>
+    el('ellipse', { cx, cy, rx: rx + 4, ry: ry + 4, fill: 'none', stroke: c, 'stroke-width': 4.5, 'stroke-dasharray': '16 41', 'stroke-dashoffset': -19 * i, opacity: .9 }, svg));
+  el('ellipse', { cx, cy, rx, ry, fill: U('mow') }, svg);
+  el('ellipse', { cx, cy, rx, ry, fill: U('vig') }, svg);
+  if (o.ring) el('ellipse', { cx, cy, rx: rx * .5, ry: ry * .5, fill: 'none', stroke: '#fff', 'stroke-width': 1, 'stroke-dasharray': '3 5', opacity: .3 }, svg);
+  el('ellipse', { cx, cy, rx: rx * rope, ry: ry * rope, fill: 'none', stroke: 'var(--rope)', 'stroke-width': o.ropeW ?? 2.2 }, svg);
+}
+function pitchStrip(svg, U, x, y, w, h, creaseAt) {
+  el('rect', { x, y, width: w, height: h, rx: 2, fill: U('pitchv') }, svg);
+  el('rect', { x, y, width: w, height: h, rx: 2, fill: U('pitch'), opacity: .5 }, svg);
+  (creaseAt || []).forEach(cy => el('line', { x1: x - 2, x2: x + w + 2, y1: cy, y2: cy, stroke: 'var(--crease)', 'stroke-width': 1.1 }, svg));
+}
+// a player seen from above: soft shadow, team colour, glossy highlight
+function token(parent, U, color, r, o = {}) {
+  const g = el('g', o.attrs || {}, parent);
+  el('ellipse', { cx: r * .25, cy: r * .55, rx: r * 1.05, ry: r * .62, fill: 'rgba(0,0,0,.3)' }, g);
+  el('circle', { r, fill: color, stroke: o.ring || 'rgba(255,255,255,.9)', 'stroke-width': o.ringW ?? 1.3 }, g);
+  el('circle', { r, fill: U('shine') }, g);
+  if (o.bat) el('rect', { x: r * .55, y: -1.6, width: r * 1.3, height: 3.2, rx: 1.2, fill: '#ecd9a7', stroke: '#7a5a2a', 'stroke-width': .6 }, g);
+  if (o.label) { const t = el('text', { 'text-anchor': 'middle', y: r * .42, 'font-size': r * 1.05, 'font-weight': 800, fill: '#fff' }, g); t.textContent = o.label; }
+  return g;
+}
+function ballEl(parent, U, r) {
+  const g = el('g', {}, parent);
+  el('circle', { r, fill: 'var(--ball)', stroke: 'rgba(255,255,255,.9)', 'stroke-width': .8 }, g);
+  el('path', { d: 'M' + (-r * .7) + ',' + (-r * .3) + ' Q0,' + (r * .25) + ' ' + (r * .7) + ',' + (-r * .3), fill: 'none', stroke: 'rgba(255,255,255,.85)', 'stroke-width': .6 }, g);
+  el('circle', { r, fill: U('shine') }, g);
+  return g;
+}
+function popText(t) { t.classList.remove('pop'); void t.getBoundingClientRect(); t.classList.add('pop'); }
+
 /* ---------- nav highlight ---------- */
 const navLinks = $$('nav.zoom a');
 const setNavH = () => document.documentElement.style.setProperty('--navh', $('nav.zoom').offsetHeight + 'px');
@@ -745,39 +821,45 @@ $$('section.zoomsec').forEach(s => io.observe(s));
 /* ================= ZOOM 1: match stepper ================= */
 (function zoom1() {
   const svg = $('#m1svg');
-  const g = el('g', {}, svg);
-  el('rect', { x: 0, y: 0, width: 300, height: 300, rx: 16, fill: 'var(--bg-2)' }, g);
-  el('ellipse', { cx: 125, cy: 150, rx: 118, ry: 140, fill: 'var(--grass)' }, g);
-  el('ellipse', { cx: 125, cy: 150, rx: 110, ry: 132, fill: 'none', stroke: 'var(--rope)', 'stroke-width': 1.5, opacity: .8 }, g);
-  el('rect', { x: 119, y: 122, width: 12, height: 56, fill: 'var(--pitch)', rx: 2 }, g);
-  // side bench
-  el('rect', { x: 250, y: 60, width: 44, height: 180, rx: 10, fill: 'var(--card)', stroke: 'var(--line-2)' }, g);
-  const benchT = el('text', { x: 272, y: 54, 'text-anchor': 'middle', 'font-size': 10, fill: 'var(--dim)', 'font-weight': 600 }, g);
-  benchT.textContent = 'waiting';
-  const fieldSpots = [[125, 100], [125, 192], [150, 200], [190, 165], [185, 95], [148, 45], [95, 45], [60, 95], [58, 175], [85, 255], [170, 255]];
-  const batSpots = [[121, 127], [129, 172]];
-  const benchSpots = [];
-  for (let i = 0; i < 9; i++) benchSpots.push([272, 78 + i * 18.5]);
-  const blues = [], golds = [];
-  for (let i = 0; i < 11; i++) {
-    blues.push(el('circle', { r: 6.5, fill: 'var(--blue)', stroke: 'var(--card)', 'stroke-width': 1.5, style: 'transition:all .7s ease' }, g));
-    golds.push(el('circle', { r: 6.5, fill: 'var(--gold)', stroke: 'var(--card)', 'stroke-width': 1.5, style: 'transition:all .7s ease' }, g));
-  }
-  const ball = el('circle', { r: 3, fill: 'var(--ball)', stroke: '#fff', 'stroke-width': .8, style: 'transition:all .7s ease' }, g);
-  function place(arr, spots) { arr.forEach((c, i) => { c.setAttribute('cx', spots[i][0]); c.setAttribute('cy', spots[i][1]); }); }
+  const U = gfx(svg);
+  const CX = 136, CY = 155, RX = 110, RY = 128;
+  el('rect', { x: 0, y: 0, width: 340, height: 310, rx: 16, fill: 'var(--bg-2)' }, svg);
+  stadium(svg, U, CX, CY, RX, RY, { stand: 20, ring: true });
+  pitchStrip(svg, U, CX - 6, CY - 32, 12, 64, [CY - 24, CY + 24]);
+  // pavilion: where the batting team waits
+  const pav = el('g', {}, svg);
+  el('path', { d: 'M276,52 L306,30 L336,52 Z', fill: 'var(--ball)', opacity: .85 }, pav);
+  el('rect', { x: 278, y: 52, width: 56, height: 250, rx: 6, fill: 'var(--card)', stroke: 'var(--line-2)' }, pav);
+  el('rect', { x: 278, y: 52, width: 56, height: 250, rx: 6, fill: U('vig'), opacity: .4 }, pav);
+  const pl = el('text', { x: 306, y: 47, 'text-anchor': 'middle', 'font-size': 8.5, 'font-weight': 800, fill: '#fff', 'letter-spacing': '.06em' }, pav);
+  pl.textContent = 'PAVILION';
+  const FIELD = [[CX + 6, CY - 46], [CX, CY + 46], [CX + 15, CY + 50], [CX + 66, CY + 18], [CX + 62, CY - 44], [CX + 28, CY - 92], [CX - 28, CY - 92], [CX - 66, CY - 44], [CX - 68, CY + 34], [CX - 40, CY + 104], [CX + 48, CY + 102]];
+  const CREASE = [[CX - 4, CY - 24], [CX + 4, CY + 24]];
+  const slot = (col, i) => [col ? 320 : 292, 72 + i * 21.5];
+  const mk = (color, n) => Array.from({ length: 11 }, (_, i) => {
+    const g = token(svg, U, color, 6.5);
+    g.style.transition = 'transform .9s cubic-bezier(.45,0,.2,1) ' + (i * .045) + 's';
+    return g;
+  });
+  const blues = mk('var(--blue)'), golds = mk('var(--gold)');
+  const ball = ballEl(svg, U, 3);
+  ball.style.transition = 'transform .9s ease .3s';
+  const mv = (g, [x, y]) => g.style.transform = 'translate(' + x + 'px,' + y + 'px)';
   function layout(batting) {
-    const bat = batting === 'blue' ? blues : golds, fld = batting === 'blue' ? golds : blues;
-    place(fld, fieldSpots);
-    place(bat, [...batSpots, ...benchSpots]);
-    ball.setAttribute('cx', fieldSpots[0][0] + 7); ball.setAttribute('cy', fieldSpots[0][1]);
+    const bat = batting === 'blue' ? blues : golds, fld = batting === 'blue' ? golds : blues, col = batting === 'blue' ? 0 : 1;
+    fld.forEach((g, i) => mv(g, FIELD[i]));
+    bat.forEach((g, i) => mv(g, i < 2 ? CREASE[i] : slot(col, i)));
+    mv(ball, [FIELD[0][0] + 8, FIELD[0][1] - 2]);
   }
-  // initial: everyone on bench-ish (both off)
   function offField() {
-    blues.forEach((c, i) => { c.setAttribute('cx', 30 + i * 18); c.setAttribute('cy', 286); });
-    golds.forEach((c, i) => { c.setAttribute('cx', 30 + i * 18); c.setAttribute('cy', 14); });
-    ball.setAttribute('cx', 125); ball.setAttribute('cy', 150);
+    blues.forEach((g, i) => mv(g, slot(0, i)));
+    golds.forEach((g, i) => mv(g, slot(1, i)));
+    mv(ball, [CX, CY]);
   }
+  // first paint without animating in from 0,0
+  [...blues, ...golds, ball].forEach(g => { g._t = g.style.transition; g.style.transition = 'none'; });
   offField();
+  requestAnimationFrame(() => requestAnimationFrame(() => [...blues, ...golds, ball].forEach(g => g.style.transition = g._t)));
 
   let anim = null;
   function count(elm, from, to, ms, done) {
@@ -1024,48 +1106,35 @@ $$('section.zoomsec').forEach(s => io.observe(s));
   let F = BASE.map(f => ({ ...f }));
 
   // drawing
-  const defs = el('defs', {}, svg);
-  const pat = el('pattern', { id: 'mow', width: 40, height: 40, patternUnits: 'userSpaceOnUse' }, defs);
-  el('rect', { width: 40, height: 40, fill: 'var(--grass)' }, pat);
-  el('rect', { width: 40, height: 20, fill: 'var(--grass-2)' }, pat);
-  el('ellipse', { cx: CX, cy: CY, rx: RX + 6, ry: RY + 6, fill: 'var(--grass-edge)' }, svg);
-  const ground = el('ellipse', { cx: CX, cy: CY, rx: RX, ry: RY, fill: 'url(#mow)' }, svg);
-  el('ellipse', { cx: CX, cy: CY, rx: RRX, ry: RRY, fill: 'none', stroke: 'var(--rope)', 'stroke-width': 2.5, 'stroke-dasharray': '1 0' }, svg);
-  const ropeLbl = el('text', { x: 222, y: CY + RRY - 12, 'text-anchor': 'middle', 'font-size': 10, fill: 'var(--rope)', 'font-weight': 700, opacity: .9 }, svg);
+  const U = gfx(svg);
+  stadium(svg, U, CX, CY, RX, RY, { stand: 20, rope: RRX / RX, ropeW: 2.5, ring: true });
+  const ropeLbl = el('text', { x: 222, y: CY + RRY - 12, 'text-anchor': 'middle', 'font-size': 10, fill: 'var(--rope)', 'font-weight': 700, opacity: .9, 'letter-spacing': '.05em' }, svg);
   ropeLbl.textContent = 'BOUNDARY ROPE';
-  // inner ring hint
-  el('ellipse', { cx: CX, cy: CY, rx: 92, ry: 100, fill: 'none', stroke: 'var(--rope)', 'stroke-width': 1, 'stroke-dasharray': '3 5', opacity: .35 }, svg);
-  // pitch
-  el('rect', { x: 191, y: 165, width: 18, height: 100, fill: 'var(--pitch)', rx: 2 }, svg);
-  el('line', { x1: 189, x2: 211, y1: 250, y2: 250, stroke: 'var(--crease)', 'stroke-width': 1.2 }, svg);
-  el('line', { x1: 189, x2: 211, y1: 180, y2: 180, stroke: 'var(--crease)', 'stroke-width': 1.2 }, svg);
+  pitchStrip(svg, U, 191, 165, 18, 100, [250, 180]);
   for (const s of [STUMPS_S, STUMPS_N]) for (let k = -1; k <= 1; k++) el('circle', { cx: s.x + k * 2.2, cy: s.y, r: 1.1, fill: '#7a4f22' }, svg);
   const aim = el('line', { x1: STR.x, y1: STR.y, x2: STR.x, y2: STR.y, stroke: '#fff', 'stroke-width': 1.5, 'stroke-dasharray': '4 4', opacity: 0, 'pointer-events': 'none' }, svg);
-  const marker = el('circle', { r: 5, fill: 'none', stroke: '#fff', 'stroke-width': 1.5, opacity: 0, 'pointer-events': 'none' }, svg);
+  const marker = el('circle', { r: 6, fill: 'rgba(255,255,255,.15)', stroke: '#fff', 'stroke-width': 1.5, 'stroke-dasharray': '2 2', opacity: 0, 'pointer-events': 'none' }, svg);
+  const trail = el('polyline', { points: '', fill: 'none', stroke: '#fff', 'stroke-width': 2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: .45, 'pointer-events': 'none' }, svg);
 
   // fielders
   const fG = el('g', {}, svg);
   const fEls = F.map((f, i) => {
     const g = el('g', { class: f.fixed ? 'fixedF' : 'fielder' }, fG);
     if (!f.fixed) el('circle', { r: 17, fill: 'transparent' }, g);
-    el('circle', { r: f.fixed ? 7 : 8, fill: 'var(--gold)', stroke: '#fff', 'stroke-width': 1.5 }, g);
-    if (f.n === 'Keeper') { const t = el('text', { 'text-anchor': 'middle', y: 3.2, 'font-size': 8, 'font-weight': 700, fill: '#fff' }, g); t.textContent = 'K'; }
-    if (f.n === 'Bowler') { const t = el('text', { 'text-anchor': 'middle', y: 3.2, 'font-size': 8, 'font-weight': 700, fill: '#fff' }, g); t.textContent = 'B'; }
-    const lbl = el('text', { 'text-anchor': 'middle', y: -11, 'font-size': 9.5, 'font-weight': 700, fill: '#fff', 'paint-order': 'stroke', stroke: 'rgba(0,0,0,.45)', 'stroke-width': 2.5, class: 'flbl', style: 'display:none' }, g);
+    token(g, U, 'var(--gold)', f.fixed ? 7.5 : 8.5, { label: f.n === 'Keeper' ? 'K' : f.n === 'Bowler' ? 'B' : '' });
+    const lbl = el('text', { 'text-anchor': 'middle', y: -12, 'font-size': 9.5, 'font-weight': 700, fill: '#fff', 'paint-order': 'stroke', stroke: 'rgba(0,0,0,.5)', 'stroke-width': 2.5, class: 'flbl', style: 'display:none' }, g);
     lbl.textContent = f.n;
     g.dataset.i = i;
     return g;
   });
   // batters
-  const batA = el('g', {}, svg), batB = el('g', {}, svg);
-  for (const b of [batA, batB]) {
-    el('circle', { r: 7, fill: 'var(--blue)', stroke: '#fff', 'stroke-width': 1.5 }, b);
-    el('rect', { x: 5, y: -2, width: 9, height: 3, rx: 1, fill: '#e9d6a6', stroke: '#7a5a2a', 'stroke-width': .6 }, b);
-  }
+  const batA = token(svg, U, 'var(--blue)', 7.5, { bat: true }), batB = token(svg, U, 'var(--blue)', 7.5, { bat: true });
   // ball
   const shadow = el('ellipse', { rx: 3.5, ry: 1.8, fill: 'rgba(0,0,0,.35)', opacity: 0 }, svg);
-  const ballEl = el('circle', { r: 3.6, fill: 'var(--ball)', stroke: '#fff', 'stroke-width': 1, opacity: 0 }, svg);
-  const flash = el('text', { x: CX, y: 130, 'text-anchor': 'middle', 'font-size': 34, style: 'font-family:var(--font-d)', fill: '#fff', 'paint-order': 'stroke', stroke: 'rgba(0,0,0,.35)', 'stroke-width': 4, opacity: 0, 'pointer-events': 'none' }, svg);
+  const ballG = ballEl(svg, U, 3.8);
+  const ballEl_ = { setAttribute(k, v) { if (k === 'opacity') ballG.setAttribute('opacity', v); else { ballG['_' + k] = v; ballG.setAttribute('transform', 'translate(' + (ballG._cx || 0) + ',' + (ballG._cy || 0) + ')'); } } };
+  ballG.setAttribute('opacity', 0);
+  const flash = el('text', { x: CX, y: 130, 'text-anchor': 'middle', 'font-size': 36, style: 'font-family:var(--font-d)', fill: '#fff', 'paint-order': 'stroke', stroke: 'rgba(0,0,0,.4)', 'stroke-width': 5, opacity: 0, 'pointer-events': 'none' }, svg);
 
   function setPos(g, x, y) { g.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ')'); }
   function drawFielders(pos) { fEls.forEach((g, i) => setPos(g, (pos || F)[i].x, (pos || F)[i].y)); }
@@ -1079,7 +1148,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
     cancelAnimationFrame(playing); playing = null;
     F = BASE.map(f => ({ ...f })); drawFielders();
     tally = { runs: 0, balls: 0, outs: 0 }; updTally();
-    ballEl.setAttribute('opacity', 0); shadow.setAttribute('opacity', 0); flash.setAttribute('opacity', 0);
+    ballEl_.setAttribute('opacity', 0); shadow.setAttribute('opacity', 0); flash.setAttribute('opacity', 0);
     setPos(batA, STR.x + 6, STR.y); setPos(batB, NSE.x - 6, NSE.y); batA.setAttribute('opacity', 1);
     $('#fResult').innerHTML = '<div class="rh">Tap anywhere on the grass.</div>Fielders are back in their starting spots.';
   });
@@ -1219,9 +1288,10 @@ $$('section.zoomsec').forEach(s => io.observe(s));
     // which batter is where at start
     const aStart = { x: STR.x + 6, y: STR.y }, bStart = { x: NSE.x - 6, y: NSE.y };
     const t0 = performance.now();
-    ballEl.setAttribute('opacity', 1);
+    ballEl_.setAttribute('opacity', 1);
     shadow.setAttribute('opacity', P.airborne ? 1 : 0);
     flash.setAttribute('opacity', 0);
+    const pts = []; trail.setAttribute('points', '');
     const speedup = reduceMotion ? 6 : PLAY;
     function frame(now) {
       const t = (now - t0) / 1000 * speedup;
@@ -1237,8 +1307,10 @@ $$('section.zoomsec').forEach(s => io.observe(s));
         h = 10 * s * (1 - s) * 4;
       } else { bx = P.stopP.x; by = P.stopP.y; }
       if (P.kind === 'caught' && t >= P.tStop) { bx = P.stopP.x; by = P.stopP.y; h = 0; }
-      ballEl.setAttribute('cx', bx); ballEl.setAttribute('cy', by - h);
+      ballEl_.setAttribute('cx', bx); ballEl_.setAttribute('cy', by - h);
       shadow.setAttribute('cx', bx); shadow.setAttribute('cy', by + 1);
+      if (t < P.tStop + .05) { pts.push(bx.toFixed(1) + ',' + (by - h).toFixed(1)); if (pts.length > 26) pts.shift(); trail.setAttribute('points', pts.join(' ')); }
+      else if (pts.length) { pts.shift(); trail.setAttribute('points', pts.join(' ')); }
       // fielder
       const fs = P.fArrive > 0 ? clamp(t / P.fArrive, 0, 1) : 1;
       let fx = lerp(f0.x, P.stopP.x, fs), fy = lerp(f0.y, P.stopP.y, fs);
@@ -1263,7 +1335,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
         flash._shown = true;
         flash.textContent = { four: 'FOUR!', six: 'SIX!', caught: 'CAUGHT!' }[P.kind];
         flash.setAttribute('fill', P.kind === 'caught' ? '#ffb3b6' : '#fff');
-        flash.setAttribute('opacity', 1);
+        flash.setAttribute('opacity', 1); popText(flash);
       }
       if (t < tEnd) playing = requestAnimationFrame(frame);
       else finish(P);
@@ -1296,7 +1368,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
     }
     if (P.kind === 'stopped' || P.kind === 'gap') {
       flash.textContent = P.runs === 0 ? 'NO RUN' : P.runs + (P.runs === 1 ? ' RUN' : ' RUNS');
-      flash.setAttribute('fill', '#fff'); flash.setAttribute('opacity', 1);
+      flash.setAttribute('fill', '#fff'); flash.setAttribute('opacity', 1); popText(flash);
     }
     $('#fResult').innerHTML = html;
     updTally();
@@ -1304,7 +1376,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
       if (playing) return;
       flash.setAttribute('opacity', 0); marker.setAttribute('opacity', 0);
       drawFielders(); setPos(batA, STR.x + 6, STR.y); setPos(batB, NSE.x - 6, NSE.y); batA.setAttribute('opacity', 1);
-      ballEl.setAttribute('opacity', 0); shadow.setAttribute('opacity', 0);
+      ballEl_.setAttribute('opacity', 0); shadow.setAttribute('opacity', 0); trail.setAttribute('points', '');
     }, 1400);
   }
 })();
@@ -1323,9 +1395,19 @@ $$('section.zoomsec').forEach(s => io.observe(s));
   let cur = 'caught', raf = null;
 
   // static scene
-  const sky = el('rect', { x: 0, y: 0, width: 640, height: 230, fill: 'var(--bg-2)' }, svg);
-  el('rect', { x: 0, y: GY, width: 640, height: 34, fill: 'var(--grass)' }, svg);
-  el('rect', { x: 70, y: GY, width: 500, height: 6, fill: 'var(--pitch)' }, svg);
+  const U = gfx(svg);
+  el('rect', { x: 0, y: 0, width: 640, height: 230, fill: U('sky') }, svg);
+  // distant stand with crowd, roof, and advertising boards
+  el('path', { d: 'M0,118 L640,112 L640,182 L0,182 Z', fill: U('crowd') }, svg);
+  el('path', { d: 'M0,118 L640,112 L640,182 L0,182 Z', fill: 'var(--sky-bot)', opacity: .6 }, svg);
+  el('path', { d: 'M0,112 L640,104 L640,113 L0,120 Z', fill: 'var(--stand)' }, svg);
+  for (let x = 0, i = 0; x < 640; x += 46, i++) el('rect', { x, y: 176, width: 44, height: 12, fill: ['var(--blue)', 'var(--ball)', 'var(--gold)'][i % 3], opacity: .55 }, svg);
+  // sightscreen behind the bowler
+  el('rect', { x: 70, y: 120, width: 26, height: 70, rx: 2, fill: '#f4f1e8', stroke: 'rgba(0,0,0,.15)' }, svg);
+  el('rect', { x: 0, y: 188, width: 640, height: 42, fill: U('turf') }, svg);
+  for (let x = -40, i = 0; x < 680; x += 60, i++) if (i % 2) el('path', { d: 'M' + x + ',188 L' + (x + 60) + ',188 L' + (x + 80) + ',230 L' + (x + 20) + ',230 Z', fill: '#fff', opacity: .05 }, svg);
+  el('path', { d: 'M74,' + GY + ' L566,' + GY + ' L572,' + (GY + 7) + ' L68,' + (GY + 7) + ' Z', fill: 'var(--pitch)' }, svg);
+  el('path', { d: 'M74,' + GY + ' L566,' + GY + ' L572,' + (GY + 7) + ' L68,' + (GY + 7) + ' Z', fill: U('pitch'), opacity: .6 }, svg);
   // creases
   const creaseR = el('rect', { x: 497, y: GY - 1, width: 4, height: 9, fill: 'var(--crease)' }, svg);
   const creaseL = el('rect', { x: 132, y: GY - 1, width: 4, height: 9, fill: 'var(--crease)' }, svg);
@@ -1334,7 +1416,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
   const zone = el('rect', { x: 499, y: GY - 2, width: 30, height: 4, fill: 'var(--ok)', opacity: 0 }, svg);
   function stumps(x) {
     const g = el('g', {}, svg);
-    for (const dx of [-4, 0, 4]) el('rect', { x: x + dx - 1, y: GY - 40, width: 2, height: 40, fill: '#c9a46a' }, g);
+    for (const dx of [-4, 0, 4]) el('rect', { x: x + dx - 1.2, y: GY - 40, width: 2.4, height: 40, rx: 1, fill: '#d8b57a', stroke: '#8a6a3a', 'stroke-width': .5 }, g);
     return g;
   }
   stumps(110); stumps(530);
@@ -1347,11 +1429,14 @@ $$('section.zoomsec').forEach(s => io.observe(s));
 
   function person(color, opts = {}) {
     const g = el('g', {}, svg);
-    const legs = el('path', { d: '', stroke: color, 'stroke-width': 4, 'stroke-linecap': 'round', fill: 'none' }, g);
+    el('ellipse', { cx: 2, cy: 1, rx: 12, ry: 2.6, fill: 'rgba(0,0,0,.25)' }, g);
+    const legs = el('path', { d: '', stroke: color, 'stroke-width': 4.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', fill: 'none' }, g);
     if (opts.pads) g._pads = el('path', { d: '', stroke: '#f3f0e4', 'stroke-width': 6, 'stroke-linecap': 'round', fill: 'none' }, g);
-    el('line', { x1: 0, y1: -24, x2: 0, y2: -48, stroke: color, 'stroke-width': 5, 'stroke-linecap': 'round' }, g);
-    const arms = el('path', { d: '', stroke: color, 'stroke-width': 3.5, 'stroke-linecap': 'round', fill: 'none' }, g);
-    el('circle', { cx: 0, cy: -56, r: 7, fill: color }, g);
+    el('path', { d: 'M0,-23 L0,-47', stroke: color, 'stroke-width': 7, 'stroke-linecap': 'round' }, g);
+    el('path', { d: 'M-1.6,-44 L-1.6,-27', stroke: '#fff', 'stroke-width': 1.4, 'stroke-linecap': 'round', opacity: .35 }, g);
+    const arms = el('path', { d: '', stroke: color, 'stroke-width': 4, 'stroke-linecap': 'round', fill: 'none' }, g);
+    el('circle', { cx: 0, cy: -56, r: 7, fill: '#e2b48c' }, g);
+    if (!opts.helmet) el('path', { d: 'M-7.2,-57 A7.2,7.2 0 0 1 7.2,-57 L10,-56 L-7.2,-55.5Z', fill: color }, g);
     if (opts.helmet) el('path', { d: 'M-7,-57 A7,7 0 0 1 7,-57 L9,-55 L-7,-55Z', fill: '#1d2b4a' }, g);
     let bat = null;
     if (opts.bat) bat = el('rect', { x: -2.5, y: 0, width: 5, height: 30, rx: 1.5, fill: '#e9d6a6', stroke: '#7a5a2a', 'stroke-width': .8 }, g);
@@ -1364,7 +1449,9 @@ $$('section.zoomsec').forEach(s => io.observe(s));
   const batter = person('var(--blue)', { bat: true, pads: true, helmet: true });
   const runner = person('var(--blue)', { bat: true, pads: true, helmet: true });
   const shadow = el('ellipse', { rx: 4, ry: 1.6, fill: 'rgba(0,0,0,.3)' }, svg);
-  const ball = el('circle', { r: 4, fill: 'var(--ball)', stroke: '#fff', 'stroke-width': 1 }, svg);
+  const trail = el('polyline', { points: '', fill: 'none', stroke: 'var(--ball)', 'stroke-width': 2.5, 'stroke-linecap': 'round', opacity: .3 }, svg);
+  const ballG = ballEl(svg, U, 4.2), tpts = [];
+  const ball = { setAttribute(k, v) { if (k === 'opacity') ballG.setAttribute('opacity', v); else { ballG['_' + k] = v; ballG.setAttribute('transform', 'translate(' + (ballG._cx || 0) + ',' + (ballG._cy || 0) + ')'); } } };
   const verdictEl = $('#verdict'), verdict = { set textContent(v) { verdictEl.textContent = v; }, setAttribute(k, v) { verdictEl.style.opacity = v; } };
   const tagL = el('text', { x: 112, y: GY + 24, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--dim)', 'font-weight': 600 }, svg); tagL.textContent = 'bowler\'s end'; tagL.setAttribute('fill', 'var(--crease)'); tagL.setAttribute('opacity', .85);
   const tagR = el('text', { x: 572, y: GY + 24, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--dim)', 'font-weight': 600 }, svg); tagR.textContent = 'batter\'s end'; tagR.setAttribute('fill', 'var(--crease)'); tagR.setAttribute('opacity', .85);
@@ -1404,7 +1491,11 @@ $$('section.zoomsec').forEach(s => io.observe(s));
     bail1.setAttribute('transform', f(-40 * dir, 90, -400));
     bail2.setAttribute('transform', f(55 * dir, 110, 520));
   }
-  function setBall(x, y, vis = 1) { ball.setAttribute('cx', x); ball.setAttribute('cy', y); ball.setAttribute('opacity', vis); shadow.setAttribute('cx', x); shadow.setAttribute('cy', GY + 1); shadow.setAttribute('opacity', vis * clamp(1 - (GY - y) / 160, .2, 1)); }
+  function setBall(x, y, vis = 1) {
+    if (vis) { const last = tpts[tpts.length - 1]; if (!last || Math.hypot(last[0] - x, last[1] - y) > 1.5) tpts.push([x, y]); if (tpts.length > 14) tpts.shift(); }
+    else tpts.length = 0;
+    trail.setAttribute('points', tpts.map(p => p.join(',')).join(' '));
+    ball.setAttribute('cx', x); ball.setAttribute('cy', y); ball.setAttribute('opacity', vis); shadow.setAttribute('cx', x); shadow.setAttribute('cy', GY + 1); shadow.setAttribute('opacity', vis * clamp(1 - (GY - y) / 160, .2, 1)); }
   function show(g, v) { g.setAttribute('opacity', v); }
   function delivery(t, tB, bx, tEnd, ex, ey) { // ball from bowler hand to bounce to (ex,ey)
     if (t < 0.25) return null;
@@ -1496,7 +1587,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
     verdict.setAttribute('opacity', 0);
   }
   function run(name) {
-    cur = name; cancelAnimationFrame(raf); resetStatic();
+    cur = name; cancelAnimationFrame(raf); resetStatic(); tpts.length = 0;
     const O = OUTS[name];
     $('#outTitle').textContent = O.t; $('#outText').innerHTML = O.d; $('#outFreq').textContent = O.f; $('#outFreqBar').style.width = O.p * 1.6 + '%';
     $$('#outTabs button').forEach(b => b.classList.toggle('on', b.dataset.out === name));
@@ -1549,16 +1640,20 @@ $$('section.zoomsec').forEach(s => io.observe(s));
 (function zoom5() {
   const svg = $('#overSvg');
   const Y = 95;
+  const U = gfx(svg);
   el('rect', { x: 0, y: 0, width: 640, height: 170, fill: 'var(--bg-2)' }, svg);
-  el('rect', { x: 0, y: 60, width: 640, height: 70, fill: 'var(--grass)' }, svg);
+  el('rect', { x: 0, y: 56, width: 640, height: 78, fill: U('mowv') }, svg);
+  el('rect', { x: 0, y: 56, width: 640, height: 78, fill: U('vig') }, svg);
   el('rect', { x: 110, y: Y - 14, width: 420, height: 28, fill: 'var(--pitch)', rx: 3 }, svg);
+  el('rect', { x: 110, y: Y - 14, width: 420, height: 28, fill: U('pitchv'), rx: 3, opacity: .0 }, svg);
   for (const x of [130, 510]) { el('line', { x1: x, x2: x, y1: Y - 14, y2: Y + 14, stroke: 'var(--crease)', 'stroke-width': 1.5 }, svg); }
   for (const x of [118, 522]) for (const d of [-4, 0, 4]) el('circle', { cx: x, cy: Y + d, r: 1.6, fill: '#7a4f22' }, svg);
   const endL = el('text', { x: 120, y: 152, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--dim)', 'font-weight': 600 }, svg); endL.textContent = 'End A';
   const endR = el('text', { x: 520, y: 152, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--dim)', 'font-weight': 600 }, svg); endR.textContent = 'End B';
-  const mk = (fill, lbl) => { const g = el('g', { style: 'transition:transform .9s ease' }, svg); el('circle', { r: 11, fill, stroke: '#fff', 'stroke-width': 2 }, g); const t = el('text', { 'text-anchor': 'middle', y: 4, 'font-size': 11, 'font-weight': 700, fill: '#fff' }, g); t.textContent = lbl; return g; };
+  const mk = (fill, lbl) => { const g = token(svg, U, fill, 11, { label: lbl, ringW: 2 }); g.style.transition = 'transform .9s ease'; return g; };
   const b1 = mk('var(--gold)', '1'), b2 = mk('var(--gold)', '2');
-  const ball = el('circle', { r: 4.5, fill: 'var(--ball)', stroke: '#fff', 'stroke-width': 1, opacity: 0 }, svg);
+  const ballG = ballEl(svg, U, 4.5); ballG.setAttribute('opacity', 0);
+  const ball = { setAttribute(k, v) { if (k === 'opacity') ballG.setAttribute('opacity', v); else { ballG['_' + k] = v; ballG.setAttribute('transform', 'translate(' + (ballG._cx || 0) + ',' + (ballG._cy || 0) + ')'); } } };
   const dotsG = el('g', {}, svg);
   const dots = [];
   for (let i = 0; i < 6; i++) dots.push(el('circle', { cx: 320 - 50 + i * 20, cy: 32, r: 7, fill: 'var(--card)', stroke: 'var(--line-2)' }, dotsG));
