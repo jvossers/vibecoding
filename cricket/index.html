@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cricket, Top Down</title>
+<meta name="theme-color" content="#f5f1e6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111511" media="(prefers-color-scheme: dark)">
 <meta name="description" content="An interactive explainer of cricket that starts with the one-sentence version and zooms in, with simulations you can play.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -173,7 +175,7 @@ svg text{font-family:var(--font-b)}
 /* ---------- zoom 3: field ---------- */
 .field-wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
 @media (max-width:780px){.field-wrap{grid-template-columns:1fr}}
-#field{width:100%;height:auto;display:block;touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none;max-width:520px;margin:0 auto}
+#field{width:100%;height:auto;display:block;touch-action:pan-y pinch-zoom;cursor:crosshair;user-select:none;-webkit-user-select:none;max-width:520px;margin:0 auto}
 #field .fielder{cursor:grab}
 #field .fielder.dragging{cursor:grabbing}
 .tally{display:flex;gap:10px;margin:10px 0}
@@ -246,6 +248,92 @@ details .dd b{color:var(--ink)}
 .recap ol{margin:0;padding-left:22px;font-size:17px}
 .recap li{margin:8px 0}
 .recap li b{color:#ffd77a}
+/* ---------- new shared bits ---------- */
+.mini{display:none;font-family:var(--font-m);font-weight:700;margin-right:8px;color:var(--ink)}
+.simbtns .sm{display:none}
+#bowlAll.on{background:var(--ink);color:var(--bg)}
+.dtabs{display:none}
+.svwrap{position:relative;border-radius:12px;overflow:hidden}
+.verdict{position:absolute;left:0;right:0;top:8px;text-align:center;font-family:var(--font-d);font-size:clamp(20px,4.5vw,28px);color:var(--bad);opacity:0;pointer-events:none;transition:opacity .2s}
+button,a,summary{-webkit-tap-highlight-color:transparent}
+#field .fielder{touch-action:none}
+
+/* ---------- phones ---------- */
+@media (max-width:640px){
+  body{font-size:16px}
+  .hero{padding:36px 0 20px}
+  .hero p{font-size:16.5px}
+  .ladder{gap:4px}
+  .ladder a{font-size:11px}
+  .ladder a small{font-size:10.5px}
+  section.zoomsec{padding:40px 0 12px}
+  .zhead{flex-direction:column;gap:6px}
+  .lede{font-size:17.5px}
+  .big-sentence{font-size:23px}
+  .card{padding:14px;margin:14px -4px}
+  .card h3{font-size:20px}
+  .btn{min-height:44px;padding:8px 12px}
+  .seg button{min-height:40px;padding:7px 10px}
+  .callout{font-size:15px}
+  .parked{font-size:14.5px}
+
+  /* zoom 1 */
+  #m1svg{max-width:300px;margin:0 auto;display:block}
+  .team .sc{font-size:28px}
+  .stepper button{min-width:0;font-size:14px;padding:8px 6px}
+
+  /* zoom 2 */
+  .board{padding:12px}
+  .dtabs{display:flex;gap:4px;margin-top:10px}
+  .dtabs button{flex:1;border:0;border-radius:8px 8px 0 0;background:rgba(255,255,255,.05);color:var(--board-dim);font-family:var(--font-m);font-size:13px;font-weight:700;padding:7px 4px;cursor:pointer}
+  .dtabs button.on{background:rgba(255,255,255,.14);color:var(--board-ink)}
+  .decoder{margin-top:0}
+  .decoder div{display:none;border-radius:0 0 8px 8px;background:rgba(255,255,255,.14);font-size:13.5px;color:var(--board-ink)}
+  .decoder div.sel{display:block}
+  .decoder div b{display:none}
+  .simbar{position:sticky;top:var(--navh,48px);z-index:6;background:var(--card);margin:0 -14px;padding:4px 14px 10px;border-bottom:1px solid var(--line)}
+  .mini{display:inline}
+  .commentary{font-size:14px;min-height:40px;margin:6px 0;line-height:1.4}
+  .simbtns{display:grid;grid-template-columns:1.25fr 1fr 1.15fr 44px;gap:6px}
+  .simbtns .btn{font-size:13.5px;padding:8px 4px;margin:0!important}
+  .simbtns .lg{display:none}.simbtns .sm{display:inline}
+  #simReset .sm{font-size:18px}
+  .simbtns .btn{white-space:nowrap}
+  .orow i{width:14px;height:14px}
+  .three-ends div{padding:12px}
+
+  /* zoom 3: shot picker above the field, result right below it */
+  .field-wrap{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+  .field-wrap>div{display:contents}
+  .field-wrap>div>.row:first-child{order:-1}
+  #field{order:0}
+  .tally{order:1;margin:0}
+  .result{order:2;min-height:0}
+  .how{order:3;margin:0}
+  .field-wrap>div>.row:last-child{order:4;margin:0!important}
+  .tally div{padding:6px}
+  .tally b{font-size:22px}
+  .result .rh{font-size:21px}
+
+  /* zoom 4 */
+  .outtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .outtabs button{padding:8px 4px;font-size:14px}
+  .outcap{grid-template-columns:1fr}
+  .outcap .freq{text-align:left}
+  .freqbar{margin-left:0}
+  .outcap h4{font-size:21px}
+
+  /* zoom 5 */
+  .fmt-facts div b{font-size:17px}
+  .timeline{height:42px}
+  .timeline div{font-size:11px;padding:0 3px}
+  .days{font-size:10px}
+
+  /* zoom 6 */
+  details summary{padding:12px;min-height:44px;align-items:center}
+  .recap{padding:22px 16px;margin:36px -4px 24px}
+  .recap ol{font-size:16px}
+}
 footer{text-align:center;color:var(--dimmer);font-size:13px;padding:10px 0 40px}
 footer a{color:var(--dim)}
 </style>
@@ -357,18 +445,21 @@ footer a{color:var(--dim)}
         <div class="tname" id="bOther" style="text-align:right"></div>
       </div>
       <div class="need" id="bNeed"></div>
+      <div class="dtabs" id="dtabs"><button data-k="runs" class="on">156</button><button data-k="wkts">/4</button><button data-k="ov">(18.2 ov)</button></div>
       <div class="decoder" id="decoder">
         <div data-k="runs"><b id="dRuns">0 runs</b>scored so far. This is the number that matters.</div>
         <div data-k="wkts"><b id="dWkts">0 out</b>batters out so far. At 10, the turn is over. (Commentators call these "wickets".)</div>
         <div data-k="ov"><b id="dOv">0 overs, 0 balls</b>Written as <i>overs.balls</i>. An over is 6 balls, so 11.4 means 11 overs and 4 balls. Not a decimal!</div>
       </div>
     </div>
-    <div class="commentary" id="comm">Press <b>Bowl one ball</b>.</div>
-    <div class="row">
-      <button class="btn primary" id="bowl1">Bowl one ball</button>
-      <button class="btn" id="bowl6">Bowl 6 balls</button>
-      <button class="btn" id="bowlAll">Fast-forward</button>
-      <button class="btn" id="simReset" style="margin-left:auto">New match</button>
+    <div class="simbar" id="simbar">
+      <div class="commentary"><span class="mini" id="miniScore"></span><span id="comm">Press <b>Bowl one ball</b>.</span></div>
+      <div class="row simbtns">
+        <button class="btn primary" id="bowl1">Bowl one ball</button>
+        <button class="btn" id="bowl6"><span class="lg">Bowl 6 balls</span><span class="sm">Bowl 6</span></button>
+        <button class="btn" id="bowlAll"><span class="lg">Fast-forward</span><span class="sm">Auto ▶▶</span></button>
+        <button class="btn" id="simReset" aria-label="New match"><span class="lg">New match</span><span class="sm">↺</span></button>
+      </div>
     </div>
 
     <div class="sim-cols">
@@ -477,7 +568,7 @@ footer a{color:var(--dim)}
       <button class="btn" data-out="runout">Run out</button>
       <button class="btn" data-out="stumped">Stumped</button>
     </div>
-    <svg id="sideview" viewBox="0 0 640 230" role="img" aria-label="Animation of a way to get out"></svg>
+    <div class="svwrap"><div class="verdict" id="verdict"></div><svg id="sideview" viewBox="66 64 548 166" role="img" aria-label="Animation of a way to get out"></svg></div>
     <div class="outcap">
       <div><h4 id="outTitle"></h4><div id="outText" style="font-size:15.5px;margin-top:4px"></div></div>
       <div class="freq"><span id="outFreq"></span><div class="freqbar"><i id="outFreqBar"></i></div></div>
@@ -528,7 +619,7 @@ footer a{color:var(--dim)}
     <span class="try">Try it</span>
     <h3>Watch an over change hands</h3>
     <div class="sub">Bowl six balls and see what happens next.</div>
-    <svg id="overSvg" viewBox="0 0 640 170" role="img" aria-label="A pitch showing which end the bowler bowls from"></svg>
+    <svg id="overSvg" viewBox="66 0 508 170" role="img" aria-label="A pitch showing which end the bowler bowls from"></svg>
     <div class="row" style="justify-content:center;margin-top:6px">
       <button class="btn primary" id="ovBowl">Bowl a ball</button>
       <span id="ovMsg" style="font-size:15px;color:var(--dim)">Bowler 1 is bowling. Over 1, ball 0 of 6.</span>
@@ -637,9 +728,16 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- nav highlight ---------- */
 const navLinks = $$('nav.zoom a');
+const setNavH = () => document.documentElement.style.setProperty('--navh', $('nav.zoom').offsetHeight + 'px');
+setNavH(); addEventListener('resize', setNavH);
 const io = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if (e.isIntersecting) navLinks.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id));
+    if (!e.isIntersecting) return;
+    navLinks.forEach(a => {
+      const on = a.getAttribute('href') === '#' + e.target.id;
+      a.classList.toggle('on', on);
+      if (on) { const w = a.parentNode; w.scrollTo({ left: a.offsetLeft - (w.clientWidth - a.offsetWidth) / 2, behavior: 'smooth' }); }
+    });
   });
 }, { rootMargin: '-40% 0px -55% 0px' });
 $$('section.zoomsec').forEach(s => io.observe(s));
@@ -800,7 +898,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
       msg = { 0: 'No run. The batter blocks it. ("Dot ball.")', 1: '1 run. A quick single.', 2: '2 runs. Back for a second.', 3: '3 runs! Good running.', 4: 'FOUR! Rolled all the way to the rope.', 6: 'SIX! Over the rope without bouncing.' }[r];
       if (r >= 4) cls = 'boundary';
     }
-    const c = $('#comm'); c.textContent = msg; c.className = 'commentary ' + cls;
+    const c = $('#comm'); c.textContent = msg; c.parentNode.className = 'commentary ' + cls;
     checkEnd();
     render();
   }
@@ -819,12 +917,12 @@ $$('section.zoomsec').forEach(s => io.observe(s));
         ? 'Blues are <b>all out</b>: 10 batters gone, with ' + (MAXB - S.balls) + ' balls left unused.'
         : 'Blues have used <b>all 120 balls</b>, with ' + (10 - S.wkts) + ' batters never getting out. Spare batters don\'t count for anything.';
       box.innerHTML = '<h4>End of Blues\' turn: ' + S.runs + '/' + S.wkts + '</h4><p>' + reason + '</p><p>So Golds need <b>' + (S.runs + 1) + '</b> to win. Now it\'s their turn to bat and Blues field.</p><button class="btn primary" id="startInn2">Start Golds\' turn</button>';
-      box.classList.add('show');
+      box.classList.add('show'); reveal(box);
       $('#startInn2').addEventListener('click', () => {
         S.first = { runs: S.runs, wkts: S.wkts, balls: S.balls };
         Object.assign(S, { inn: 2, runs: 0, wkts: 0, balls: 0, log: [], done: false, onStrike: [0, 1], next: 2, outSet: new Set() });
         box.classList.remove('show');
-        $('#comm').textContent = 'Golds need ' + (S.first.runs + 1) + ' to win. Bowl!'; $('#comm').className = 'commentary';
+        $('#comm').textContent = 'Golds need ' + (S.first.runs + 1) + ' to win. Bowl!'; $('#comm').parentNode.className = 'commentary';
         render();
       });
     } else {
@@ -842,16 +940,19 @@ $$('section.zoomsec').forEach(s => io.observe(s));
         p = 'Golds ' + (why === 'allout' ? 'were all out' : 'ran out of balls') + ' on ' + S.runs + ', ' + gap + ' short of Blues\' ' + t + '. "By ' + gap + ' runs" is the gap.';
       }
       box.innerHTML = '<h4>' + h + '</h4><p>' + p + '</p><button class="btn primary" id="again">Play another match</button>';
-      box.classList.add('show');
+      box.classList.add('show'); reveal(box);
       $('#again').addEventListener('click', reset);
     }
   }
 
+  function reveal(box) { if (innerWidth < 760) setTimeout(() => box.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' }), 150); }
   function render() {
     const T = team();
     $('#bTeam').textContent = T.n + (S.inn === 1 ? ' · BATTING FIRST' : ' · CHASING');
     $('#bOther').innerHTML = S.inn === 2 ? 'BLUES SCORED<br>' + S.first.runs + '/' + S.first.wkts : 'GOLDS BAT NEXT';
+    $('#miniScore').textContent = T.n.charAt(0) + T.n.slice(1).toLowerCase() + ' ' + S.runs + '/' + S.wkts + ' (' + ovStr(S.balls) + ')';
     $('#bRuns').textContent = S.runs; $('#bWkts').textContent = S.wkts; $('#bOv').textContent = ovStr(S.balls);
+    dtabs[0].textContent = S.runs + ' runs'; dtabs[1].textContent = S.wkts + ' out'; dtabs[2].textContent = ovStr(S.balls) + ' ov';
     $('#dRuns').textContent = S.runs + (S.runs === 1 ? ' run' : ' runs');
     $('#dWkts').textContent = S.wkts + ' out';
     $('#dOv').textContent = ovWords(S.balls);
@@ -877,7 +978,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
   }
 
   let auto = null;
-  function stopAuto() { clearInterval(auto); auto = null; $('#bowlAll').textContent = 'Fast-forward'; }
+  function stopAuto() { clearInterval(auto); auto = null; $('#bowlAll').innerHTML = '<span class="lg">Fast-forward</span><span class="sm">Auto ▶▶</span>'; }
   $('#bowl1').addEventListener('click', bowl);
   $('#bowl6').addEventListener('click', () => { for (let i = 0; i < 6 && !S.done; i++) bowl(); });
   $('#bowlAll').addEventListener('click', () => {
@@ -885,11 +986,16 @@ $$('section.zoomsec').forEach(s => io.observe(s));
     $('#bowlAll').textContent = 'Pause';
     auto = setInterval(() => { if (S.done) stopAuto(); else bowl(); }, reduceMotion ? 5 : 45);
   });
-  function reset() { stopAuto(); fresh(); $('#endbox').classList.remove('show'); $('#comm').innerHTML = 'Press <b>Bowl one ball</b>.'; $('#comm').className = 'commentary'; render(); }
+  function reset() { stopAuto(); fresh(); $('#endbox').classList.remove('show'); $('#comm').innerHTML = 'Press <b>Bowl one ball</b>.'; $('#comm').parentNode.className = 'commentary'; render(); }
   $('#simReset').addEventListener('click', reset);
 
   // decoder highlight linking
   const parts = $$('.board .p'), decs = $$('#decoder div');
+  const dtabs = $$('#dtabs button');
+  function pickDec(k) { decs.forEach(d => d.classList.toggle('sel', d.dataset.k === k)); dtabs.forEach(b => b.classList.toggle('on', b.dataset.k === k)); }
+  dtabs.forEach(b => b.addEventListener('click', () => pickDec(b.dataset.k)));
+  parts.forEach(p => p.addEventListener('click', () => pickDec(p.dataset.k)));
+  pickDec('runs');
   function hl(k) { parts.forEach(p => p.classList.toggle('hl', p.dataset.k === k)); decs.forEach(d => d.classList.toggle('hl', d.dataset.k === k)); }
   [...parts, ...decs].forEach(x => { x.addEventListener('mouseenter', () => hl(x.dataset.k)); x.addEventListener('mouseleave', () => hl(null)); });
   render();
@@ -925,7 +1031,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
   el('ellipse', { cx: CX, cy: CY, rx: RX + 6, ry: RY + 6, fill: 'var(--grass-edge)' }, svg);
   const ground = el('ellipse', { cx: CX, cy: CY, rx: RX, ry: RY, fill: 'url(#mow)' }, svg);
   el('ellipse', { cx: CX, cy: CY, rx: RRX, ry: RRY, fill: 'none', stroke: 'var(--rope)', 'stroke-width': 2.5, 'stroke-dasharray': '1 0' }, svg);
-  const ropeLbl = el('text', { x: 248, y: CY + RRY - 12, 'text-anchor': 'middle', 'font-size': 10, fill: 'var(--rope)', 'font-weight': 700, opacity: .9 }, svg);
+  const ropeLbl = el('text', { x: 222, y: CY + RRY - 12, 'text-anchor': 'middle', 'font-size': 10, fill: 'var(--rope)', 'font-weight': 700, opacity: .9 }, svg);
   ropeLbl.textContent = 'BOUNDARY ROPE';
   // inner ring hint
   el('ellipse', { cx: CX, cy: CY, rx: 92, ry: 100, fill: 'none', stroke: 'var(--rope)', 'stroke-width': 1, 'stroke-dasharray': '3 5', opacity: .35 }, svg);
@@ -941,6 +1047,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
   const fG = el('g', {}, svg);
   const fEls = F.map((f, i) => {
     const g = el('g', { class: f.fixed ? 'fixedF' : 'fielder' }, fG);
+    if (!f.fixed) el('circle', { r: 17, fill: 'transparent' }, g);
     el('circle', { r: f.fixed ? 7 : 8, fill: 'var(--gold)', stroke: '#fff', 'stroke-width': 1.5 }, g);
     if (f.n === 'Keeper') { const t = el('text', { 'text-anchor': 'middle', y: 3.2, 'font-size': 8, 'font-weight': 700, fill: '#fff' }, g); t.textContent = 'K'; }
     if (f.n === 'Bowler') { const t = el('text', { 'text-anchor': 'middle', y: 3.2, 'font-size': 8, 'font-weight': 700, fill: '#fff' }, g); t.textContent = 'B'; }
@@ -994,14 +1101,17 @@ $$('section.zoomsec').forEach(s => io.observe(s));
   }
   const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
-  // dragging fielders
-  let drag = null, dragStart = null, dragMoved = false;
+  // Input. The field lets the page scroll vertically (touch-action: pan-y), so a hit
+  // fires on pointerup only if the finger barely moved. Fielders block scrolling so
+  // they can be dragged.
+  let drag = null, dragStart = null, dragMoved = false, tap = null;
   fEls.forEach((g, i) => {
     if (F[i].fixed) return;
+    g.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
     g.addEventListener('pointerdown', e => {
       if (playing) return;
       e.stopPropagation(); e.preventDefault();
-      drag = i; dragStart = toSvg(e); dragMoved = false; g.classList.add('dragging'); svg.setPointerCapture(e.pointerId);
+      drag = i; dragStart = toSvg(e); dragMoved = false; tap = null; g.classList.add('dragging'); svg.setPointerCapture(e.pointerId);
     });
   });
   svg.addEventListener('pointermove', e => {
@@ -1010,21 +1120,27 @@ $$('section.zoomsec').forEach(s => io.observe(s));
       if (!dragMoved && dist(p, dragStart) < 4) return;
       dragMoved = true;
       let q = p;
-      if (!inEll(q, RRX - 8, RRY - 8)) { const h = (() => { const dx = q.x - CX, dy = q.y - CY; const k = 1 / Math.sqrt((dx / (RRX - 8)) ** 2 + (dy / (RRY - 8)) ** 2); return { x: CX + dx * k, y: CY + dy * k }; })(); q = h; }
+      if (!inEll(q, RRX - 8, RRY - 8)) { const dx = q.x - CX, dy = q.y - CY; const k = 1 / Math.sqrt((dx / (RRX - 8)) ** 2 + (dy / (RRY - 8)) ** 2); q = { x: CX + dx * k, y: CY + dy * k }; }
       F[drag].x = q.x; F[drag].y = q.y; setPos(fEls[drag], q.x, q.y);
       return;
     }
-    if (playing || e.pointerType === 'touch') return;
+    if (tap && Math.hypot(e.clientX - tap.cx, e.clientY - tap.cy) > 10) tap = null;
+    if (playing || e.pointerType !== 'mouse') return;
     if (!inEll(p, RX, RY)) { aim.setAttribute('opacity', 0); return; }
     aim.setAttribute('x2', p.x); aim.setAttribute('y2', p.y); aim.setAttribute('opacity', .55);
   });
   svg.addEventListener('pointerleave', () => aim.setAttribute('opacity', 0));
   const endDrag = () => { if (drag !== null) { fEls[drag].classList.remove('dragging'); drag = null; } };
-  // a tap on a fielder (no drag) hits the ball straight at them
-  svg.addEventListener('pointerup', e => { const wasTap = drag !== null && !dragMoved; const at = dragStart; endDrag(); if (wasTap && !playing) hit(at); }); svg.addEventListener('pointercancel', endDrag);
+  svg.addEventListener('pointercancel', () => { endDrag(); tap = null; });
   svg.addEventListener('pointerdown', e => {
     if (drag !== null || playing) return;
-    let p = toSvg(e);
+    tap = { p: toSvg(e), cx: e.clientX, cy: e.clientY };
+  });
+  svg.addEventListener('pointerup', () => {
+    // a tap on a fielder (no drag) hits the ball straight at them
+    if (drag !== null) { const wasTap = !dragMoved, at = dragStart; endDrag(); if (wasTap && !playing) hit(at); return; }
+    if (!tap || playing) { tap = null; return; }
+    let p = tap.p; tap = null;
     if (!inEll(p, RX + 4, RY + 4)) return;
     if (dist(p, STR) < 14) return;
     if (!inEll(p, RX - 3, RY - 3)) p = rayHit(p, RX - 3, RY - 3);
@@ -1178,6 +1294,10 @@ $$('section.zoomsec').forEach(s => io.observe(s));
       html = '<div class="rh">' + head + '</div>' + why + 'Getting the ball back to the stumps took about <b>' + secs + 's</b>. One run takes about ' + RUNTIME + 's, so the batters ' + (P.runs === 0 ? 'stayed where they were.' : 'had time for ' + P.runs + '.') + (P.runs % 2 === 1 ? ' They\'ve swapped ends, so the other batter faces the next ball.' : '');
       // swap who's on strike visually? keep A at striker end for simplicity after reset
     }
+    if (P.kind === 'stopped' || P.kind === 'gap') {
+      flash.textContent = P.runs === 0 ? 'NO RUN' : P.runs + (P.runs === 1 ? ' RUN' : ' RUNS');
+      flash.setAttribute('fill', '#fff'); flash.setAttribute('opacity', 1);
+    }
     $('#fResult').innerHTML = html;
     updTally();
     setTimeout(() => {
@@ -1185,7 +1305,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
       flash.setAttribute('opacity', 0); marker.setAttribute('opacity', 0);
       drawFielders(); setPos(batA, STR.x + 6, STR.y); setPos(batB, NSE.x - 6, NSE.y); batA.setAttribute('opacity', 1);
       ballEl.setAttribute('opacity', 0); shadow.setAttribute('opacity', 0);
-    }, 900);
+    }, 1400);
   }
 })();
 
@@ -1203,7 +1323,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
   let cur = 'caught', raf = null;
 
   // static scene
-  const sky = el('rect', { x: 0, y: 0, width: 640, height: 230, rx: 12, fill: 'var(--bg-2)' }, svg);
+  const sky = el('rect', { x: 0, y: 0, width: 640, height: 230, fill: 'var(--bg-2)' }, svg);
   el('rect', { x: 0, y: GY, width: 640, height: 34, fill: 'var(--grass)' }, svg);
   el('rect', { x: 70, y: GY, width: 500, height: 6, fill: 'var(--pitch)' }, svg);
   // creases
@@ -1245,9 +1365,9 @@ $$('section.zoomsec').forEach(s => io.observe(s));
   const runner = person('var(--blue)', { bat: true, pads: true, helmet: true });
   const shadow = el('ellipse', { rx: 4, ry: 1.6, fill: 'rgba(0,0,0,.3)' }, svg);
   const ball = el('circle', { r: 4, fill: 'var(--ball)', stroke: '#fff', 'stroke-width': 1 }, svg);
-  const verdict = el('text', { x: 320, y: 40, 'text-anchor': 'middle', 'font-size': 26, style: 'font-family:var(--font-d)', fill: 'var(--bad)', opacity: 0 }, svg);
-  const tagL = el('text', { x: 110, y: 22, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--dim)', 'font-weight': 600 }, svg); tagL.textContent = 'bowler\'s end';
-  const tagR = el('text', { x: 530, y: 22, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--dim)', 'font-weight': 600 }, svg); tagR.textContent = 'batter\'s end';
+  const verdictEl = $('#verdict'), verdict = { set textContent(v) { verdictEl.textContent = v; }, setAttribute(k, v) { verdictEl.style.opacity = v; } };
+  const tagL = el('text', { x: 112, y: GY + 24, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--dim)', 'font-weight': 600 }, svg); tagL.textContent = 'bowler\'s end'; tagL.setAttribute('fill', 'var(--crease)'); tagL.setAttribute('opacity', .85);
+  const tagR = el('text', { x: 572, y: GY + 24, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--dim)', 'font-weight': 600 }, svg); tagR.textContent = 'batter\'s end'; tagR.setAttribute('fill', 'var(--crease)'); tagR.setAttribute('opacity', .85);
 
   // pose: x, lean, legs spread phase, arm angle, bat angle (deg, 0 = pointing down), crouch
   function pose(g, x, o = {}) {
@@ -1302,7 +1422,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
       pose(batter, 512, { bat, dir: -1, arm: 60 });
       let p;
       if (t < .88) p = delivery(t, .7, 420, .88, 497, GY - 26);
-      else p = arc(t, .88, [497, GY - 26], 2.3, [236, GY - 46], 110);
+      else p = arc(t, .88, [497, GY - 26], 2.3, [236, GY - 46], 80);
       const fa = kf([[0, 40], [1.6, 40], [2.2, 165]], t)[0];
       pose(fielder, 226, { arm: fa, dir: 1, run: t > .9 && t < 2.1 ? t * 14 : null });
       if (p) setBall(p[0], p[1]); else setBall(0, 0, 0);
@@ -1429,7 +1549,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
 (function zoom5() {
   const svg = $('#overSvg');
   const Y = 95;
-  el('rect', { x: 0, y: 0, width: 640, height: 170, rx: 12, fill: 'var(--bg-2)' }, svg);
+  el('rect', { x: 0, y: 0, width: 640, height: 170, fill: 'var(--bg-2)' }, svg);
   el('rect', { x: 0, y: 60, width: 640, height: 70, fill: 'var(--grass)' }, svg);
   el('rect', { x: 110, y: Y - 14, width: 420, height: 28, fill: 'var(--pitch)', rx: 3 }, svg);
   for (const x of [130, 510]) { el('line', { x1: x, x2: x, y1: Y - 14, y2: Y + 14, stroke: 'var(--crease)', 'stroke-width': 1.5 }, svg); }
@@ -1493,7 +1613,7 @@ $$('section.zoomsec').forEach(s => io.observe(s));
     test: { facts: [['Balls per team', 'No limit'], ['Turns each', '2'], ['Takes up to', '5 days'], ['Can it draw?', 'Yes']],
       days: ['day 1', 'day 2', 'day 3', 'day 4', 'day 5'],
       win: { line: [['b', 1.3, 'Blues 1st'], ['g', .9, 'Golds 1st'], ['b', 1.2, 'Blues 2nd'], ['g', 1.1, 'Golds 2nd'], ['x', .5, 'spare']], note: '<b>A win:</b> Golds were all out in their second turn still short of Blues\' total, with time to spare. Blues got Golds out twice, so Blues win.' },
-      draw: { line: [['b', 1.6, 'Blues 1st'], ['g', 1.5, 'Golds 1st'], ['b', 1.0, 'Blues 2nd'], ['g', .9, 'Golds 2nd… time up']], note: '<b>A draw:</b> Golds were still batting with only 6 out when day 5 ended. Blues couldn\'t get them all out, so nobody wins, however far ahead anyone was.' },
+      draw: { line: [['b', 1.6, 'Blues 1st'], ['g', 1.5, 'Golds 1st'], ['b', 1.0, 'Blues 2nd'], ['g', .9, 'Golds 2nd ⏱']], note: '<b>A draw:</b> Golds were still batting with only 6 out when day 5 ended. Blues couldn\'t get them all out, so nobody wins, however far ahead anyone was.' },
     },
   };
   let fmt = 't20', ending = 'win';
