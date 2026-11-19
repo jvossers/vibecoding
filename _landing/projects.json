@@ -16,6 +16,7 @@
     "bird":          { "title": "Flappy Cockatiels",      "group": "Toys & games", "description": "Flappy Bird, but with a pair of cockatiels." },
     "chemistry":     { "title": "Reactivity of Metals",   "group": "Teaching",     "description": "AQA GCSE Chemistry revision pages and a quiz on the reactivity series." },
     "contraption":   { "title": "Contraption",            "group": "Toys & games", "description": "Build Rube Goldberg machines from ramps, balls, belts and a cat, then watch them run." },
+    "cricket":       { "title": "Cricket, Top Down",      "group": "Explainers",   "description": "Cricket explained from the one-sentence version down, with a match, field and wicket simulator." },
     "cpu":           { "title": "CPU & RAM Simulator",    "group": "Teaching",     "description": "Step through how a CPU fetches and runs instructions from memory." },
     "cpuvsgpu":      { "title": "CPU vs GPU",             "group": "Explainers",   "description": "Interactive 3D explainer on CPUs vs GPUs, and why crypto mining and AI need GPUs." },
     "cs":            { "title": "GCSE CS Simulations",    "group": "Teaching",     "description": "Interactive simulations for the OCR GCSE Computer Science course." },

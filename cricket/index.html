@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cricket, Top Down</title>
+<meta name="description" content="An interactive explainer of cricket that starts with the one-sentence version and zooms in, with simulations you can play.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f1e6; --bg-2:#ece6d6; --card:#fffdf6; --line:#ddd5c1; --line-2:#c8bea5;
+  --ink:#1c241d; --dim:#56625a; --dimmer:#8b9389;
+  --grass:#6fa65a; --grass-2:#64994f; --grass-edge:#4f7f3e; --rope:#fffdf6; --pitch:#d9c48e; --crease:#fffdf6;
+  --ball:#c3232c; --blue:#2458b0; --gold:#c2860a; --blue-soft:#dfe8f8; --gold-soft:#f7ead0;
+  --ok:#1f7a3a; --bad:#b4232b; --accent:#c3232c;
+  --board:#16201a; --board-ink:#f3f0e4; --board-dim:#93a397;
+  --font-d:"Young Serif",Georgia,serif; --font-b:"Figtree",-apple-system,"Segoe UI",sans-serif; --font-m:"JetBrains Mono",ui-monospace,monospace;
+  --r:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111511; --bg-2:#181e18; --card:#1b221c; --line:#2d372e; --line-2:#3e4a3f;
+    --ink:#ecefe6; --dim:#a8b3a8; --dimmer:#748074;
+    --grass:#3d6b33; --grass-2:#376230; --grass-edge:#2a4c24; --rope:#e9e6da; --pitch:#a8955f; --crease:#f2efe3;
+    --ball:#ef4b53; --blue:#6f9cf0; --gold:#e8b23e; --blue-soft:#1d2a42; --gold-soft:#3a2e15;
+    --ok:#4cc46f; --bad:#ff6b72; --accent:#ef4b53;
+    --board:#0a0e0b; --board-ink:#f3f0e4; --board-dim:#7d8c81;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111511; --bg-2:#181e18; --card:#1b221c; --line:#2d372e; --line-2:#3e4a3f;
+  --ink:#ecefe6; --dim:#a8b3a8; --dimmer:#748074;
+  --grass:#3d6b33; --grass-2:#376230; --grass-edge:#2a4c24; --rope:#e9e6da; --pitch:#a8955f; --crease:#f2efe3;
+  --ball:#ef4b53; --blue:#6f9cf0; --gold:#e8b23e; --blue-soft:#1d2a42; --gold-soft:#3a2e15;
+  --ok:#4cc46f; --bad:#ff6b72; --accent:#ef4b53;
+  --board:#0a0e0b; --board-ink:#f3f0e4; --board-dim:#7d8c81;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-b);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{font-family:var(--font-d);font-weight:400;line-height:1.15;margin:0}
+p{margin:0 0 .9em}
+button{font:inherit;color:inherit}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+b,strong{font-weight:700}
+.blue{color:var(--blue);font-weight:700}.gold{color:var(--gold);font-weight:700}.red{color:var(--ball);font-weight:700}
+
+/* ---------- hero ---------- */
+.hero{padding:56px 0 28px;text-align:center}
+.hero .kicker{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:600}
+.hero h1{font-size:clamp(40px,8vw,72px);margin:10px 0 14px}
+.hero h1 em{font-style:normal;color:var(--ball)}
+.hero p{max-width:620px;margin:0 auto 12px;color:var(--dim);font-size:18px}
+.ladder{display:flex;gap:6px;justify-content:center;align-items:flex-end;margin:30px auto 0;max-width:640px}
+.ladder a{flex:1;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:600;line-height:1.2}
+.ladder a span.bar{display:block;width:100%;border-radius:6px 6px 2px 2px;background:var(--grass);opacity:.9;transition:transform .15s}
+.ladder a:hover span.bar{transform:translateY(-3px)}
+.ladder a small{color:var(--dim);font-weight:500}
+.ladder-note{font-size:14px;color:var(--dim);margin-top:12px}
+
+/* ---------- sticky nav ---------- */
+nav.zoom{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.zoom .wrap{display:flex;gap:6px;align-items:center;padding-top:9px;padding-bottom:9px;overflow-x:auto;scrollbar-width:none}
+nav.zoom .wrap::-webkit-scrollbar{display:none}
+nav.zoom .lbl{font-size:12px;color:var(--dim);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-right:4px;white-space:nowrap}
+nav.zoom a{white-space:nowrap;text-decoration:none;color:var(--dim);font-size:14px;font-weight:600;padding:5px 11px;border-radius:999px;border:1px solid transparent}
+nav.zoom a:hover{color:var(--ink)}
+nav.zoom a.on{background:var(--ink);color:var(--bg)}
+
+/* ---------- sections ---------- */
+section.zoomsec{padding:56px 0 20px}
+.zhead{display:flex;gap:14px;align-items:baseline;margin-bottom:6px}
+.zbadge{font-family:var(--font-m);font-size:12px;font-weight:700;color:var(--bg);background:var(--grass-edge);padding:3px 8px;border-radius:6px;white-space:nowrap;letter-spacing:.04em}
+.zhead h2{font-size:clamp(28px,5vw,40px)}
+.lede{font-size:20px;line-height:1.5;margin:14px 0 18px;max-width:760px}
+.lede strong{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--gold) 35%,transparent) 62%)}
+.prose{max-width:760px}
+.big-sentence{font-family:var(--font-d);font-size:clamp(24px,4.2vw,34px);line-height:1.3;margin:18px 0 22px;max-width:820px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:18px 0}
+.card h3{font-size:22px;margin-bottom:6px}
+.card .sub{color:var(--dim);font-size:15px;margin-bottom:12px}
+.try{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ball);margin-bottom:6px}
+
+.parked{border:1.5px dashed var(--line-2);border-radius:12px;padding:12px 16px;margin:22px 0 0;font-size:15px;color:var(--dim);max-width:760px}
+.parked b{color:var(--ink)}
+.parked ul{margin:6px 0 0;padding-left:20px}
+.parked li{margin:2px 0}
+.parked a{color:var(--ink)}
+
+.btn{border:1px solid var(--line-2);background:var(--card);border-radius:10px;padding:8px 14px;font-weight:600;font-size:15px;cursor:pointer;transition:background .12s,transform .05s}
+.btn:hover{background:var(--bg-2)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.primary:hover{opacity:.9;background:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:10px;overflow:hidden;background:var(--card)}
+.seg button{border:0;background:transparent;padding:7px 12px;font-weight:600;font-size:14px;cursor:pointer;color:var(--dim)}
+.seg button+button{border-left:1px solid var(--line-2)}
+.seg button.on{background:var(--ink);color:var(--bg)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+.callout{background:var(--bg-2);border-radius:12px;padding:12px 16px;font-size:15.5px;margin:12px 0}
+.callout b{color:var(--ink)}
+svg text{font-family:var(--font-b)}
+
+/* ---------- zoom 1 ---------- */
+.match-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:center}
+@media (max-width:760px){.match-grid{grid-template-columns:1fr}}
+.teams{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.team{border-radius:12px;padding:12px;border:2px solid transparent;transition:border-color .2s,background .2s}
+.team.blues{background:var(--blue-soft)}.team.golds{background:var(--gold-soft)}
+.team.active.blues{border-color:var(--blue)}.team.active.golds{border-color:var(--gold)}
+.team .nm{font-weight:700;font-size:15px}
+.team.blues .nm{color:var(--blue)}.team.golds .nm{color:var(--gold)}
+.team .role{font-size:13px;color:var(--dim);min-height:20px}
+.team .sc{font-family:var(--font-m);font-size:34px;font-weight:700;line-height:1.2}
+.stepper{display:flex;gap:6px;margin:14px 0 10px;flex-wrap:wrap}
+.stepper button{flex:1;min-width:110px}
+.stepper button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.m1-msg{font-size:16px;min-height:52px}
+
+/* ---------- zoom 2: innings sim ---------- */
+.board{background:var(--board);color:var(--board-ink);border-radius:14px;padding:14px 16px;font-family:var(--font-m)}
+.board .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.board .tname{font-size:13px;letter-spacing:.12em;color:var(--board-dim)}
+.board .score{font-size:clamp(34px,7vw,48px);font-weight:700;line-height:1.1;letter-spacing:-.01em}
+.board .score .p{border-bottom:2px dotted transparent;cursor:help;border-radius:4px;padding:0 2px;transition:background .15s}
+.board .score .p:hover,.board .score .p.hl{background:rgba(255,255,255,.12)}
+.board .ov{font-size:18px;color:var(--board-dim)}
+.board .need{font-size:14px;color:#ffd77a;min-height:20px;margin-top:4px}
+.decoder{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;font-family:var(--font-b)}
+.decoder div{background:rgba(255,255,255,.06);border-radius:8px;padding:8px 10px;font-size:13px;line-height:1.35;color:var(--board-dim);transition:background .15s}
+.decoder div b{display:block;color:var(--board-ink);font-family:var(--font-m);font-size:15px}
+.decoder div.hl{background:rgba(255,255,255,.16)}
+@media (max-width:560px){.decoder{grid-template-columns:1fr}}
+.commentary{font-size:16px;font-weight:600;min-height:28px;margin:12px 0 4px}
+.commentary.out{color:var(--bad)}.commentary.boundary{color:var(--ok)}
+.sim-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;margin-top:14px}
+@media (max-width:760px){.sim-cols{grid-template-columns:1fr}}
+.meter-h{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin:0 0 6px;display:flex;justify-content:space-between}
+.meter-h span{font-family:var(--font-m);text-transform:none;letter-spacing:0;color:var(--ink)}
+.batters{display:flex;gap:4px;flex-wrap:wrap}
+.batters .bt{width:30px;height:38px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--font-m);font-size:13px;font-weight:700;background:var(--bg-2);color:var(--dim);position:relative;transition:all .2s}
+.batters .bt.in{background:var(--tcol);color:#fff;box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--tcol)}
+.batters .bt.out{opacity:.35;text-decoration:line-through}
+.batters .bt.out::after{content:"";position:absolute;left:4px;right:4px;top:50%;height:2px;background:var(--bad);transform:rotate(-30deg)}
+.overs{display:grid;grid-template-columns:repeat(2,1fr);gap:3px 12px}
+.orow{display:flex;gap:3px;align-items:center}
+.orow .on-lbl{font-family:var(--font-m);font-size:10px;color:var(--dimmer);width:16px;text-align:right;margin-right:2px}
+.orow i{width:15px;height:15px;border-radius:50%;background:var(--bg-2);font-style:normal;font-family:var(--font-m);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--dim)}
+.orow i.r0{background:var(--line);color:var(--dim)}
+.orow i.r1,.orow i.r2,.orow i.r3{background:color-mix(in srgb,var(--grass) 45%,var(--card));color:var(--ink)}
+.orow i.r4{background:var(--ok);color:#fff}.orow i.r6{background:var(--blue);color:#fff}
+.orow i.rW{background:var(--bad);color:#fff}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:4px}
+.legend i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.endbox{border-radius:12px;padding:14px 16px;margin-top:14px;background:var(--bg-2);display:none}
+.endbox.show{display:block}
+.endbox h4{margin:0 0 4px;font-family:var(--font-d);font-weight:400;font-size:22px}
+.three-ends{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.three-ends div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:15px}
+.three-ends div b{display:block;font-family:var(--font-d);font-weight:400;font-size:20px;margin-bottom:4px}
+.three-ends .n{font-family:var(--font-m);font-size:12px;color:var(--dim)}
+@media (max-width:700px){.three-ends{grid-template-columns:1fr}}
+
+/* ---------- zoom 3: field ---------- */
+.field-wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:780px){.field-wrap{grid-template-columns:1fr}}
+#field{width:100%;height:auto;display:block;touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none;max-width:520px;margin:0 auto}
+#field .fielder{cursor:grab}
+#field .fielder.dragging{cursor:grabbing}
+.tally{display:flex;gap:10px;margin:10px 0}
+.tally div{flex:1;background:var(--bg-2);border-radius:10px;padding:8px 10px;text-align:center}
+.tally b{display:block;font-family:var(--font-m);font-size:26px;line-height:1.1}
+.tally small{font-size:12px;color:var(--dim);font-weight:600}
+.result{border-radius:12px;padding:12px 14px;background:var(--bg-2);min-height:96px;font-size:15.5px}
+.result .rh{font-family:var(--font-d);font-size:24px;line-height:1.2;margin-bottom:4px}
+.result .rh.out{color:var(--bad)}.result .rh.bnd{color:var(--ok)}
+.how{font-size:14.5px;color:var(--dim);margin-top:10px}
+.how li{margin:3px 0}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:var(--dim);cursor:pointer}
+
+/* ---------- zoom 4: outs ---------- */
+.outtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.outtabs button{padding:7px 12px}
+.outtabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.outtabs button small{font-weight:500;opacity:.7;margin-left:4px}
+#sideview{width:100%;height:auto;display:block;background:linear-gradient(var(--sky1,transparent),transparent);border-radius:12px}
+.outcap{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;margin-top:10px}
+.outcap h4{margin:0;font-family:var(--font-d);font-weight:400;font-size:24px}
+.outcap .freq{font-size:13px;color:var(--dim);text-align:right;white-space:nowrap}
+.freqbar{height:8px;border-radius:4px;background:var(--bg-2);width:120px;margin-top:4px;overflow:hidden;margin-left:auto}
+.freqbar i{display:block;height:100%;background:var(--ball);border-radius:4px}
+.wicket-word{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.wicket-word div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:14.5px}
+.wicket-word div b{display:block;font-size:16px}
+@media (max-width:640px){.wicket-word{grid-template-columns:1fr}}
+.quiz{display:grid;gap:10px}
+.q{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card)}
+.q .qt{font-weight:600;margin-bottom:8px}
+.q .ans{margin-top:8px;font-size:15px;display:none;padding:8px 10px;border-radius:8px}
+.q.done .ans{display:block}
+.q.right .ans{background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.q.wrong .ans{background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.q .ans b.v{margin-right:4px}
+.q.done .btn{pointer-events:none;opacity:.55}
+.q.done .btn.pick{opacity:1;outline:2px solid var(--ink)}
+.qscore{font-weight:700;font-size:15px;color:var(--dim);margin-top:6px}
+
+/* ---------- zoom 5: overs & formats ---------- */
+#overSvg{width:100%;height:auto;display:block;max-width:640px;margin:0 auto}
+.fmt-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.fmt-facts div{background:var(--bg-2);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--dim);font-weight:600}
+.fmt-facts div b{display:block;font-size:20px;color:var(--ink);font-family:var(--font-d);font-weight:400;line-height:1.25;margin-top:2px}
+@media (max-width:640px){.fmt-facts{grid-template-columns:1fr 1fr}}
+.timeline{display:flex;gap:3px;margin:12px 0 6px;height:46px}
+.timeline div{border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;color:#fff;overflow:hidden;white-space:nowrap;transition:flex-grow .5s}
+.timeline .b{background:var(--blue)}.timeline .g{background:var(--gold)}
+.timeline .x{background:repeating-linear-gradient(45deg,var(--line) 0 6px,var(--bg-2) 6px 12px);color:var(--dim)}
+.days{display:flex;gap:3px;font-size:11px;color:var(--dim);font-family:var(--font-m)}
+.days span{flex:1;border-top:2px solid var(--line-2);padding-top:3px;text-align:center}
+.fmt-note{font-size:15.5px;margin-top:12px}
+
+/* ---------- zoom 6: noise ---------- */
+.noise-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:700px){.noise-grid{grid-template-columns:1fr}}
+.noise-grid h3{font-size:20px;margin:6px 0 8px}
+details{border:1px solid var(--line);border-radius:10px;background:var(--card);margin-bottom:6px}
+details summary{cursor:pointer;padding:9px 12px;font-weight:600;font-size:15.5px;list-style:none;display:flex;justify-content:space-between;gap:8px}
+details summary::-webkit-details-marker{display:none}
+details summary::after{content:"+";color:var(--dim);font-weight:700}
+details[open] summary::after{content:"–"}
+details summary small{color:var(--dim);font-weight:500;margin-left:auto;margin-right:6px;font-size:13px}
+details .dd{padding:0 12px 11px;font-size:15px;color:var(--dim)}
+details .dd b{color:var(--ink)}
+
+.recap{background:var(--board);color:var(--board-ink);border-radius:18px;padding:26px 22px;margin:50px 0 30px}
+.recap h2{font-size:30px;margin-bottom:12px}
+.recap ol{margin:0;padding-left:22px;font-size:17px}
+.recap li{margin:8px 0}
+.recap li b{color:#ffd77a}
+footer{text-align:center;color:var(--dimmer);font-size:13px;padding:10px 0 40px}
+footer a{color:var(--dim)}
+</style>
+</head>
+<body>
+
+<header class="hero wrap">
+  <div class="kicker">An explainer for people who've given up twice</div>
+  <h1>Cricket, <em>top down</em></h1>
+  <p>Most explanations start with the details and bury you. This one starts with the one-sentence version and only zooms in when you're ready. Every level makes sense on its own.</p>
+  <div class="ladder" aria-label="Zoom levels">
+    <a href="#z1"><span class="bar" style="height:18px"></span>1<small>The whole game</small></a>
+    <a href="#z2"><span class="bar" style="height:30px"></span>2<small>A team's turn</small></a>
+    <a href="#z3"><span class="bar" style="height:42px"></span>3<small>Scoring runs</small></a>
+    <a href="#z4"><span class="bar" style="height:54px"></span>4<small>Getting out</small></a>
+    <a href="#z5"><span class="bar" style="height:66px"></span>5<small>Overs &amp; formats</small></a>
+    <a href="#z6"><span class="bar" style="height:78px;opacity:.45"></span>6<small>The noise</small></a>
+  </div>
+  <p class="ladder-note">Levels 1–4 are enough to follow a match on TV. Level 6 is the stuff you can happily ignore.</p>
+</header>
+
+<nav class="zoom" aria-label="Sections">
+  <div class="wrap">
+    <span class="lbl">Zoom</span>
+    <a href="#z1">1 · Whole game</a>
+    <a href="#z2">2 · A turn</a>
+    <a href="#z3">3 · Runs</a>
+    <a href="#z4">4 · Outs</a>
+    <a href="#z5">5 · Overs &amp; formats</a>
+    <a href="#z6">6 · Noise</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ================= ZOOM 1 ================= -->
+<section class="zoomsec" id="z1">
+  <div class="zhead"><span class="zbadge">ZOOM 1</span><h2>The whole game in one sentence</h2></div>
+  <p class="big-sentence">Two teams take turns. One team <span class="blue">bats</span> and tries to score as many <b>runs</b> as it can. Then they swap, and the other team tries to score more.</p>
+  <div class="prose">
+    <p>That's it. That's the game. Whoever has more runs at the end wins. Everything else is detail about <i>how</i> runs are scored and <i>when</i> a turn ends.</p>
+    <p>A team's turn is called an <b>innings</b> (always with an "s", even for one). While one team bats, the other team <span class="gold">fields</span>: one of them throws the ball (the <b>bowler</b>) and the rest spread out around the field to stop runs.</p>
+  </div>
+
+  <div class="card">
+    <span class="try">Try it</span>
+    <h3>Play a whole match in three clicks</h3>
+    <div class="sub">Step through it and watch who is on the field. Notice how lopsided it is.</div>
+    <div class="match-grid">
+      <svg id="m1svg" viewBox="0 0 300 300" role="img" aria-label="A cricket field showing which team's players are on it"></svg>
+      <div>
+        <div class="teams">
+          <div class="team blues" id="m1Blues"><div class="nm">Blues</div><div class="role" id="m1BluesRole"></div><div class="sc" id="m1BluesSc">–</div></div>
+          <div class="team golds" id="m1Golds"><div class="nm">Golds</div><div class="role" id="m1GoldsRole"></div><div class="sc" id="m1GoldsSc">–</div></div>
+        </div>
+        <div class="stepper">
+          <button class="btn" data-step="1">1 · Blues bat</button>
+          <button class="btn" data-step="2">2 · Golds bat</button>
+          <button class="btn" data-step="3">3 · Result</button>
+        </div>
+        <div class="m1-msg" id="m1Msg">Press <b>1</b> to start.</div>
+      </div>
+    </div>
+    <div class="callout">See it? The <b>batting</b> team only ever has <b>two</b> players out on the field at a time. The other nine wait at the side for their go. The <b>fielding</b> team has all eleven out there.</div>
+  </div>
+
+  <div class="parked">
+    <b>Parked for later (you don't need these yet):</b>
+    <ul>
+      <li>How exactly do you score a run? → <a href="#z3">Zoom 3</a></li>
+      <li>When does a team's turn end? → <a href="#z2">Zoom 2</a>, next</li>
+      <li>Why do some matches last five days? → <a href="#z5">Zoom 5</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= ZOOM 2 ================= -->
+<section class="zoomsec" id="z2">
+  <div class="zhead"><span class="zbadge">ZOOM 2</span><h2>When does a turn end?</h2></div>
+  <p class="lede">The bowler throws the ball at the batter, one ball at a time. Every ball, three things can happen: <strong>runs are scored</strong>, <strong>nothing happens</strong>, or <strong>the batter is out</strong>. A team's turn ends when it <strong>runs out of batters</strong> or <strong>runs out of balls</strong>.</p>
+
+  <div class="three-ends">
+    <div><span class="n">ENDS IF…</span><b>10 batters are out</b>Called "all out". Why 10 and not 11? Batters always play in pairs, so the last one has no partner.</div>
+    <div><span class="n">…OR IF…</span><b>The balls run out</b>In the popular short format (T20) each team gets 120 balls. Use them or lose them.</div>
+    <div><span class="n">…OR, 2ND TEAM ONLY</span><b>The target is passed</b>The team batting second stops the moment it beats the first team's score.</div>
+  </div>
+
+  <div class="prose"><p>So the whole game is a balancing act. Swing hard and you score faster, but you're more likely to get out. Play safe and you'll survive, but you might waste your balls. Try it.</p></div>
+
+  <div class="card" id="sim">
+    <span class="try">Try it</span>
+    <h3>Bat through a whole match, one ball at a time</h3>
+    <div class="sub">Each click is one ball from the bowler. Pick a batting style and see what happens to runs and outs.</div>
+
+    <div class="row" style="margin-bottom:12px">
+      <span style="font-size:14px;color:var(--dim);font-weight:600">Batting style:</span>
+      <div class="seg" id="styleSeg">
+        <button data-style="careful">Careful</button>
+        <button data-style="normal" class="on">Balanced</button>
+        <button data-style="aggressive">Swing hard</button>
+      </div>
+    </div>
+
+    <div class="board">
+      <div class="top">
+        <div><div class="tname" id="bTeam">BLUES · BATTING FIRST</div>
+          <div class="score"><span class="p" data-k="runs" id="bRuns">0</span>/<span class="p" data-k="wkts" id="bWkts">0</span> <span class="ov">(<span class="p" data-k="ov" id="bOv">0.0</span> ov)</span></div>
+        </div>
+        <div class="tname" id="bOther" style="text-align:right"></div>
+      </div>
+      <div class="need" id="bNeed"></div>
+      <div class="decoder" id="decoder">
+        <div data-k="runs"><b id="dRuns">0 runs</b>scored so far. This is the number that matters.</div>
+        <div data-k="wkts"><b id="dWkts">0 out</b>batters out so far. At 10, the turn is over. (Commentators call these "wickets".)</div>
+        <div data-k="ov"><b id="dOv">0 overs, 0 balls</b>Written as <i>overs.balls</i>. An over is 6 balls, so 11.4 means 11 overs and 4 balls. Not a decimal!</div>
+      </div>
+    </div>
+    <div class="commentary" id="comm">Press <b>Bowl one ball</b>.</div>
+    <div class="row">
+      <button class="btn primary" id="bowl1">Bowl one ball</button>
+      <button class="btn" id="bowl6">Bowl 6 balls</button>
+      <button class="btn" id="bowlAll">Fast-forward</button>
+      <button class="btn" id="simReset" style="margin-left:auto">New match</button>
+    </div>
+
+    <div class="sim-cols">
+      <div>
+        <div class="meter-h">Batters <span id="batLbl">2 in · 9 waiting</span></div>
+        <div class="batters" id="batters"></div>
+        <p style="font-size:14px;color:var(--dim);margin-top:10px">The two highlighted players are batting right now. When one is out, the next comes in. When the 10th is out, the 11th is left alone and the turn ends.</p>
+      </div>
+      <div>
+        <div class="meter-h">Balls <span id="ballLbl">0 of 120 used</span></div>
+        <div class="overs" id="overs"></div>
+        <div class="legend">
+          <span><i style="background:var(--line)"></i>no run</span>
+          <span><i style="background:color-mix(in srgb,var(--grass) 45%,var(--card))"></i>1–3 runs</span>
+          <span><i style="background:var(--ok)"></i>4</span>
+          <span><i style="background:var(--blue)"></i>6</span>
+          <span><i style="background:var(--bad)"></i>out</span>
+        </div>
+      </div>
+    </div>
+    <div class="endbox" id="endbox"></div>
+  </div>
+
+  <div class="callout"><b>Why "won by 5 wickets" vs "won by 20 runs"?</b> If the team batting second passes the target, they win "by" however many batters they still had left. If they fall short, the first team wins "by" the gap in runs. It's just a way of saying how comfortable the win was. Play the sim to the end to see one.</div>
+
+  <div class="parked">
+    <b>Parked for later:</b>
+    <ul>
+      <li>How do the batters actually score those 1s, 4s and 6s? → <a href="#z3">Zoom 3</a>, next</li>
+      <li>What counts as "out"? → <a href="#z4">Zoom 4</a></li>
+      <li>Why are balls grouped into sixes ("overs")? And is it always 120? → <a href="#z5">Zoom 5</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= ZOOM 3 ================= -->
+<section class="zoomsec" id="z3">
+  <div class="zhead"><span class="zbadge">ZOOM 3</span><h2>How runs are scored</h2></div>
+  <p class="lede">In the middle of the field is a strip of flat ground called the <strong>pitch</strong>, with a set of sticks (the <strong>stumps</strong>) at each end. One batter stands at each end. When the batter hits the ball, there are two ways to score.</p>
+
+  <div class="two">
+    <div class="card" style="margin:0"><h3>1. Run for it</h3><p style="margin:0">Both batters sprint to swap ends while the fielders chase the ball. Every swap = <b>1 run</b>. They can keep going back and forth for 2 or 3 runs, as long as they get there before the ball comes back.</p></div>
+    <div class="card" style="margin:0"><h3>2. Hit the boundary</h3><p style="margin:0">There's a rope around the edge of the field. Ball reaches it rolling or bouncing: <b>4 runs</b>. Ball flies over it without touching the ground: <b>6 runs</b>. No running needed.</p></div>
+  </div>
+
+  <div class="card">
+    <span class="try">Try it</span>
+    <h3>You're the batter. Tap the field to hit the ball there.</h3>
+    <div class="sub">You can also drag the <span class="gold">gold fielders</span> around to see how the fielding captain plugs the gaps.</div>
+    <div class="field-wrap">
+      <svg id="field" viewBox="0 0 400 430" role="img" aria-label="Top-down cricket field. Tap to hit the ball."></svg>
+      <div>
+        <div class="row" style="margin-bottom:6px">
+          <span style="font-size:14px;color:var(--dim);font-weight:600">Shot:</span>
+          <div class="seg" id="shotSeg">
+            <button data-shot="ground" class="on">Along the ground</button>
+            <button data-shot="air">In the air</button>
+          </div>
+        </div>
+        <div class="tally">
+          <div><b id="tRuns">0</b><small>runs</small></div>
+          <div><b id="tBalls">0</b><small>balls</small></div>
+          <div><b id="tOuts">0</b><small>out</small></div>
+        </div>
+        <div class="result" id="fResult"><div class="rh">Tap anywhere on the grass.</div>Where the ball ends up decides the score. Try aiming between the fielders, then try the rope.</div>
+        <ul class="how">
+          <li><b>Into a gap:</b> the fielder has to run, so there's time for runs.</li>
+          <li><b>Straight at a fielder:</b> they stop it. Probably no run.</li>
+          <li><b>In the air near a fielder:</b> they catch it. You're <b style="color:var(--bad)">out</b>!</li>
+        </ul>
+        <div class="row" style="margin-top:8px">
+          <label class="chk"><input type="checkbox" id="showNames"> Show fielding position names</label>
+          <button class="btn" id="fReset" style="margin-left:auto;font-size:13px;padding:6px 10px">Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>That's the hidden tension you saw in Zoom 2. Hitting the ball <b>in the air</b> is how you get a 6, but it's also how you get caught. Hitting it <b>along the ground</b> is safe, but fielders can cut it off.</p>
+    <p>Notice the batter doesn't <i>have</i> to run. If they hit it straight to a fielder they just stay put. No penalty, it just counts as a ball used with no run (a "dot ball").</p>
+  </div>
+
+  <div class="parked">
+    <b>Parked for later:</b>
+    <ul>
+      <li>Runs the batters didn't hit (the bowler's mistakes, called "extras") → <a href="#z6">Zoom 6</a></li>
+      <li>Those fielding position names (slip, cover, mid-on…) → just names for spots on the field. <a href="#z6">Zoom 6</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= ZOOM 4 ================= -->
+<section class="zoomsec" id="z4">
+  <div class="zhead"><span class="zbadge">ZOOM 4</span><h2>How a batter gets out</h2></div>
+  <p class="lede">The bowler's goal is to get batters out. The batter's job is to <strong>protect the stumps</strong> behind them, and to <strong>not get caught</strong>. Five ways of getting out cover almost everything you'll ever see.</p>
+
+  <div class="card">
+    <span class="try">Watch</span>
+    <h3>The five ways to get out</h3>
+    <div class="sub">Side-on view: the bowler is on the left, the batter on the right, guarding the stumps.</div>
+    <div class="outtabs" id="outTabs">
+      <button class="btn on" data-out="caught">Caught</button>
+      <button class="btn" data-out="bowled">Bowled</button>
+      <button class="btn" data-out="lbw">LBW</button>
+      <button class="btn" data-out="runout">Run out</button>
+      <button class="btn" data-out="stumped">Stumped</button>
+    </div>
+    <svg id="sideview" viewBox="0 0 640 230" role="img" aria-label="Animation of a way to get out"></svg>
+    <div class="outcap">
+      <div><h4 id="outTitle"></h4><div id="outText" style="font-size:15.5px;margin-top:4px"></div></div>
+      <div class="freq"><span id="outFreq"></span><div class="freqbar"><i id="outFreqBar"></i></div></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn" id="replay">↻ Replay</button>
+      <label class="chk"><input type="checkbox" id="slowmo"> Slow motion</label>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p><b>Caught</b> and <b>bowled</b> are the two big ones, and they're easy to spot: the ball is caught, or the stumps get knocked over. <b>LBW</b> is the one that causes arguments, because it relies on guessing where the ball <i>would</i> have gone. (On TV they show a computer prediction of it.)</p>
+  </div>
+
+  <div class="card" style="background:var(--bg-2);border-color:transparent">
+    <h3>The confusing word: "wicket"</h3>
+    <div class="sub">This one word means three different things, which is half the reason cricket sounds like gibberish.</div>
+    <div class="wicket-word">
+      <div><b>1. The stumps</b>The three sticks with two little "bails" balanced on top. "The ball hit the wicket."</div>
+      <div><b>2. An out</b>"She took 3 wickets" = she got 3 batters out. "India are 120 for 3" = 3 out.</div>
+      <div><b>3. The pitch</b>The strip in the middle. "It's a dry wicket today." Mostly said by commentators.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="try">Quiz</span>
+    <h3>Out or not out?</h3>
+    <div class="sub">Use what you know so far.</div>
+    <div class="quiz" id="quiz"></div>
+    <div class="qscore" id="qscore"></div>
+  </div>
+
+  <div class="parked">
+    <b>Parked for later:</b>
+    <ul>
+      <li>The fine print of LBW (it's genuinely fiddly) → <a href="#z6">Zoom 6</a></li>
+      <li>Rare ways to get out: hit wicket, handling the ball, obstructing the field, timed out → <a href="#z6">Zoom 6</a>. You might see one in a lifetime.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= ZOOM 5 ================= -->
+<section class="zoomsec" id="z5">
+  <div class="zhead"><span class="zbadge">ZOOM 5</span><h2>Overs, and why some games take five days</h2></div>
+  <p class="lede">Balls are bowled in batches of six, called an <strong>over</strong>. After each over a <strong>different bowler</strong> takes over from the <strong>other end</strong> of the pitch. That's all an over is: a way to share the bowling and rest arms.</p>
+
+  <div class="card">
+    <span class="try">Try it</span>
+    <h3>Watch an over change hands</h3>
+    <div class="sub">Bowl six balls and see what happens next.</div>
+    <svg id="overSvg" viewBox="0 0 640 170" role="img" aria-label="A pitch showing which end the bowler bowls from"></svg>
+    <div class="row" style="justify-content:center;margin-top:6px">
+      <button class="btn primary" id="ovBowl">Bowl a ball</button>
+      <span id="ovMsg" style="font-size:15px;color:var(--dim)">Bowler 1 is bowling. Over 1, ball 0 of 6.</span>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>The number of overs is what sets the length of a game, and there are three main <b>formats</b>. Same rules for batting, bowling and getting out. What changes is how many balls each team gets, and how many turns.</p>
+  </div>
+
+  <div class="card">
+    <span class="try">Compare</span>
+    <h3>The three formats</h3>
+    <div class="seg" id="fmtSeg" style="margin:6px 0 4px">
+      <button data-fmt="t20" class="on">T20</button>
+      <button data-fmt="odi">One-Day</button>
+      <button data-fmt="test">Test match</button>
+    </div>
+    <div class="fmt-facts" id="fmtFacts"></div>
+    <div class="timeline" id="fmtLine"></div>
+    <div class="days" id="fmtDays"></div>
+    <div class="fmt-note" id="fmtNote"></div>
+    <div class="row" id="testBtns" style="margin-top:10px;display:none">
+      <button class="btn" data-ending="win">Show a win</button>
+      <button class="btn" data-ending="draw">Show a draw</button>
+    </div>
+  </div>
+
+  <div class="callout"><b>The big Test match idea:</b> there's no limit on balls, so a turn only ends when 10 batters are out. To <i>win</i>, you have to get the other team out <b>twice</b> and still have more runs. If five days run out first, nobody wins: it's a draw, even if one team was miles ahead. That's why a team can "play for a draw" by just surviving.</div>
+</section>
+
+<!-- ================= ZOOM 6 ================= -->
+<section class="zoomsec" id="z6">
+  <div class="zhead"><span class="zbadge">ZOOM 6</span><h2>The noise (safe to ignore)</h2></div>
+  <p class="lede">This is the stuff that made cricket feel impossible. None of it changes the big picture: <strong>score runs, don't get out, more runs wins</strong>. Open them as you bump into them.</p>
+
+  <div class="noise-grid">
+    <div>
+      <h3>Bonus runs ("extras")</h3>
+      <details><summary>Wide</summary><div class="dd">The bowler throws it too far from the batter to hit. The batting team gets <b>1 free run</b> and the ball doesn't count, so it's bowled again.</div></details>
+      <details><summary>No-ball</summary><div class="dd">The bowler oversteps their line or bowls dangerously. <b>1 free run</b>, bowled again, and in short formats the next ball is a <b>free hit</b>: the batter can't be out bowled or caught on it.</div></details>
+      <details><summary>Bye and leg bye</summary><div class="dd">The batters run even though the bat didn't touch the ball (it went past, or hit their body). The runs count for the team but not for the batter.</div></details>
+
+      <h3>Scorecard words</h3>
+      <details><summary>Duck <small>scored 0</small></summary><div class="dd">A batter out without scoring. A "golden duck" is out on their very first ball.</div></details>
+      <details><summary>Fifty, century <small>50, 100 runs</small></summary><div class="dd">Milestones for one batter. Players raise the bat to the crowd when they reach them.</div></details>
+      <details><summary>Not out <small>the asterisk</small></summary><div class="dd">"72*" means the batter scored 72 and was still batting when the innings ended. It's a good thing.</div></details>
+      <details><summary>Maiden <small>a quiet over</small></summary><div class="dd">An over where the batting team scored no runs at all. A win for the bowler.</div></details>
+      <details><summary>Hat-trick</summary><div class="dd">A bowler gets batters out with three balls in a row. Rare and celebrated.</div></details>
+      <details><summary>Run rate</summary><div class="dd">Runs per over. In a chase you'll see the "required run rate": how fast they need to score from here to win.</div></details>
+      <details><summary>Figures like 3/24 or 3–24</summary><div class="dd">For a bowler: 3 batters out, 24 runs given away. Lower second number = better. Countries write it in different orders, annoyingly.</div></details>
+    </div>
+    <div>
+      <h3>Field and bowling jargon</h3>
+      <details><summary>Fielding positions</summary><div class="dd">Slip, gully, point, cover, mid-off, mid-on, midwicket, square leg, fine leg, third man, long on… They're just <b>names for spots</b>, like "left back" in football. "Silly" means very close to the batter, "deep" means near the rope. Tick "Show fielding position names" in Zoom 3 to see some.</div></details>
+      <details><summary>Off side and leg side</summary><div class="dd">The two halves of the field, split along the pitch. Off side is the side the batter faces when standing ready; leg side is behind their legs. It flips for left-handers.</div></details>
+      <details><summary>Pace vs spin</summary><div class="dd">Two kinds of bowler. Pace bowlers bowl fast (up to about 150 km/h). Spin bowlers bowl slowly but make the ball twist sideways after it bounces.</div></details>
+      <details><summary>Yorker, bouncer, googly, swing, seam…</summary><div class="dd">Names for different kinds of delivery. All are ways of tricking the batter. You can watch for years without knowing them.</div></details>
+      <details><summary>Wicketkeeper</summary><div class="dd">The fielder in gloves who crouches behind the stumps. Catches what the batter misses.</div></details>
+
+      <h3>Rules in the fine print</h3>
+      <details><summary>LBW, properly</summary><div class="dd">Out if the ball hits the batter's body (not the bat or glove) first <b>and</b> would have hit the stumps. There are extra conditions about where the ball bounced and where it hit the pad. That's why it's argued about.</div></details>
+      <details><summary>DRS (the review system)</summary><div class="dd">Each team can challenge a few umpire decisions per innings. Replays and ball-tracking decide. When you see a player make a "T" with their hands, that's a review.</div></details>
+      <details><summary>The toss</summary><div class="dd">A coin toss before the match decides which team chooses to bat or bowl first.</div></details>
+      <details><summary>Bowler limits</summary><div class="dd">No bowler can bowl two overs in a row. In T20, a bowler can bowl at most 4 overs; in a One-Day, 10.</div></details>
+      <details><summary>Powerplay</summary><div class="dd">In short formats, the first few overs only allow two fielders far out near the rope, so batters try to score fast early.</div></details>
+      <details><summary>Rain, and Duckworth–Lewis–Stern</summary><div class="dd">If rain shortens a limited-overs game, a formula resets the target fairly. Nobody does it in their head.</div></details>
+      <details><summary>Declaration and follow-on <small>Tests only</small></summary><div class="dd">A Test captain can end their own innings early ("declare") to leave time to bowl the other team out. A team far behind after both first innings can be made to bat again straight away ("follow on").</div></details>
+      <details><summary>Super Over</summary><div class="dd">A T20 tie is settled by each team batting one extra over.</div></details>
+      <details><summary>Rare ways to get out</summary><div class="dd">Hit wicket (knocking your own stumps over), obstructing the field, handling the ball, timed out (taking too long to come in), hitting the ball twice.</div></details>
+    </div>
+  </div>
+
+  <div class="recap">
+    <h2>If you remember five things</h2>
+    <ol>
+      <li><b>Two teams take turns</b> batting. Most runs wins.</li>
+      <li>A turn ends when <b>10 batters are out</b> or the <b>balls run out</b>.</li>
+      <li>Runs come from <b>running between the ends</b>, or hitting the rope: <b>4</b> rolling, <b>6</b> in the air.</li>
+      <li>You're out mostly by being <b>caught</b> or having your <b>stumps hit</b>.</li>
+      <li>A score like <b>156/4 (18.2)</b> means 156 runs, 4 out, 18 overs and 2 balls used.</li>
+    </ol>
+  </div>
+</section>
+</main>
+
+<footer>Rules simplified on purpose. Outcome odds in the simulators are rough, made-up but realistic. <a href="../">More explainers</a></footer>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- nav highlight ---------- */
+const navLinks = $$('nav.zoom a');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) navLinks.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id));
+  });
+}, { rootMargin: '-40% 0px -55% 0px' });
+$$('section.zoomsec').forEach(s => io.observe(s));
+
+/* ================= ZOOM 1: match stepper ================= */
+(function zoom1() {
+  const svg = $('#m1svg');
+  const g = el('g', {}, svg);
+  el('rect', { x: 0, y: 0, width: 300, height: 300, rx: 16, fill: 'var(--bg-2)' }, g);
+  el('ellipse', { cx: 125, cy: 150, rx: 118, ry: 140, fill: 'var(--grass)' }, g);
+  el('ellipse', { cx: 125, cy: 150, rx: 110, ry: 132, fill: 'none', stroke: 'var(--rope)', 'stroke-width': 1.5, opacity: .8 }, g);
+  el('rect', { x: 119, y: 122, width: 12, height: 56, fill: 'var(--pitch)', rx: 2 }, g);
+  // side bench
+  el('rect', { x: 250, y: 60, width: 44, height: 180, rx: 10, fill: 'var(--card)', stroke: 'var(--line-2)' }, g);
+  const benchT = el('text', { x: 272, y: 54, 'text-anchor': 'middle', 'font-size': 10, fill: 'var(--dim)', 'font-weight': 600 }, g);
+  benchT.textContent = 'waiting';
+  const fieldSpots = [[125, 100], [125, 192], [150, 200], [190, 165], [185, 95], [148, 45], [95, 45], [60, 95], [58, 175], [85, 255], [170, 255]];
+  const batSpots = [[121, 127], [129, 172]];
+  const benchSpots = [];
+  for (let i = 0; i < 9; i++) benchSpots.push([272, 78 + i * 18.5]);
+  const blues = [], golds = [];
+  for (let i = 0; i < 11; i++) {
+    blues.push(el('circle', { r: 6.5, fill: 'var(--blue)', stroke: 'var(--card)', 'stroke-width': 1.5, style: 'transition:all .7s ease' }, g));
+    golds.push(el('circle', { r: 6.5, fill: 'var(--gold)', stroke: 'var(--card)', 'stroke-width': 1.5, style: 'transition:all .7s ease' }, g));
+  }
+  const ball = el('circle', { r: 3, fill: 'var(--ball)', stroke: '#fff', 'stroke-width': .8, style: 'transition:all .7s ease' }, g);
+  function place(arr, spots) { arr.forEach((c, i) => { c.setAttribute('cx', spots[i][0]); c.setAttribute('cy', spots[i][1]); }); }
+  function layout(batting) {
+    const bat = batting === 'blue' ? blues : golds, fld = batting === 'blue' ? golds : blues;
+    place(fld, fieldSpots);
+    place(bat, [...batSpots, ...benchSpots]);
+    ball.setAttribute('cx', fieldSpots[0][0] + 7); ball.setAttribute('cy', fieldSpots[0][1]);
+  }
+  // initial: everyone on bench-ish (both off)
+  function offField() {
+    blues.forEach((c, i) => { c.setAttribute('cx', 30 + i * 18); c.setAttribute('cy', 286); });
+    golds.forEach((c, i) => { c.setAttribute('cx', 30 + i * 18); c.setAttribute('cy', 14); });
+    ball.setAttribute('cx', 125); ball.setAttribute('cy', 150);
+  }
+  offField();
+
+  let anim = null;
+  function count(elm, from, to, ms, done) {
+    cancelAnimationFrame(anim);
+    const t0 = performance.now();
+    const step = now => {
+      const t = clamp((now - t0) / ms, 0, 1);
+      elm.textContent = Math.round(lerp(from, to, ease(t)));
+      if (t < 1) anim = requestAnimationFrame(step); else done && done();
+    };
+    anim = requestAnimationFrame(step);
+  }
+  let golds2 = 151; // alternate result each time
+  let plays = 0;
+  const btns = $$('.stepper button');
+  btns.forEach(b => b.addEventListener('click', () => go(+b.dataset.step)));
+  function go(s) {
+    btns.forEach(b => b.classList.toggle('on', +b.dataset.step === s));
+    const B = $('#m1Blues'), G = $('#m1Golds');
+    if (s === 1) {
+      plays++; golds2 = plays % 2 ? 151 : 166;
+      layout('blue');
+      B.classList.add('active'); G.classList.remove('active');
+      $('#m1BluesRole').textContent = '🏏 batting';
+      $('#m1GoldsRole').textContent = '🧤 fielding';
+      $('#m1GoldsSc').textContent = '–';
+      $('#m1Msg').innerHTML = 'Blues bat. Only <b>2</b> Blues are on the field; all <b>11</b> Golds are out there fielding. Blues score…';
+      count($('#m1BluesSc'), 0, 164, 1400, () => {
+        $('#m1Msg').innerHTML = 'Blues finish on <b>164 runs</b>. So Golds need <b>165</b> to win. Press <b>2</b>.';
+      });
+    } else if (s === 2) {
+      if ($('#m1BluesSc').textContent !== '164') $('#m1BluesSc').textContent = '164';
+      layout('gold');
+      G.classList.add('active'); B.classList.remove('active');
+      $('#m1BluesRole').textContent = '🧤 fielding';
+      $('#m1GoldsRole').textContent = '🏏 batting';
+      $('#m1Msg').innerHTML = 'Swap! Now Golds bat and Blues field. Golds are chasing <b>165</b>…';
+      count($('#m1GoldsSc'), 0, golds2, 1400, () => {
+        $('#m1Msg').innerHTML = golds2 > 164 ? 'Golds reach <b>' + golds2 + '</b>. They passed the target! Press <b>3</b>.' : 'Golds finish on <b>' + golds2 + '</b>. Not enough. Press <b>3</b>.';
+      });
+    } else {
+      $('#m1BluesSc').textContent = '164';
+      $('#m1GoldsSc').textContent = golds2;
+      offField();
+      B.classList.remove('active'); G.classList.remove('active');
+      $('#m1BluesRole').textContent = ''; $('#m1GoldsRole').textContent = '';
+      if (golds2 > 164) { G.classList.add('active'); $('#m1Msg').innerHTML = '<b class="gold">Golds win!</b> More runs. That is genuinely the whole game. (Play again for a different ending.)'; }
+      else { B.classList.add('active'); $('#m1Msg').innerHTML = '<b class="blue">Blues win</b>, by ' + (164 - golds2) + ' runs. More runs wins. That is genuinely the whole game. (Play again for a different ending.)'; }
+    }
+  }
+})();
+
+/* ================= ZOOM 2: innings simulator ================= */
+(function zoom2() {
+  const STYLES = {
+    // outcome probabilities: 0,1,2,3,4,6,W
+    careful:    [.43, .36, .10, .02, .065, .01, .015],
+    normal:     [.35, .34, .09, .02, .12, .04, .04],
+    aggressive: [.28, .25, .08, .01, .18, .11, .09],
+  };
+  const OUT = ['0', '1', '2', '3', '4', '6', 'W'];
+  const MAXB = 120;
+  let style = 'normal';
+  let S;
+  function fresh() {
+    S = { inn: 1, runs: 0, wkts: 0, balls: 0, log: [], first: null, done: false, onStrike: [0, 1], next: 2, outSet: new Set() };
+  }
+  fresh();
+  const team = () => S.inn === 1 ? { n: 'BLUES', c: 'var(--blue)' } : { n: 'GOLDS', c: 'var(--gold)' };
+
+  // build overs grid
+  const oversEl = $('#overs');
+  const cells = [];
+  for (let o = 0; o < 20; o++) {
+    const r = document.createElement('div'); r.className = 'orow';
+    const l = document.createElement('span'); l.className = 'on-lbl'; l.textContent = o + 1; r.appendChild(l);
+    for (let b = 0; b < 6; b++) { const i = document.createElement('i'); r.appendChild(i); cells.push(i); }
+    oversEl.appendChild(r);
+  }
+  // reorder: column 1 overs 1-10, column 2 overs 11-20
+  const rows = [...oversEl.children];
+  oversEl.innerHTML = '';
+  for (let k = 0; k < 10; k++) { oversEl.appendChild(rows[k]); oversEl.appendChild(rows[k + 10]); }
+
+  const batEl = $('#batters');
+  const bts = [];
+  for (let i = 0; i < 11; i++) { const d = document.createElement('div'); d.className = 'bt'; d.textContent = i + 1; batEl.appendChild(d); bts.push(d); }
+
+  $$('#styleSeg button').forEach(b => b.addEventListener('click', () => {
+    style = b.dataset.style;
+    $$('#styleSeg button').forEach(x => x.classList.toggle('on', x === b));
+  }));
+
+  function pick() {
+    const p = STYLES[style]; let r = Math.random(), acc = 0;
+    for (let i = 0; i < p.length; i++) { acc += p[i]; if (r < acc) return OUT[i]; }
+    return '0';
+  }
+  const ovStr = b => Math.floor(b / 6) + '.' + (b % 6);
+  const ovWords = b => { const o = Math.floor(b / 6), x = b % 6; return o + (o === 1 ? ' over, ' : ' overs, ') + x + (x === 1 ? ' ball' : ' balls'); };
+
+  function bowl() {
+    if (S.done) return;
+    const o = pick();
+    S.balls++;
+    S.log.push(o);
+    let msg = '', cls = '';
+    if (o === 'W') {
+      S.wkts++;
+      const outIdx = S.onStrike[0];
+      S.outSet.add(outIdx);
+      const how = ['Caught!', 'Bowled!', 'Caught!', 'LBW!', 'Caught!', 'Run out!'][Math.floor(Math.random() * 6)];
+      msg = 'OUT! ' + how + ' Batter ' + (outIdx + 1) + ' has to leave.';
+      cls = 'out';
+      if (S.wkts < 10) { S.onStrike[0] = S.next++; msg += ' Batter ' + (S.onStrike[0] + 1) + ' comes in.'; }
+    } else {
+      const r = +o; S.runs += r;
+      msg = { 0: 'No run. The batter blocks it. ("Dot ball.")', 1: '1 run. A quick single.', 2: '2 runs. Back for a second.', 3: '3 runs! Good running.', 4: 'FOUR! Rolled all the way to the rope.', 6: 'SIX! Over the rope without bouncing.' }[r];
+      if (r >= 4) cls = 'boundary';
+    }
+    const c = $('#comm'); c.textContent = msg; c.className = 'commentary ' + cls;
+    checkEnd();
+    render();
+  }
+
+  function checkEnd() {
+    let why = null;
+    if (S.inn === 2 && S.runs > S.first.runs) why = 'target';
+    else if (S.wkts >= 10) why = 'allout';
+    else if (S.balls >= MAXB) why = 'balls';
+    if (!why) return;
+    S.done = true;
+    stopAuto();
+    const box = $('#endbox');
+    if (S.inn === 1) {
+      const reason = why === 'allout'
+        ? 'Blues are <b>all out</b>: 10 batters gone, with ' + (MAXB - S.balls) + ' balls left unused.'
+        : 'Blues have used <b>all 120 balls</b>, with ' + (10 - S.wkts) + ' batters never getting out. Spare batters don\'t count for anything.';
+      box.innerHTML = '<h4>End of Blues\' turn: ' + S.runs + '/' + S.wkts + '</h4><p>' + reason + '</p><p>So Golds need <b>' + (S.runs + 1) + '</b> to win. Now it\'s their turn to bat and Blues field.</p><button class="btn primary" id="startInn2">Start Golds\' turn</button>';
+      box.classList.add('show');
+      $('#startInn2').addEventListener('click', () => {
+        S.first = { runs: S.runs, wkts: S.wkts, balls: S.balls };
+        Object.assign(S, { inn: 2, runs: 0, wkts: 0, balls: 0, log: [], done: false, onStrike: [0, 1], next: 2, outSet: new Set() });
+        box.classList.remove('show');
+        $('#comm').textContent = 'Golds need ' + (S.first.runs + 1) + ' to win. Bowl!'; $('#comm').className = 'commentary';
+        render();
+      });
+    } else {
+      const t = S.first.runs;
+      let h, p;
+      if (why === 'target') {
+        const left = 10 - S.wkts;
+        h = 'Golds win by ' + left + ' wicket' + (left === 1 ? '' : 's') + '!';
+        p = 'They passed ' + t + ' with ' + left + ' batter' + (left === 1 ? '' : 's') + ' still not out and ' + (MAXB - S.balls) + ' balls to spare. "By ' + left + ' wickets" means how many they had left in hand.';
+      } else if (S.runs === t) {
+        h = 'It\'s a tie!'; p = 'Exactly level on ' + t + '. In T20 a tie is settled by a "Super Over" (see Zoom 6).';
+      } else {
+        const gap = t - S.runs;
+        h = 'Blues win by ' + gap + ' run' + (gap === 1 ? '' : 's') + '!';
+        p = 'Golds ' + (why === 'allout' ? 'were all out' : 'ran out of balls') + ' on ' + S.runs + ', ' + gap + ' short of Blues\' ' + t + '. "By ' + gap + ' runs" is the gap.';
+      }
+      box.innerHTML = '<h4>' + h + '</h4><p>' + p + '</p><button class="btn primary" id="again">Play another match</button>';
+      box.classList.add('show');
+      $('#again').addEventListener('click', reset);
+    }
+  }
+
+  function render() {
+    const T = team();
+    $('#bTeam').textContent = T.n + (S.inn === 1 ? ' · BATTING FIRST' : ' · CHASING');
+    $('#bOther').innerHTML = S.inn === 2 ? 'BLUES SCORED<br>' + S.first.runs + '/' + S.first.wkts : 'GOLDS BAT NEXT';
+    $('#bRuns').textContent = S.runs; $('#bWkts').textContent = S.wkts; $('#bOv').textContent = ovStr(S.balls);
+    $('#dRuns').textContent = S.runs + (S.runs === 1 ? ' run' : ' runs');
+    $('#dWkts').textContent = S.wkts + ' out';
+    $('#dOv').textContent = ovWords(S.balls);
+    if (S.inn === 2 && !S.done) {
+      const need = S.first.runs + 1 - S.runs, left = MAXB - S.balls;
+      $('#bNeed').textContent = 'Need ' + need + ' from ' + left + ' balls';
+    } else $('#bNeed').textContent = '';
+    cells.forEach((c, i) => {
+      const v = S.log[i];
+      c.className = v === undefined ? '' : 'r' + v;
+      c.textContent = v === undefined || v === '0' ? '' : v;
+    });
+    bts.forEach((b, i) => {
+      b.style.setProperty('--tcol', T.c);
+      const out = S.outSet.has(i);
+      const inn = !out && (S.onStrike.includes(i));
+      b.className = 'bt' + (out ? ' out' : '') + (inn && !(S.done && S.wkts >= 10) ? ' in' : '');
+    });
+    const waiting = Math.max(0, 11 - S.wkts - 2);
+    $('#batLbl').textContent = S.wkts + ' out · ' + (S.wkts >= 10 ? '1 left alone' : '2 in · ' + waiting + ' waiting');
+    $('#ballLbl').textContent = S.balls + ' of 120 used';
+    ['#bowl1', '#bowl6', '#bowlAll'].forEach(id => $(id).disabled = S.done);
+  }
+
+  let auto = null;
+  function stopAuto() { clearInterval(auto); auto = null; $('#bowlAll').textContent = 'Fast-forward'; }
+  $('#bowl1').addEventListener('click', bowl);
+  $('#bowl6').addEventListener('click', () => { for (let i = 0; i < 6 && !S.done; i++) bowl(); });
+  $('#bowlAll').addEventListener('click', () => {
+    if (auto) return stopAuto();
+    $('#bowlAll').textContent = 'Pause';
+    auto = setInterval(() => { if (S.done) stopAuto(); else bowl(); }, reduceMotion ? 5 : 45);
+  });
+  function reset() { stopAuto(); fresh(); $('#endbox').classList.remove('show'); $('#comm').innerHTML = 'Press <b>Bowl one ball</b>.'; $('#comm').className = 'commentary'; render(); }
+  $('#simReset').addEventListener('click', reset);
+
+  // decoder highlight linking
+  const parts = $$('.board .p'), decs = $$('#decoder div');
+  function hl(k) { parts.forEach(p => p.classList.toggle('hl', p.dataset.k === k)); decs.forEach(d => d.classList.toggle('hl', d.dataset.k === k)); }
+  [...parts, ...decs].forEach(x => { x.addEventListener('mouseenter', () => hl(x.dataset.k)); x.addEventListener('mouseleave', () => hl(null)); });
+  render();
+})();
+
+/* ================= ZOOM 3: field simulator ================= */
+(function zoom3() {
+  const svg = $('#field');
+  const CX = 200, CY = 215, RX = 190, RY = 207, RRX = 177, RRY = 193;
+  const STR = { x: 200, y: 250 }, NSE = { x: 200, y: 180 }; // crease positions
+  const STUMPS_S = { x: 200, y: 257 }, STUMPS_N = { x: 200, y: 173 };
+  const SPEED = { ground: 62, air: 72, fielder: 19, throw: 90 }, PICKUP = .45, RUNTIME = 2.5, PLAY = 1.9;
+  const BASE = [
+    { n: 'Keeper', x: 200, y: 280, fixed: true },
+    { n: 'Bowler', x: 210, y: 160, fixed: true },
+    { n: 'Slip', x: 232, y: 292 },
+    { n: 'Point', x: 288, y: 238 },
+    { n: 'Cover', x: 282, y: 158 },
+    { n: 'Mid-off', x: 240, y: 98 },
+    { n: 'Mid-on', x: 160, y: 98 },
+    { n: 'Midwicket', x: 108, y: 172 },
+    { n: 'Square leg', x: 112, y: 258 },
+    { n: 'Fine leg', x: 150, y: 384 },
+    { n: 'Long on', x: 148, y: 44 },
+  ];
+  let F = BASE.map(f => ({ ...f }));
+
+  // drawing
+  const defs = el('defs', {}, svg);
+  const pat = el('pattern', { id: 'mow', width: 40, height: 40, patternUnits: 'userSpaceOnUse' }, defs);
+  el('rect', { width: 40, height: 40, fill: 'var(--grass)' }, pat);
+  el('rect', { width: 40, height: 20, fill: 'var(--grass-2)' }, pat);
+  el('ellipse', { cx: CX, cy: CY, rx: RX + 6, ry: RY + 6, fill: 'var(--grass-edge)' }, svg);
+  const ground = el('ellipse', { cx: CX, cy: CY, rx: RX, ry: RY, fill: 'url(#mow)' }, svg);
+  el('ellipse', { cx: CX, cy: CY, rx: RRX, ry: RRY, fill: 'none', stroke: 'var(--rope)', 'stroke-width': 2.5, 'stroke-dasharray': '1 0' }, svg);
+  const ropeLbl = el('text', { x: 248, y: CY + RRY - 12, 'text-anchor': 'middle', 'font-size': 10, fill: 'var(--rope)', 'font-weight': 700, opacity: .9 }, svg);
+  ropeLbl.textContent = 'BOUNDARY ROPE';
+  // inner ring hint
+  el('ellipse', { cx: CX, cy: CY, rx: 92, ry: 100, fill: 'none', stroke: 'var(--rope)', 'stroke-width': 1, 'stroke-dasharray': '3 5', opacity: .35 }, svg);
+  // pitch
+  el('rect', { x: 191, y: 165, width: 18, height: 100, fill: 'var(--pitch)', rx: 2 }, svg);
+  el('line', { x1: 189, x2: 211, y1: 250, y2: 250, stroke: 'var(--crease)', 'stroke-width': 1.2 }, svg);
+  el('line', { x1: 189, x2: 211, y1: 180, y2: 180, stroke: 'var(--crease)', 'stroke-width': 1.2 }, svg);
+  for (const s of [STUMPS_S, STUMPS_N]) for (let k = -1; k <= 1; k++) el('circle', { cx: s.x + k * 2.2, cy: s.y, r: 1.1, fill: '#7a4f22' }, svg);
+  const aim = el('line', { x1: STR.x, y1: STR.y, x2: STR.x, y2: STR.y, stroke: '#fff', 'stroke-width': 1.5, 'stroke-dasharray': '4 4', opacity: 0, 'pointer-events': 'none' }, svg);
+  const marker = el('circle', { r: 5, fill: 'none', stroke: '#fff', 'stroke-width': 1.5, opacity: 0, 'pointer-events': 'none' }, svg);
+
+  // fielders
+  const fG = el('g', {}, svg);
+  const fEls = F.map((f, i) => {
+    const g = el('g', { class: f.fixed ? 'fixedF' : 'fielder' }, fG);
+    el('circle', { r: f.fixed ? 7 : 8, fill: 'var(--gold)', stroke: '#fff', 'stroke-width': 1.5 }, g);
+    if (f.n === 'Keeper') { const t = el('text', { 'text-anchor': 'middle', y: 3.2, 'font-size': 8, 'font-weight': 700, fill: '#fff' }, g); t.textContent = 'K'; }
+    if (f.n === 'Bowler') { const t = el('text', { 'text-anchor': 'middle', y: 3.2, 'font-size': 8, 'font-weight': 700, fill: '#fff' }, g); t.textContent = 'B'; }
+    const lbl = el('text', { 'text-anchor': 'middle', y: -11, 'font-size': 9.5, 'font-weight': 700, fill: '#fff', 'paint-order': 'stroke', stroke: 'rgba(0,0,0,.45)', 'stroke-width': 2.5, class: 'flbl', style: 'display:none' }, g);
+    lbl.textContent = f.n;
+    g.dataset.i = i;
+    return g;
+  });
+  // batters
+  const batA = el('g', {}, svg), batB = el('g', {}, svg);
+  for (const b of [batA, batB]) {
+    el('circle', { r: 7, fill: 'var(--blue)', stroke: '#fff', 'stroke-width': 1.5 }, b);
+    el('rect', { x: 5, y: -2, width: 9, height: 3, rx: 1, fill: '#e9d6a6', stroke: '#7a5a2a', 'stroke-width': .6 }, b);
+  }
+  // ball
+  const shadow = el('ellipse', { rx: 3.5, ry: 1.8, fill: 'rgba(0,0,0,.35)', opacity: 0 }, svg);
+  const ballEl = el('circle', { r: 3.6, fill: 'var(--ball)', stroke: '#fff', 'stroke-width': 1, opacity: 0 }, svg);
+  const flash = el('text', { x: CX, y: 130, 'text-anchor': 'middle', 'font-size': 34, style: 'font-family:var(--font-d)', fill: '#fff', 'paint-order': 'stroke', stroke: 'rgba(0,0,0,.35)', 'stroke-width': 4, opacity: 0, 'pointer-events': 'none' }, svg);
+
+  function setPos(g, x, y) { g.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ')'); }
+  function drawFielders(pos) { fEls.forEach((g, i) => setPos(g, (pos || F)[i].x, (pos || F)[i].y)); }
+  drawFielders();
+  setPos(batA, STR.x + 6, STR.y); setPos(batB, NSE.x - 6, NSE.y);
+
+  let shot = 'ground', tally = { runs: 0, balls: 0, outs: 0 }, playing = null;
+  $$('#shotSeg button').forEach(b => b.addEventListener('click', () => { shot = b.dataset.shot; $$('#shotSeg button').forEach(x => x.classList.toggle('on', x === b)); }));
+  $('#showNames').addEventListener('change', e => $$('#field .flbl').forEach(t => t.style.display = e.target.checked ? '' : 'none'));
+  $('#fReset').addEventListener('click', () => {
+    cancelAnimationFrame(playing); playing = null;
+    F = BASE.map(f => ({ ...f })); drawFielders();
+    tally = { runs: 0, balls: 0, outs: 0 }; updTally();
+    ballEl.setAttribute('opacity', 0); shadow.setAttribute('opacity', 0); flash.setAttribute('opacity', 0);
+    setPos(batA, STR.x + 6, STR.y); setPos(batB, NSE.x - 6, NSE.y); batA.setAttribute('opacity', 1);
+    $('#fResult').innerHTML = '<div class="rh">Tap anywhere on the grass.</div>Fielders are back in their starting spots.';
+  });
+  function updTally() { $('#tRuns').textContent = tally.runs; $('#tBalls').textContent = tally.balls; $('#tOuts').textContent = tally.outs; }
+
+  const inEll = (p, rx, ry) => ((p.x - CX) / rx) ** 2 + ((p.y - CY) / ry) ** 2 <= 1;
+  function toSvg(evt) {
+    const pt = svg.createSVGPoint(); pt.x = evt.clientX; pt.y = evt.clientY;
+    const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    return { x: p.x, y: p.y };
+  }
+  // where does the ray from STR towards p cross ellipse (rx,ry)?
+  function rayHit(p, rx, ry) {
+    const dx = p.x - STR.x, dy = p.y - STR.y;
+    const ox = STR.x - CX, oy = STR.y - CY;
+    const a = dx * dx / (rx * rx) + dy * dy / (ry * ry), b = 2 * (ox * dx / (rx * rx) + oy * dy / (ry * ry)), c = ox * ox / (rx * rx) + oy * oy / (ry * ry) - 1;
+    const t = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
+    return { x: STR.x + dx * t, y: STR.y + dy * t, t };
+  }
+  const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+  // dragging fielders
+  let drag = null, dragStart = null, dragMoved = false;
+  fEls.forEach((g, i) => {
+    if (F[i].fixed) return;
+    g.addEventListener('pointerdown', e => {
+      if (playing) return;
+      e.stopPropagation(); e.preventDefault();
+      drag = i; dragStart = toSvg(e); dragMoved = false; g.classList.add('dragging'); svg.setPointerCapture(e.pointerId);
+    });
+  });
+  svg.addEventListener('pointermove', e => {
+    const p = toSvg(e);
+    if (drag !== null) {
+      if (!dragMoved && dist(p, dragStart) < 4) return;
+      dragMoved = true;
+      let q = p;
+      if (!inEll(q, RRX - 8, RRY - 8)) { const h = (() => { const dx = q.x - CX, dy = q.y - CY; const k = 1 / Math.sqrt((dx / (RRX - 8)) ** 2 + (dy / (RRY - 8)) ** 2); return { x: CX + dx * k, y: CY + dy * k }; })(); q = h; }
+      F[drag].x = q.x; F[drag].y = q.y; setPos(fEls[drag], q.x, q.y);
+      return;
+    }
+    if (playing || e.pointerType === 'touch') return;
+    if (!inEll(p, RX, RY)) { aim.setAttribute('opacity', 0); return; }
+    aim.setAttribute('x2', p.x); aim.setAttribute('y2', p.y); aim.setAttribute('opacity', .55);
+  });
+  svg.addEventListener('pointerleave', () => aim.setAttribute('opacity', 0));
+  const endDrag = () => { if (drag !== null) { fEls[drag].classList.remove('dragging'); drag = null; } };
+  // a tap on a fielder (no drag) hits the ball straight at them
+  svg.addEventListener('pointerup', e => { const wasTap = drag !== null && !dragMoved; const at = dragStart; endDrag(); if (wasTap && !playing) hit(at); }); svg.addEventListener('pointercancel', endDrag);
+  svg.addEventListener('pointerdown', e => {
+    if (drag !== null || playing) return;
+    let p = toSvg(e);
+    if (!inEll(p, RX + 4, RY + 4)) return;
+    if (dist(p, STR) < 14) return;
+    if (!inEll(p, RX - 3, RY - 3)) p = rayHit(p, RX - 3, RY - 3);
+    aim.setAttribute('opacity', 0);
+    hit(p);
+  });
+
+  function hit(T) {
+    const plan = { kind: null, path: [], fi: -1 };
+    const len = dist(STR, T);
+    const crossesRope = !inEll(T, RRX, RRY);
+    const rope = crossesRope ? rayHit(T, RRX, RRY) : null;
+    const ux = (T.x - STR.x) / len, uy = (T.y - STR.y) / len;
+    let stopP, tStop, fi = -1, fArrive = 0;
+    if (shot === 'ground') {
+      const segEnd = crossesRope ? rope : T, segLen = dist(STR, segEnd);
+      let best = null;
+      F.forEach((f, i) => {
+        if (f.n === 'Bowler') return;
+        const s = clamp((f.x - STR.x) * ux + (f.y - STR.y) * uy, 0, segLen);
+        if (s < 6) return;
+        const cp = { x: STR.x + ux * s, y: STR.y + uy * s };
+        const tb = s / SPEED.ground;
+        const reach = 9 + 0.45 * SPEED.fielder * tb;
+        const d = dist(f, cp);
+        if (d <= reach && (!best || s < best.s)) best = { i, s, cp, tb, d };
+      });
+      if (best) {
+        plan.kind = 'stopped'; stopP = best.cp; tStop = best.tb; fi = best.i; fArrive = Math.max(best.tb, best.d / SPEED.fielder);
+      } else if (crossesRope) {
+        plan.kind = 'four'; stopP = rayHit(T, RX - 2, RY - 2); tStop = dist(STR, stopP) / SPEED.ground;
+      } else {
+        plan.kind = 'gap'; stopP = T; tStop = len / SPEED.ground;
+      }
+    } else {
+      tStop = len / SPEED.air; stopP = T;
+      if (crossesRope) plan.kind = 'six';
+      else {
+        let best = null;
+        F.forEach((f, i) => {
+          const reach = Math.min(30, 8 + 0.5 * SPEED.fielder * tStop);
+          const d = dist(f, T);
+          if (len > 20 && d <= reach && (!best || d < best.d)) best = { i, d };
+        });
+        if (best) { plan.kind = 'caught'; fi = best.i; fArrive = tStop; }
+        else plan.kind = 'gap';
+      }
+    }
+    // chasing fielder for gaps/boundaries
+    if (fi < 0) {
+      let bd = 1e9;
+      F.forEach((f, i) => { if (f.fixed) return; const d = dist(f, stopP); if (d < bd) { bd = d; fi = i; } });
+      fArrive = Math.max(tStop, bd / SPEED.fielder);
+      if (plan.kind === 'four' || plan.kind === 'six') fArrive = Math.max(tStop, bd / SPEED.fielder);
+    }
+    // throw & runs
+    let runs = 0, tBack = 0, throwTo = STUMPS_N;
+    if (plan.kind === 'stopped' || plan.kind === 'gap') {
+      throwTo = dist(stopP, STUMPS_N) < dist(stopP, STUMPS_S) ? STUMPS_N : STUMPS_S;
+      tBack = fArrive + PICKUP + dist(stopP, throwTo) / SPEED.throw;
+      runs = clamp(Math.floor((tBack - 0.35) / RUNTIME), 0, 3);
+    }
+    if (plan.kind === 'four') runs = 4;
+    if (plan.kind === 'six') runs = 6;
+    play({ T, stopP, tStop, fi, fArrive, tBack, throwTo, runs, kind: plan.kind, airborne: shot === 'air', len });
+  }
+
+  function play(P) {
+    drawFielders();
+    const f0 = { x: F[P.fi].x, y: F[P.fi].y };
+    const runEnd = P.runs > 0 && P.runs <= 3 ? 0.3 + P.runs * RUNTIME : 0;
+    const tEnd = Math.max(P.kind === 'caught' ? P.tStop + 0.8 : 0, P.tBack ? P.tBack + 0.3 : 0, runEnd + 0.2, P.tStop + 0.8, P.fArrive + 0.2);
+    marker.setAttribute('cx', P.T.x); marker.setAttribute('cy', P.T.y);
+    marker.setAttribute('opacity', P.airborne ? .7 : 0);
+    batA.setAttribute('opacity', 1);
+    // which batter is where at start
+    const aStart = { x: STR.x + 6, y: STR.y }, bStart = { x: NSE.x - 6, y: NSE.y };
+    const t0 = performance.now();
+    ballEl.setAttribute('opacity', 1);
+    shadow.setAttribute('opacity', P.airborne ? 1 : 0);
+    flash.setAttribute('opacity', 0);
+    const speedup = reduceMotion ? 6 : PLAY;
+    function frame(now) {
+      const t = (now - t0) / 1000 * speedup;
+      // ball
+      let bx, by, h = 0;
+      if (t < P.tStop) {
+        const s = t / P.tStop;
+        bx = lerp(STR.x, P.stopP.x, s); by = lerp(STR.y, P.stopP.y, s);
+        if (P.airborne) h = 4 * Math.min(60, P.len * .35) * s * (1 - s);
+      } else if ((P.kind === 'stopped' || P.kind === 'gap') && t > P.fArrive + PICKUP) {
+        const s = clamp((t - P.fArrive - PICKUP) / (P.tBack - P.fArrive - PICKUP), 0, 1);
+        bx = lerp(P.stopP.x, P.throwTo.x, s); by = lerp(P.stopP.y, P.throwTo.y, s);
+        h = 10 * s * (1 - s) * 4;
+      } else { bx = P.stopP.x; by = P.stopP.y; }
+      if (P.kind === 'caught' && t >= P.tStop) { bx = P.stopP.x; by = P.stopP.y; h = 0; }
+      ballEl.setAttribute('cx', bx); ballEl.setAttribute('cy', by - h);
+      shadow.setAttribute('cx', bx); shadow.setAttribute('cy', by + 1);
+      // fielder
+      const fs = P.fArrive > 0 ? clamp(t / P.fArrive, 0, 1) : 1;
+      let fx = lerp(f0.x, P.stopP.x, fs), fy = lerp(f0.y, P.stopP.y, fs);
+      if (P.kind === 'four' || P.kind === 'six') { const s = clamp(t / Math.max(P.fArrive, .01), 0, 1) * .85; fx = lerp(f0.x, P.stopP.x, s); fy = lerp(f0.y, P.stopP.y, s); }
+      if (P.kind === 'stopped' && fs >= 1) { fx = P.stopP.x + 5; fy = P.stopP.y; }
+      setPos(fEls[P.fi], fx, fy);
+      // batters
+      if (P.runs > 0 && P.runs <= 3) {
+        const rt = t - 0.3;
+        const k = clamp(Math.floor(rt / RUNTIME), 0, P.runs - 1);
+        const frac = clamp((rt - k * RUNTIME) / RUNTIME, 0, 1);
+        const aFrom = k % 2 === 0 ? aStart : { x: bStart.x + 12, y: bStart.y };
+        const aTo = k % 2 === 0 ? { x: bStart.x + 12, y: bStart.y } : aStart;
+        const bFrom = k % 2 === 0 ? bStart : { x: aStart.x - 12, y: aStart.y };
+        const bTo = k % 2 === 0 ? { x: aStart.x - 12, y: aStart.y } : bStart;
+        const e = rt < 0 ? 0 : ease(frac);
+        setPos(batA, lerp(aFrom.x, aTo.x, e), lerp(aFrom.y, aTo.y, e));
+        setPos(batB, lerp(bFrom.x, bTo.x, e), lerp(bFrom.y, bTo.y, e));
+      }
+      if (P.kind === 'caught' && t > P.tStop) batA.setAttribute('opacity', clamp(1 - (t - P.tStop) / 1.2, .25, 1));
+      if (t >= P.tStop && !flash._shown && P.kind !== 'gap' && P.kind !== 'stopped') {
+        flash._shown = true;
+        flash.textContent = { four: 'FOUR!', six: 'SIX!', caught: 'CAUGHT!' }[P.kind];
+        flash.setAttribute('fill', P.kind === 'caught' ? '#ffb3b6' : '#fff');
+        flash.setAttribute('opacity', 1);
+      }
+      if (t < tEnd) playing = requestAnimationFrame(frame);
+      else finish(P);
+    }
+    flash._shown = false;
+    playing = requestAnimationFrame(frame);
+  }
+
+  function finish(P) {
+    playing = null;
+    tally.balls++;
+    const fname = F[P.fi].n.toLowerCase();
+    let html;
+    if (P.kind === 'caught') {
+      tally.outs++;
+      html = '<div class="rh out">OUT! Caught by ' + fname + '.</div>The ball went in the air and a fielder caught it before it bounced. Batter is out. Try aiming the air shot over the rope, or away from fielders.';
+    } else if (P.kind === 'six') {
+      tally.runs += 6; html = '<div class="rh bnd">SIX! 6 runs.</div>It cleared the rope without touching the ground. Maximum score from one ball. No running needed.';
+    } else if (P.kind === 'four') {
+      tally.runs += 4; html = '<div class="rh bnd">FOUR! 4 runs.</div>It found a gap and rolled all the way to the rope. No fielder could cut it off. No running needed.';
+    } else {
+      tally.runs += P.runs;
+      const secs = P.tBack.toFixed(1);
+      const head = P.runs === 0 ? 'No run.' : P.runs + (P.runs === 1 ? ' run.' : ' runs.');
+      const why = P.kind === 'stopped'
+        ? 'It went close enough to ' + fname + ' to be stopped. '
+        : 'It stopped in a gap and ' + fname + ' had to run to it. ';
+      html = '<div class="rh">' + head + '</div>' + why + 'Getting the ball back to the stumps took about <b>' + secs + 's</b>. One run takes about ' + RUNTIME + 's, so the batters ' + (P.runs === 0 ? 'stayed where they were.' : 'had time for ' + P.runs + '.') + (P.runs % 2 === 1 ? ' They\'ve swapped ends, so the other batter faces the next ball.' : '');
+      // swap who's on strike visually? keep A at striker end for simplicity after reset
+    }
+    $('#fResult').innerHTML = html;
+    updTally();
+    setTimeout(() => {
+      if (playing) return;
+      flash.setAttribute('opacity', 0); marker.setAttribute('opacity', 0);
+      drawFielders(); setPos(batA, STR.x + 6, STR.y); setPos(batB, NSE.x - 6, NSE.y); batA.setAttribute('opacity', 1);
+      ballEl.setAttribute('opacity', 0); shadow.setAttribute('opacity', 0);
+    }, 900);
+  }
+})();
+
+/* ================= ZOOM 4: ways to get out ================= */
+(function zoom4() {
+  const svg = $('#sideview');
+  const GY = 196;
+  const OUTS = {
+    caught: { t: 'Caught', d: 'The batter hits the ball into the air and a fielder catches it <b>before it bounces</b>. The most common way to get out.', f: 'roughly 5 in 10 outs', p: 52 },
+    bowled: { t: 'Bowled', d: 'The batter misses and the ball knocks the <b>bails</b> (the two little pieces on top of the stumps) off. The simplest way to get out.', f: 'roughly 1 in 6 outs', p: 17 },
+    lbw: { t: 'LBW: leg before wicket', d: 'The ball hits the batter\'s <b>leg</b> (or any part of the body) when it <b>would have hit the stumps</b>. Otherwise you could just block every ball with your legs.', f: 'roughly 1 in 7 outs', p: 14 },
+    runout: { t: 'Run out', d: 'While the batters are running, a fielder hits the stumps with the ball <b>before the batter gets back behind the line</b> (the crease). The line is the batter\'s safe zone.', f: 'roughly 1 in 15 outs', p: 7 },
+    stumped: { t: 'Stumped', d: 'The batter steps <b>out of their safe zone</b> to hit the ball, misses, and the wicketkeeper knocks the bails off before they step back.', f: 'roughly 1 in 40 outs', p: 3 },
+  };
+  let cur = 'caught', raf = null;
+
+  // static scene
+  const sky = el('rect', { x: 0, y: 0, width: 640, height: 230, rx: 12, fill: 'var(--bg-2)' }, svg);
+  el('rect', { x: 0, y: GY, width: 640, height: 34, fill: 'var(--grass)' }, svg);
+  el('rect', { x: 70, y: GY, width: 500, height: 6, fill: 'var(--pitch)' }, svg);
+  // creases
+  const creaseR = el('rect', { x: 497, y: GY - 1, width: 4, height: 9, fill: 'var(--crease)' }, svg);
+  const creaseL = el('rect', { x: 132, y: GY - 1, width: 4, height: 9, fill: 'var(--crease)' }, svg);
+  const creaseLbl = el('text', { x: 499, y: GY + 24, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--crease)', 'font-weight': 700 }, svg);
+  creaseLbl.textContent = 'crease';
+  const zone = el('rect', { x: 499, y: GY - 2, width: 30, height: 4, fill: 'var(--ok)', opacity: 0 }, svg);
+  function stumps(x) {
+    const g = el('g', {}, svg);
+    for (const dx of [-4, 0, 4]) el('rect', { x: x + dx - 1, y: GY - 40, width: 2, height: 40, fill: '#c9a46a' }, g);
+    return g;
+  }
+  stumps(110); stumps(530);
+  el('rect', { x: 105, y: GY - 42, width: 10, height: 2, fill: '#e0c48c' }, svg);
+  const bail1 = el('rect', { x: -5, y: -1, width: 5, height: 2.2, fill: '#e0c48c' }, svg);
+  const bail2 = el('rect', { x: 0, y: -1, width: 5, height: 2.2, fill: '#e0c48c' }, svg);
+  const ghost = el('path', { d: '', fill: 'none', stroke: 'var(--ball)', 'stroke-width': 2, 'stroke-dasharray': '5 5', opacity: 0 }, svg);
+  const ghostLbl = el('text', { 'font-size': 12, fill: 'var(--ball)', 'font-weight': 700, opacity: 0, 'text-anchor': 'middle' }, svg);
+  ghostLbl.textContent = 'would have hit';
+
+  function person(color, opts = {}) {
+    const g = el('g', {}, svg);
+    const legs = el('path', { d: '', stroke: color, 'stroke-width': 4, 'stroke-linecap': 'round', fill: 'none' }, g);
+    if (opts.pads) g._pads = el('path', { d: '', stroke: '#f3f0e4', 'stroke-width': 6, 'stroke-linecap': 'round', fill: 'none' }, g);
+    el('line', { x1: 0, y1: -24, x2: 0, y2: -48, stroke: color, 'stroke-width': 5, 'stroke-linecap': 'round' }, g);
+    const arms = el('path', { d: '', stroke: color, 'stroke-width': 3.5, 'stroke-linecap': 'round', fill: 'none' }, g);
+    el('circle', { cx: 0, cy: -56, r: 7, fill: color }, g);
+    if (opts.helmet) el('path', { d: 'M-7,-57 A7,7 0 0 1 7,-57 L9,-55 L-7,-55Z', fill: '#1d2b4a' }, g);
+    let bat = null;
+    if (opts.bat) bat = el('rect', { x: -2.5, y: 0, width: 5, height: 30, rx: 1.5, fill: '#e9d6a6', stroke: '#7a5a2a', 'stroke-width': .8 }, g);
+    g._legs = legs; g._arms = arms; g._bat = bat;
+    return g;
+  }
+  const bowler = person('var(--gold)');
+  const fielder = person('var(--gold)');
+  const keeper = person('var(--gold)');
+  const batter = person('var(--blue)', { bat: true, pads: true, helmet: true });
+  const runner = person('var(--blue)', { bat: true, pads: true, helmet: true });
+  const shadow = el('ellipse', { rx: 4, ry: 1.6, fill: 'rgba(0,0,0,.3)' }, svg);
+  const ball = el('circle', { r: 4, fill: 'var(--ball)', stroke: '#fff', 'stroke-width': 1 }, svg);
+  const verdict = el('text', { x: 320, y: 40, 'text-anchor': 'middle', 'font-size': 26, style: 'font-family:var(--font-d)', fill: 'var(--bad)', opacity: 0 }, svg);
+  const tagL = el('text', { x: 110, y: 22, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--dim)', 'font-weight': 600 }, svg); tagL.textContent = 'bowler\'s end';
+  const tagR = el('text', { x: 530, y: 22, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--dim)', 'font-weight': 600 }, svg); tagR.textContent = 'batter\'s end';
+
+  // pose: x, lean, legs spread phase, arm angle, bat angle (deg, 0 = pointing down), crouch
+  function pose(g, x, o = {}) {
+    const cr = o.crouch || 0;
+    g.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + (GY + cr) + ')');
+    const ph = o.run != null ? Math.sin(o.run) * 9 : 6;
+    g._legs.setAttribute('d', 'M' + (-ph) + ',0 L0,' + (-24 + cr * .3) + ' L' + ph + ',0');
+    if (g._pads) g._pads.setAttribute('d', 'M' + (-ph * .8) + ',-2 L' + (-ph * .4) + ',-14 M' + (ph * .8) + ',-2 L' + (ph * .4) + ',-14');
+    const a = (o.arm ?? 30) * Math.PI / 180, dir = o.dir || -1;
+    const hx = Math.sin(a) * 18 * dir, hy = -44 + Math.cos(a) * 18;
+    g._arms.setAttribute('d', 'M0,-44 L' + hx.toFixed(1) + ',' + hy.toFixed(1));
+    g._hand = { x: x + hx, y: GY + cr + hy };
+    if (g._bat) {
+      const ba = o.bat ?? 15;
+      g._bat.setAttribute('transform', 'translate(' + hx.toFixed(1) + ',' + hy.toFixed(1) + ') rotate(' + (ba * (dir)) + ')');
+    }
+  }
+  function kf(keys, t) { // keys: [[t, ...vals]]
+    if (t <= keys[0][0]) return keys[0].slice(1);
+    for (let i = 1; i < keys.length; i++) {
+      if (t <= keys[i][0]) {
+        const a = keys[i - 1], b = keys[i], s = (t - a[0]) / (b[0] - a[0]);
+        return a.slice(1).map((v, j) => lerp(v, b[j + 1], s));
+      }
+    }
+    return keys[keys.length - 1].slice(1);
+  }
+  function arc(t, t0, p0, t1, p1, hgt) { const s = clamp((t - t0) / (t1 - t0), 0, 1); return [lerp(p0[0], p1[0], s), lerp(p0[1], p1[1], s) - 4 * hgt * s * (1 - s)]; }
+  function bails(t, tHit, dir = 1) {
+    const sx = 530, sy = GY - 41.5;
+    if (t < tHit) { bail1.setAttribute('transform', 'translate(' + sx + ',' + sy + ')'); bail2.setAttribute('transform', 'translate(' + sx + ',' + sy + ')'); return; }
+    const u = Math.min(t - tHit, 1.2);
+    const f = (vx, vy, r) => { let y = sy - vy * u + 160 * u * u; y = Math.min(y, GY - 1); return 'translate(' + (sx + vx * u) + ',' + y + ') rotate(' + r * u + ')'; };
+    bail1.setAttribute('transform', f(-40 * dir, 90, -400));
+    bail2.setAttribute('transform', f(55 * dir, 110, 520));
+  }
+  function setBall(x, y, vis = 1) { ball.setAttribute('cx', x); ball.setAttribute('cy', y); ball.setAttribute('opacity', vis); shadow.setAttribute('cx', x); shadow.setAttribute('cy', GY + 1); shadow.setAttribute('opacity', vis * clamp(1 - (GY - y) / 160, .2, 1)); }
+  function show(g, v) { g.setAttribute('opacity', v); }
+  function delivery(t, tB, bx, tEnd, ex, ey) { // ball from bowler hand to bounce to (ex,ey)
+    if (t < 0.25) return null;
+    if (t < tB) { const s = (t - .25) / (tB - .25); return [lerp(118, bx, s), lerp(GY - 62, GY - 3, s * s * .4 + s * .6)]; }
+    const s = clamp((t - tB) / (tEnd - tB), 0, 1); return [lerp(bx, ex, s), lerp(GY - 3, ey, Math.sqrt(s))];
+  }
+  function bowlerPose(t) { const arm = t < .25 ? lerp(-150, 180, t / .25) : 200; pose(bowler, 112 + Math.min(t, .3) * 20, { arm, dir: 1, run: t < .3 ? t * 30 : null }); }
+
+  const SCENES = {
+    caught: { dur: 3.4, f(t) {
+      show(runner, 0); show(fielder, 1); show(keeper, 1); bails(t, 99);
+      bowlerPose(t);
+      pose(keeper, 575, { crouch: 10, arm: 140, dir: -1 });
+      const bat = kf([[0, 20], [.6, -110], [.88, 60], [1.2, 120]], t)[0];
+      pose(batter, 512, { bat, dir: -1, arm: 60 });
+      let p;
+      if (t < .88) p = delivery(t, .7, 420, .88, 497, GY - 26);
+      else p = arc(t, .88, [497, GY - 26], 2.3, [236, GY - 46], 110);
+      const fa = kf([[0, 40], [1.6, 40], [2.2, 165]], t)[0];
+      pose(fielder, 226, { arm: fa, dir: 1, run: t > .9 && t < 2.1 ? t * 14 : null });
+      if (p) setBall(p[0], p[1]); else setBall(0, 0, 0);
+      return t > 2.3 ? 'OUT: caught' : null;
+    } },
+    bowled: { dur: 3, f(t) {
+      show(runner, 0); show(fielder, 0); show(keeper, 1);
+      bowlerPose(t);
+      pose(keeper, 580, { crouch: 10, arm: 140, dir: -1 });
+      const bat = kf([[0, 20], [.55, -110], [.78, 70], [1.1, 120]], t)[0];
+      pose(batter, 512, { bat, dir: -1, arm: 60 });
+      let p = t < 1.02 ? delivery(t, .72, 425, 1.02, 530, GY - 30) : kf([[1.02, 530, GY - 30], [1.5, 552, GY - 2], [2, 565, GY - 2]], t);
+      if (p) setBall(p[0], p[1]); else setBall(0, 0, 0);
+      bails(t, 1.02);
+      return t > 1.1 ? 'OUT: bowled' : null;
+    } },
+    lbw: { dur: 3.2, f(t) {
+      show(runner, 0); show(fielder, 0); show(keeper, 1);
+      bowlerPose(t);
+      pose(keeper, 580, { crouch: 10, arm: 140, dir: -1 });
+      const bat = kf([[0, 20], [.6, -100], [.95, 10]], t)[0];
+      pose(batter, 512, { bat, dir: -1, arm: 70 });
+      bails(t, 99);
+      let p = t < .95 ? delivery(t, .72, 420, .95, 505, GY - 12) : kf([[.95, 505, GY - 12], [1.3, 488, GY - 2], [1.8, 470, GY - 2]], t);
+      if (p) setBall(p[0], p[1]); else setBall(0, 0, 0);
+      const gv = t > 1.15 ? clamp((t - 1.15) * 3, 0, 1) : 0;
+      ghost.setAttribute('d', 'M505,' + (GY - 12) + ' L530,' + (GY - 19));
+      ghost.setAttribute('opacity', gv); ghostLbl.setAttribute('opacity', gv);
+      ghostLbl.setAttribute('x', 560); ghostLbl.setAttribute('y', GY - 60);
+      return t > 1.5 ? 'OUT: LBW' : null;
+    } },
+    runout: { dur: 3.4, f(t) {
+      show(runner, 1); show(fielder, 1); show(keeper, 0); show(batter, 0);
+      pose(bowler, 90, { arm: 30, dir: 1 });
+      const rx = lerp(220, 520, clamp(t / 2.6, 0, 1));
+      pose(runner, rx, { run: t < 2.6 ? t * 16 : null, bat: -60, arm: 100, dir: -1 });
+      const fa = kf([[0, 30], [.7, -140], [1.0, 120]], t)[0];
+      pose(fielder, 330, { arm: fa, dir: -1 });
+      let p = t < 1 ? [330, GY - 20] : arc(t, 1, [330, GY - 50], 1.9, [530, GY - 32], 25);
+      setBall(p[0], p[1]);
+      bails(t, 1.9);
+      const hot = t > 1.9 ? 1 : 0;
+      zone.setAttribute('opacity', hot * .9); zone.setAttribute('fill', 'var(--ok)');
+      creaseR.setAttribute('fill', t > 1.9 ? 'var(--bad)' : 'var(--crease)');
+      ghostLbl.setAttribute('opacity', t > 1.9 && t < 3.3 ? 1 : 0); ghostLbl.setAttribute('x', 440); ghostLbl.setAttribute('y', GY - 70);
+      ghostLbl.textContent = 'not back in time!';
+      return t > 2.1 ? 'OUT: run out' : null;
+    } },
+    stumped: { dur: 3.4, f(t) {
+      show(runner, 0); show(fielder, 0); show(keeper, 1); show(batter, 1);
+      bowlerPose(t);
+      const bxp = kf([[0, 512], [.35, 512], [.75, 470], [1.25, 470], [2.1, 492]], t)[0];
+      const bat = kf([[0, 20], [.5, -110], [.85, 60], [1.2, 110]], t)[0];
+      pose(batter, bxp, { bat, dir: -1, arm: 60, run: t > .35 && t < .75 ? t * 18 : (t > 1.25 && t < 2.1 ? t * 18 : null) });
+      const kx = kf([[0, 580], [1.15, 580], [1.45, 548]], t)[0];
+      pose(keeper, kx, { crouch: t < 1.15 ? 10 : 4, arm: t < 1.3 ? 140 : 80, dir: -1 });
+      let p = t < 1.15 ? delivery(t, .7, 410, 1.15, 566, GY - 30) : kf([[1.15, 566, GY - 30], [1.45, 534, GY - 34]], t);
+      if (p) setBall(p[0], p[1]); else setBall(0, 0, 0);
+      bails(t, 1.45, -1);
+      creaseR.setAttribute('fill', t > 1.45 ? 'var(--bad)' : 'var(--crease)');
+      ghostLbl.setAttribute('opacity', t > 1.45 ? 1 : 0); ghostLbl.setAttribute('x', 470); ghostLbl.setAttribute('y', GY - 80);
+      ghostLbl.textContent = 'outside the crease!';
+      return t > 1.6 ? 'OUT: stumped' : null;
+    } },
+  };
+
+  function resetStatic() {
+    ghost.setAttribute('opacity', 0); ghostLbl.setAttribute('opacity', 0); ghostLbl.textContent = 'would have hit';
+    zone.setAttribute('opacity', 0); creaseR.setAttribute('fill', 'var(--crease)');
+    show(batter, 1); show(bowler, 1);
+    verdict.setAttribute('opacity', 0);
+  }
+  function run(name) {
+    cur = name; cancelAnimationFrame(raf); resetStatic();
+    const O = OUTS[name];
+    $('#outTitle').textContent = O.t; $('#outText').innerHTML = O.d; $('#outFreq').textContent = O.f; $('#outFreqBar').style.width = O.p * 1.6 + '%';
+    $$('#outTabs button').forEach(b => b.classList.toggle('on', b.dataset.out === name));
+    const sc = SCENES[name], t0 = performance.now();
+    const step = now => {
+      const sp = $('#slowmo').checked ? .3 : 1;
+      const t = reduceMotion ? sc.dur : (now - t0) / 1000 * sp;
+      const v = sc.f(Math.min(t, sc.dur));
+      if (v) { verdict.textContent = v; verdict.setAttribute('opacity', 1); }
+      if (t < sc.dur) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+  }
+  $$('#outTabs button').forEach(b => b.addEventListener('click', () => run(b.dataset.out)));
+  $('#replay').addEventListener('click', () => run(cur));
+  $('#slowmo').addEventListener('change', () => run(cur));
+  // start when visible
+  let started = false;
+  new IntersectionObserver(es => { if (es[0].isIntersecting && !started) { started = true; run('caught'); } }, { threshold: .4 }).observe(svg);
+  SCENES.caught.f(0); OUTS && (function () { const O = OUTS.caught; $('#outTitle').textContent = O.t; $('#outText').innerHTML = O.d; $('#outFreq').textContent = O.f; $('#outFreqBar').style.width = O.p * 1.6 + '%'; })();
+
+  /* quiz */
+  const Q = [
+    ['The batter hits it high. A fielder catches it, but only after it has bounced once.', false, 'Not out. A catch only counts if the ball hasn\'t touched the ground since the bat.'],
+    ['The ball clips the stumps, they wobble, but the bails stay on top.', false, 'Not out! The bails have to come off. It happens, and the bowler is always furious.'],
+    ['The batter edges the ball and it deflects off their own bat onto the stumps. Bails fall.', true, 'Out, bowled. It doesn\'t matter that the batter touched it on the way. Commentators call it "played on".'],
+    ['The ball hits the batter\'s pad, but it was heading well wide of the stumps.', false, 'Not out. LBW only applies if the ball would have hit the stumps.'],
+    ['A fielder catches the ball cleanly, but one foot is touching the boundary rope.', false, 'Not out. Touching the rope means the ball has effectively left the field: it\'s a six.'],
+    ['Batters are running. A throw hits the stumps while one batter is a stride short of the crease.', true, 'Out, run out. Being nearly there isn\'t enough: the bat or a foot has to be grounded behind the line.'],
+  ];
+  const qEl = $('#quiz'); let score = 0, answered = 0;
+  Q.forEach(([q, out, why]) => {
+    const d = document.createElement('div'); d.className = 'q';
+    d.innerHTML = '<div class="qt"></div><div class="row"><button class="btn" data-a="1">Out</button><button class="btn" data-a="0">Not out</button></div><div class="ans"></div>';
+    d.querySelector('.qt').textContent = q;
+    d.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+      if (d.classList.contains('done')) return;
+      const ok = (b.dataset.a === '1') === out;
+      b.classList.add('pick');
+      d.classList.add('done', ok ? 'right' : 'wrong');
+      d.querySelector('.ans').innerHTML = '<b class="v">' + (ok ? '✓ Right.' : '✗ Not quite.') + '</b>' + why;
+      answered++; if (ok) score++;
+      $('#qscore').textContent = answered === Q.length ? 'You got ' + score + ' of ' + Q.length + '. ' + (score >= 5 ? 'You understand cricket better than you think.' : 'Those edge cases trip up plenty of fans, too.') : score + ' of ' + answered + ' so far';
+    }));
+    qEl.appendChild(d);
+  });
+})();
+
+/* ================= ZOOM 5: overs ================= */
+(function zoom5() {
+  const svg = $('#overSvg');
+  const Y = 95;
+  el('rect', { x: 0, y: 0, width: 640, height: 170, rx: 12, fill: 'var(--bg-2)' }, svg);
+  el('rect', { x: 0, y: 60, width: 640, height: 70, fill: 'var(--grass)' }, svg);
+  el('rect', { x: 110, y: Y - 14, width: 420, height: 28, fill: 'var(--pitch)', rx: 3 }, svg);
+  for (const x of [130, 510]) { el('line', { x1: x, x2: x, y1: Y - 14, y2: Y + 14, stroke: 'var(--crease)', 'stroke-width': 1.5 }, svg); }
+  for (const x of [118, 522]) for (const d of [-4, 0, 4]) el('circle', { cx: x, cy: Y + d, r: 1.6, fill: '#7a4f22' }, svg);
+  const endL = el('text', { x: 120, y: 152, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--dim)', 'font-weight': 600 }, svg); endL.textContent = 'End A';
+  const endR = el('text', { x: 520, y: 152, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--dim)', 'font-weight': 600 }, svg); endR.textContent = 'End B';
+  const mk = (fill, lbl) => { const g = el('g', { style: 'transition:transform .9s ease' }, svg); el('circle', { r: 11, fill, stroke: '#fff', 'stroke-width': 2 }, g); const t = el('text', { 'text-anchor': 'middle', y: 4, 'font-size': 11, 'font-weight': 700, fill: '#fff' }, g); t.textContent = lbl; return g; };
+  const b1 = mk('var(--gold)', '1'), b2 = mk('var(--gold)', '2');
+  const ball = el('circle', { r: 4.5, fill: 'var(--ball)', stroke: '#fff', 'stroke-width': 1, opacity: 0 }, svg);
+  const dotsG = el('g', {}, svg);
+  const dots = [];
+  for (let i = 0; i < 6; i++) dots.push(el('circle', { cx: 320 - 50 + i * 20, cy: 32, r: 7, fill: 'var(--card)', stroke: 'var(--line-2)' }, dotsG));
+  const ovLbl = el('text', { x: 320, y: 16, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--dim)', 'font-weight': 700 }, svg);
+  const tr = (g, x, y) => g.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+  let over = 1, ballN = 0, fromA = true, busy = false;
+  function place() {
+    // current bowler at the end they bowl from; other bowler resting at side
+    const cur = over % 2 === 1 ? b1 : b2, rest = over % 2 === 1 ? b2 : b1;
+    tr(cur, fromA ? 92 : 548, Y);
+    tr(rest, fromA ? 470 : 170, 45 + 0);
+    ovLbl.textContent = 'OVER ' + over;
+    dots.forEach((d, i) => d.setAttribute('fill', i < ballN ? 'var(--ball)' : 'var(--card)'));
+  }
+  b1.style.transition = b2.style.transition = 'none'; place();
+  requestAnimationFrame(() => { b1.style.transition = b2.style.transition = 'transform .9s ease'; });
+  $('#ovBowl').addEventListener('click', () => {
+    if (busy) return;
+    if (ballN === 6) { // start new over
+      ballN = 0; over++; fromA = !fromA; place();
+      $('#ovBowl').textContent = 'Bowl a ball';
+      $('#ovMsg').innerHTML = 'New over. <b>Bowler ' + (over % 2 ? 1 : 2) + '</b> now bowls from <b>' + (fromA ? 'End A' : 'End B') + '</b>.';
+      return;
+    }
+    busy = true;
+    const x0 = fromA ? 110 : 530, x1 = fromA ? 520 : 120;
+    const t0 = performance.now(), D = reduceMotion ? 1 : 520;
+    ball.setAttribute('opacity', 1);
+    const step = now => {
+      const s = clamp((now - t0) / D, 0, 1);
+      ball.setAttribute('cx', lerp(x0, x1, s)); ball.setAttribute('cy', Y - 18 * Math.sin(s * Math.PI * .7) + (s > .7 ? 0 : 0));
+      if (s < 1) requestAnimationFrame(step);
+      else {
+        ball.setAttribute('opacity', 0); ballN++; place(); busy = false;
+        if (ballN === 6) {
+          $('#ovMsg').innerHTML = '<b>Over!</b> That\'s six balls. The umpire calls "over" and the bowling swaps ends with a new bowler.';
+          $('#ovBowl').textContent = 'Next over →';
+        } else $('#ovMsg').textContent = 'Bowler ' + (over % 2 ? 1 : 2) + ' is bowling. Over ' + over + ', ball ' + ballN + ' of 6.';
+      }
+    };
+    requestAnimationFrame(step);
+  });
+
+  /* formats */
+  const FMT = {
+    t20: { facts: [['Balls per team', '120 (20 overs)'], ['Turns each', '1'], ['Takes about', '3½ hours'], ['Can it draw?', 'No']],
+      line: [['b', 1, 'Blues · 20 overs'], ['g', 1, 'Golds · 20 overs']], days: ['one evening'],
+      note: 'The fast, loud one, and the easiest to start with. Lots of 4s and 6s because there\'s no time to be careful. Our simulator in Zoom 2 was a T20.' },
+    odi: { facts: [['Balls per team', '300 (50 overs)'], ['Turns each', '1'], ['Takes about', '8 hours'], ['Can it draw?', 'No']],
+      line: [['b', 1, 'Blues · 50 overs'], ['g', 1, 'Golds · 50 overs']], days: ['one full day'],
+      note: 'Exactly the same idea as T20, just longer, so batters pace themselves more. The Cricket World Cup is played in this format.' },
+    test: { facts: [['Balls per team', 'No limit'], ['Turns each', '2'], ['Takes up to', '5 days'], ['Can it draw?', 'Yes']],
+      days: ['day 1', 'day 2', 'day 3', 'day 4', 'day 5'],
+      win: { line: [['b', 1.3, 'Blues 1st'], ['g', .9, 'Golds 1st'], ['b', 1.2, 'Blues 2nd'], ['g', 1.1, 'Golds 2nd'], ['x', .5, 'spare']], note: '<b>A win:</b> Golds were all out in their second turn still short of Blues\' total, with time to spare. Blues got Golds out twice, so Blues win.' },
+      draw: { line: [['b', 1.6, 'Blues 1st'], ['g', 1.5, 'Golds 1st'], ['b', 1.0, 'Blues 2nd'], ['g', .9, 'Golds 2nd… time up']], note: '<b>A draw:</b> Golds were still batting with only 6 out when day 5 ended. Blues couldn\'t get them all out, so nobody wins, however far ahead anyone was.' },
+    },
+  };
+  let fmt = 't20', ending = 'win';
+  function renderFmt() {
+    const F = FMT[fmt];
+    $('#fmtFacts').innerHTML = F.facts.map(([k, v]) => '<div>' + k + '<b>' + v + '</b></div>').join('');
+    const L = fmt === 'test' ? F[ending].line : F.line;
+    $('#fmtLine').innerHTML = L.map(([c, w, t]) => '<div class="' + c + '" style="flex-grow:' + w + ';flex-basis:0">' + t + '</div>').join('');
+    $('#fmtDays').innerHTML = F.days.map(d => '<span>' + d + '</span>').join('');
+    $('#fmtNote').innerHTML = fmt === 'test' ? 'Each team bats twice, alternating, and a turn only ends when 10 are out. ' + F[ending].note : F.note;
+    $('#testBtns').style.display = fmt === 'test' ? 'flex' : 'none';
+    $$('#testBtns button').forEach(b => b.classList.toggle('primary', b.dataset.ending === ending));
+  }
+  $$('#fmtSeg button').forEach(b => b.addEventListener('click', () => { fmt = b.dataset.fmt; $$('#fmtSeg button').forEach(x => x.classList.toggle('on', x === b)); renderFmt(); }));
+  $$('#testBtns button').forEach(b => b.addEventListener('click', () => { ending = b.dataset.ending; renderFmt(); }));
+  renderFmt();
+})();
+})();
+</script>
+</body>
+</html>
