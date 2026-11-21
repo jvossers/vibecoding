@@ -12,199 +12,439 @@
 <style>
   :root {
     --bg: #f6f6f3; --panel: #fff; --fg: #1d1f1e; --muted: #6a6e6b; --line: #e3e3dd; --accent: #2f5d50;
+    --accent-soft: #e4eee9; --mark: #fbe7a6; --shadow: rgba(20,30,25,.14);
     --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
-    color-scheme: light dark;
+    color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --bg: #141615; --panel: #1c1f1e; --fg: #e9eae6; --muted: #9a9f9b; --line: #2c302e; --accent: #8cc2b2; }
+    :root { --bg: #141615; --panel: #1c1f1e; --fg: #e9eae6; --muted: #9a9f9b; --line: #2c302e; --accent: #8cc2b2;
+      --accent-soft: #23302c; --mark: #5a4a17; --shadow: rgba(0,0,0,.5); color-scheme: dark; }
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 var(--sans); }
-  main { max-width: 1040px; margin: 0 auto; padding: 56px max(16px, env(safe-area-inset-right)) 72px max(16px, env(safe-area-inset-left)); display: grid; gap: 36px; }
+  html { scroll-padding-top: 140px; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+  main { max-width: 1040px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-right)) 72px max(16px, env(safe-area-inset-left)); }
   a { color: inherit; text-decoration: none; }
-  header { border-bottom: 1px solid var(--line); padding-bottom: 20px; }
-  h1 { font: 600 32px/1.15 var(--serif); margin: 0 0 8px; }
-  header p { margin: 0; color: var(--muted); max-width: 60ch; }
+  header.intro { padding: 56px 0 24px; }
+  h1 { font: 600 36px/1.1 var(--serif); margin: 0 0 8px; letter-spacing: -.01em; }
+  header.intro p { margin: 0; color: var(--muted); max-width: 60ch; }
+
+  .bar { position: sticky; top: 0; z-index: 5; padding: 12px 0; margin-bottom: 8px;
+    background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: saturate(1.4) blur(10px); -webkit-backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid transparent; transition: border-color .2s; }
+  .bar.stuck { border-bottom-color: var(--line); }
+  .search { position: relative; }
+  .search svg { position: absolute; left: 16px; top: 50%; translate: 0 -50%; width: 18px; height: 18px; color: var(--muted); pointer-events: none; }
+  .search input { width: 100%; font: 17px/1.3 var(--sans); color: var(--fg); background: var(--panel);
+    border: 0; border-radius: 12px; padding: 15px 92px 15px 46px; outline: none;
+    box-shadow: 0 0 0 1px var(--line), 0 1px 2px var(--shadow); transition: box-shadow .15s; -webkit-appearance: none; appearance: none; }
+  .search input::placeholder { color: var(--muted); }
+  .search input:focus { box-shadow: 0 0 0 2px var(--accent), 0 6px 20px -10px var(--shadow); }
+  .search input::-webkit-search-cancel-button { display: none; }
+  .search .right { position: absolute; right: 10px; top: 50%; translate: 0 -50%; display: flex; gap: 6px; align-items: center; }
+  kbd { font: 12px/1 var(--sans); color: var(--muted); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 4px 7px; background: var(--bg); }
+  .clear { display: none; border: 0; background: var(--line); color: var(--fg); width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font: 16px/1 var(--sans); }
+  .has-q .clear { display: block; }
+  .has-q .slash { display: none; }
+  @media (hover: none) { .slash { display: none; } }
+
+  .chips { display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; scrollbar-width: none; padding: 2px; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; font: 500 13px/1 var(--sans); color: var(--muted); background: transparent; border: 1px solid var(--line);
+    border-radius: 999px; padding: 7px 12px; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+  .chip span { opacity: .65; margin-left: 3px; font-variant-numeric: tabular-nums; }
+  .chip:hover { color: var(--fg); border-color: var(--muted); }
+  .chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .status { color: var(--muted); font-size: 13px; min-height: 20px; margin: 4px 2px 14px; }
+  .content { display: grid; gap: 36px; }
   section { display: grid; gap: 12px; }
   h2 { font: 500 12px var(--sans); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0; }
   h2 span { opacity: .7; margin-left: 6px; font-variant-numeric: tabular-nums; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 10px; }
-  .card { background: var(--panel); border-radius: 6px; padding: 16px 18px; display: grid; align-content: start; gap: 4px;
-    box-shadow: 0 0 0 1px var(--line); transition: box-shadow .15s; }
-  .card:hover { box-shadow: 0 0 0 1px var(--accent), 0 4px 14px -8px rgba(0,0,0,.25); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px; }
+  .card { position: relative; background: var(--panel); border-radius: 10px; padding: 16px 18px 14px; display: grid; grid-template-rows: auto 1fr auto; gap: 6px;
+    box-shadow: 0 0 0 1px var(--line); transition: box-shadow .18s, transform .18s; }
+  .card:hover, .card.sel { box-shadow: 0 0 0 1px var(--accent), 0 10px 24px -14px var(--shadow); transform: translateY(-2px); }
+  .card.sel { box-shadow: 0 0 0 2px var(--accent), 0 10px 24px -14px var(--shadow); }
   .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   h3 { font: 600 18px/1.25 var(--serif); margin: 0; }
   .card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
-  @media (prefers-reduced-motion: reduce) { .card { transition: none; } }
+  .meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 4px; font-size: 12px; color: var(--muted); }
+  .tag { display: none; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 2px 8px; font-weight: 500; }
+  .results .tag { display: inline-block; }
+  .path { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; opacity: 0; transition: opacity .18s; margin-left: auto; }
+  .card:hover .path, .card.sel .path, .results .path { opacity: .8; }
+  mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 1px; }
+  .results[hidden], .group[hidden], .empty[hidden] { display: none; }
+  .empty { text-align: center; padding: 48px 16px; color: var(--muted); }
+  .empty strong { display: block; font: 600 20px var(--serif); color: var(--fg); margin-bottom: 6px; }
+  .empty button { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+  .hint { color: var(--muted); font-size: 12px; margin-top: 40px; text-align: center; }
+  @media (hover: none) { .hint { display: none; } }
+  @media (max-width: 560px) { header.intro { padding-top: 36px; } h1 { font-size: 30px; } .search input { font-size: 16px; } }
+  @media (prefers-reduced-motion: reduce) { .card, .chip, .bar, .path { transition: none; } .card:hover, .card.sel { transform: none; } }
 </style>
 </head>
 <body>
 <main>
-  <header>
+  <header class="intro">
     <h1>Labs</h1>
     <p>Small apps, games and explainers I've built, kept here so I can find them again. 34 projects.</p>
   </header>
+  <div class="bar" id="bar">
+    <div class="search" id="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Search 34 projects…" autocomplete="off" spellcheck="false" aria-label="Search projects" aria-controls="results">
+      <div class="right"><kbd class="slash">/</kbd><button type="button" class="clear" id="clear" aria-label="Clear search">×</button></div>
+    </div>
+    <div class="chips" role="group" aria-label="Filter by group">
+        <button type="button" class="chip" data-group="" aria-pressed="true">All <span>34</span></button>
+        <button type="button" class="chip" data-group="Teaching" aria-pressed="false">Teaching <span>11</span></button>
+        <button type="button" class="chip" data-group="Explainers" aria-pressed="false">Explainers <span>8</span></button>
+        <button type="button" class="chip" data-group="Tools" aria-pressed="false">Tools <span>6</span></button>
+        <button type="button" class="chip" data-group="Toys &amp; games" aria-pressed="false">Toys &amp; games <span>9</span></button>
+    </div>
+  </div>
+  <div class="status" id="status" aria-live="polite"></div>
+  <div class="content" id="content">
+    <section class="results" id="results" hidden><div class="grid" id="results-grid"></div></section>
+    <div class="empty" id="empty" hidden><strong>Nothing matches</strong><span id="empty-msg"></span></div>
 
-    <section>
-      <h2>Teaching <span>11</span></h2>
+    <section class="group" data-group="Teaching" aria-labelledby="g-teaching">
+      <h2 id="g-teaching">Teaching <span>11</span></h2>
       <div class="grid">
-        <a class="card" href="arrays/">
+        <a class="card" href="arrays/" data-dir="arrays" data-group="Teaching">
           <h3>Array Lab</h3>
           <p>Write a Python list of colours and watch it become a row, a grid or a cube.</p>
+          <span class="meta"><span class="tag">Teaching</span><span class="path">/arrays/</span></span>
         </a>
-        <a class="card" href="universities/">
+        <a class="card" href="universities/" data-dir="universities" data-group="Teaching">
           <h3>Campus Atlas</h3>
           <p>Explore UK universities on a map by subject, entry grades and cost of living, and build a shortlist.</p>
+          <span class="meta"><span class="tag">Teaching</span><span class="path">/universities/</span></span>
         </a>
-        <a class="card" href="cpu/">
+        <a class="card" href="cpu/" data-dir="cpu" data-group="Teaching">
           <h3>CPU &amp; RAM Simulator</h3>
           <p>Step through how a CPU fetches and runs instructions from memory.</p>
+          <span class="meta"><span class="tag">Teaching</span><span class="path">/cpu/</span></span>
         </a>
-        <a class="card" href="examtutor/">
+        <a class="card" href="examtutor/" data-dir="examtutor" data-group="Teaching">
           <h3>Full Marks</h3>
           <p>Rank answers by the marks they'd earn and learn GCSE exam technique.</p>
+          <span class="meta"><span class="tag">Teaching</span><span class="path">/examtutor/</span></span>
         </a>
-        <a class="card" href="cs/">
+        <a class="card" href="cs/" data-dir="cs" data-group="Teaching">
           <h3>GCSE CS Simulations</h3>
           <p>Interactive simulations for the OCR GCSE Computer Science course.</p>
+          <span class="meta"><span class="tag">Teaching</span><span class="path">/cs/</span></span>
         </a>
-        <a class="card" href="http/">
+        <a class="card" href="http/" data-dir="http" data-group="Teaching">
           <h3>HTTP Requests</h3>
           <p>Ten click-along pages for watching HTTP requests in DevTools.</p>
+          <span class="meta"><span class="tag">Teaching</span><span class="path">/http/</span></span>
         </a>
-        <a class="card" href="chemistry/">
+        <a class="card" href="chemistry/" data-dir="chemistry" data-group="Teaching">
           <h3>Reactivity of Metals</h3>
           <p>AQA GCSE Chemistry revision pages and a quiz on the reactivity series.</p>
+          <span class="meta"><span class="tag">Teaching</span><span class="path">/chemistry/</span></span>
         </a>
-        <a class="card" href="routerswitch/">
+        <a class="card" href="routerswitch/" data-dir="routerswitch" data-group="Teaching">
           <h3>Routers vs Switches</h3>
           <p>Send packets across two LANs and see how switches and routers differ, for OCR GCSE.</p>
+          <span class="meta"><span class="tag">Teaching</span><span class="path">/routerswitch/</span></span>
         </a>
-        <a class="card" href="piano/">
+        <a class="card" href="piano/" data-dir="piano" data-group="Teaching">
           <h3>Sight Reading Practice</h3>
           <p>Name notes on the treble and bass clef against the clock.</p>
+          <span class="meta"><span class="tag">Teaching</span><span class="path">/piano/</span></span>
         </a>
-        <a class="card" href="strings/">
+        <a class="card" href="strings/" data-dir="strings" data-group="Teaching">
           <h3>String Swipe</h3>
           <p>Swipe through 150 drag-and-drop Python string puzzles for OCR GCSE Computer Science.</p>
+          <span class="meta"><span class="tag">Teaching</span><span class="path">/strings/</span></span>
         </a>
-        <a class="card" href="alevels/">
+        <a class="card" href="alevels/" data-dir="alevels" data-group="Teaching">
           <h3>Trio</h3>
           <p>Score an A-level combination for university and careers, and see the best subject to add next.</p>
+          <span class="meta"><span class="tag">Teaching</span><span class="path">/alevels/</span></span>
         </a>
       </div>
     </section>
 
-    <section>
-      <h2>Explainers <span>8</span></h2>
+    <section class="group" data-group="Explainers" aria-labelledby="g-explainers">
+      <h2 id="g-explainers">Explainers <span>8</span></h2>
       <div class="grid">
-        <a class="card" href="cpuvsgpu/">
+        <a class="card" href="cpuvsgpu/" data-dir="cpuvsgpu" data-group="Explainers">
           <h3>CPU vs GPU</h3>
           <p>Interactive 3D explainer on CPUs vs GPUs, and why crypto mining and AI need GPUs.</p>
+          <span class="meta"><span class="tag">Explainers</span><span class="path">/cpuvsgpu/</span></span>
         </a>
-        <a class="card" href="cricket/">
+        <a class="card" href="cricket/" data-dir="cricket" data-group="Explainers">
           <h3>Cricket, Top Down</h3>
           <p>Cricket explained from the one-sentence version down, with a match, field and wicket simulator.</p>
+          <span class="meta"><span class="tag">Explainers</span><span class="path">/cricket/</span></span>
         </a>
-        <a class="card" href="emv/">
+        <a class="card" href="emv/" data-dir="emv" data-group="Explainers">
           <h3>Cryptogram</h3>
           <p>Insert a chip card and watch every cryptographic step of an EMV payment.</p>
+          <span class="meta"><span class="tag">Explainers</span><span class="path">/emv/</span></span>
         </a>
-        <a class="card" href="heating/">
+        <a class="card" href="heating/" data-dir="heating" data-group="Explainers">
           <h3>Flow &amp; Return</h3>
           <p>Play with the valves and thermostats in a cutaway of a UK boiler, cylinder and radiator system.</p>
+          <span class="meta"><span class="tag">Explainers</span><span class="path">/heating/</span></span>
         </a>
-        <a class="card" href="meanwhile/">
+        <a class="card" href="meanwhile/" data-dir="meanwhile" data-group="Explainers">
           <h3>Meanwhile</h3>
           <p>Compare countries, regions and people on a zoomable timeline of history.</p>
+          <span class="meta"><span class="tag">Explainers</span><span class="path">/meanwhile/</span></span>
         </a>
-        <a class="card" href="orrery/">
+        <a class="card" href="orrery/" data-dir="orrery" data-group="Explainers">
           <h3>Orrery</h3>
           <p>A 3D solar system with a time slider, and a sunlight ray that shows why the Moon has phases.</p>
+          <span class="meta"><span class="tag">Explainers</span><span class="path">/orrery/</span></span>
         </a>
-        <a class="card" href="stikstof/">
+        <a class="card" href="stikstof/" data-dir="stikstof" data-group="Explainers">
           <h3>Stikstof</h3>
           <p>Visual explainer, in Dutch and English, on the nitrogen crisis and why the UK doesn't have one.</p>
+          <span class="meta"><span class="tag">Explainers</span><span class="path">/stikstof/</span></span>
         </a>
-        <a class="card" href="mass/">
+        <a class="card" href="mass/" data-dir="mass" data-group="Explainers">
           <h3>Understanding the Mass</h3>
           <p>A guided timeline through the structure of a Catholic Mass.</p>
+          <span class="meta"><span class="tag">Explainers</span><span class="path">/mass/</span></span>
         </a>
       </div>
     </section>
 
-    <section>
-      <h2>Tools <span>6</span></h2>
+    <section class="group" data-group="Tools" aria-labelledby="g-tools">
+      <h2 id="g-tools">Tools <span>6</span></h2>
       <div class="grid">
-        <a class="card" href="backbeat/">
+        <a class="card" href="backbeat/" data-dir="backbeat" data-group="Tools">
           <h3>Backbeat</h3>
           <p>Loop drum grooves and fills with sheet music and pad lanes, from beginner to expert.</p>
+          <span class="meta"><span class="tag">Tools</span><span class="path">/backbeat/</span></span>
         </a>
-        <a class="card" href="analyst/">
+        <a class="card" href="analyst/" data-dir="analyst" data-group="Tools">
           <h3>Elicit</h3>
           <p>Prototype AI business analyst that interviews stakeholders and writes Gherkin feature files.</p>
+          <span class="meta"><span class="tag">Tools</span><span class="path">/analyst/</span></span>
         </a>
-        <a class="card" href="fauxreel/">
+        <a class="card" href="fauxreel/" data-dir="fauxreel" data-group="Tools">
           <h3>Faux Reel</h3>
           <p>Turn a chat transcript into a fake phone screen recording, exported as GIF or video.</p>
+          <span class="meta"><span class="tag">Tools</span><span class="path">/fauxreel/</span></span>
         </a>
-        <a class="card" href="mise/">
+        <a class="card" href="mise/" data-dir="mise" data-group="Tools">
           <h3>Mise</h3>
           <p>Snap a recipe and see it as parallel prep streams that meet at the plate (simulated).</p>
+          <span class="meta"><span class="tag">Tools</span><span class="path">/mise/</span></span>
         </a>
-        <a class="card" href="alternatives/">
+        <a class="card" href="alternatives/" data-dir="alternatives" data-group="Tools">
           <h3>Parity</h3>
           <p>Sales-assistant prototype that finds rule-based alternatives to lab consumables.</p>
+          <span class="meta"><span class="tag">Tools</span><span class="path">/alternatives/</span></span>
         </a>
-        <a class="card" href="dailycheck/">
+        <a class="card" href="dailycheck/" data-dir="dailycheck" data-group="Tools">
           <h3>Vinker</h3>
           <p>A daily checklist for tasks you repeat several times a day.</p>
+          <span class="meta"><span class="tag">Tools</span><span class="path">/dailycheck/</span></span>
         </a>
       </div>
     </section>
 
-    <section>
-      <h2>Toys &amp; games <span>9</span></h2>
+    <section class="group" data-group="Toys &amp; games" aria-labelledby="g-toys-games">
+      <h2 id="g-toys-games">Toys &amp; games <span>9</span></h2>
       <div class="grid">
-        <a class="card" href="beats/">
+        <a class="card" href="beats/" data-dir="beats" data-group="Toys &amp; games">
           <h3>BEATS</h3>
           <p>A retro, CRT-styled tracker for making beats on your phone.</p>
+          <span class="meta"><span class="tag">Toys &amp; games</span><span class="path">/beats/</span></span>
         </a>
-        <a class="card" href="contraption/">
+        <a class="card" href="contraption/" data-dir="contraption" data-group="Toys &amp; games">
           <h3>Contraption</h3>
           <p>Build Rube Goldberg machines from ramps, balls, belts and a cat, then watch them run.</p>
+          <span class="meta"><span class="tag">Toys &amp; games</span><span class="path">/contraption/</span></span>
         </a>
-        <a class="card" href="foodgame/">
+        <a class="card" href="foodgame/" data-dir="foodgame" data-group="Toys &amp; games">
           <h3>Feed Me Right!</h3>
           <p>Tap the healthy food and dodge the junk before the character explodes.</p>
+          <span class="meta"><span class="tag">Toys &amp; games</span><span class="path">/foodgame/</span></span>
         </a>
-        <a class="card" href="bird/">
+        <a class="card" href="bird/" data-dir="bird" data-group="Toys &amp; games">
           <h3>Flappy Cockatiels</h3>
           <p>Flappy Bird, but with a pair of cockatiels.</p>
+          <span class="meta"><span class="tag">Toys &amp; games</span><span class="path">/bird/</span></span>
         </a>
-        <a class="card" href="geo/">
+        <a class="card" href="geo/" data-dir="geo" data-group="Toys &amp; games">
           <h3>Geography Blackjack</h3>
           <p>Fill a target country with other countries' land area without going over 100%.</p>
+          <span class="meta"><span class="tag">Toys &amp; games</span><span class="path">/geo/</span></span>
         </a>
-        <a class="card" href="pillartwordle/">
+        <a class="card" href="pillartwordle/" data-dir="pillartwordle" data-group="Toys &amp; games">
           <h3>Pillar Twordle</h3>
           <p>A Wordle-style game about the global minimum tax.</p>
+          <span class="meta"><span class="tag">Toys &amp; games</span><span class="path">/pillartwordle/</span></span>
         </a>
-        <a class="card" href="rivercrossing/">
+        <a class="card" href="rivercrossing/" data-dir="rivercrossing" data-group="Toys &amp; games">
           <h3>River Crossing</h3>
           <p>The classic river-crossing logic puzzle.</p>
+          <span class="meta"><span class="tag">Toys &amp; games</span><span class="path">/rivercrossing/</span></span>
         </a>
-        <a class="card" href="tilt/">
+        <a class="card" href="tilt/" data-dir="tilt" data-group="Toys &amp; games">
           <h3>Tilt</h3>
           <p>Particle toys that pour, swirl and scatter as you move your phone.</p>
+          <span class="meta"><span class="tag">Toys &amp; games</span><span class="path">/tilt/</span></span>
         </a>
-        <a class="card" href="timeline/">
+        <a class="card" href="timeline/" data-dir="timeline" data-group="Toys &amp; games">
           <h3>Timeline Puzzle</h3>
           <p>Drag historical events into the right order.</p>
+          <span class="meta"><span class="tag">Toys &amp; games</span><span class="path">/timeline/</span></span>
         </a>
       </div>
     </section>
+  </div>
+  <p class="hint"><kbd>/</kbd> to search · <kbd>↑</kbd> <kbd>↓</kbd> to choose · <kbd>Enter</kbd> to open · <kbd>Esc</kbd> to clear</p>
 </main>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const q = $("q"), search = $("search"), results = $("results"), grid = $("results-grid");
+  const empty = $("empty"), status = $("status"), bar = $("bar");
+  const sections = [...document.querySelectorAll(".group")];
+  const chips = [...document.querySelectorAll(".chip")];
+  const total = document.querySelectorAll(".group .card").length;
+  let group = "", hits = [], sel = -1;
+
+  // Lowercase and strip accents, keeping a map back to original character positions for highlighting.
+  const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  function indexed(s) {
+    let n = "", map = [];
+    for (let i = 0; i < s.length; i++) { const c = norm(s[i]); for (const _ of c) map.push(i); n += c; }
+    return { s, n, map };
+  }
+
+  const items = [...document.querySelectorAll(".group .card")].map(el => {
+    const title = el.querySelector("h3").textContent, p = el.querySelector("p");
+    const desc = p ? p.textContent : "";
+    return { el, group: el.dataset.group, t: indexed(title), d: indexed(desc),
+      dir: norm(el.dataset.dir), g: norm(el.dataset.group) };
+  });
+
+  const wordStart = (hay, tok) => { let i = hay.indexOf(tok); while (i > -1) { if (i === 0 || /[^a-z0-9]/.test(hay[i - 1])) return true; i = hay.indexOf(tok, i + 1); } return false; };
+
+  function score(it, toks, whole) {
+    let total = 0;
+    for (const tok of toks) {
+      let s = 0;
+      if (wordStart(it.t.n, tok)) s = 12; else if (it.t.n.includes(tok)) s = 7;
+      if (it.dir.includes(tok)) s = Math.max(s, it.dir.startsWith(tok) ? 8 : 5);
+      if (wordStart(it.g, tok)) s = Math.max(s, 4);
+      if (wordStart(it.d.n, tok)) s = Math.max(s, 3); else if (it.d.n.includes(tok)) s = Math.max(s, 1);
+      if (!s) return 0;
+      total += s;
+    }
+    if (it.t.n.startsWith(whole)) total += 20; else if (it.t.n.includes(whole)) total += 8;
+    return total;
+  }
+
+  const escHtml = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  function highlight(x, toks) {
+    const on = new Uint8Array(x.s.length);
+    for (const tok of toks) { let i = x.n.indexOf(tok); while (i > -1) { for (let k = i; k < i + tok.length; k++) on[x.map[k]] = 1; i = x.n.indexOf(tok, i + 1); } }
+    let out = "", open = false;
+    for (let i = 0; i < x.s.length; i++) {
+      if (on[i] && !open) { out += "<mark>"; open = true; } else if (!on[i] && open) { out += "</mark>"; open = false; }
+      out += escHtml(x.s[i]);
+    }
+    return out + (open ? "</mark>" : "");
+  }
+
+  function select(i, scroll) {
+    if (hits[sel]) hits[sel].classList.remove("sel");
+    sel = hits.length ? Math.max(0, Math.min(i, hits.length - 1)) : -1;
+    if (hits[sel]) { hits[sel].classList.add("sel"); if (scroll) hits[sel].scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+  }
+
+  function render() {
+    const raw = q.value.trim(), whole = norm(raw).replace(/\s+/g, " ");
+    const toks = whole.split(" ").filter(Boolean);
+    search.classList.toggle("has-q", !!q.value);
+    chips.forEach(c => c.setAttribute("aria-pressed", String(c.dataset.group === group)));
+    const inGroup = it => !group || it.group === group;
+
+    if (!toks.length) {
+      results.hidden = true; grid.replaceChildren();
+      sections.forEach(s => s.hidden = !!group && s.dataset.group !== group);
+      const n = items.filter(inGroup).length;
+      hits = []; sel = -1;
+      empty.hidden = true;
+      status.textContent = group ? n + " in " + group : "";
+      return;
+    }
+
+    sections.forEach(s => s.hidden = true);
+    const ranked = items.filter(inGroup).map(it => [it, score(it, toks, whole)]).filter(([, s]) => s > 0)
+      .sort((a, b) => b[1] - a[1] || a[0].t.s.localeCompare(b[0].t.s));
+    hits = ranked.map(([it]) => {
+      const c = it.el.cloneNode(true);
+      c.querySelector("h3").innerHTML = highlight(it.t, toks);
+      const p = c.querySelector("p"); if (p) p.innerHTML = highlight(it.d, toks);
+      return c;
+    });
+    grid.replaceChildren(...hits);
+    results.hidden = !hits.length;
+    empty.hidden = !!hits.length;
+    if (!hits.length) {
+      $("empty-msg").innerHTML = "No project matches \u201c" + escHtml(raw) + "\u201d" + (group ? " in " + escHtml(group) + ". <button type=button id=any>Search all groups</button>" : ".");
+      const any = $("any"); if (any) any.onclick = () => { group = ""; render(); q.focus(); };
+    }
+    status.textContent = hits.length ? hits.length + (hits.length === 1 ? " project" : " projects") + (group ? " in " + group : "") + (hits.length > 1 ? " · Enter opens the first" : " · Enter to open") : "";
+    sel = -1; select(0);
+  }
+
+  let syncT;
+  function sync() {
+    clearTimeout(syncT);
+    syncT = setTimeout(() => {
+      const u = new URL(location);
+      q.value.trim() ? u.searchParams.set("q", q.value.trim()) : u.searchParams.delete("q");
+      group ? u.searchParams.set("group", group) : u.searchParams.delete("group");
+      history.replaceState(null, "", u);
+    }, 250);
+  }
+
+  q.addEventListener("input", () => { render(); sync(); });
+  q.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown" && hits.length) { e.preventDefault(); select(sel + 1, true); }
+    else if (e.key === "ArrowUp" && hits.length) { e.preventDefault(); select(sel - 1, true); }
+    else if (e.key === "Enter" && hits[sel]) { e.preventDefault(); const h = hits[sel].href; (e.metaKey || e.ctrlKey) ? window.open(h) : location.href = h; }
+    else if (e.key === "Escape") { if (q.value) { e.preventDefault(); q.value = ""; render(); sync(); } else q.blur(); }
+  });
+  $("clear").addEventListener("click", () => { q.value = ""; render(); sync(); q.focus(); });
+  chips.forEach(c => c.addEventListener("click", () => { group = c.dataset.group === group ? "" : c.dataset.group; render(); sync(); }));
+
+  document.addEventListener("keydown", e => {
+    if (e.target === q || e.altKey) return;
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable;
+    if ((e.key === "/" && !typing && !e.metaKey && !e.ctrlKey) || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k")) {
+      e.preventDefault(); q.focus(); q.select();
+    } else if (!typing && !e.metaKey && !e.ctrlKey && e.key.length === 1 && /\S/.test(e.key)) {
+      q.focus(); // start typing anywhere to search
+    }
+  });
+
+  new IntersectionObserver(([e]) => bar.classList.toggle("stuck", !e.isIntersecting), { rootMargin: "-1px 0px 0px 0px" })
+    .observe(document.querySelector("header.intro"));
+
+  const params = new URLSearchParams(location.search);
+  if (params.get("q")) q.value = params.get("q");
+  if (params.get("group") && chips.some(c => c.dataset.group === params.get("group"))) group = params.get("group");
+  render();
+  if (!matchMedia("(hover: none)").matches) q.focus({ preventScroll: true });
+})();
+</script>
 </body>
 </html>
