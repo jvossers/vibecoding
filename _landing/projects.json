@@ -40,6 +40,7 @@
     "stikstof":      { "title": "Stikstof",               "group": "Explainers",   "description": "Visual explainer, in Dutch and English, on the nitrogen crisis and why the UK doesn't have one." },
     "tilt":          { "title": "Tilt",                   "group": "Toys & games", "description": "Particle toys that pour, swirl and scatter as you move your phone." },
     "timeline":      { "title": "Timeline Puzzle",        "group": "Toys & games", "description": "Drag historical events into the right order." },
+    "vectors":       { "title": "Two Trapeziums",         "group": "Teaching",     "description": "Step through four ways to crack a GCSE Higher vectors question, with an animated diagram." },
     "universities":  { "title": "Campus Atlas",           "group": "Teaching",     "description": "Explore UK universities on a map by subject, entry grades and cost of living, and build a shortlist." }
   }
 }
