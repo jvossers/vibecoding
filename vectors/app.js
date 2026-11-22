@@ -314,11 +314,13 @@
     if (s === 'lesson') $('method-select').value = state.approachId;
   }
 
+  const LEVEL_NAMES = { 1: 'Easier', 2: 'Standard', 3: 'Harder' };
+
   function renderCards() {
     $('cards').innerHTML = L.approaches.map((a) => `
       <button class="card${completed.has(a.id) ? ' done' : ''}" data-approach="${a.id}">
         <span class="badge" aria-hidden="true">${completed.has(a.id) ? '✓' : a.short}</span>
-        <span class="name">${a.name}<span class="dots" aria-label="Difficulty ${a.level} of 3">${[1, 2, 3].map((i) => `<i class="${i <= a.level ? 'on' : ''}"></i>`).join('')}</span></span>
+        <span class="name">${a.name}<span class="level level-${a.level}">${LEVEL_NAMES[a.level]}</span></span>
         <span class="blurb">${a.blurb}</span>
         <span class="learn"><b>Shows:</b> ${a.learn.toLowerCase()} · ${a.steps.length} steps</span>
       </button>`).join('');
