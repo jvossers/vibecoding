@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f3ec">
+<meta name="description" content="Step through four ways to solve a GCSE Higher vectors question about two trapeziums, with an animated diagram.">
+<title>Two Trapeziums</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="styles.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="geometry.js"></script>
+<script defer src="steps.js"></script>
+<script defer src="app.js"></script>
+</head>
+<body>
+<div class="app" id="app" data-screen="intro">
+
+  <header class="bar">
+    <button class="icon-btn" id="btn-back" aria-label="Back" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="bar-title">
+      <span class="kicker">GCSE Vectors · Q12</span>
+      <h1 id="title">Two Trapeziums</h1>
+    </div>
+    <label class="method-select" id="method-wrap" hidden>
+      <span class="sr-only">Method</span>
+      <select id="method-select" aria-label="Choose method"></select>
+    </label>
+    <button class="icon-btn" id="btn-labels" aria-pressed="false" aria-label="Show all labels" title="Show all labels" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M4 12h16M4 17h7"/><circle cx="18" cy="7" r="2"/></svg>
+    </button>
+    <button class="icon-btn" id="btn-reset" aria-label="Restart this method" title="Restart this method" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg>
+    </button>
+  </header>
+
+  <main class="stage" id="stage">
+    <section class="figure" id="figure" aria-label="Diagram">
+      <svg id="diagram" viewBox="292 22 428 516" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="diagram-desc">
+        <desc id="diagram-desc">Two trapeziums ABCD and CDEF sharing side DC, with M the midpoint of BC and a straight line from M through N on DC to E.</desc>
+      </svg>
+      <p class="fig-note" id="fig-note">Diagram not drawn accurately</p>
+      <div class="sheet" id="sheet" role="region" aria-live="polite" hidden>
+        <div class="sheet-head"><strong id="sheet-title">Hint</strong>
+          <button class="icon-btn small" id="sheet-close" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+        <p id="sheet-body"></p>
+      </div>
+    </section>
+
+    <!-- Intro: the problem -->
+    <section class="panel panel-intro" id="panel-intro">
+      <ul class="given">
+        <li><b>ABCD</b> and <b>CDEF</b> are trapeziums</li>
+        <li><span class="m" data-tex="\V{DC}=2\va"></span></li>
+        <li><span class="m" data-tex="\V{AD}=\V{CF}=\vb"></span></li>
+        <li><span class="m" data-tex="AB:DC:EF=4:2:3"></span></li>
+        <li><b>M</b> is the midpoint of BC</li>
+        <li><b>N</b> is on CD and <b>MNE</b> is straight</li>
+      </ul>
+      <div class="target">
+        <span class="target-q">Find <i>k</i></span>
+        <span class="m" data-tex="DN:NC=k:1"></span>
+        <span class="target-note">k is an integer</span>
+      </div>
+    </section>
+
+    <!-- Choose a method -->
+    <section class="panel panel-choose" id="panel-choose" aria-labelledby="choose-h">
+      <h2 id="choose-h">Choose a method</h2>
+      <p class="sub">All four reach the same answer. Each shows a different idea.</p>
+      <div class="cards" id="cards"></div>
+      <button class="link-btn" id="btn-reveal">Just show me the answer</button>
+    </section>
+
+    <!-- Lesson step -->
+    <section class="panel panel-step" id="panel-step" aria-live="polite">
+      <p class="step-kicker" id="step-kicker"></p>
+      <h2 class="step-title" id="step-title" tabindex="-1"></h2>
+      <p class="step-text" id="step-text"></p>
+      <div class="eq" id="step-eq"></div>
+      <div class="step-tools">
+        <button class="chip" id="btn-hint" aria-expanded="false">Hint</button>
+        <button class="chip" id="btn-why" aria-expanded="false">Why this step?</button>
+      </div>
+    </section>
+
+    <!-- Compare -->
+    <section class="panel panel-compare" id="panel-compare">
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div class="tab-body" id="tab-body" role="tabpanel"></div>
+    </section>
+  </main>
+
+  <footer class="dock" id="dock">
+    <div class="dock-intro" id="dock-intro">
+      <button class="btn primary wide" id="btn-start">Choose a method</button>
+    </div>
+    <nav class="dock-step" id="dock-step" aria-label="Step navigation">
+      <button class="btn nav" id="btn-prev" aria-label="Previous step">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span>Back</span>
+      </button>
+      <div class="progress" id="progress" aria-hidden="true"></div>
+      <span class="sr-only" id="progress-text"></span>
+      <button class="btn nav primary" id="btn-next" aria-label="Next step">
+        <span id="next-label">Next</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </nav>
+  </footer>
+</div>
+</body>
+</html>
