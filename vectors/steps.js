@@ -13,8 +13,77 @@
   const approaches = [
     {
       id: 'a',
-      name: 'Shared origin',
+      name: 'Coordinates',
       short: 'A',
+      level: 1,
+      blurb: 'Use a and b as slanted axes, write each point as coordinates, and find where ME meets DC.',
+      learn: 'Vectors as coordinates in a basis',
+      steps: [
+        {
+          title: 'Use a and b as axes',
+          text: 'Measure every point from D as (number of <b>a</b>’s, number of <b>b</b>’s). DC lies on the <b>a</b>-axis, where the second coordinate is 0.',
+          eq: [R`D=(0,0),\qquad C=(2,0)`],
+          focus: ['D', 'C', 'DC'],
+          show: ['axes'],
+          hint: 'C = D + 2a.',
+          why: 'The axes are slanted, not at right angles, but coordinates still work: each point is “so many a, then so many b” from D.'
+        },
+        {
+          title: 'Read off the corners',
+          text: 'Follow the given sides from D.',
+          eq: [R`A=(0,-1),\qquad B=(4,-1)`, R`F=(2,1),\qquad E=(-1,1)`],
+          focus: GIVEN_FOCUS,
+          showGivenLabels: true,
+          show: ['axes'],
+          hint: 'A = D − b, B = A + 4a, F = C + b, E = F − 3a.',
+          why: 'Each side adds or subtracts a known number of a’s or b’s.'
+        },
+        {
+          title: 'Midpoint M',
+          text: 'Average the coordinates of B and C.',
+          eq: [R`M=\Big(\tfrac{4+2}{2},\ \tfrac{-1+0}{2}\Big)=\big(3,-\tfrac12\big)`],
+          focus: ['B', 'C', 'M', 'BC'],
+          show: ['axes'],
+          hint: 'Add, then halve, each coordinate.',
+          why: 'Same midpoint rule as with ordinary x–y coordinates.'
+        },
+        {
+          title: 'Describe the line ME',
+          text: 'Start at M and add a fraction <i>t</i> of the step from M to E.',
+          eq: [R`E-M=\big(-4,\ \tfrac32\big)`, R`P=\big(3-4t,\ -\tfrac12+\tfrac32t\big)`],
+          focus: ['M', 'E', 'MNE'],
+          show: ['axes', 'ME'],
+          labels: { ME: '(−4, 3⁄2)' },
+          hint: 'E − M = (−1 − 3, 1 − (−½)).',
+          why: 't = 0 gives M and t = 1 gives E.'
+        },
+        {
+          title: 'Where ME meets the a-axis',
+          text: 'On DC the second coordinate is 0.',
+          eq: [R`-\tfrac12+\tfrac32t=0\ \Rightarrow\ t=\tfrac13`, R`N=\big(3-\tfrac43,\ 0\big)=\big(\tfrac53,0\big)`],
+          focus: ['M', 'E', 'N', 'MNE', 'DC'],
+          nGreen: true,
+          show: ['axes', 'ME'],
+          hint: 'Solve for t, then put it into the first coordinate.',
+          why: 'Crossing the a-axis is exactly where the b-coordinate hits zero.'
+        },
+        {
+          final: true,
+          title: 'Find DN : NC',
+          text: 'Along the <b>a</b>-axis, D is at 0, N at 5⁄3 and C at 2.',
+          eq: [R`DN=\tfrac53,\quad NC=2-\tfrac53=\tfrac13`, R`DN:NC=5:1`, R`\boxed{k=5}`],
+          focus: ['D', 'C', 'N', 'DC', 'MNE'],
+          nGreen: true,
+          show: ['DN', 'NC', 'ratioDC'],
+                    hint: 'Multiply both parts by 3.',
+          why: 'The diagram is now redrawn to scale: N really is much nearer C than D.'
+        }
+      ]
+    },
+    {
+      id: 'b',
+      name: 'Shared origin',
+      short: 'B',
       level: 2,
       blurb: 'Write every point as a route from D, then walk along ME until you land on DC.',
       learn: 'Position vectors from one origin',
@@ -102,9 +171,9 @@
       ]
     },
     {
-      id: 'b',
+      id: 'c',
       name: 'Collinearity',
-      short: 'B',
+      short: 'C',
       level: 2,
       blurb: 'Call DN = xa, write NM and NE in terms of x, and use the fact that they lie on one line.',
       learn: 'Parallel vectors are multiples',
@@ -188,9 +257,9 @@
       ]
     },
     {
-      id: 'c',
+      id: 'd',
       name: 'Section formula',
-      short: 'C',
+      short: 'D',
       level: 3,
       blurb: 'Treat N as a weighted blend of M and E, and pick the weights that cancel b.',
       learn: 'Ratios along a line as weights',
@@ -259,87 +328,18 @@
           why: 'The diagram is now redrawn to scale. This is a shortcut built on the shared-origin vectors rather than a separate geometric proof.'
         }
       ]
-    },
-    {
-      id: 'd',
-      name: 'Coordinates',
-      short: 'D',
-      level: 1,
-      blurb: 'Use a and b as slanted axes, write each point as coordinates, and find where ME meets DC.',
-      learn: 'Vectors as coordinates in a basis',
-      steps: [
-        {
-          title: 'Use a and b as axes',
-          text: 'Measure every point from D as (number of <b>a</b>’s, number of <b>b</b>’s). DC lies on the <b>a</b>-axis, where the second coordinate is 0.',
-          eq: [R`D=(0,0),\qquad C=(2,0)`],
-          focus: ['D', 'C', 'DC'],
-          show: ['axes'],
-          hint: 'C = D + 2a.',
-          why: 'The axes are slanted, not at right angles, but coordinates still work: each point is “so many a, then so many b” from D.'
-        },
-        {
-          title: 'Read off the corners',
-          text: 'Follow the given sides from D.',
-          eq: [R`A=(0,-1),\qquad B=(4,-1)`, R`F=(2,1),\qquad E=(-1,1)`],
-          focus: GIVEN_FOCUS,
-          showGivenLabels: true,
-          show: ['axes'],
-          hint: 'A = D − b, B = A + 4a, F = C + b, E = F − 3a.',
-          why: 'Each side adds or subtracts a known number of a’s or b’s.'
-        },
-        {
-          title: 'Midpoint M',
-          text: 'Average the coordinates of B and C.',
-          eq: [R`M=\Big(\tfrac{4+2}{2},\ \tfrac{-1+0}{2}\Big)=\big(3,-\tfrac12\big)`],
-          focus: ['B', 'C', 'M', 'BC'],
-          show: ['axes'],
-          hint: 'Add, then halve, each coordinate.',
-          why: 'Same midpoint rule as with ordinary x–y coordinates.'
-        },
-        {
-          title: 'Describe the line ME',
-          text: 'Start at M and add a fraction <i>t</i> of the step from M to E.',
-          eq: [R`E-M=\big(-4,\ \tfrac32\big)`, R`P=\big(3-4t,\ -\tfrac12+\tfrac32t\big)`],
-          focus: ['M', 'E', 'MNE'],
-          show: ['axes', 'ME'],
-          labels: { ME: '(−4, 3⁄2)' },
-          hint: 'E − M = (−1 − 3, 1 − (−½)).',
-          why: 't = 0 gives M and t = 1 gives E.'
-        },
-        {
-          title: 'Where ME meets the a-axis',
-          text: 'On DC the second coordinate is 0.',
-          eq: [R`-\tfrac12+\tfrac32t=0\ \Rightarrow\ t=\tfrac13`, R`N=\big(3-\tfrac43,\ 0\big)=\big(\tfrac53,0\big)`],
-          focus: ['M', 'E', 'N', 'MNE', 'DC'],
-          nGreen: true,
-          show: ['axes', 'ME'],
-          hint: 'Solve for t, then put it into the first coordinate.',
-          why: 'Crossing the a-axis is exactly where the b-coordinate hits zero.'
-        },
-        {
-          final: true,
-          title: 'Find DN : NC',
-          text: 'Along the <b>a</b>-axis, D is at 0, N at 5⁄3 and C at 2.',
-          eq: [R`DN=\tfrac53,\quad NC=2-\tfrac53=\tfrac13`, R`DN:NC=5:1`, R`\boxed{k=5}`],
-          focus: ['D', 'C', 'N', 'DC', 'MNE'],
-          nGreen: true,
-          show: ['DN', 'NC', 'ratioDC'],
-                    hint: 'Multiply both parts by 3.',
-          why: 'The diagram is now redrawn to scale: N really is much nearer C than D.'
-        }
-      ]
     }
   ];
 
   const compare = [
-    { id: 'a', name: 'Shared origin', idea: 'One origin makes every point comparable.',
+    { id: 'a', name: 'Coordinates', idea: 'a and b act as slanted axes.',
+      summary: 'M = (3, −½), E = (−1, 1). Line ME reaches b-coordinate 0 at t = ⅓, giving N = (5⁄3, 0).' },
+    { id: 'b', name: 'Shared origin', idea: 'One origin makes every point comparable.',
       summary: 'Write points as routes from D: DM = 3a − ½b, DE = b − a. Walk from M along ME until the b-part is zero (t = ⅓), giving DN = 5⁄3 a.' },
-    { id: 'b', name: 'Collinearity', idea: 'Vectors along one line are multiples.',
+    { id: 'c', name: 'Collinearity', idea: 'Vectors along one line are multiples.',
       summary: 'Let DN = xa. Then NM = (3 − x)a − ½b and NE = −(x + 1)a + b. Matching b-parts gives NM = −½NE; matching a-parts gives x = 5⁄3.' },
-    { id: 'c', name: 'Section formula', idea: 'A ratio along a line is a set of weights.',
-      summary: 'DN = ⅔DM + ⅓DE is the blend that cancels b. So MN : NE = 1 : 2, and DN = 5⁄3 a.' },
-    { id: 'd', name: 'Coordinates', idea: 'a and b act as slanted axes.',
-      summary: 'M = (3, −½), E = (−1, 1). Line ME reaches b-coordinate 0 at t = ⅓, giving N = (5⁄3, 0).' }
+    { id: 'd', name: 'Section formula', idea: 'A ratio along a line is a set of weights.',
+      summary: 'DN = ⅔DM + ⅓DE is the blend that cancels b. So MN : NE = 1 : 2, and DN = 5⁄3 a.' }
   ];
 
   const quiz = [
