@@ -494,8 +494,12 @@ function questionCard(qi, n) {
     const longest = Math.max(...pre.textContent.split("\n").map(l => l.length)) + 1;
     const w = pre.clientWidth - 24;
     if (!w) return;
-    const size = Math.max(11, Math.min(16, w / (longest * 0.6)));
+    let size = Math.max(10, Math.min(16, w / (longest * 0.6)));
     pre.style.fontSize = size.toFixed(1) + "px";
+    // the estimate can be a little off: shrink until nothing overflows
+    while (pre.scrollWidth > pre.clientWidth + 1 && size > 9.5) {
+      size -= 0.5; pre.style.fontSize = size.toFixed(1) + "px";
+    }
   }
   el._fit = fitCode;
 
@@ -770,6 +774,11 @@ $("#resetBtn").addEventListener("click", () => {
 });
 
 updateHeader();
+window.addEventListener("hashchange", () => {
+  const id = location.hash.slice(1);
+  if (themeById(id) && (!T || T.id !== id)) openTheme(id);
+  else if (!id && T) goHome();
+});
 const start = location.hash.slice(1);
 if (themeById(start)) openTheme(start); else go(-2, 1);
 })();

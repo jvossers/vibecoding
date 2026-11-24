@@ -19,7 +19,7 @@ A theme can be opened directly with a hash, for example `codeswipe/#loops`.
 - Predict questions: add `p:1`. `c` has no gaps and `a[0]` is the exact single-line output (or an exception name such as `TypeError`).
 - `i`: lines the user types, one per input() call. Input prompts aren't included in `o`.
 - `f`: files that exist before running, `{name: contents}`. `fo`: the expected file contents afterwards. Both are shown on the card.
-- No backslashes in `c` (it's a JS template literal). Keep lines under about 34 characters so they fit on a phone.
+- `c` is a JS template literal, so write a Python `"\n"` as `"\\n"` in the source, and avoid `${`. Keep lines under about 34 characters so they fit on a phone (the app shrinks the font if needed).
 
 ## Always validate after editing a bank
 
