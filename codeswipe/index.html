@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1117">
+<meta name="description" content="Drag-and-drop Python puzzles for OCR GCSE Computer Science Paper 2, by theme, one full-screen card at a time.">
+<title>Code Swipe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --panel: #171a23;
+  --panel2: #1e2230;
+  --line: #2b3042;
+  --text: #e9ecf4;
+  --muted: #8a91a8;
+  --accent: #ffcf4a;
+  --accent-ink: #1a1400;
+  --good: #3ddc97;
+  --bad: #ff5d6c;
+  --chip: #262b3b;
+  --chip-line: #3a4158;
+  --kw: #ff8fb1;
+  --str: #9be36b;
+  --num: #ffb86b;
+  --bi: #6cc6ff;
+  --meth: #c8a6ff;
+  --com: #66708a;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-variant-ligatures: none; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); overflow: hidden; overscroll-behavior: none; }
+body { display: flex; justify-content: center; }
+button { font: inherit; color: inherit; }
+
+#app { position: relative; width: 100%; max-width: 520px; height: 100dvh; display: flex; flex-direction: column; background: var(--bg); }
+@media (min-width: 560px) { #app { border-left: 1px solid var(--line); border-right: 1px solid var(--line); } }
+
+/* top bar */
+#top { flex: none; padding: calc(env(safe-area-inset-top) + 10px) 16px 8px; display: flex; align-items: center; gap: 12px; z-index: 5; }
+#brand { font-weight: 700; letter-spacing: -.02em; font-size: 17px; white-space: nowrap; background: none; border: 0; padding: 0; cursor: pointer; }
+#brand b { color: var(--accent); }
+#prog { flex: 1; height: 6px; border-radius: 3px; background: var(--panel2); overflow: hidden; }
+#progFill { height: 100%; width: 0; background: var(--good); transition: width .4s; }
+#stats { font-family: var(--mono); font-size: 13px; color: var(--muted); white-space: nowrap; display: flex; gap: 10px; }
+#stats .fire { color: var(--accent); }
+#menuBtn { flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); display: grid; place-items: center; cursor: pointer; }
+#menuBtn svg { width: 18px; height: 18px; }
+
+/* stage */
+#stage { position: relative; flex: 1; overflow: hidden; }
+.card { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 4px 16px calc(env(safe-area-inset-bottom) + 12px); overflow-y: auto; overflow-x: hidden; will-change: transform; transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .45s; }
+.card > * { flex-shrink: 0; }
+.card.below { transform: translateY(100%); }
+.card.above { transform: translateY(-100%); opacity: .4; }
+.card.noanim { transition: none; }
+
+.meta { display: flex; align-items: center; gap: 8px; margin: 6px 0 10px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.pill { white-space: nowrap; padding: 4px 9px; border-radius: 999px; background: var(--panel2); border: 1px solid var(--line); color: var(--text); overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.pill.kind { background: transparent; flex: none; }
+.meta .num { margin-left: auto; font-family: var(--mono); letter-spacing: 0; flex: none; }
+.task { font-size: clamp(19px, 5.4vw, 23px); font-weight: 600; line-height: 1.25; margin: 0 0 14px; letter-spacing: -.01em; }
+
+.win { border-radius: 14px; background: var(--panel); border: 1px solid var(--line); overflow: hidden; }
+.win + .win { margin-top: 10px; }
+.win-h { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.win-h i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); display: inline-block; }
+.win-h span { margin-left: 6px; }
+pre.code { margin: 0; padding: 12px 12px 14px; font-family: var(--mono); font-size: 15px; line-height: 1.75; white-space: pre; overflow-x: auto; tab-size: 4; }
+.k { color: var(--kw); } .s { color: var(--str); } .n { color: var(--num); } .b { color: var(--bi); } .m { color: var(--meth); } .c { color: var(--com); font-style: italic; }
+
+.file { margin-bottom: 10px; border-radius: 12px; border: 1px dashed var(--chip-line); background: #ffffff06; }
+.file .fh { display: flex; align-items: center; gap: 6px; padding: 6px 12px; font-family: var(--mono); font-size: 12px; color: var(--muted); border-bottom: 1px dashed var(--chip-line); }
+.file .fh svg { width: 13px; height: 13px; }
+.file pre { margin: 0; padding: 7px 12px 8px; font-family: var(--mono); font-size: 13px; line-height: 1.5; white-space: pre-wrap; word-break: break-all; color: #d6dbe8; }
+.file pre .eol { color: var(--com); }
+
+.slot { display: inline-block; vertical-align: middle; min-width: 3.2ch; height: 1.55em; line-height: 1.45em; padding: 0 .35ch; margin: 0 1px; border-radius: 6px; border: 1.5px dashed var(--accent); background: rgba(255, 207, 74, .08); text-align: center; touch-action: none; cursor: pointer; transition: background .15s, border-color .15s, transform .15s; }
+.slot.filled { border-style: solid; border-color: var(--chip-line); background: var(--chip); }
+.slot.sel, .slot.over { background: rgba(255, 207, 74, .28); transform: scale(1.06); }
+.slot.good { border-color: var(--good); background: rgba(61, 220, 151, .16); cursor: default; }
+.slot.bad { border-color: var(--bad); background: rgba(255, 93, 108, .2); animation: shake .4s; }
+@media (max-height: 720px) {
+  .win-h { display: none; }
+  pre.code { line-height: 1.6; padding: 10px 12px; }
+  .task { margin-bottom: 10px; font-size: 19px; }
+  .meta { margin: 2px 0 8px; }
+  .term { padding: 7px 12px; }
+  .tray { margin-top: 12px; gap: 8px; }
+}
+@keyframes shake { 20%, 60% { transform: translateX(-4px); } 40%, 80% { transform: translateX(4px); } }
+
+.typed { margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+.typed .lab { display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; }
+.typed .lab svg { width: 16px; height: 16px; }
+.key { font-family: var(--mono); font-size: 14px; color: var(--text); padding: 3px 9px; border-radius: 7px; background: var(--panel2); border: 1px solid var(--chip-line); border-bottom-width: 3px; white-space: pre; }
+.key.empty { color: var(--muted); font-style: italic; font-family: var(--sans); }
+
+.term { margin-top: 10px; border-radius: 12px; background: #0a0c11; border: 1px solid var(--line); padding: 9px 12px; font-family: var(--mono); font-size: 13px; }
+.term .lab { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; font-family: var(--sans); }
+.term .lab .fname { text-transform: none; letter-spacing: 0; font-family: var(--mono); color: var(--text); }
+.term .lab small { text-transform: none; letter-spacing: 0; }
+.term pre { margin: 0; font-family: inherit; white-space: pre-wrap; word-break: break-all; color: #d6dbe8; }
+.term pre .eol { color: var(--com); }
+.term.predict { font-size: 15px; }
+.term.predict .row { display: flex; align-items: center; gap: 8px; }
+.term.predict .row::before { content: "\25B6"; color: var(--good); font-size: 11px; }
+
+.tray { flex: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 18px 0 6px; min-height: 52px; }
+.chip { font-family: var(--mono); font-size: 15px; padding: 9px 13px; border-radius: 12px; background: var(--chip); border: 1.5px solid var(--chip-line); box-shadow: 0 3px 0 #0006; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; white-space: pre; transition: opacity .15s, transform .15s; }
+.chip:active { transform: translateY(1px); }
+.chip.used { opacity: .18; box-shadow: none; pointer-events: none; }
+.chip.lifted { opacity: .25; }
+.ghost { position: fixed; z-index: 50; pointer-events: none; transform: translate(-50%, -60%) scale(1.12); box-shadow: 0 12px 30px #000a; border-color: var(--accent); }
+
+.foot { margin-top: auto; padding-top: 10px; }
+.msg { min-height: 22px; text-align: center; font-size: 14px; color: var(--muted); }
+.msg.bad { color: var(--bad); }
+.why { display: none; margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: var(--panel2); border-left: 3px solid var(--good); font-size: 15px; line-height: 1.45; }
+.why.show { display: block; animation: rise .35s ease-out; }
+.why.shown { border-left-color: var(--accent); }
+.why b { color: var(--good); }
+.task code, .why code { font-family: var(--mono); font-size: .88em; background: #ffffff12; padding: 1px 5px; border-radius: 5px; white-space: nowrap; }
+.task code { font-weight: 500; }
+.why.shown b { color: var(--accent); }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+.btns { display: flex; gap: 10px; margin-top: 12px; }
+.btn { flex: 1; min-height: 48px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); font-weight: 600; font-size: 15px; cursor: pointer; position: relative; overflow: hidden; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn .fill { position: absolute; inset: 0; background: #0002; transform-origin: left; transform: scaleX(0); }
+.btn .fill.run { animation: fill var(--t, 4s) linear forwards; }
+.btn span { position: relative; }
+@keyframes fill { to { transform: scaleX(1); } }
+.card.solved .win { border-color: var(--good); box-shadow: 0 0 0 3px rgba(61, 220, 151, .12); }
+
+/* home: theme picker */
+.home { padding-top: 14px; }
+.home h1 { font-size: clamp(38px, 12vw, 52px); line-height: .95; margin: 6px 0 10px; letter-spacing: -.04em; }
+.home h1 b { color: var(--accent); }
+.home .sub { color: var(--muted); font-size: 15px; margin: 0 0 6px; line-height: 1.4; }
+.home .tip { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+.home h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 6px 0 10px; font-weight: 500; }
+.themes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-bottom: 8px; }
+.tile { position: relative; text-align: left; display: flex; flex-direction: column; gap: 6px; padding: 12px 12px 11px; min-height: 128px; border-radius: 16px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; transition: transform .12s, border-color .12s; }
+.tile:active { transform: scale(.98); }
+.tile:hover { border-color: var(--chip-line); }
+.tile .ic { font-family: var(--mono); font-weight: 700; font-size: 15px; padding: 3px 8px; border-radius: 8px; background: var(--panel2); align-self: flex-start; }
+.tile .nm { font-weight: 700; font-size: 16px; line-height: 1.15; letter-spacing: -.01em; }
+.tile .sp { font-size: 12px; color: var(--muted); line-height: 1.3; }
+.tile .pb { margin-top: auto; display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.tile .pb div { flex: 1; height: 4px; border-radius: 2px; background: var(--panel2); overflow: hidden; }
+.tile .pb div i { display: block; height: 100%; background: var(--good); }
+.tile.last { border-color: var(--accent); }
+.tile .badge { position: absolute; top: 10px; right: 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent-ink); background: var(--accent); padding: 3px 7px; border-radius: 999px; }
+.foot-note { color: var(--muted); font-size: 12px; text-align: center; margin: 14px 0 4px; }
+
+/* theme start / end */
+.hero { justify-content: center; text-align: center; }
+.hero h1 { font-size: clamp(34px, 11vw, 48px); line-height: 1; margin: 0 0 12px; letter-spacing: -.035em; }
+.hero h1 b { color: var(--accent); display: block; }
+.hero .sub { color: var(--muted); font-size: 15px; margin: 0 0 22px; }
+.hero .bigic { font-family: var(--mono); font-weight: 700; font-size: 30px; padding: 8px 16px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); align-self: center; margin-bottom: 16px; }
+.how { list-style: none; padding: 0; margin: 0 auto 24px; text-align: left; max-width: 340px; font-size: 15px; line-height: 1.4; }
+.how li { display: flex; gap: 10px; margin: 8px 0; }
+.how li span { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--panel2); display: grid; place-items: center; font-size: 12px; font-weight: 700; color: var(--accent); }
+.hero .btns { max-width: 340px; margin: 0 auto; width: 100%; flex-direction: column; }
+.hint { margin-top: 18px; color: var(--muted); font-size: 13px; animation: bob 1.6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-5px); } }
+.big { font-family: var(--mono); font-size: 52px; font-weight: 700; color: var(--good); margin: 4px 0; }
+
+/* menu sheet */
+#scrim { position: fixed; inset: 0; background: #0009; z-index: 40; opacity: 0; pointer-events: none; transition: opacity .25s; }
+#scrim.open { opacity: 1; pointer-events: auto; }
+#sheet { position: fixed; left: 50%; bottom: 0; width: 100%; max-width: 520px; transform: translate(-50%, 100%); z-index: 41; background: var(--panel); border-top: 1px solid var(--line); border-radius: 20px 20px 0 0; padding: 18px 16px calc(env(safe-area-inset-bottom) + 18px); transition: transform .3s cubic-bezier(.2,.8,.2,1); max-height: 85dvh; overflow-y: auto; }
+#sheet.open { transform: translate(-50%, 0); }
+#sheet h2 { margin: 0 0 4px; font-size: 18px; }
+#sheet p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+.topics { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.topic { padding: 9px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; font-size: 14px; cursor: pointer; }
+.topic.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+.topic small { opacity: .7; font-family: var(--mono); margin-left: 4px; }
+#sheet .btns + .btns { margin-top: 10px; }
+
+#toast { position: fixed; left: 50%; top: 70px; transform: translate(-50%, -20px); background: var(--good); color: #052414; font-weight: 700; padding: 8px 16px; border-radius: 999px; z-index: 30; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
+#toast.show { opacity: 1; transform: translate(-50%, 0); }
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="top">
+    <button id="brand" aria-label="All themes">Code<b>Swipe</b></button>
+    <div id="prog"><div id="progFill"></div></div>
+    <div id="stats"><span id="sSolved">0/0</span><span class="fire" id="sStreak">🔥0</span></div>
+    <button id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </header>
+  <main id="stage"></main>
+</div>
+<div id="scrim"></div>
+<div id="sheet" role="dialog" aria-label="Settings">
+  <h2 id="sheetTitle">Topics</h2>
+  <p>Choose which topics go in the deck. Questions come in a random order.</p>
+  <div class="topics" id="topics"></div>
+  <div class="btns">
+    <button class="btn" id="resetBtn"><span>Reset this theme</span></button>
+    <button class="btn primary" id="applyBtn"><span>Shuffle &amp; play</span></button>
+  </div>
+  <div class="btns">
+    <button class="btn" id="homeBtn"><span>← All themes</span></button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+// Theme files call CodeSwipe.add(id, questions). Theme order and labels live in THEMES below.
+window.CodeSwipe = { banks: {}, add(id, qs) { this.banks[id] = qs; } };
+const THEMES = [
+  { id: "basics",     name: "Variables & data types",  ic: "x = 5",   col: "var(--bi)",   spec: "2.2.1 · 2.2.2", blurb: "Assignment, input & output, operators, DIV & MOD, casting" },
+  { id: "selection",  name: "Selection & logic",       ic: "if",      col: "var(--kw)",   spec: "2.2.1 · 2.4",   blurb: "if, elif, else, AND, OR, NOT and truth tables" },
+  { id: "loops",      name: "Loops",                   ic: "for",     col: "var(--kw)",   spec: "2.2.1",         blurb: "Count- and condition-controlled iteration" },
+  { id: "strings",    name: "Strings",                 ic: "\"ab\"",  col: "var(--str)",  spec: "2.2.3",         blurb: "Length, slicing, case, ASCII, concatenation" },
+  { id: "lists",      name: "Lists & 2D arrays",       ic: "[ ]",     col: "var(--num)",  spec: "2.2.3",         blurb: "1D and 2D arrays, records, list methods" },
+  { id: "functions",  name: "Functions & procedures",  ic: "def",     col: "var(--meth)", spec: "2.2.3",         blurb: "Parameters, return values, scope, random" },
+  { id: "files",      name: "File handling",           ic: "open()",  col: "var(--bi)",   spec: "2.2.3",         blurb: "Read, write, append, process lines and CSV" },
+  { id: "algorithms", name: "Searching & sorting",     ic: "sort",    col: "var(--good)", spec: "2.1",           blurb: "Linear & binary search, bubble, insertion, merge sort" },
+  { id: "robust",     name: "Robust programs",         ic: "try",     col: "var(--bad)",  spec: "2.3",           blurb: "Validation, authentication, errors, test data" },
+];
+</script>
+<script src="themes/basics.js"></script>
+<script src="themes/selection.js"></script>
+<script src="themes/loops.js"></script>
+<script src="themes/strings.js"></script>
+<script src="themes/lists.js"></script>
+<script src="themes/functions.js"></script>
+<script src="themes/files.js"></script>
+<script src="themes/algorithms.js"></script>
+<script src="themes/robust.js"></script>
+<script>
+(() => {
+"use strict";
+const $ = (s, el = document) => el.querySelector(s);
+const stage = $("#stage");
+const LS = "codeswipe.v1";
+const themes = THEMES.filter(t => (CodeSwipe.banks[t.id] || []).length);
+const themeById = id => themes.find(t => t.id === id);
+
+// ---------- storage ----------
+const lsGet = k => { try { return JSON.parse(localStorage.getItem(k)) || null; } catch (e) { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const G = lsGet(LS) || { last: null };
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function loadTheme(id) {
+  const Q = CodeSwipe.banks[id];
+  const topics = [...new Set(Q.map(q => q.t))];
+  let s = lsGet(`${LS}.${id}`);
+  if (!s && id === "strings") { // carry over progress from the old String Swipe page
+    const old = lsGet("stringswipe.v1");
+    if (old && Array.isArray(old.order)) s = old;
+  }
+  if (!s || !Array.isArray(s.order) || s.order.some(i => !Q[i])) {
+    s = { topics: topics.slice(), order: null, pos: -1, solved: {}, streak: 0, best: 0 };
+  }
+  s.topics = (s.topics || []).filter(t => topics.includes(t));
+  if (!s.topics.length) s.topics = topics.slice();
+  if (!s.order) s.order = deckFor(Q, s.topics);
+  return s;
+}
+const deckFor = (Q, topics) => shuffle(Q.map((q, i) => i).filter(i => topics.includes(Q[i].t)));
+
+let T = null;       // current theme meta
+let Q = [];         // its questions
+let S = null;       // its saved state
+const save = () => { if (T) lsSet(`${LS}.${T.id}`, S); };
+const memo = {};    // in-session card state, keyed "theme:index"
+
+// ---------- text helpers ----------
+const KW = new Set("def return if elif else for in while and or not break continue import from as pass True False None is global lambda with try except finally raise".split(" "));
+const BI = new Set("print len str int float bool ord chr range input sorted list set round abs max min sum type open".split(" "));
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const fmt = s => {
+  const re = /("[^"]*"|\b[\w.]*\w\([^()]*\)(?:\.\w+\(\))?|\b\w+\[[^\]]*\]|\bnot in\b|\.(?:upper|lower|length|left|right)\b)/g;
+  return s.split(re).map((p, i) => i % 2 ? `<code>${esc(p)}</code>` : esc(p)).join("");
+};
+function hl(src) {
+  let out = "", prev = "";
+  const re = /(#.*$)|([fr]?"[^"\n]*"?|[fr]?'[^'\n]*'?)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_]\w*)|(\s+)|([\s\S])/gm;
+  let m;
+  while ((m = re.exec(src))) {
+    const [t, com, str, num, word] = m;
+    if (com) out += `<span class="c">${esc(t)}</span>`;
+    else if (str) out += `<span class="s">${esc(t)}</span>`;
+    else if (num) out += `<span class="n">${t}</span>`;
+    else if (word) {
+      const cls = KW.has(word) ? "k" : prev === "." ? "m" : BI.has(word) ? "b" : "";
+      out += cls ? `<span class="${cls}">${word}</span>` : word;
+    } else out += esc(t);
+    if (!/^\s+$/.test(t)) prev = t.slice(-1);
+  }
+  return out;
+}
+// show file contents, marking a missing final newline subtly
+const fileText = s => s === "" ? '<span class="eol">(empty file)</span>' : esc(s.replace(/\n$/, ""));
+const FILE_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></svg>';
+const KEY_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>';
+
+// ---------- header ----------
+function updateHeader() {
+  let done, total, streak;
+  if (T) {
+    total = S.order.length; done = S.order.filter(i => S.solved[i]).length; streak = S.streak;
+  } else {
+    total = done = streak = 0;
+    themes.forEach(t => { const s = lsGet(`${LS}.${t.id}`); total += CodeSwipe.banks[t.id].length; if (s) { done += Object.keys(s.solved || {}).length; streak = Math.max(streak, s.streak || 0); } });
+  }
+  $("#sSolved").textContent = `${done}/${total}`;
+  $("#sStreak").textContent = `🔥${streak}`;
+  $("#progFill").style.width = total ? (done / total * 100) + "%" : "0";
+}
+function toast(t) {
+  const el = $("#toast"); el.textContent = t; el.classList.add("show");
+  clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 1300);
+}
+const buzz = p => { try { navigator.vibrate && navigator.vibrate(p); } catch (e) {} };
+const pick = a => a[Math.random() * a.length | 0];
+
+// ---------- cards ----------
+let current = null, autoTimer = null;
+
+function homeCard() {
+  const el = document.createElement("section");
+  el.className = "card home";
+  const total = themes.reduce((n, t) => n + CodeSwipe.banks[t.id].length, 0);
+  el.innerHTML = `
+    <h1>Code<b>Swipe</b></h1>
+    <p class="sub">OCR GCSE Computer Science · Paper 2<br>${total} Python puzzles in ${themes.length} themes</p>
+    <p class="tip">Drag code chips into the gaps (or tap them). Get it right and the next one slides in.</p>
+    <h2>Pick a theme</h2>
+    <div class="themes">${themes.map(t => {
+      const s = lsGet(`${LS}.${t.id}`) || (t.id === "strings" ? lsGet("stringswipe.v1") : null);
+      const n = CodeSwipe.banks[t.id].length;
+      const d = s ? Object.keys(s.solved || {}).length : 0;
+      const last = G.last === t.id && d > 0;
+      return `<button class="tile${last ? " last" : ""}" data-theme="${t.id}">
+        ${last ? '<span class="badge">Continue</span>' : ""}
+        <span class="ic" style="color:${t.col}">${esc(t.ic)}</span>
+        <span class="nm">${esc(t.name)}</span>
+        <span class="sp">${esc(t.blurb)}</span>
+        <span class="pb"><div><i style="width:${d / n * 100}%"></i></div>${d}/${n}</span>
+      </button>`;
+    }).join("")}</div>
+    <p class="foot-note">Spec refs: J277 ${themes.map(t => t.spec).filter((v, i, a) => a.indexOf(v) === i).join(", ")}</p>`;
+  el.addEventListener("click", e => {
+    const b = e.target.closest("[data-theme]"); if (b) openTheme(b.dataset.theme);
+  });
+  return el;
+}
+
+function startCard() {
+  const el = document.createElement("section");
+  el.className = "card hero";
+  const done = S.order.filter(i => S.solved[i]).length;
+  const resume = S.pos >= 0 && S.pos < S.order.length && done > 0;
+  el.innerHTML = `
+    <div class="bigic" style="color:${T.col}">${esc(T.ic)}</div>
+    <h1>${esc(T.name)}</h1>
+    <p class="sub">${esc(T.blurb)}<br>${S.order.length} puzzles · OCR J277 ${esc(T.spec)}</p>
+    <ul class="how">
+      <li><span>1</span>Drag the code chips into the gaps, or tap a chip to drop it in the next gap.</li>
+      <li><span>2</span>Tap a filled gap to send its chip back.</li>
+      <li><span>3</span>Get it right and the next puzzle slides in. Swipe up to skip.</li>
+    </ul>
+    <div class="btns">
+      ${resume ? `<button class="btn primary" data-act="resume"><span>Continue · ${done}/${S.order.length} solved</span></button>
+      <button class="btn" data-act="fresh"><span>New shuffle</span></button>`
+      : `<button class="btn primary" data-act="start"><span>Start</span></button>`}
+      <button class="btn" data-act="home"><span>← All themes</span></button>
+    </div>
+    <div class="hint">swipe up ↑</div>`;
+  el.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]"); if (!b) return;
+    const a = b.dataset.act;
+    if (a === "fresh") newDeck();
+    else if (a === "resume") go(S.pos, 1);
+    else if (a === "home") goHome();
+    else go(0, 1);
+  });
+  return el;
+}
+
+function endCard() {
+  const el = document.createElement("section");
+  el.className = "card hero";
+  const total = S.order.length;
+  const solved = S.order.filter(i => S.solved[i]);
+  const first = solved.filter(i => S.solved[i] === "first").length;
+  el.innerHTML = `
+    <h1>${esc(T.name)}<b>done!</b></h1>
+    <div class="big">${first}/${total}</div>
+    <p class="sub">right first time · ${solved.length} solved in total · best streak 🔥${S.best}</p>
+    <div class="btns">
+      <button class="btn primary" data-act="again"><span>Shuffle &amp; go again</span></button>
+      <button class="btn" data-act="missed"><span>Retry the ones I missed</span></button>
+      <button class="btn" data-act="home"><span>Pick another theme</span></button>
+    </div>`;
+  el.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]"); if (!b) return;
+    const a = b.dataset.act;
+    if (a === "again") newDeck();
+    else if (a === "home") goHome();
+    else {
+      const missed = S.order.filter(i => S.solved[i] !== "first");
+      if (!missed.length) { toast("Nothing missed!"); return; }
+      missed.forEach(i => { delete S.solved[i]; delete memo[`${T.id}:${i}`]; });
+      S.order = shuffle(missed); S.pos = 0; save(); updateHeader(); go(0, 1);
+    }
+  });
+  return el;
+}
+
+function newDeck() {
+  S.order = deckFor(Q, S.topics); S.solved = {}; S.streak = 0; S.pos = 0;
+  for (const k in memo) if (k.startsWith(T.id + ":")) delete memo[k];
+  save(); updateHeader(); go(0, 1);
+}
+
+function questionCard(qi, n) {
+  const q = Q[qi];
+  const key = `${T.id}:${qi}`;
+  const nBlanks = q.p ? 1 : q.a.length;
+  let st = memo[key];
+  if (!st) {
+    const chips = shuffle(q.a.concat(q.d));
+    st = memo[key] = { chips, filled: Array(nBlanks).fill(null), locked: Array(nBlanks).fill(false), tries: 0, done: false };
+    if (S.solved[qi]) { // already solved earlier: show it completed
+      const used = new Set();
+      q.a.forEach((ans, i) => { const ci = chips.findIndex((c, k) => c === ans && !used.has(k)); used.add(ci); st.filled[i] = ci; st.locked[i] = true; });
+      st.done = true;
+    }
+  }
+  const el = document.createElement("section");
+  el.className = "card";
+  const kind = q.p ? "Predict output" : "Fill the gaps";
+  const codeHTML = q.p ? hl(q.c)
+    : q.c.split(/\{\{(\d+)\}\}/).map((part, k) => k % 2 ? `<span class="slot" data-i="${part}"></span>` : hl(part)).join("");
+  const files = Object.entries(q.f || {}).map(([name, txt]) =>
+    `<div class="file"><div class="fh">${FILE_IC}${esc(name)}</div><pre>${fileText(txt)}</pre></div>`).join("");
+  const typed = q.i ? `<div class="typed"><span class="lab">${KEY_IC}User types</span>${q.i.map(v => v === "" ? '<span class="key empty">Enter only</span>' : `<span class="key">${esc(v)}</span>`).join("")}</div>` : "";
+  const promptNote = q.i ? " <small>(input prompts not shown)</small>" : "";
+  const fileOut = Object.entries(q.fo || {}).map(([name, txt]) =>
+    `<div class="term fo"><div class="lab"><span class="fname">${esc(name)}</span> <span class="fs">should contain</span></div><pre>${fileText(txt)}</pre></div>`).join("");
+  const showOut = !q.p && (q.o !== "" || !q.fo);
+
+  el.innerHTML = `
+    <div class="meta"><span class="pill">${esc(q.t)}</span><span class="pill kind">${kind}</span><span class="num">#${n + 1}</span></div>
+    <h2 class="task">${fmt(q.q)}</h2>
+    ${files}
+    <div class="win"><div class="win-h"><i></i><i></i><i></i><span>main.py</span></div><pre class="code">${codeHTML}</pre></div>
+    ${typed}
+    ${q.p
+      ? `<div class="term predict"><div class="lab">Output${promptNote}</div><div class="row"><span class="slot" data-i="0"></span></div></div>`
+      : (showOut ? `<div class="term out"><div class="lab">Should print${promptNote}</div><pre>${q.o === "" ? '<span class="eol">(nothing)</span>' : esc(q.o)}</pre></div>` : "")}
+    ${fileOut}
+    <div class="tray">${st.chips.map((c, k) => `<div class="chip" data-k="${k}">${q.p ? esc(c) : hl(c)}</div>`).join("")}</div>
+    <div class="foot">
+      <div class="msg"></div>
+      <div class="why"></div>
+      <div class="btns"></div>
+    </div>`;
+
+  const slots = [...el.querySelectorAll(".slot")];
+  const chipEls = [...el.querySelectorAll(".chip")];
+  const msg = $(".msg", el), why = $(".why", el), btns = $(".btns", el);
+  let selSlot = null;
+
+  function render() {
+    slots.forEach((s, i) => {
+      const ci = st.filled[i];
+      s.classList.toggle("filled", ci !== null);
+      s.classList.toggle("good", st.locked[i]);
+      s.classList.toggle("sel", selSlot === i);
+      s.innerHTML = ci === null ? "" : (q.p ? esc(st.chips[ci]) : hl(st.chips[ci]));
+    });
+    const used = new Set(st.filled.filter(x => x !== null));
+    chipEls.forEach((c, k) => c.classList.toggle("used", used.has(k)));
+    fitCode();
+  }
+
+  function fitCode() {
+    const pre = $("pre.code", el);
+    const longest = Math.max(...pre.textContent.split("\n").map(l => l.length)) + 1;
+    const w = pre.clientWidth - 24;
+    if (!w) return;
+    let size = Math.max(10, Math.min(16, w / (longest * 0.6)));
+    pre.style.fontSize = size.toFixed(1) + "px";
+    // the estimate can be a little off: shrink until nothing overflows
+    while (pre.scrollWidth > pre.clientWidth + 1 && size > 9.5) {
+      size -= 0.5; pre.style.fontSize = size.toFixed(1) + "px";
+    }
+  }
+  el._fit = fitCode;
+
+  function setButtons() {
+    if (st.done) {
+      btns.innerHTML = `<button class="btn primary" data-act="next"><span class="fill"></span><span>Next ↓</span></button>`;
+    } else {
+      btns.innerHTML = (st.tries >= 2 ? `<button class="btn" data-act="show"><span>Show answer</span></button>` : "") +
+        `<button class="btn" data-act="skip"><span>Skip ↓</span></button>`;
+    }
+  }
+
+  function showWhy(revealed) {
+    why.className = "why show" + (revealed ? " shown" : "");
+    why.innerHTML = `<b>${revealed ? "Answer shown." : pick(["Nailed it!", "Correct!", "Spot on!", "Yes!", "Lovely."])}</b> ${fmt(q.w)}`;
+    const out = $(".term.out", el);
+    if (out) out.querySelector(".lab").innerHTML = "Output ▶" + promptNote;
+    el.querySelectorAll(".term.fo .fs").forEach(l => { l.textContent = "now contains ✓"; });
+  }
+
+  function place(k, i) {
+    if (st.done) return;
+    if (i === undefined) {
+      i = selSlot !== null && !st.locked[selSlot] ? selSlot : st.filled.findIndex((x, j) => x === null && !st.locked[j]);
+      if (i < 0) return;
+    }
+    if (st.locked[i]) return;
+    st.filled[i] = k; selSlot = null;
+    msg.textContent = ""; msg.className = "msg";
+    render();
+    if (st.filled.every(x => x !== null)) check();
+  }
+
+  const scrollDown = () => setTimeout(() => el.scrollTo({ top: el.scrollHeight, behavior: "smooth" }), 50);
+
+  function check() {
+    const right = st.filled.map((ci, i) => st.chips[ci] === q.a[i]);
+    if (right.every(Boolean)) {
+      st.done = true; st.locked = st.locked.map(() => true);
+      const firstTime = !S.solved[qi];
+      if (firstTime) {
+        S.solved[qi] = st.tries === 0 ? "first" : "retry";
+        if (st.tries === 0) { S.streak++; S.best = Math.max(S.best, S.streak); }
+      }
+      save(); updateHeader(); render();
+      el.classList.add("solved");
+      showWhy(false); setButtons(); buzz(30); scrollDown();
+      if (firstTime && st.tries === 0 && S.streak > 1 && S.streak % 5 === 0) toast(`🔥 ${S.streak} in a row!`);
+      startAuto();
+    } else {
+      st.tries++; S.streak = 0; save(); updateHeader(); buzz([40, 60, 40]);
+      right.forEach((ok, i) => { if (ok) st.locked[i] = true; });
+      render();
+      slots.forEach((s, i) => { if (!right[i]) s.classList.add("bad"); });
+      msg.className = "msg bad";
+      msg.textContent = right.some(Boolean) && nBlanks > 1 ? "Not quite. The green ones are right." : "Not quite. Try again!";
+      setTimeout(() => {
+        right.forEach((ok, i) => { if (!ok) st.filled[i] = null; });
+        slots.forEach(s => s.classList.remove("bad"));
+        render(); setButtons();
+      }, 700);
+    }
+  }
+
+  function startAuto() {
+    const fill = $(".fill", btns);
+    const ms = 4500;
+    fill.style.setProperty("--t", ms + "ms");
+    requestAnimationFrame(() => fill.classList.add("run"));
+    clearTimeout(autoTimer);
+    autoTimer = setTimeout(() => { if (current === el) next(); }, ms);
+  }
+  el._stopAuto = () => { clearTimeout(autoTimer); const f = $(".fill.run", btns); if (f) f.classList.remove("run"); };
+
+  btns.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]"); if (!b) return;
+    const a = b.dataset.act;
+    if (a === "next" || a === "skip") next();
+    else if (a === "show") {
+      const used = new Set();
+      st.filled = q.a.map(ans => { const k = st.chips.findIndex((c, j) => c === ans && !used.has(j)); used.add(k); return k; });
+      st.done = true; st.locked = st.locked.map(() => true);
+      if (!S.solved[qi]) S.solved[qi] = "shown";
+      save(); updateHeader(); render(); showWhy(true); setButtons(); msg.textContent = ""; scrollDown();
+    }
+  });
+  // tapping the explanation pauses the auto-advance so it can be read
+  why.addEventListener("pointerdown", () => el._stopAuto());
+
+  slots.forEach((s, i) => s.addEventListener("click", () => {
+    if (st.done || st.locked[i]) return;
+    if (st.filled[i] !== null) { st.filled[i] = null; selSlot = null; }
+    else selSlot = selSlot === i ? null : i;
+    render();
+  }));
+
+  chipEls.forEach(chip => chip.addEventListener("pointerdown", e => {
+    if (st.done || chip.classList.contains("used")) return;
+    e.preventDefault();
+    const k = +chip.dataset.k;
+    const sx = e.clientX, sy = e.clientY;
+    let ghost = null, over = null;
+    chip.setPointerCapture(e.pointerId);
+    const move = ev => {
+      if (!ghost && Math.hypot(ev.clientX - sx, ev.clientY - sy) > 6) {
+        ghost = chip.cloneNode(true); ghost.classList.add("ghost"); document.body.appendChild(ghost);
+        chip.classList.add("lifted");
+      }
+      if (!ghost) return;
+      ghost.style.left = ev.clientX + "px"; ghost.style.top = ev.clientY + "px";
+      const t = document.elementFromPoint(ev.clientX, ev.clientY);
+      const s = t && t.closest(".slot");
+      const ok = s && el.contains(s) && !st.locked[+s.dataset.i] ? s : nearestSlot(ev.clientX, ev.clientY);
+      if (ok !== over) { over && over.classList.remove("over"); over = ok; over && over.classList.add("over"); }
+    };
+    const up = ev => {
+      chip.removeEventListener("pointermove", move);
+      chip.removeEventListener("pointerup", up);
+      chip.removeEventListener("pointercancel", up);
+      chip.classList.remove("lifted");
+      over && over.classList.remove("over");
+      if (ghost) { ghost.remove(); if (over && ev.type === "pointerup") place(k, +over.dataset.i); }
+      else if (ev.type === "pointerup") place(k);
+    };
+    chip.addEventListener("pointermove", move);
+    chip.addEventListener("pointerup", up);
+    chip.addEventListener("pointercancel", up);
+  }));
+
+  // forgiving drop: snap to a nearby open slot within 40px
+  function nearestSlot(x, y) {
+    let best = null, bd = 40;
+    slots.forEach((s, i) => {
+      if (st.locked[i]) return;
+      const r = s.getBoundingClientRect();
+      const dx = Math.max(r.left - x, 0, x - r.right), dy = Math.max(r.top - y, 0, y - r.bottom);
+      const d = Math.hypot(dx, dy);
+      if (d < bd) { bd = d; best = s; }
+    });
+    return best;
+  }
+
+  render(); setButtons();
+  if (st.done) { el.classList.add("solved"); showWhy(S.solved[qi] === "shown"); }
+  return el;
+}
+
+// pos: -2 = home (theme picker), -1 = theme start card, 0..n-1 = questions, n = end card
+let pos = -2;
+function makeCard(p) {
+  if (p <= -2 || !T) return homeCard();
+  if (p === -1) return startCard();
+  if (p >= S.order.length) return endCard();
+  return questionCard(S.order[p], p);
+}
+
+// ---------- navigation ----------
+let busy = false;
+function go(p, dir, force) {
+  if (busy) return;
+  const min = T ? -1 : -2;
+  p = Math.max(min, Math.min(T ? S.order.length : -2, p));
+  if (current && p === pos && !force) return;
+  clearTimeout(autoTimer);
+  const el = makeCard(p);
+  const old = current;
+  if (old) {
+    busy = true;
+    el.classList.add("noanim", dir > 0 ? "below" : "above");
+    stage.appendChild(el);
+    el.offsetHeight; // reflow
+    el.classList.remove("noanim");
+    requestAnimationFrame(() => {
+      el.classList.remove("below", "above");
+      old.classList.add(dir > 0 ? "above" : "below");
+    });
+    setTimeout(() => { old.remove(); busy = false; }, 470);
+  } else stage.appendChild(el);
+  current = el; pos = p;
+  if (T && p >= 0 && p < S.order.length) { S.pos = p; save(); }
+  el._fit && requestAnimationFrame(el._fit);
+}
+const next = () => { if (pos >= -1) go(pos + 1, 1); };
+const prev = () => {
+  if (pos === -1) goHome();
+  else if (pos >= 0) go(pos - 1, -1);
+};
+
+function openTheme(id, instant) {
+  const t = themeById(id); if (!t) return;
+  T = t; Q = CodeSwipe.banks[id]; S = loadTheme(id);
+  G.last = id; lsSet(LS, G);
+  try { history.replaceState(null, "", "#" + id); } catch (e) {}
+  updateHeader();
+  go(-1, 1, true);
+}
+function goHome() {
+  T = null; Q = []; S = null;
+  try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+  updateHeader();
+  go(-2, -1, true);
+}
+
+// swipe (touch), wheel and keys
+let ts = null;
+stage.addEventListener("touchstart", e => {
+  if (e.touches.length !== 1 || e.target.closest(".chip,.slot")) { ts = null; return; }
+  const c = current;
+  ts = { y: e.touches[0].clientY, x: e.touches[0].clientX, t: Date.now(),
+    top: c.scrollTop <= 1, bottom: c.scrollTop + c.clientHeight >= c.scrollHeight - 2 };
+}, { passive: true });
+stage.addEventListener("touchend", e => {
+  if (!ts) return;
+  const t = e.changedTouches[0];
+  const dy = t.clientY - ts.y, dx = t.clientX - ts.x, dt = Date.now() - ts.t;
+  if (Math.abs(dy) > 60 && Math.abs(dy) > Math.abs(dx) * 1.5 && dt < 700) {
+    if (dy < 0 && ts.bottom) next();
+    else if (dy > 0 && ts.top) prev();
+  }
+  ts = null;
+}, { passive: true });
+let wheelLock = 0;
+stage.addEventListener("wheel", e => {
+  const c = current; if (!c || Math.abs(e.deltaY) < 30 || Date.now() < wheelLock) return;
+  const top = c.scrollTop <= 1, bottom = c.scrollTop + c.clientHeight >= c.scrollHeight - 2;
+  if (e.deltaY > 0 && bottom) { wheelLock = Date.now() + 700; next(); }
+  else if (e.deltaY < 0 && top) { wheelLock = Date.now() + 700; prev(); }
+}, { passive: true });
+document.addEventListener("keydown", e => {
+  if ($("#sheet").classList.contains("open")) { if (e.key === "Escape") closeMenu(); return; }
+  if (e.key === "ArrowDown" || e.key === "PageDown") { e.preventDefault(); next(); }
+  else if (e.key === "ArrowUp" || e.key === "PageUp") { e.preventDefault(); prev(); }
+});
+window.addEventListener("resize", () => current && current._fit && current._fit());
+
+// ---------- menu ----------
+let picked = [];
+function openMenu() {
+  if (!T) { toast("Pick a theme first"); return; }
+  picked = S.topics.slice();
+  $("#sheetTitle").textContent = T.name;
+  renderTopics();
+  $("#scrim").classList.add("open"); $("#sheet").classList.add("open");
+  current && current._stopAuto && current._stopAuto();
+}
+function closeMenu() { $("#scrim").classList.remove("open"); $("#sheet").classList.remove("open"); }
+function renderTopics() {
+  const topics = [...new Set(Q.map(q => q.t))];
+  $("#topics").innerHTML = `<button class="topic ${picked.length === topics.length ? "on" : ""}" data-t="*">All<small>${Q.length}</small></button>` +
+    topics.map(t => `<button class="topic ${picked.includes(t) ? "on" : ""}" data-t="${esc(t)}">${esc(t)}<small>${Q.filter(q => q.t === t).length}</small></button>`).join("");
+}
+$("#topics").addEventListener("click", e => {
+  const b = e.target.closest(".topic"); if (!b) return;
+  const topics = [...new Set(Q.map(q => q.t))];
+  const t = b.dataset.t;
+  if (t === "*") picked = picked.length === topics.length ? [] : topics.slice();
+  else picked = picked.includes(t) ? picked.filter(x => x !== t) : picked.concat(t);
+  renderTopics();
+});
+$("#menuBtn").addEventListener("click", openMenu);
+$("#brand").addEventListener("click", () => { if (T) goHome(); });
+$("#scrim").addEventListener("click", closeMenu);
+$("#homeBtn").addEventListener("click", () => { closeMenu(); goHome(); });
+$("#applyBtn").addEventListener("click", () => {
+  if (!picked.length) { toast("Pick at least one topic"); return; }
+  S.topics = picked.slice(); closeMenu(); newDeck();
+});
+$("#resetBtn").addEventListener("click", () => {
+  S.solved = {}; S.streak = 0; S.best = 0;
+  for (const k in memo) if (k.startsWith(T.id + ":")) delete memo[k];
+  closeMenu(); newDeck(); toast("Progress reset");
+});
+
+updateHeader();
+window.addEventListener("hashchange", () => {
+  const id = location.hash.slice(1);
+  if (themeById(id) && (!T || T.id !== id)) openTheme(id);
+  else if (!id && T) goHome();
+});
+const start = location.hash.slice(1);
+if (themeById(start)) openTheme(start); else go(-2, 1);
+})();
+</script>
+</body>
+</html>
