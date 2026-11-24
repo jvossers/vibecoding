@@ -403,7 +403,7 @@ c:`temps = [12, 15, 9]
 with open("t.txt", "w") as f:
     for t in temps:
         print({{0}}, file=f)`, a:["t"], d:["temps","str(temps)","[t]"], o:"", fo:{"t.txt":"12\n15\n9\n"},
-w:"print(t, file=f) turns the number into text and adds a newline, so no str() or "\\n" is needed here."},
+w:"print(t, file=f) turns the number into text and adds a newline, so no str() or \"\\n\" is needed here."},
 
 {t:"Appending", q:"Add logout to the end of the log.", f:{"log.txt":"login\n"},
 c:`f = open("log.txt", {{0}})
