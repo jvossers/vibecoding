@@ -3,7 +3,8 @@
 
   "hidden": [
     "chatreel",
-    "workspace-demo"
+    "workspace-demo",
+    "strings"
   ],
 
   "projects": {
@@ -18,6 +19,7 @@
     "contraption":   { "title": "Contraption",            "group": "Toys & games", "description": "Build Rube Goldberg machines from ramps, balls, belts and a cat, then watch them run." },
     "cricket":       { "title": "Cricket, Top Down",      "group": "Explainers",   "description": "Cricket explained from the one-sentence version down, with a match, field and wicket simulator." },
     "cpu":           { "title": "CPU & RAM Simulator",    "group": "Teaching",     "description": "Step through how a CPU fetches and runs instructions from memory." },
+    "codeswipe":     { "title": "Code Swipe",             "group": "Teaching",     "description": "Swipe through drag-and-drop Python puzzles for OCR GCSE Computer Science Paper 2, by theme." },
     "cpuvsgpu":      { "title": "CPU vs GPU",             "group": "Explainers",   "description": "Interactive 3D explainer on CPUs vs GPUs, and why crypto mining and AI need GPUs." },
     "cs":            { "title": "GCSE CS Simulations",    "group": "Teaching",     "description": "Interactive simulations for the OCR GCSE Computer Science course." },
     "dailycheck":    { "title": "Vinker",                 "group": "Tools",        "description": "A daily checklist for tasks you repeat several times a day." },
@@ -36,7 +38,6 @@
     "pillartwordle": { "title": "Pillar Twordle",         "group": "Toys & games", "description": "A Wordle-style game about the global minimum tax." },
     "routerswitch":  { "title": "Routers vs Switches",    "group": "Teaching",     "description": "Send packets across two LANs and see how switches and routers differ, for OCR GCSE." },
     "rivercrossing": { "title": "River Crossing",         "group": "Toys & games", "description": "The classic river-crossing logic puzzle." },
-    "strings":       { "title": "String Swipe",           "group": "Teaching",     "description": "Swipe through 150 drag-and-drop Python string puzzles for OCR GCSE Computer Science." },
     "stikstof":      { "title": "Stikstof",               "group": "Explainers",   "description": "Visual explainer, in Dutch and English, on the nitrogen crisis and why the UK doesn't have one." },
     "tilt":          { "title": "Tilt",                   "group": "Toys & games", "description": "Particle toys that pour, swirl and scatter as you move your phone." },
     "timeline":      { "title": "Timeline Puzzle",        "group": "Toys & games", "description": "Drag historical events into the right order." },
