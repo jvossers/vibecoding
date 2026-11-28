@@ -31,6 +31,7 @@
     "fidget":        { "title": "Spiral Ball",            "group": "Toys & games", "description": "Orbit, pull apart and customise a 3D model of a twisted fidget ball, rebuilt from photos." },
     "geo":           { "title": "Geography Blackjack",    "group": "Toys & games", "description": "Fill a target country with other countries' land area without going over 100%." },
     "http":          { "title": "HTTP Requests",          "group": "Teaching",     "description": "Ten click-along pages for watching HTTP requests in DevTools." },
+    "lyric-beat-editor": { "title": "Cadence",          "group": "Tools",        "description": "Fit lyrics to a beat grid, then practise rapping them over a clap track." },
     "mass":          { "title": "Understanding the Mass", "group": "Explainers",   "description": "A guided timeline through the structure of a Catholic Mass." },
     "mise":          { "title": "Mise",                   "group": "Tools",        "description": "Snap a recipe and see it as parallel prep streams that meet at the plate (simulated)." },
     "meanwhile":     { "title": "Meanwhile",              "group": "Explainers",   "description": "Compare countries, regions and people on a zoomable timeline of history." },
