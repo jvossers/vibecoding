@@ -57,6 +57,11 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 
 .link { background: none; border: 0; padding: 6px 2px; text-decoration: underline; text-underline-offset: 3px; color: var(--ink-soft); font-size: 14px; }
 
+.samples {
+  font: 400 14px/1 var(--display); color: var(--ink); background: var(--paper-2);
+  border: 1.5px solid var(--ink); border-radius: 999px; height: 40px; padding: 0 12px; max-width: 60%;
+}
+
 textarea {
   display: block; width: 100%; resize: vertical; min-height: 84px;
   font: 400 18px/1.4 var(--display); color: var(--ink);
