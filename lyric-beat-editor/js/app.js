@@ -5,6 +5,14 @@ import { Player } from './audio.js';
 const $ = id => document.getElementById(id);
 const STORE = 'lyric-beat-editor:v1';
 const SAMPLE = 'Snow fell, trains stopped. Noon came, trains ran.';
+const SAMPLES = [
+  ['Snow fell (one syllable each)', SAMPLE],
+  ['Heavy snowfall', 'Heavy snowfall halted local trains, but services resumed by noon.'],
+  ['Yesterday I wandered', 'Yesterday I wandered through the city, counting every window in the rain.'],
+  ['Tiny little raindrops', 'Tiny little raindrops tapping on the table, telling me a story, singing me a fable.'],
+  ['Coffee in the morning', 'Coffee in the morning, radio is humming, another busy Monday and the weekend is coming.'],
+  ['Complicated conversations', 'Complicated conversations, unexpected revelations, I remember every syllable you said.'],
+];
 
 // Hard-coded arrangement for the sample, so the page plays before any analysis runs.
 const sampleSyllables = () => ['Snow', 'fell', 'trains', 'stopped', 'Noon', 'came', 'trains', 'ran'].map((w, i) => ({
@@ -351,9 +359,12 @@ async function doFit() {
 
 $('fitBtn').addEventListener('click', doFit);
 $('source').addEventListener('input', () => { state.source = $('source').value; renderWorking(); save(); });
-$('sampleBtn').addEventListener('click', () => {
-  if (player.playing) return;
-  $('source').value = SAMPLE;
+SAMPLES.forEach(([name], i) => $('sampleSel').add(new Option(name, i)));
+$('sampleSel').addEventListener('change', e => {
+  const pick = SAMPLES[e.target.value];
+  e.target.value = '';
+  if (!pick || player.playing) return;
+  $('source').value = pick[1];
   doFit();
 });
 
@@ -431,7 +442,7 @@ $('cuesBtn').addEventListener('click', e => toggle('cues', e.currentTarget));
 
 /* ---------------- playback ---------------- */
 
-const LOCKED = ['fitBtn', 'sampleBtn', 'barsDown', 'barsUp', 'bpm', 'bpmDown', 'bpmUp', 'loopBtn', 'cuesBtn'];
+const LOCKED = ['fitBtn', 'sampleSel', 'barsDown', 'barsUp', 'bpm', 'bpmDown', 'bpmUp', 'loopBtn', 'cuesBtn'];
 
 async function play() {
   select(null);
