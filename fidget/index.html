@@ -4,42 +4,75 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#0c1110">
-<meta name="description" content="Orbit and extend a 3D reconstruction of a green-gold spiral ball fidget, modelled from photographs.">
+<meta name="description" content="Orbit, extend and customise a 3D reconstruction of a green-gold spiral ball fidget, modelled from photographs.">
 <title>Spiral Ball</title>
 <style>
-  :root { --ink:#e9efe6; --dim:#93a39a; --line:rgba(233,239,230,.16); --gold:#d9cf48; --panel:rgba(14,22,19,.72); }
+  :root { --ink:#e9efe6; --dim:#93a39a; --line:rgba(233,239,230,.16); --gold:#d9cf48; --panel:rgba(14,22,19,.72); --bar:72px; }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html,body { height:100%; margin:0; overflow:hidden; background:#0c1110; color:var(--ink);
     font:15px/1.4 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overscroll-behavior:none; }
   canvas { position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; outline:none; }
-  button { font:inherit; color:inherit; background:var(--panel); border:1px solid var(--line); border-radius:999px;
+  button, select { font:inherit; color:inherit; }
+  button { background:var(--panel); border:1px solid var(--line); border-radius:999px;
     min-width:44px; height:44px; padding:0 14px; display:inline-flex; align-items:center; justify-content:center; gap:6px;
     backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); cursor:pointer; }
   button:active { background:rgba(40,60,52,.9); }
-  button[aria-pressed="true"] { border-color:var(--gold); color:var(--gold); }
-  button:focus-visible, input:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+  button[aria-pressed="true"], button[aria-expanded="true"] { border-color:var(--gold); color:var(--gold); }
+  button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
   svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
   .top { position:fixed; top:calc(10px + env(safe-area-inset-top)); right:calc(10px + env(safe-area-inset-right));
-    display:flex; gap:8px; }
-  .top button { padding:0; width:44px; }
+    left:calc(10px + env(safe-area-inset-left)); display:flex; gap:8px; justify-content:flex-end; pointer-events:none; }
+  .top button { padding:0; width:44px; pointer-events:auto; flex:none; }
   .bottom { position:fixed; left:0; right:0; bottom:0; display:flex; align-items:center; gap:10px;
     padding:10px calc(12px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
     background:linear-gradient(transparent, rgba(8,12,11,.75) 45%); }
   .bottom button { padding:0; width:48px; height:48px; flex:none; }
-  input[type=range] { flex:1; min-width:0; height:48px; margin:0; background:transparent; -webkit-appearance:none; appearance:none; touch-action:none; }
-  input[type=range]::-webkit-slider-runnable-track { height:6px; border-radius:3px; background:linear-gradient(90deg,#327d70,var(--gold)); }
-  input[type=range]::-moz-range-track { height:6px; border-radius:3px; background:linear-gradient(90deg,#327d70,var(--gold)); }
-  input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:28px; height:28px; margin-top:-11px; border-radius:50%;
+  input[type=range] { flex:1; min-width:0; height:36px; margin:0; background:transparent; -webkit-appearance:none; appearance:none; }
+  #ext { height:48px; touch-action:none; }
+  input[type=range]::-webkit-slider-runnable-track { height:6px; border-radius:3px; background:rgba(233,239,230,.22); }
+  input[type=range]::-moz-range-track { height:6px; border-radius:3px; background:rgba(233,239,230,.22); }
+  #ext::-webkit-slider-runnable-track { background:linear-gradient(90deg,#327d70,var(--gold)); }
+  #ext::-moz-range-track { background:linear-gradient(90deg,#327d70,var(--gold)); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:24px; height:24px; margin-top:-9px; border-radius:50%;
     background:#e9efe6; border:3px solid #16241f; box-shadow:0 2px 8px rgba(0,0,0,.5); }
-  input[type=range]::-moz-range-thumb { width:24px; height:24px; border-radius:50%; background:#e9efe6; border:3px solid #16241f; }
-  #about { position:fixed; left:12px; right:12px; top:calc(64px + env(safe-area-inset-top)); max-width:440px; margin-left:auto;
-    padding:16px 18px; background:rgba(14,22,19,.92); border:1px solid var(--line); border-radius:14px;
-    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); max-height:60vh; overflow:auto; }
-  #about[hidden] { display:none; }
+  #ext::-webkit-slider-thumb { width:28px; height:28px; margin-top:-11px; }
+  input[type=range]::-moz-range-thumb { width:20px; height:20px; border-radius:50%; background:#e9efe6; border:3px solid #16241f; }
+
+  .sheet { position:fixed; background:rgba(14,22,19,.93); border:1px solid var(--line);
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); overflow:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
+  .sheet[hidden] { display:none; }
+  #about { left:12px; right:12px; top:calc(64px + env(safe-area-inset-top)); max-width:440px; margin-left:auto;
+    padding:16px 18px; border-radius:14px; max-height:60vh; }
   #about h1 { font-size:16px; margin:0 0 8px; }
   #about p { margin:0 0 8px; color:var(--dim); font-size:14px; }
   #about p:last-child { margin:0; }
   #about b { color:var(--ink); font-weight:600; }
+  #panel { left:0; right:0; bottom:calc(var(--bar) + env(safe-area-inset-bottom)); height:44vh; border-width:1px 0;
+    border-radius:16px 16px 0 0; padding:10px calc(14px + env(safe-area-inset-right)) 14px calc(14px + env(safe-area-inset-left)); }
+  @media (min-width:760px) {
+    #panel { left:auto; right:12px; top:calc(64px + env(safe-area-inset-top)); bottom:calc(var(--bar) + 8px); height:auto; width:340px;
+      border-width:1px; border-radius:14px; padding:10px 14px 14px; }
+    .chips { flex-wrap:wrap; }
+  }
+  .chips { display:flex; gap:8px; overflow-x:auto; padding:4px 0 8px; scrollbar-width:none; }
+  .chips::-webkit-scrollbar { display:none; }
+  .chips button { height:36px; min-width:0; padding:0 12px; font-size:13px; flex:none; background:rgba(233,239,230,.07); backdrop-filter:none; }
+  .chips .sw { width:14px; height:14px; border-radius:50%; border:1px solid rgba(255,255,255,.35); }
+  .chiplabel { font-size:12px; color:var(--dim); text-transform:uppercase; letter-spacing:.06em; margin-top:6px; }
+  details { border-top:1px solid var(--line); }
+  summary { list-style:none; cursor:pointer; padding:12px 2px; font-weight:600; display:flex; justify-content:space-between; align-items:center; }
+  summary::-webkit-details-marker { display:none; }
+  summary::after { content:"+"; color:var(--dim); font-weight:400; font-size:18px; }
+  details[open] summary::after { content:"–"; }
+  .row { display:grid; grid-template-columns:1fr auto; align-items:center; column-gap:10px; padding:2px 2px 8px; }
+  .row label { font-size:13px; color:var(--dim); }
+  .row output { font-size:13px; font-variant-numeric:tabular-nums; }
+  .row input[type=range] { grid-column:1 / -1; width:100%; }
+  .row input[type=color] { width:52px; height:32px; padding:0; border:1px solid var(--line); border-radius:8px; background:none; }
+  .row input[type=checkbox] { width:22px; height:22px; accent-color:var(--gold); }
+  .row select { background:#16211d; border:1px solid var(--line); border-radius:8px; height:34px; padding:0 8px; max-width:190px; }
+  .actions { display:flex; gap:8px; flex-wrap:wrap; padding:12px 0 2px; border-top:1px solid var(--line); }
+  .actions button { height:40px; font-size:13px; flex:1; white-space:nowrap; background:rgba(233,239,230,.07); backdrop-filter:none; }
   #err { position:fixed; inset:0; display:none; place-items:center; padding:24px; text-align:center; color:var(--dim); }
 </style>
 </head>
@@ -48,6 +81,7 @@
 <div id="err">This page needs WebGL and a network connection to load the 3D library.</div>
 
 <div class="top">
+  <button id="tune" title="Customise" aria-label="Customise" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></button>
   <button id="views" title="Next view" aria-label="Next view"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></button>
   <button id="spin" title="Turntable" aria-label="Turntable" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
   <button id="reset" title="Reset view" aria-label="Reset view"><svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8"/><path d="M6 10v9h12v-9"/></svg></button>
@@ -55,13 +89,15 @@
   <button id="info" title="About this model" aria-label="About this model" aria-expanded="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button>
 </div>
 
-<div id="about" hidden>
+<div id="about" class="sheet" hidden>
   <h1>Spiral ball fidget</h1>
-  <p>A reconstruction modelled from nine photographs of a 3D-printed toy. It is a close visual match, not a copy of the original design file.</p>
+  <p>A reconstruction modelled from photographs of a 3D-printed toy. It is a close visual match, not a copy of the original design file.</p>
   <p><b>Seen in the photos:</b> the ball shape, the 5 × 5 grid of twisted columns, the slotted frames and the silk green–gold finish.</p>
   <p><b>Assumed:</b> the exact proportions, the amount of twist, which side each slot opens on, how far each piece travels and the order in which pieces follow the centre one. The retaining pins inside are hidden and not modelled.</p>
-  <p>Drag to orbit, pinch or scroll to zoom, two fingers (or right-drag) to pan.</p>
+  <p>Drag to orbit, pinch or scroll to zoom, two fingers (or right-drag) to pan. The sliders button opens every setting; your changes are kept in the page link, so you can share a design.</p>
 </div>
+
+<div id="panel" class="sheet" hidden aria-label="Customise"></div>
 
 <div class="bottom">
   <button id="play" title="Play" aria-label="Play extension"><svg viewBox="0 0 24 24" id="playIcon"><path d="M7 4l13 8-13 8z"/></svg></button>
@@ -81,39 +117,88 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { toCreasedNormals } from 'three/addons/utils/BufferGeometryUtils.js';
 
 /* ------------------------------------------------------------------
-   Working parameters. Everything here is fitted by eye to the photos;
-   none of it is measured. Units: compact maximum diameter = 1.
+   Parameters. The defaults are fitted by eye to the photos; none are
+   measured. Units: maximum diameter = 1. Every entry in SCHEMA gets a
+   control in the Customise panel and is saved in the URL hash.
    ------------------------------------------------------------------ */
-const P = {
-  grid: 5,                 // pieces per side (5 x 5 = 25 candidate pieces)
-  cuts: [0.085, 0.255],    // distance of the grid cuts from the axis (inner cells 0.17 wide)
-  gap: 0.014,              // clearance between neighbouring pieces
-  radius: 0.5,             // maximum radius
-  girthY: 0,               // height of maximum girth
-  topLen: 0.5,             // half-length above the girth (0.5 = sphere)
-  tailLen: 0.5,            // half-length below the girth (0.5 = sphere)
-  twist: -1.9,             // radians of twist per unit length (sign = handedness)
-  wall: 0.042,             // slot side-wall thickness
-  slotWidth: 0.072,        // slot opening width on the outer pieces
-  slotStart: 0.46,         // slot start, as a fraction of each piece's length
-  bridge: 0.045,           // end-bridge length
-  step: 0.25,              // travel of each piece relative to its neighbour
-  perim: 6,                // mesh samples per cell side
-  arc: 5,                  // mesh samples per corner of outer skin
-  slices: 64,              // mesh samples along a full piece
-  layerFreq: 150,          // print layers per unit length
-  slotOverride: {}         // e.g. { "2,2": "A" } to force a slot orientation per cell
+const DEF = {
+  // shape
+  topLen: 0.5, tailLen: 0.5, point: 0, twist: -1.9,
+  // grid
+  grid: 5, spread: 0.51, gap: 0.014,
+  // slots
+  slots: true, wall: 0.042, slotWidth: 0.072, slotStart: 0.46, bridge: 0.045,
+  // motion
+  step: 0.25, order: 'diamond', staged: true, playSeconds: 5, spinSpeed: 1.6,
+  // finish
+  body: '#389573', shiftColor: '#d1c54a', shift: 0.75, metalness: 0.55, roughness: 0.33, clearcoat: 0.25,
+  layerAmp: 0.10, layerFreq: 150,
+  // scene
+  background: '#0c1110', exposure: 1.05, envIntensity: 0.9, shadows: true, detail: 64
+};
+const P = { ...DEF, radius: 0.5, girthY: 0, perim: 6, arc: 5, slices: 64, slotOverride: {} };
+
+// [group, key, label, min, max, step] · colours, checkboxes and selects are inferred from the default's type
+const G = 1, L = 2;                           // G = rebuilds the mesh, L = look / motion only
+const SCHEMA = [
+  ['Shape', 'topLen', 'Top height', 0.2, 1.2, 0.01, G],
+  ['Shape', 'tailLen', 'Bottom height', 0.2, 1.8, 0.01, G],
+  ['Shape', 'point', 'Bottom pointiness', 0, 1, 0.01, G],
+  ['Shape', 'twist', 'Twist (sign sets direction)', -4, 4, 0.05, G],
+  ['Grid', 'grid', 'Pieces per side', 2, 9, 1, G],
+  ['Grid', 'spread', 'Grid spread', 0.2, 0.85, 0.01, G],
+  ['Grid', 'gap', 'Gap between pieces', 0.004, 0.05, 0.001, G],
+  ['Slots', 'slots', 'Cut slots', 0, 0, 0, G],
+  ['Slots', 'wall', 'Wall thickness', 0.015, 0.08, 0.001, G],
+  ['Slots', 'slotWidth', 'Slot width on outer pieces', 0.03, 0.14, 0.001, G],
+  ['Slots', 'slotStart', 'Slot start along piece', 0.1, 0.8, 0.01, G],
+  ['Slots', 'bridge', 'End bridge length', 0.02, 0.2, 0.005, G],
+  ['Motion', 'step', 'Travel per piece', 0.03, 0.7, 0.01, L],
+  ['Motion', 'order', 'Pull order', { diamond: 'Centre first (diamond)', rings: 'Centre first (rings)', corner: 'From one corner', edge: 'From one edge', spiral: 'One at a time (spiral)' }, 0, 0, L],
+  ['Motion', 'staged', 'Pieces follow one by one', 0, 0, 0, L],
+  ['Motion', 'playSeconds', 'Play duration (s)', 1, 20, 0.5, L],
+  ['Motion', 'spinSpeed', 'Turntable speed', -8, 8, 0.1, L],
+  ['Finish', 'body', 'Body colour', 0, 0, 0, L],
+  ['Finish', 'shiftColor', 'Highlight colour', 0, 0, 0, L],
+  ['Finish', 'shift', 'Colour shift strength', 0, 1.5, 0.01, L],
+  ['Finish', 'metalness', 'Metallic', 0, 1, 0.01, L],
+  ['Finish', 'roughness', 'Roughness', 0.05, 1, 0.01, L],
+  ['Finish', 'clearcoat', 'Gloss coat', 0, 1, 0.01, L],
+  ['Finish', 'layerAmp', 'Print line depth', 0, 0.4, 0.01, L],
+  ['Finish', 'layerFreq', 'Print lines per unit', 30, 300, 1, L],
+  ['Scene', 'background', 'Background', 0, 0, 0, L],
+  ['Scene', 'exposure', 'Brightness', 0.4, 2.2, 0.01, L],
+  ['Scene', 'envIntensity', 'Reflections', 0, 2, 0.01, L],
+  ['Scene', 'shadows', 'Shadows', 0, 0, 0, L],
+  ['Scene', 'detail', 'Mesh detail', 20, 110, 1, G]
+];
+const SHAPES = {
+  Ball: { topLen: 0.5, tailLen: 0.5, point: 0, twist: -1.9, step: 0.25 },
+  Egg: { topLen: 0.5, tailLen: 0.8, point: 0.9, twist: -1.7, step: 0.29 },
+  Teardrop: { topLen: 0.45, tailLen: 1.4, point: 1, twist: -1.3, step: 0.4 },
+  Lens: { topLen: 0.3, tailLen: 0.3, point: 0, twist: -2.6, step: 0.16 },
+  Capsule: { topLen: 0.95, tailLen: 0.95, point: 0, twist: -1.2, step: 0.42 }
+};
+const COLOURS = {
+  'Green–gold': { body: '#389573', shiftColor: '#d1c54a', background: '#0c1110' },
+  'Blue–violet': { body: '#2f55c8', shiftColor: '#d05ad8', background: '#0b0d14' },
+  'Copper–rose': { body: '#b0502c', shiftColor: '#f2c27a', background: '#120d0b' },
+  'Red–gold': { body: '#b32630', shiftColor: '#f0c040', background: '#120b0b' },
+  'Graphite': { body: '#4a4f57', shiftColor: '#d6dde8', background: '#0d0e10' },
+  'Pearl': { body: '#d8d2c4', shiftColor: '#8fd0e8', background: '#20242a' }
 };
 
-/* ---------- ball profile ---------- */
-const Y_TOP = P.girthY + P.topLen, Y_BOT = P.girthY - P.tailLen;
+/* ---------- profile ---------- */
+let Y_TOP = 0.5, Y_BOT = -0.5;
 function radiusAt(y) {
   if (y >= P.girthY) {
     const s = (y - P.girthY) / P.topLen;
     return s >= 1 ? 0 : P.radius * Math.sqrt(1 - s * s);
   }
   const s = (P.girthY - y) / P.tailLen;
-  return s >= 1 ? 0 : P.radius * Math.sqrt(1 - s * s);
+  if (s >= 1) return 0;
+  const round = Math.sqrt(1 - s * s), sharp = Math.pow(Math.cos(s * Math.PI / 2), 0.72);
+  return P.radius * (round + (sharp - round) * P.point);
 }
 function solveY(target, yIn, yOut) {       // radiusAt(yIn) > target >= radiusAt(yOut)
   for (let i = 0; i < 40; i++) { const m = (yIn + yOut) / 2; if (radiusAt(m) > target) yIn = m; else yOut = m; }
@@ -204,20 +289,22 @@ function addSegment(out, rect, yLo, yHi) {
 }
 
 /* ---------- pieces ---------- */
-function cellBounds(k) {            // k = 0..4 → [lo, hi] in the untwisted section
-  const c = P.cuts, big = P.radius + 0.1, g = P.gap / 2;
-  const edges = [-big, -c[1], -c[0], c[0], c[1], big];
-  return [edges[k] + g, edges[k + 1] - g];
+function cellBounds(k) {            // k = 0..grid-1 → [lo, hi] in the untwisted section
+  const n = P.grid, big = P.radius + 0.1, g = P.gap / 2;
+  const cell = 2 * P.spread * P.radius / Math.max(1, n - 2);
+  const edge = e => e <= 0 ? -big : e >= n ? big : (e - n / 2) * cell;
+  return [edge(k) + g, edge(k + 1) - g];
 }
 function buildPiece(i, j) {
   const [x0, x1] = cellBounds(i), [z0, z1] = cellBounds(j);
+  if (x1 - x0 < 0.004 || z1 - z0 < 0.004) return null;
   const qx = Math.min(Math.max(0, x0), x1), qz = Math.min(Math.max(0, z0), z1);
   const dmin = Math.hypot(qx, qz);
   if (dmin >= P.radius - 1e-3) return null;
   const pa = solveY(dmin, P.girthY, Y_BOT), pb = solveY(dmin, P.girthY, Y_TOP);
   const last = P.grid - 1, outerI = i === 0 || i === last, outerJ = j === 0 || j === last;
-  // Inner pieces alternate A/B. Outer pieces open sideways so the ball's outer skin stays whole.
-  let orient = outerI && outerJ ? 'none' : outerI ? 'B' : outerJ ? 'A' : (i + j) % 2 === 0 ? 'A' : 'B';
+  // Inner pieces alternate A/B. Outer pieces open sideways so the outer skin stays whole.
+  let orient = !P.slots || (outerI && outerJ) ? 'none' : outerI ? 'B' : outerJ ? 'A' : (i + j) % 2 === 0 ? 'A' : 'B';
   orient = P.slotOverride[i + ',' + j] || orient;
   const out = { pos: [], idx: [] }, w = P.wall, sw = P.slotWidth;
   let sLo = pa + (pb - pa) * P.slotStart, sHi = pb - P.bridge;
@@ -227,7 +314,7 @@ function buildPiece(i, j) {
   let rails = [];
   if (orient === 'A') rails = span(z0, z1, outerJ, j === 0).map(r => [x0, x1, r[0], r[1]]);   // open through the x faces
   if (orient === 'B') rails = span(x0, x1, outerI, i === 0).map(r => [r[0], r[1], z0, z1]);   // open through the z faces
-  if (outerI || outerJ) {                                         // keep the slot where the skin wall spans the whole piece
+  if (orient !== 'none' && (outerI || outerJ)) {                  // keep the slot where the skin wall spans the whole piece
     const inner = outerI ? Math.abs(x0 > 0 ? x0 : x1) + w + sw : Math.abs(z0 > 0 ? z0 : z1) + w + sw;
     const far = outerI ? Math.max(Math.abs(z0), Math.abs(z1)) : Math.max(Math.abs(x0), Math.abs(x1));
     const d = Math.hypot(inner, far);
@@ -235,17 +322,22 @@ function buildPiece(i, j) {
       sHi = Math.min(sHi, solveY(d, P.girthY, Y_TOP) - 0.012);
       sLo = Math.max(sLo, solveY(d, P.girthY, Y_BOT) + 0.012);
     } else orient = 'none';
-  }
-  else {                                                          // inner pieces: end the slot below the domed end face
+  } else if (orient !== 'none') {                                 // inner pieces: keep the slot clear of both end faces
+    const width = orient === 'A' ? z1 - z0 : x1 - x0;
     const d = Math.hypot(Math.max(Math.abs(x0), Math.abs(x1)), Math.max(Math.abs(z0), Math.abs(z1)));
-    sHi = Math.min(sHi, solveY(d, P.girthY, Y_TOP) - 0.012);
+    if (width < 2 * w + 0.012 || d >= P.radius - 0.005) orient = 'none';
+    else {
+      sHi = Math.min(sHi, solveY(d, P.girthY, Y_TOP) - 0.012);
+      sLo = Math.max(sLo, solveY(d, P.girthY, Y_BOT) + 0.012);
+    }
   }
-  if (orient === 'none' || sHi - sLo < 0.08) { addSegment(out, [x0, x1, z0, z1], -9, 9); }
+  if (orient === 'none' || sHi - sLo < 0.06) { addSegment(out, [x0, x1, z0, z1], -9, 9); }
   else {
-    addSegment(out, [x0, x1, z0, z1], -9, sLo);                   // solid body, pointed end
-    addSegment(out, [x0, x1, z0, z1], sHi, 9);                    // end bridge, blunt end
+    addSegment(out, [x0, x1, z0, z1], -9, sLo);                   // solid body
+    addSegment(out, [x0, x1, z0, z1], sHi, 9);                    // end bridge
     for (const r of rails) addSegment(out, r, sLo - 0.002, sHi + 0.002);
   }
+  if (!out.idx.length) return null;
   let g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute(out.pos, 3));
   g.setIndex(out.idx);
@@ -260,109 +352,157 @@ try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPrefere
 catch (e) { document.getElementById('err').style.display = 'grid'; throw e; }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.05;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0c1110);
+scene.background = new THREE.Color();
 const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.03).texture;
 
-const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 50);
+const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 80);
 const key = new THREE.DirectionalLight(0xfff0d0, 2.6);            // warm key
 key.position.set(2.5, 4, 3);
 key.castShadow = true;
 key.shadow.mapSize.set(1024, 1024);
-Object.assign(key.shadow.camera, { left: -1.8, right: 1.8, top: 1.8, bottom: -1.8, near: 0.5, far: 12 });
 key.shadow.bias = -0.0004; key.shadow.normalBias = 0.006;
 scene.add(key);
 const fill = new THREE.DirectionalLight(0x9fd8ff, 0.9);           // cool fill
 fill.position.set(-3, 1, -2);
 scene.add(fill);
-const under = new THREE.DirectionalLight(0xd8ffe8, 0.7);         // soft light from below so the underside reads
+const under = new THREE.DirectionalLight(0xd8ffe8, 0.7);          // soft light from below so the underside reads
 under.position.set(1, -3, 2);
 scene.add(under);
 
-/* silk filament: dark green body, teal→gold shift towards grazing angles, fine layer lines */
-const material = new THREE.MeshPhysicalMaterial({
-  color: 0x1f5a45, metalness: 0.55, roughness: 0.33, clearcoat: 0.25, clearcoatRoughness: 0.35, envMapIntensity: 0.9
-});
+/* silk filament: body colour shifting towards the highlight colour at grazing angles, fine layer lines */
+const U = {
+  uFreq: { value: 1 }, uAmp: { value: 0.1 }, uShift: { value: 0.75 },
+  uBody: { value: new THREE.Color() }, uGlow: { value: new THREE.Color() }
+};
+const material = new THREE.MeshPhysicalMaterial({ color: 0xffffff, clearcoatRoughness: 0.35 });
 material.onBeforeCompile = sh => {
-  sh.uniforms.uFreq = { value: P.layerFreq * Math.PI * 2 };
+  Object.assign(sh.uniforms, U);
   sh.vertexShader = sh.vertexShader
     .replace('#include <common>', '#include <common>\nvarying vec3 vObj;\nvarying vec3 vUp;')
     .replace('#include <begin_vertex>', '#include <begin_vertex>\nvObj = position;\nvUp = normalMatrix * vec3(0.0, 1.0, 0.0);');
   sh.fragmentShader = sh.fragmentShader
-    .replace('#include <common>', '#include <common>\nvarying vec3 vObj;\nvarying vec3 vUp;\nuniform float uFreq;')
+    .replace('#include <common>', '#include <common>\nvarying vec3 vObj;\nvarying vec3 vUp;\nuniform float uFreq;\nuniform float uAmp;\nuniform float uShift;\nuniform vec3 uBody;\nuniform vec3 uGlow;')
     .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
       {
         float ph = vObj.y * uFreq;
         float fade = 1.0 - smoothstep(0.35, 1.3, fwidth(ph));
         vec3 up = normalize(vUp);
         float side = 1.0 - abs(dot(normal, up));
-        normal = normalize(normal + up * sin(ph) * 0.10 * fade * side);
+        normal = normalize(normal + up * sin(ph) * uAmp * fade * side);
         float f = pow(1.0 - abs(dot(normal, normalize(vViewPosition))), 2.6);
-        vec3 deep = vec3(0.016, 0.120, 0.070);
-        vec3 teal = vec3(0.040, 0.300, 0.170);
-        vec3 gold = vec3(0.640, 0.560, 0.070);
         float wob = 0.5 + 0.5 * sin(dot(normal, vec3(1.7, 2.3, 0.9)) * 2.2);
-        vec3 c = mix(deep, teal, wob);
-        diffuseColor.rgb = mix(c, gold, clamp(f * 0.75, 0.0, 1.0));
+        vec3 c = mix(uBody * 0.4, uBody, wob);
+        diffuseColor.rgb = mix(c, uGlow, clamp(f * uShift, 0.0, 1.0));
       }`);
 };
 
 const toy = new THREE.Group();
 scene.add(toy);
-const pieces = [];
-const mid = (P.grid - 1) / 2;
-for (let i = 0; i < P.grid; i++) for (let j = 0; j < P.grid; j++) {
-  const g = buildPiece(i, j);
-  if (!g) continue;
-  const mesh = new THREE.Mesh(g, material);
-  mesh.castShadow = mesh.receiveShadow = true;
-  mesh.name = `piece ${i},${j}`;
-  mesh.userData.tier = Math.abs(i - mid) + Math.abs(j - mid);     // steps away from the centre piece
-  toy.add(mesh);
-  pieces.push(mesh);
-}
-const maxTier = Math.max(...pieces.map(p => p.userData.tier));
-const maxTravel = maxTier * P.step;
+let pieces = [], maxTier = 1, maxTravel = 1, needsRender = true, ext = 0;
 
+function rebuild() {
+  Y_TOP = P.girthY + P.topLen; Y_BOT = P.girthY - P.tailLen;
+  P.grid = Math.round(P.grid);
+  P.slices = Math.round(P.detail * Math.min(1, 6 / P.grid));       // keep big grids affordable
+  for (const m of pieces) { toy.remove(m); m.geometry.dispose(); }
+  pieces = [];
+  for (let i = 0; i < P.grid; i++) for (let j = 0; j < P.grid; j++) {
+    const g = buildPiece(i, j);
+    if (!g) continue;
+    const mesh = new THREE.Mesh(g, material);
+    mesh.castShadow = mesh.receiveShadow = true;
+    mesh.name = `piece ${i},${j}`;
+    mesh.userData = { i, j };
+    toy.add(mesh);
+    pieces.push(mesh);
+  }
+  applyMotion();
+}
+
+/* Which pieces lead. tier 0 is pulled first; each higher tier follows one travel step behind. */
+function tierOf(i, j) {
+  const n = P.grid, mid = (n - 1) / 2, a = Math.abs(i - mid), b = Math.abs(j - mid);
+  switch (P.order) {
+    case 'rings': return Math.max(a, b);
+    case 'corner': return i + j;
+    case 'edge': return i;
+    case 'spiral': return Math.round(Math.max(a, b) * 2) * 1000 + (Math.atan2(j - mid, i - mid) + Math.PI) * 150;   // ring by ring, round each ring
+    default: return a + b;
+  }
+}
 /* Deployment. The twisted grid is unchanged by a screw motion about the long axis, so each
    piece can slide up while turning at the grid's own pitch without touching its neighbours.
-   The centre piece is pulled first; each neighbour follows once its slot runs out (assumed). */
-let ext = 0;
+   The order and travel are assumptions; only the screw pitch follows from the geometry. */
+function applyMotion() {
+  let lo = Infinity, hi = -Infinity;
+  for (const p of pieces) { p.userData.tier = tierOf(p.userData.i, p.userData.j); lo = Math.min(lo, p.userData.tier); hi = Math.max(hi, p.userData.tier); }
+  const ranks = [...new Set(pieces.map(p => p.userData.tier))].sort((a, b) => a - b);   // close up any gaps
+  for (const p of pieces) p.userData.tier = ranks.indexOf(p.userData.tier);
+  maxTier = Math.max(1, ranks.length - 1);
+  maxTravel = maxTier * P.step;
+  const span = (Y_TOP - Y_BOT) + maxTravel, r = span / 2 + 0.8;
+  Object.assign(key.shadow.camera, { left: -r, right: r, top: r, bottom: -r, near: 0.5, far: 12 + span });
+  key.shadow.camera.updateProjectionMatrix();
+  refit();
+  setExtension(ext);
+}
 function setExtension(e) {
   ext = Math.min(1, Math.max(0, e));
   const pull = ext * maxTravel;
   for (const p of pieces) {
-    const h = Math.max(0, pull - p.userData.tier * P.step);
+    const t = p.userData.tier;
+    const h = P.staged ? Math.max(0, pull - t * P.step) : pull * (1 - t / maxTier);
     p.position.y = h;
     p.rotation.y = P.twist * h;
   }
   toy.position.y = -(Y_TOP + Y_BOT) / 2 - pull / 2;               // keep the assembly centred
   needsRender = true;
 }
+function applyLook() {
+  U.uBody.value.set(P.body); U.uGlow.value.set(P.shiftColor);
+  U.uShift.value = P.shift; U.uAmp.value = P.layerAmp; U.uFreq.value = P.layerFreq * Math.PI * 2;
+  material.metalness = P.metalness; material.roughness = P.roughness; material.clearcoat = P.clearcoat;
+  material.envMapIntensity = P.envIntensity;
+  scene.background.set(P.background);
+  document.body.style.background = P.background;
+  renderer.toneMappingExposure = P.exposure;
+  key.castShadow = P.shadows;
+  controls.autoRotateSpeed = P.spinSpeed;
+  needsRender = true;
+}
 
 /* ---------- camera & controls ---------- */
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true; controls.dampingFactor = 0.08;
-controls.minDistance = 0.6; controls.maxDistance = 14;
-controls.autoRotateSpeed = 1.6;
+controls.minDistance = 0.4; controls.maxDistance = 40;
 controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
 controls.addEventListener('change', () => { needsRender = true; });
 
 function fitDistance() {                     // frame the fully extended toy in any aspect ratio
   const h = (Y_TOP - Y_BOT) + maxTravel + 0.85, w = 1.5;
   const t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-  return Math.max(h / 2 / t, w / 2 / (t * camera.aspect));
+  return Math.max(h / 2 / (t * vis.y), w / 2 / (t * camera.aspect * vis.x));
+}
+let lastFit = 0;
+const vis = { x: 1, y: 1 };                 // fraction of the screen not covered by the panel
+function refit() {                           // keep the same framing when the toy's size changes
+  const d = fitDistance();
+  if (lastFit && Math.abs(d - lastFit) > 1e-6) {
+    camera.position.sub(controls.target).multiplyScalar(d / lastFit).add(controls.target);
+    controls.update();
+  }
+  lastFit = d;
 }
 const VIEWS = [
-  { name: 'side',     dir: [0.55, 0.28, 1] },
+  { name: 'side', dir: [0.55, 0.28, 1] },
   { name: 'top', dir: [0.25, 1, 0.45] },
   { name: 'underside', dir: [0.3, -1, 0.5] },
-  { name: 'edge-on',  dir: [1, 0.1, 0.05] }
+  { name: 'edge-on', dir: [1, 0.1, 0.05] }
 ];
 let viewIx = 0, fly = null;
 function goView(ix, instant) {
@@ -372,20 +512,137 @@ function goView(ix, instant) {
   fly = { from: camera.position.clone(), to: d, tFrom: controls.target.clone(), t: 0 };
 }
 
-let needsRender = true;
+const $ = id => document.getElementById(id);
+const panel = $('panel');
 function resize() {
   const w = window.innerWidth, h = window.innerHeight;
   renderer.setSize(w, h, false);
-  camera.aspect = w / h; camera.updateProjectionMatrix();
+  camera.aspect = w / h;
+  if (!panel.hidden) {                       // slide the model out from under the panel
+    const r = panel.getBoundingClientRect();
+    if (w >= 760) { camera.setViewOffset(w, h, (w - r.left) / 2, 0, w, h); vis.x = r.left / w; vis.y = 1; }
+    else { camera.setViewOffset(w, h, 0, (h - r.top) / 2 - 24, w, h); vis.x = 1; vis.y = Math.max(0.2, (r.top - 48) / h); }
+  } else { camera.clearViewOffset(); vis.x = vis.y = 1; }
+  camera.updateProjectionMatrix();
+  refit();
   needsRender = true;
 }
 window.addEventListener('resize', resize);
 window.addEventListener('orientationchange', () => setTimeout(resize, 200));
-resize();
-goView(0, true);
+
+/* ---------- settings: URL hash, panel ---------- */
+function readHash() {
+  const q = new URLSearchParams(location.hash.slice(1));
+  for (const [k, v] of q) if (k in DEF) {
+    const d = DEF[k];
+    if (typeof d === 'number') { const n = parseFloat(v), s = SCHEMA.find(r => r[1] === k); if (isFinite(n)) P[k] = Math.min(s[4], Math.max(s[3], n)); }
+    else if (typeof d === 'boolean') P[k] = v === '1';
+    else if (k === 'order') { if (v in SCHEMA.find(r => r[1] === k)[3]) P[k] = v; }
+    else if (/^#[0-9a-f]{6}$/i.test(v)) P[k] = v;
+  }
+}
+let hashTimer = 0;
+function writeHash() {
+  clearTimeout(hashTimer);
+  hashTimer = setTimeout(() => {
+    const q = new URLSearchParams();
+    for (const k in DEF) if (P[k] !== DEF[k]) q.set(k, typeof P[k] === 'boolean' ? (P[k] ? '1' : '0') : P[k]);
+    const s = q.toString();
+    history.replaceState(null, '', s ? '#' + s : location.pathname + location.search);
+  }, 250);
+}
+const inputs = {};
+const fmt = (v, step) => (+v).toFixed(step >= 1 ? 0 : step >= 0.1 ? 1 : step >= 0.01 ? 2 : 3);
+let rebuildTimer = 0;
+function changed(kind) {
+  if (kind === G) { clearTimeout(rebuildTimer); rebuildTimer = setTimeout(rebuild, 60); }
+  else { applyLook(); applyMotion(); }
+  writeHash();
+}
+function syncInputs() {
+  for (const [, k, , , , step] of SCHEMA) {
+    const el = inputs[k];
+    if (el.type === 'checkbox') el.checked = P[k]; else el.value = P[k];
+    if (el.type === 'range') el.nextOut.textContent = fmt(P[k], step);
+  }
+}
+function applyAll(patch) { Object.assign(P, patch); syncInputs(); applyLook(); rebuild(); writeHash(); }
+function chipRow(title, set, swatch) {
+  const lab = document.createElement('div'); lab.className = 'chiplabel'; lab.textContent = title;
+  const row = document.createElement('div'); row.className = 'chips';
+  for (const name in set) {
+    const b = document.createElement('button'); b.type = 'button';
+    if (swatch) { const s = document.createElement('span'); s.className = 'sw'; s.style.background = `linear-gradient(135deg, ${set[name].body} 50%, ${set[name].shiftColor} 50%)`; b.append(s); }
+    b.append(name);
+    b.addEventListener('click', () => applyAll(set[name]));
+    row.append(b);
+  }
+  panel.append(lab, row);
+}
+function buildPanel() {
+  chipRow('Shape', SHAPES, false);
+  chipRow('Colour', COLOURS, true);
+  const groups = {};
+  for (const [group, k, label, min, max, step, kind] of SCHEMA) {
+    if (!groups[group]) {
+      const d = document.createElement('details'); d.innerHTML = `<summary>${group}</summary>`;
+      d.open = group === 'Shape';
+      panel.append(d); groups[group] = d;
+    }
+    const row = document.createElement('div'); row.className = 'row';
+    const lab = document.createElement('label'); lab.textContent = label; lab.htmlFor = 'p_' + k;
+    let el;
+    const d = DEF[k];
+    if (typeof d === 'boolean') { el = document.createElement('input'); el.type = 'checkbox'; row.append(lab, el); }
+    else if (typeof min === 'object') {
+      el = document.createElement('select');
+      for (const v in min) el.add(new Option(min[v], v));
+      row.append(lab, el);
+    }
+    else if (typeof d === 'string') { el = document.createElement('input'); el.type = 'color'; row.append(lab, el); }
+    else {
+      el = document.createElement('input'); el.type = 'range'; el.min = min; el.max = max; el.step = step;
+      const out = document.createElement('output'); el.nextOut = out;
+      row.append(lab, out, el);
+    }
+    el.id = 'p_' + k;
+    el.addEventListener('input', () => {
+      P[k] = el.type === 'checkbox' ? el.checked : el.type === 'range' ? +el.value : el.value;
+      if (el.type === 'range') el.nextOut.textContent = fmt(P[k], step);
+      changed(kind);
+    });
+    inputs[k] = el;
+    groups[group].append(row);
+  }
+  const act = document.createElement('div'); act.className = 'actions';
+  const mk = (text, fn) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = text; b.addEventListener('click', () => fn(b)); act.append(b); };
+  mk('Surprise me', () => {
+    const r = (a, b) => a + Math.random() * (b - a), hue = Math.random();
+    const hex = (h, s, l) => '#' + new THREE.Color().setHSL(h % 1, s, l, THREE.SRGBColorSpace).getHexString();
+    applyAll({
+      topLen: +r(0.3, 0.9).toFixed(2), tailLen: +r(0.3, 1.4).toFixed(2), point: +(Math.random() < 0.5 ? 0 : r(0.3, 1)).toFixed(2),
+      twist: +(r(0.8, 3) * (Math.random() < 0.5 ? -1 : 1)).toFixed(2), grid: 3 + Math.floor(Math.random() * 5),
+      spread: +r(0.4, 0.65).toFixed(2), step: +r(0.15, 0.4).toFixed(2),
+      order: ['diamond', 'diamond', 'rings', 'corner', 'edge'][Math.floor(Math.random() * 5)],
+      body: hex(hue, r(0.45, 0.8), r(0.3, 0.5)), shiftColor: hex(hue + r(0.08, 0.35), r(0.6, 0.9), r(0.55, 0.7))
+    });
+  });
+  mk('Copy link', async b => {
+    clearTimeout(hashTimer);
+    const q = new URLSearchParams();
+    for (const k in DEF) if (P[k] !== DEF[k]) q.set(k, typeof P[k] === 'boolean' ? (P[k] ? '1' : '0') : P[k]);
+    const url = location.origin + location.pathname + (q.toString() ? '#' + q : '');
+    history.replaceState(null, '', url);
+    try { await navigator.clipboard.writeText(url); b.textContent = 'Copied'; }
+    catch (e) { b.textContent = 'Link is in the address bar'; }
+    setTimeout(() => { b.textContent = 'Copy link'; }, 1800);
+  });
+  mk('Reset all', () => applyAll({ ...DEF }));
+  panel.append(act);
+  syncInputs();
+}
 
 /* ---------- UI ---------- */
-const $ = id => document.getElementById(id);
 const slider = $('ext'), playBtn = $('play'), spinBtn = $('spin');
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let playing = false, playDir = 1;
@@ -404,10 +661,11 @@ spinBtn.addEventListener('click', () => {
 });
 $('reset').addEventListener('click', () => goView(0, reduced));
 $('views').addEventListener('click', () => goView((viewIx + 1) % VIEWS.length, reduced));
-$('info').addEventListener('click', () => {
-  const a = $('about'); a.hidden = !a.hidden; $('info').setAttribute('aria-expanded', !a.hidden);
-});
-canvas.addEventListener('pointerdown', () => { $('about').hidden = true; $('info').setAttribute('aria-expanded', false); fly = null; });
+function showAbout(v) { $('about').hidden = !v; $('info').setAttribute('aria-expanded', v); }
+function showPanel(v) { panel.hidden = !v; $('tune').setAttribute('aria-expanded', v); resize(); }
+$('info').addEventListener('click', () => { showPanel(false); showAbout($('about').hidden); });
+$('tune').addEventListener('click', () => { showAbout(false); showPanel(panel.hidden); });
+canvas.addEventListener('pointerdown', () => { showAbout(false); fly = null; });
 const fullBtn = $('full');
 const fsEl = document.documentElement;
 if (!(fsEl.requestFullscreen || fsEl.webkitRequestFullscreen)) fullBtn.style.display = 'none';
@@ -416,7 +674,8 @@ fullBtn.addEventListener('click', () => {
   else (fsEl.requestFullscreen || fsEl.webkitRequestFullscreen).call(fsEl);
 });
 window.addEventListener('keydown', e => {
-  if (e.key === ' ') { e.preventDefault(); setPlaying(!playing); }
+  if (e.key === ' ' && e.target === document.body || e.key === ' ' && e.target === canvas) { e.preventDefault(); setPlaying(!playing); }
+  if (e.key === 'Escape') { showPanel(false); showAbout(false); }
 });
 
 /* ---------- loop ---------- */
@@ -426,7 +685,7 @@ function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   if (playing) {
     if (Math.abs(ease(lin) - ext) > 0.01) lin = ext;              // resync after a manual scrub (approximate)
-    lin += playDir * dt / 5;
+    lin += playDir * dt / P.playSeconds;
     if (lin >= 1) { lin = 1; playDir = -1; } else if (lin <= 0) { lin = 0; playDir = 1; }
     setExtension(ease(lin));
     slider.value = ext;
@@ -443,9 +702,16 @@ function frame(now) {
   if (needsRender) { renderer.render(scene, camera); needsRender = false; }
   requestAnimationFrame(frame);
 }
-setExtension(0);
+
+readHash();
+buildPanel();
+applyLook();
+resize();
+rebuild();
+lastFit = fitDistance();
+goView(0, true);
 requestAnimationFrame(frame);
-window.__toy = { P, setExtension, goView, pieces, camera, controls };   // handy for tuning in the console
+window.__toy = { P, DEF, setExtension, goView, rebuild, applyAll, get pieces() { return pieces; }, camera, controls };   // handy for tuning in the console
 </script>
 </body>
 </html>
